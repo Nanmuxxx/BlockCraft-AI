@@ -6,13 +6,18 @@ import { featureKind, hasRelation, FEATURE_CATALOG, RECIPES, combination } from 
 import { BlockInspector } from './blocks/BlockInspector'
 import { useSnapCanvas } from './blocks/useSnapCanvas'
 import { CARD_HEIGHT, stackFor } from './blocks/snap-layout'
+import { appBlockKind, APP_BLOCK_CATALOG } from './blocks/app-canvas'
 import './block-canvas.css'
 
-export type { BlockCanvasProps, BlockModuleData, BlockBuilderBindings, BlockEdit, BlockRelation, RecipeId, VisualExample } from './blocks/contract'
+export type { BlockCanvasProps, BlockModuleData, BlockBuilderBindings, BlockEdit, BlockRelation, RecipeId, VisualExample, AppBlockType, AppCanvasEdit, AppCanvasBindings } from './blocks/contract'
+export { toAppCanvasModules } from './blocks/app-canvas'
 const ICONS = { tasks: ListChecks, courses: CalendarDays, stats: ChartNoAxesColumnIncreasing }
 
-export function BlockCanvas<Id extends string = ModuleId>({ modules: requestedModules, positions, selectedModuleId, onSelectModule, onMoveModule, builder, examples = [] }: BlockCanvasProps<Id>) {
+export function BlockCanvas<Id extends string = ModuleId>({ modules: requestedModules, positions, selectedModuleId, onSelectModule, onMoveModule, builder, appBuilder, examples = [] }: BlockCanvasProps<Id>) {
   const isSupported = (module: BlockModuleData<Id>) => {
+    const appKind = appBlockKind(module)
+    if (appKind) return !builder && (!appBuilder || appBuilder.availableTypes.includes(appKind))
+    if (appBuilder) return false
     const kind = featureKind(module)
     return kind !== null && (!builder || builder.availableFeatures.includes(kind))
   }
@@ -63,12 +68,20 @@ export function BlockCanvas<Id extends string = ModuleId>({ modules: requestedMo
     <div className="block-canvas-toolbar">
       <span><Blocks size={16} aria-hidden="true" />我的功能 · {items.length} 块积木</span>
       <div className="block-canvas-actions">
+        {appBuilder && <>
+          <button type="button" disabled={!appBuilder.canUndo} onClick={appBuilder.onUndo}><Undo2 size={14} aria-hidden="true" />撤销结构修改</button>
+          <button type="button" disabled={!selected || appBlockKind(selected) === 'metric'} onClick={() => selected && appBuilder.onEdit({ type: 'configure', blockId: selected.id })}>配置字段</button>
+          <button type="button" disabled={!selected} onClick={() => selected && appBuilder.onEdit({ type: 'remove', blockId: selected.id })}>移除积木</button>
+        </>}
         {builder && <button type="button" disabled={!builder.canUndo} onClick={builder.onUndo}><Undo2 size={14} aria-hidden="true" />撤销功能修改</button>}
         <button type="button" disabled={selectedStack.length < 2 || snap.dragging.length > 0} onClick={() => selectedKey && snap.detach(selectedKey)}><Unlink size={14} aria-hidden="true" />拆开这组</button>
         <button type="button" disabled={!items.length || snap.dragging.length > 0} onClick={snap.arrange}><LayoutGrid size={14} aria-hidden="true" />一键整理</button>
-        {builder && <button type="button" aria-expanded={catalogOpen} aria-controls={catalogId} onClick={() => setCatalogOpen(!catalogOpen)}><Plus size={14} aria-hidden="true" />添加积木</button>}
+        {(builder || appBuilder) && <button type="button" aria-expanded={catalogOpen} aria-controls={catalogId} onClick={() => setCatalogOpen(!catalogOpen)}><Plus size={14} aria-hidden="true" />添加积木</button>}
       </div>
     </div>
+    {appBuilder && catalogOpen && <div className="block-canvas-catalog" id={catalogId} aria-label="可用积木类型">
+      {appBuilder.availableTypes.map(kind => <button type="button" key={kind} onClick={() => { appBuilder.onEdit({ type: 'add', kind }); setCatalogOpen(false) }}><strong>{APP_BLOCK_CATALOG[kind].name}</strong><span>{APP_BLOCK_CATALOG[kind].description}</span></button>)}
+    </div>}
     {builder && catalogOpen && <div className="block-canvas-catalog" id={catalogId} aria-label="可用功能">
       {builder.availableFeatures.map((kind) => {
         const exists = modules.some((module) => featureKind(module) === kind)
@@ -78,7 +91,7 @@ export function BlockCanvas<Id extends string = ModuleId>({ modules: requestedMo
     </div>}
     {builder?.unsupportedRequirements?.length ? <div className="block-canvas-limit" role="note"><strong>这些需求暂时还搭不出来</strong><ul>{builder.unsupportedRequirements.map((requirement, index) => <li key={index}>{requirement}</li>)}</ul></div> : null}
     <div className="block-canvas-play-note"><span>上下靠近，轻轻拼上</span><small>拼接只调整布局，软件功能保持不变。{examples.length > 0 && '提醒通知、学习目标为展示积木。'}</small></div>
-    {!builder && !examples.length && <p className="block-canvas-limit">当前可查看功能与调整布局。添加、配置和组合功能尚未开放。</p>}
+    {!builder && !appBuilder && !examples.length && <p className="block-canvas-limit">当前可查看功能与调整布局。添加、配置和组合功能尚未开放。</p>}
     {unsupported.length > 0 && <p className="block-canvas-limit" role="note">{unsupported.map(({ name }) => `「${name}」`).join('、')}尚未提供可运行功能，未加入画布。</p>}
     {source && <div ref={combinationRef} tabIndex={-1} className="block-canvas-combine" role="region" aria-label="确认组合功能" onKeyDown={(event) => { if (event.key === 'Escape') cancelCombination() }}>
       <div><strong>将「{source.name}」和另一块组合功能</strong><p>点击另一块功能积木，先看看它们能一起做什么。</p></div>
@@ -87,7 +100,7 @@ export function BlockCanvas<Id extends string = ModuleId>({ modules: requestedMo
     </div>}
     <div ref={snap.canvasRef} className={`block-canvas${source ? ' is-combining' : ''}`} style={{ height: snap.board.height }} aria-describedby={helpId}>
       <span className="block-canvas-watermark" aria-hidden="true">A LITTLE SPACE TO BUILD</span>
-      {!items.length && <div className="block-canvas-empty"><Blocks size={30} aria-hidden="true" /><strong>从一个能用的功能开始</strong><p>{builder ? '点击“添加积木”，选择软件需要的功能。' : '还没有功能积木，先明确你想解决的事情。'}</p></div>}
+      {!items.length && <div className="block-canvas-empty"><Blocks size={30} aria-hidden="true" /><strong>从一个能用的功能开始</strong><p>{builder || appBuilder ? '点击“添加积木”，选择软件需要的功能。' : '还没有功能积木，先明确你想解决的事情。'}</p></div>}
       {snap.stacks.flatMap((stack) => stack.slice(1).map((key, index) => {
         const top = snap.scene[stack[index]]
         const bottom = snap.scene[key]
@@ -101,7 +114,8 @@ export function BlockCanvas<Id extends string = ModuleId>({ modules: requestedMo
       {items.map((item, index) => {
         const { key, name, module, example } = item
         const kind = module ? featureKind(module) : null
-        const defaults = kind ? FEATURE_CATALOG[kind] : null
+        const appKind = module ? appBlockKind(module) : null
+        const defaults = kind ? FEATURE_CATALOG[kind] : appKind ? APP_BLOCK_CATALOG[appKind] : null
         const Icon = example?.icon ?? module?.icon ?? (kind ? ICONS[kind] : Blocks)
         const point = snap.scene[key]
         if (!point) return null
@@ -136,5 +150,6 @@ export function BlockCanvas<Id extends string = ModuleId>({ modules: requestedMo
       }) : <p>还没有功能组合。视觉拼接只影响布局。</p>}
     </div>}
     {builder && <p className="block-canvas-feedback" role="status" aria-live="polite">{builder.feedback}</p>}
+    {appBuilder && <p className="block-canvas-feedback" role="status" aria-live="polite">{appBuilder.feedback}</p>}
   </section>
 }

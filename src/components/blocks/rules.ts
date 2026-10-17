@@ -21,7 +21,7 @@ export const RECIPES = {
 } as const
 
 export function featureKind(module: BlockModuleData<string>): ModuleId | null {
-  if (module.kind !== undefined) return MODULE_IDS.includes(module.kind) ? module.kind : null
+  if (module.kind !== undefined) return MODULE_IDS.find(id => id === module.kind) ?? null
   return MODULE_IDS.find((id) => id === module.id) ?? null
 }
 

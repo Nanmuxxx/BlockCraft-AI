@@ -1,5 +1,6 @@
 import type { BlockSpec, EntityRecord, FieldSpec, FieldValue, ProjectState } from './appSpec'
-import { assertProjectState, ensure } from './appSpecValidation'
+import { createCommandSession, processCommand, type CommandSession } from './appCommands'
+import { AppSpecError, assertProjectState, ensure } from './appSpecValidation'
 
 export type RecordChange =
   | { type: 'create'; entityId: string; record: EntityRecord }
@@ -29,21 +30,70 @@ function freeze<T>(value: T): T {
   return value
 }
 
-/** One source of truth per project. Snapshots cannot be mutated by a component. */
-export function createAppRuntime(initial: ProjectState) {
-  assertProjectState(initial)
-  let state = freeze(structuredClone(initial))
+export type RuntimeResult =
+  | { ok: true; duplicate: boolean; committedRevision: number }
+  | { ok: false; error: { code: string; message: string } }
+
+export interface AppRuntime {
+  getSnapshot: () => ProjectState
+  subscribe: (listener: () => void) => () => void
+  executeCommand: (request: unknown) => RuntimeResult
+  updateRecords: (change: RecordChange) => RuntimeResult
+  moveBlock: (blockId: string, position: { x: number; y: number }) => RuntimeResult
+  canUndo: () => boolean
+  /** B1 compatibility: record transaction, throwing AppSpecError on rejection. */
+  dispatch: (change: RecordChange) => void
+}
+
+/** One session owns state, history and receipts for both B and C. */
+export function createAppRuntime(initial: ProjectState): AppRuntime {
+  let session = freeze(createCommandSession(initial))
   const listeners = new Set<() => void>()
+  const publish = (next: CommandSession) => {
+    session = freeze(next)
+    listeners.forEach(listener => listener())
+  }
+  // Full-state command history cannot cross a later data/layout transaction.
+  // Keep receipts so retries across this boundary remain idempotent.
+  const mutate = (apply: (state: ProjectState) => ProjectState): RuntimeResult => {
+    let state: ProjectState
+    try { state = apply(session.state) }
+    catch (error) {
+      if (!(error instanceof AppSpecError)) throw error
+      return { ok: false, error: { code: error.code, message: error.message } }
+    }
+    publish({ ...session, state, history: [] })
+    return { ok: true, duplicate: false, committedRevision: state.revision }
+  }
+  const updateRecords = (change: RecordChange) => mutate(state => applyRecordChange(state, change))
   return {
-    getSnapshot: () => state,
+    getSnapshot: () => session.state,
     subscribe(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener) } },
+    canUndo: () => session.history.length > 0,
+    executeCommand(request) {
+      const result = processCommand(session, request)
+      if (!result.ok) return { ok: false, error: result.error }
+      if (!result.duplicate) publish(result.session)
+      return { ok: true, duplicate: result.duplicate, committedRevision: result.committedRevision }
+    },
+    updateRecords,
+    moveBlock(blockId, position) {
+      return mutate(state => {
+        ensure(state.spec.blocks.some(block => block.id === blockId), 'Unknown position block')
+        ensure(state.revision < Number.MAX_SAFE_INTEGER, 'Revision exhausted')
+        const next = structuredClone(state)
+        next.blockPositions[blockId] = structuredClone(position)
+        next.revision++
+        assertProjectState(next)
+        return next
+      })
+    },
     dispatch(change: RecordChange) {
-      state = freeze(applyRecordChange(state, change))
-      listeners.forEach(listener => listener())
+      const result = updateRecords(change)
+      if (!result.ok) throw new AppSpecError(result.error.code, result.error.message)
     },
   }
 }
-export type AppRuntime = ReturnType<typeof createAppRuntime>
 
 export function metricValue(state: ProjectState, block: Extract<BlockSpec, { type: 'metric' }>): number {
   const binding = state.spec.relations.find(relation => relation.blockId === block.id)!

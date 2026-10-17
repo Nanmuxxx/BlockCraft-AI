@@ -237,3 +237,143 @@ if (result.ok) session = result.session
 - 浏览器操作：社团空表单不提交；有效提交后名单新增、人数 1 → 2；列表修改后切换示例再切回仍保留修改；删除后人数 2 → 1。阅读记录新增 20 分钟后流水新增、累计分钟 30 → 50。
 - 旧流程浏览器冒烟：根路径首页 → 需求澄清 → Workshop B 功能积木 → 旧 C 学习应用预览均可进入；这不等于完整重测所有拖拽与聊天交互。
 - 基线：开始时工作区干净，本地 main 与缓存 origin/main 均为 `bd43b45`。`git fetch origin` 因 github.com DNS 解析失败，无法证明远端最新状态。没有自动提交、推送或合并。
+
+## 阶段 B2-1：B/C 共享运行时与通用画布公共接口
+
+本节是通用 B 模式负责人的当前接入契约。上文 `AppConfig`、`BlockEdit`、recipe 和 builder 属于旧学习 Demo；阶段 A/B1 的描述是历史阶段记录。AppSpec v1 本轮未变，未实现 AppSpecInspector，未修改旧 Workshop、MochiPanel、Home 或 ClarificationStep。
+
+### 唯一状态源与签名
+
+每个项目只创建一个 `createAppRuntime(initial: ProjectState): AppRuntime`，B 画布、C 的 `<AppRenderer runtime={runtime} />`、未来命令入口共享该实例。内部只持有一个私有 `CommandSession`，`getSnapshot()` 直接读取它的 `state`。宿主不得另外维护 session、records、spec 或 positions 的可写副本，也不得把外部 `processCommand` 的结果作为另一套项目状态使用。切换 B/C 不重新创建 runtime；选中 ID、未提交表单、错误消息、视觉拼接组可保存在 UI 本地。
+
+```ts
+// src/model/appRuntime.ts
+interface AppRuntime {
+  getSnapshot: () => ProjectState
+  subscribe: (listener: () => void) => () => void
+  executeCommand: (request: unknown) => RuntimeResult
+  updateRecords: (change: RecordChange) => RuntimeResult
+  moveBlock: (blockId: string, position: { x: number; y: number }) => RuntimeResult
+  canUndo: () => boolean
+  dispatch: (change: RecordChange) => void
+}
+type RuntimeResult =
+  | { ok: true; duplicate: boolean; committedRevision: number }
+  | { ok: false; error: { code: string; message: string } }
+```
+
+- `useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)` 读取深冻结快照。连续读取在没有提交时返回同一对象；所有成功的新事务增加一次 revision、发布一次快照。回调在提交后同步运行，订阅者应只读取或触发 React 更新，不能抛错。
+- `executeCommand` 接收阶段 A 原样的 `CommandRequest`，内部调用 `processCommand`；包括 undo 在内的全部结构操作走此入口。`baseRevision` 取准备提交时的当前 revision，`requestId` 由宿主生成有效稳定 ID。同一请求重试保留完整载荷与 ID；新意图使用新 ID。
+- `updateRecords` 复用 `applyRecordChange`，`RecordChange` 仍为 `create { entityId, record }`、`update { entityId, recordId, values }`、`delete { entityId, recordId }`（均含 `type`）。`update.values` 完整替换该条记录的 values；调用方应保留未编辑字段。C 的旧 `dispatch` 仍可使用，成功返回 void，校验失败抛 `AppSpecError(code, message)`；它与 `updateRecords` 使用同一事务和撤销边界。
+- `moveBlock` 只更新指定实例的归一化 `[0,1]` 坐标，校验实例存在和完整下一状态，增加 revision；不修改记录、实体、绑定或功能。UI 应及时消费返回结果；不要先在另一份项目状态中乐观写入。
+- `canUndo()` 根据当前 session 历史查询；在快照订阅触发后重新读取，传入画布的 `canUndo`。纯 `processCommand` / `createCommandSession` 保留给模型层测试和其他独立调用场景，不是 B/C 的并行状态容器。
+
+### 撤销安全边界与错误协议
+
+阶段 A 的结构历史包含整个 `ProjectState`。为防止撤销覆盖后来新增、修改或删除的真实记录，本轮采取显式保守边界：**任一次成功的记录事务（含 dispatch）或布局移动，都会清空此前结构撤销历史**。布局操作本身不进入结构历史；即使写回相同值，成功事务仍产生一次 revision 并建立边界。之后新提交的结构操作重新积累历史，撤销以最新记录/布局为基线。失败的记录/布局修改不清空历史。界面可提示“记录或布局已保存，之前的结构修改不再可撤销”。
+
+清空历史时保留 `receipts`，因此旧命令的完全相同重试仍返回 `duplicate: true` 和原始 `committedRevision`，不重做、不清空新历史、不发布快照；当前 revision 请读取 `getSnapshot()`，不要用旧收据版本覆盖 UI。undo 也按普通请求去重。空历史 undo 返回 `NOTHING_TO_UNDO`。
+
+`executeCommand`、`updateRecords`、`moveBlock` 的校验失败返回统一的 `{ ok: false, error: { code, message } }`；不改变快照对象、revision、history、receipts，不通知订阅。结构入口支持校验任意 unknown JSON；记录和移动入口是上述 TypeScript 类型约定的调用，业务值再由现有状态校验器校验。编程错误或非 JSON 输入造成的异常不伪装成业务拒绝。
+
+| code | 宿主处理方式 |
+| --- | --- |
+| `VALIDATION` | 展示 message，修正字段、绑定、坐标或记录；版本耗尽也由此拒绝 |
+| `FIELD_REFERENCED` | 字段被积木或业务记录引用，保留数据并提示原因 |
+| `REVISION_CONFLICT` | 重新读取快照、重新核对意图；不要自动强制覆盖 |
+| `REQUEST_ID_CONFLICT` | 同 ID 不同载荷，修复调用方的请求 ID 管理 |
+| `NOTHING_TO_UNDO` | 刷新撤销按钮状态，保留当前项目 |
+
+错误消息仅用于显示与诊断，分支逻辑依赖 code。错误/成功文案由宿主持有，通过 `appBuilder.feedback` 传给画布；画布只上报意图，不声称请求已成功。
+
+### BlockCanvas Props 与编辑意图
+
+继续使用 `src/components/BlockCanvas.tsx`，由该文件导出以下类型与 `toAppCanvasModules`。`BlockCanvasProps<Id>` 的公共部分不变；通用项目使用 `<BlockCanvas<string>>`，传 `appBuilder`，不传旧的 `builder`（类型互斥）。`BlockModuleData.kind` 新增 `list | form | metric`，`id` 始终为实例 ID，不用类型充当 ID。`toAppCanvasModules(state)` 是从快照到卡片的纯投影，保留所有实例与 spec 数组顺序，不缓存业务状态；独立只读画布也可不传 appBuilder。
+
+```ts
+type AppBlockType = BlockSpec['type'] // list | form | metric
+interface AppCanvasBindings<Id extends string = string> {
+  availableTypes: readonly AppBlockType[]
+  onEdit: (edit: AppCanvasEdit<Id>) => void
+  onUndo: () => void
+  canUndo: boolean
+  feedback?: string
+}
+type AppCanvasEdit<Id extends string = string> =
+  | { type: 'add'; kind: AppBlockType }
+  | { type: 'remove'; blockId: Id }
+  | { type: 'configure'; blockId: Id }
+```
+
+| Props / 回调 | B 负责人接线 |
+| --- | --- |
+| `modules` | `toAppCanvasModules(snapshot)`；也可自行投影，必须保留稳定实例 id 与显式 kind |
+| `positions` | `snapshot.blockPositions`，不另建布局状态源 |
+| `selectedModuleId` / `onSelectModule(id)` | 宿主的 UI 选中状态；结构删除后将失效 ID 清空或按不存在处理 |
+| `onMoveModule(id, position)` | 调 `runtime.moveBlock(id, position)` 并处理结果；整组拖动/整理会逐实例调用，每次为独立事务 |
+| `appBuilder.availableTypes` | 实际可用的类型白名单；未广告的卡片不渲染并说明，目录允许同类型重复添加 |
+| `appBuilder.onEdit({type:'add', kind})` | 宿主选择实体与字段，生成全局唯一的 block/binding ID，提交 `addBlock`，不自动猜测绑定 |
+| `appBuilder.onEdit({type:'remove', blockId})` | 宿主可先确认，再提交 `removeBlock`；引擎保留业务记录 |
+| `appBuilder.onEdit({type:'configure', blockId})` | 通知宿主打开未来字段编辑入口；确认后提交 `configureBlockFields`。本轮仅提供意图按钮，未实现 Inspector；metric 禁用该按钮 |
+| `appBuilder.onUndo()` | 用当前 revision 和新 requestId 提交独立 `[{type:'undo'}]` |
+| `appBuilder.canUndo` / `feedback` | 读取 `runtime.canUndo()` / 宿主事务反馈，不由画布自行推断成功 |
+
+当前没有重命名、改变绑定或配置 metric 的专用命令，不能把旧 builder 的 `configure {name, settings}` 或 `combine/disconnect` 硬转成新协议。AppSpec 的 `dataBinding` 只能由合法结构命令显式建立；靠近、吸附、视觉拼接、拆组、整组移动和一键整理始终只有布局意义。同一实体上的多个积木通过同一 runtime 的 records 联动，类型或视觉相邻不代表业务关系。
+
+### 最小宿主接入示例
+
+下面的 `resolveEdit` 由 B 宿主实现：可弹出未来的选择/字段编辑 UI，再通过同一个 `submit` 提交确认后的 AppCommand；这里只演示同步返回命令的接线，取消或暂未实现返回 null。运行时以 useState 惰性创建，B 与 C 的 JSX 使用同一对象。
+
+```tsx
+import { useState, useSyncExternalStore } from 'react'
+import { BlockCanvas, toAppCanvasModules, type AppCanvasEdit } from '../src/components/BlockCanvas'
+import { AppRenderer } from '../src/components/app-renderer/AppRenderer'
+import { createAppRuntime, type RuntimeResult } from '../src/model/appRuntime'
+import type { AppCommand, ProjectState } from '../src/model/appSpec'
+
+function SharedProject({ initial, resolveEdit }: {
+  initial: ProjectState
+  resolveEdit: (edit: AppCanvasEdit, state: ProjectState) => AppCommand[] | null
+}) {
+  const [runtime] = useState(() => createAppRuntime(initial))
+  const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
+  const [selectedId, select] = useState<string | null>(null)
+  const [feedback, setFeedback] = useState('')
+  function report(result: RuntimeResult) {
+    setFeedback(result.ok ? result.duplicate ? '请求已处理' : '已保存' : `${result.error.code}: ${result.error.message}`)
+  }
+  function submit(commands: AppCommand[]) {
+    report(runtime.executeCommand({
+      requestId: `edit-${crypto.randomUUID()}`,
+      baseRevision: runtime.getSnapshot().revision,
+      commands,
+    }))
+  }
+  return <>
+    <BlockCanvas<string>
+      modules={toAppCanvasModules(state)} positions={state.blockPositions}
+      selectedModuleId={state.spec.blocks.some(block => block.id === selectedId) ? selectedId : null}
+      onSelectModule={select}
+      onMoveModule={(id, position) => report(runtime.moveBlock(id, position))}
+      appBuilder={{
+        availableTypes: ['list', 'form', 'metric'], canUndo: runtime.canUndo(), feedback,
+        onUndo: () => submit([{ type: 'undo' }]),
+        onEdit: edit => {
+          const commands = resolveEdit(edit, runtime.getSnapshot())
+          if (commands) submit(commands)
+        },
+      }}
+    />
+    <AppRenderer runtime={runtime} />
+  </>
+}
+```
+
+运行时为页面内存会话，不含后端、持久化、AI 或跨进程并发控制。旧 tasks/courses/stats 卡片、builder、recipe、展示积木与拖拽实现继续保留；通用 appBuilder 不启用旧 recipe，也不出现旧学习模块 Inspector。
+
+### B2-1 验证
+
+- `npm test`：67 项全部通过（B1 基线 58 项，新增 9 项）。覆盖统一 B/C 状态、结构去重与撤销、失败零发布、记录 CRUD 与布局的撤销边界、版本耗尽、通用三类型与同类型多实例、能力白名单、旧画布回归及 C 渲染结果。
+- `npm run build`：TypeScript 与 Vite 生产构建通过。AppRenderer 订阅增加同源 server snapshot，允许测试实际 C 输出。
+- `git diff --check`：通过。新增画布验证使用静态渲染和模型联动单元测试；本轮未声称完成浏览器拖拽端到端验收。
+- 起点为干净的本地 main，B1 提交 `2b18da1`。未执行 push、merge、reset 或 force push；本轮修改留在工作区等待验收。

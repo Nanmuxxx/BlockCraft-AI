@@ -1,10 +1,13 @@
 import type { LucideIcon } from 'lucide-react'
 import type { BlockPosition, ModuleId } from '../../model/appConfig'
+import type { BlockSpec } from '../../model/appSpec'
+
+export type AppBlockType = BlockSpec['type']
 
 /** Feature kind describes behavior; instance IDs may be any stable string. */
 export interface BlockModuleData<Id extends string = ModuleId> {
   id: Id
-  kind?: ModuleId
+  kind?: ModuleId | AppBlockType
   name: string
   description?: string
   detail?: string
@@ -42,16 +45,35 @@ export interface BlockBuilderBindings<Id extends string = string> {
   feedback?: string
 }
 
-export interface BlockCanvasProps<Id extends string = ModuleId> {
+/** UI intent only: host supplies IDs/bindings or opens its own field editor. */
+export type AppCanvasEdit<Id extends string = string> =
+  | { type: 'add'; kind: AppBlockType }
+  | { type: 'remove'; blockId: Id }
+  | { type: 'configure'; blockId: Id }
+
+export interface AppCanvasBindings<Id extends string = string> {
+  availableTypes: readonly AppBlockType[]
+  onEdit: (edit: AppCanvasEdit<Id>) => void
+  onUndo: () => void
+  canUndo: boolean
+  feedback?: string
+}
+
+interface CanvasBaseProps<Id extends string> {
   modules: readonly BlockModuleData<Id>[]
   positions: Readonly<Partial<Record<Id, BlockPosition>>>
   selectedModuleId: Id | null
   onSelectModule: (moduleId: Id) => void
   onMoveModule: (moduleId: Id, position: BlockPosition) => void
-  builder?: BlockBuilderBindings<Id>
   /** Layout-only examples; no functional IDs or AppConfig changes required. */
   examples?: readonly VisualExample[]
 }
+
+/** The legacy recipe builder and generic AppSpec editor are mutually exclusive. */
+export type BlockCanvasProps<Id extends string = ModuleId> = CanvasBaseProps<Id> & (
+  | { builder?: BlockBuilderBindings<Id>; appBuilder?: never }
+  | { builder?: never; appBuilder: AppCanvasBindings<Id> }
+)
 
 export interface VisualExample {
   id: string

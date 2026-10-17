@@ -45,7 +45,7 @@ function RecordEditor({ fields, initial, onSave, onCancel }: {
 }
 
 function RecordList({ runtime, entityId, fieldIds }: { runtime: AppRuntime; entityId: string; fieldIds: string[] }) {
-  const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot)
+  const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
   const entity = state.spec.entities.find(entity => entity.id === entityId)!
   const fields = fieldIds.map(id => entity.fields.find(field => field.id === id)!)
   const rows = state.records[entityId] ?? []
@@ -78,7 +78,7 @@ function RecordList({ runtime, entityId, fieldIds }: { runtime: AppRuntime; enti
 
 /** AppSpec v1 has no previewOrder; its blocks array is the canonical display order. */
 export function AppRenderer({ runtime }: { runtime: AppRuntime }) {
-  const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot)
+  const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
   return <div className="app-renderer">
     {state.spec.blocks.map(block => {
       const binding = state.spec.relations.find(relation => relation.blockId === block.id)!

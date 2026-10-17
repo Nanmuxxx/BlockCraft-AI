@@ -136,3 +136,49 @@ test('selection and saved relations come from external props; legacy mode does n
   assert.match(html, /组合已保存/)
   assert.match(html, /取消组合/)
 })
+
+const { toAppCanvasModules } = require('./app-canvas.ts')
+const { createAppRuntime } = require('../../model/appRuntime.ts')
+const { createReadingLogExample } = require('../../model/appSpecExamples.ts')
+const appBuilder = { availableTypes: ['list', 'form', 'metric'], canUndo: false, onEdit() {}, onUndo() {} }
+
+test('AppSpec canvas renders all three kinds and independent instances with stable IDs', () => {
+  const runtime = createAppRuntime(createReadingLogExample())
+  const modules = toAppCanvasModules(runtime.getSnapshot())
+  assert.equal(modules.filter(module => module.kind === 'list').length, 2)
+  const html = render(modules, { appBuilder, selectedModuleId: 'bookshelf' })
+  assert.match(html, /我的功能 · 4 块积木/)
+  for (const module of modules) assert.ok(html.includes(`data-block-key="module:${module.id}"`))
+  assert.match(html, /配置字段/)
+  assert.match(html, /移除积木/)
+  assert.doesNotMatch(html, /功能设置|组合功能|搭在一起的功能/)
+  assert.match(html, /拼接只调整布局/)
+  assert.equal(combination(modules[0], modules[1], ['course-tasks', 'task-stats']), null)
+})
+
+test('generic capability filtering, metric configure guard and feedback are explicit', () => {
+  const modules = toAppCanvasModules(createReadingLogExample())
+  const html = render(modules, { appBuilder: { ...appBuilder, availableTypes: ['metric'], feedback: '版本冲突，请重试' }, selectedModuleId: 'reading-total' })
+  assert.match(html, /我的功能 · 1 块积木/)
+  assert.match(html, /尚未提供可运行功能/)
+  assert.match(html, /disabled="">配置字段/)
+  assert.match(html, /版本冲突，请重试/)
+  assert.doesNotMatch(html, /功能设置/)
+  // No builder is needed for a controlled, read-only generic canvas.
+  assert.match(render(modules), /我的功能 · 4 块积木/)
+})
+
+test('B module projection follows command add/remove/undo while C records stay intact', () => {
+  const runtime = createAppRuntime(createReadingLogExample())
+  const command = commands => runtime.executeCommand({ requestId: `edit-${runtime.getSnapshot().revision}`, baseRevision: runtime.getSnapshot().revision, commands })
+  const records = runtime.getSnapshot().records
+  assert.equal(command([{ type: 'addBlock', block: { id: 'second-bookshelf', type: 'list', name: '第二书架', fieldIds: ['book-title'] }, binding: { id: 'second-binding', type: 'dataBinding', blockId: 'second-bookshelf', entityId: 'books' } }]).ok, true)
+  assert.match(render(toAppCanvasModules(runtime.getSnapshot()), { appBuilder }), /我的功能 · 5 块积木/)
+  assert.equal(command([{ type: 'removeBlock', blockId: 'bookshelf' }]).ok, true)
+  const html = render(toAppCanvasModules(runtime.getSnapshot()), { appBuilder })
+  assert.doesNotMatch(html, /data-block-key="module:bookshelf"/)
+  assert.match(html, /data-block-key="module:second-bookshelf"/)
+  assert.equal(command([{ type: 'undo' }]).ok, true)
+  assert.match(render(toAppCanvasModules(runtime.getSnapshot()), { appBuilder }), /data-block-key="module:bookshelf"/)
+  assert.deepEqual(runtime.getSnapshot().records, records)
+})
