@@ -1,8 +1,19 @@
-import { useRef, useState, type FormEvent, type PointerEvent } from 'react'
-import { ArrowLeft, Blocks, BookOpen, CalendarDays, ChartNoAxesColumnIncreasing, Check, Clock3, GraduationCap, LayoutGrid, ListChecks, Monitor, Plus, Sparkles } from 'lucide-react'
+import { useRef, useState, type FormEvent } from 'react'
+import { ArrowLeft, Blocks, BookOpen, CalendarDays, ChartNoAxesColumnIncreasing, Check, Clock3, GraduationCap, ListChecks, Monitor, Plus, Sparkles } from 'lucide-react'
 import { Logo } from './Logo'
 import { MochiCat } from './MochiCat'
-import { DEFAULT_BLOCK_POSITIONS, withTasks, type AppConfig, type AppConfigUpdater, type Course, type ModuleId, type StudyStats, type StudyTask } from '../model/appConfig'
+import { BlockCanvas, type BlockModuleData } from './BlockCanvas'
+import { VISUAL_EXAMPLES } from './blocks/examples'
+import {
+  withTasks,
+  type AppConfig,
+  type AppConfigUpdater,
+  type BlockPosition,
+  type Course,
+  type ModuleId,
+  type StudyStats,
+  type StudyTask,
+} from '../model/appConfig'
 import './workshop.css'
 
 interface WorkshopProps {
@@ -12,29 +23,18 @@ interface WorkshopProps {
 }
 
 type Mode = 'blocks' | 'preview'
-const FEATURES = [
+const FEATURES: BlockModuleData[] = [
   { id: 'tasks', name: '任务管理', description: '把学习目标拆成小任务，让每一步都有方向。', detail: '待办任务 · 完成进度', icon: ListChecks, tone: 'sage' },
   { id: 'courses', name: '课程安排', description: '为课程留好时间，让每天的学习井井有条。', detail: '课程日历 · 时间安排', icon: CalendarDays, tone: 'blue' },
   { id: 'stats', name: '学习统计', description: '记录一点一滴的积累，看见自己的成长。', detail: '学习记录 · 成长趋势', icon: ChartNoAxesColumnIncreasing, tone: 'apricot' },
-] as const
-
-interface ActiveDrag {
-  id: ModuleId
-  pointerId: number
-  offsetX: number
-  offsetY: number
-}
+]
 
 export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
   const [mode, setMode] = useState<Mode>('blocks')
   const [taskDraft, setTaskDraft] = useState('')
-  const [selectedBlock, setSelectedBlock] = useState<ModuleId | null>(null)
-  const [draggingBlock, setDraggingBlock] = useState<ModuleId | null>(null)
+  const [selectedModuleId, setSelectedModuleId] = useState<ModuleId | null>(null)
   const { idea, data, blockPositions } = config
   const { tasks, courses, stats: taskStats } = data
-  const canvasRef = useRef<HTMLDivElement>(null)
-  const activeDragRef = useRef<ActiveDrag | null>(null)
-
   const addTask = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const title = taskDraft.trim()
@@ -55,48 +55,11 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
     })
   }
 
-  const startBlockDrag = (event: PointerEvent<HTMLButtonElement>, id: ModuleId) => {
-    if (event.button !== 0 || !canvasRef.current) return
-    const blockBounds = event.currentTarget.getBoundingClientRect()
-
-    activeDragRef.current = {
-      id,
-      pointerId: event.pointerId,
-      offsetX: event.clientX - blockBounds.left,
-      offsetY: event.clientY - blockBounds.top,
-    }
-    event.currentTarget.setPointerCapture(event.pointerId)
-    setSelectedBlock(id)
-  }
-
-  const moveBlock = (event: PointerEvent<HTMLButtonElement>) => {
-    const activeDrag = activeDragRef.current
-    const canvas = canvasRef.current
-    if (!activeDrag || activeDrag.pointerId !== event.pointerId || !canvas) return
-
-    const canvasBounds = canvas.getBoundingClientRect()
-    const blockBounds = event.currentTarget.getBoundingClientRect()
-    const inset = 16
-    const minX = blockBounds.width / 2 + inset
-    const maxX = Math.max(minX, canvasBounds.width - blockBounds.width / 2 - inset)
-    const minY = blockBounds.height / 2 + inset
-    const maxY = Math.max(minY, canvasBounds.height - blockBounds.height / 2 - inset)
-    const centerX = Math.min(maxX, Math.max(minX, event.clientX - canvasBounds.left - activeDrag.offsetX + blockBounds.width / 2))
-    const centerY = Math.min(maxY, Math.max(minY, event.clientY - canvasBounds.top - activeDrag.offsetY + blockBounds.height / 2))
-
-    setDraggingBlock(activeDrag.id)
-    const position = { x: centerX / canvasBounds.width, y: centerY / canvasBounds.height }
+  const moveModule = (moduleId: ModuleId, position: BlockPosition) => {
     onConfigChange((current) => ({
       ...current,
-      blockPositions: { ...current.blockPositions, [activeDrag.id]: position },
+      blockPositions: { ...current.blockPositions, [moduleId]: position },
     }))
-  }
-
-  const finishBlockDrag = (event: PointerEvent<HTMLButtonElement>) => {
-    if (activeDragRef.current?.pointerId !== event.pointerId) return
-    activeDragRef.current = null
-    setDraggingBlock(null)
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
   }
 
   return (
@@ -133,46 +96,21 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
               <h2 id="canvas-title">{mode === 'blocks' ? '从一块积木开始' : '让想法有个模样'}</h2>
               <p>{mode === 'blocks' ? '每一块，都是软件的一种可能。' : '这里是「我的学习助手」的预览空间。'}</p>
             </div>
-            <span className="workshop__badge">{mode === 'blocks' ? '3 块示例积木' : '本地 Mock 数据'}</span>
+            <span className="workshop__badge">{mode === 'blocks' ? '3 块功能 · 2 块展示' : '本地 Mock 数据'}</span>
           </div>
 
-          {mode === 'blocks' ? (
-            <section className="workshop__block-stage" aria-label="功能积木画布">
-              <div className="workshop__block-toolbar">
-                <span><Blocks size={15} aria-hidden="true" />画布 · 3 块功能积木</span>
-                <button type="button" className="workshop__organize" onClick={() => { onConfigChange((current) => ({ ...current, blockPositions: { ...DEFAULT_BLOCK_POSITIONS } })); setSelectedBlock(null) }}>
-                  <LayoutGrid size={15} aria-hidden="true" />一键整理
-                </button>
-              </div>
-              <div ref={canvasRef} className="workshop__block-canvas" onPointerDown={(event) => { if (event.target === event.currentTarget) setSelectedBlock(null) }}>
-                {FEATURES.map(({ id, name, description, detail, icon: Icon, tone }, index) => {
-                  const position = blockPositions[id] ?? DEFAULT_BLOCK_POSITIONS[id]
-                  const selected = selectedBlock === id
-                  return (
-                    <button
-                      type="button"
-                      className={`workshop__block workshop__block--${tone}${selected ? ' is-selected' : ''}${draggingBlock === id ? ' is-dragging' : ''}`}
-                      key={id}
-                      aria-pressed={selected}
-                      style={{ left: `${position.x * 100}%`, top: `${position.y * 100}%` }}
-                      onPointerDown={(event) => startBlockDrag(event, id)}
-                      onPointerMove={moveBlock}
-                      onPointerUp={finishBlockDrag}
-                      onPointerCancel={finishBlockDrag}
-                      onClick={() => setSelectedBlock(id)}
-                    >
-                      <span className="workshop__studs" aria-hidden="true"><i /><i /></span>
-                      <span className="workshop__block-top"><span className="workshop__block-icon"><Icon size={24} aria-hidden="true" /></span><span className="workshop__block-number">0{index + 1}</span></span>
-                      <span className="workshop__block-title">{name}</span>
-                      <span className="workshop__block-description">{description}</span>
-                      <span className="workshop__block-detail">{detail}</span>
-                    </button>
-                  )
-                })}
-              </div>
-              <p className="workshop__stage-note"><Blocks size={15} aria-hidden="true" />选中积木后拖到喜欢的位置，功能配置保持不变</p>
-            </section>
-          ) : (
+          <div className="workshop__blocks-layer" hidden={mode !== 'blocks'}>
+            <BlockCanvas
+              modules={FEATURES}
+              examples={VISUAL_EXAMPLES}
+              positions={blockPositions}
+              selectedModuleId={selectedModuleId}
+              onSelectModule={setSelectedModuleId}
+              onMoveModule={moveModule}
+            />
+          </div>
+
+          {mode === 'preview' && (
             <StudyPreview
               tasks={tasks}
               courses={courses}
