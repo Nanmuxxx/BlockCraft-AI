@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent, type PointerEvent } from 'react'
 import { ArrowLeft, Blocks, BookOpen, CalendarDays, ChartNoAxesColumnIncreasing, Check, Clock3, GraduationCap, LayoutGrid, ListChecks, Monitor, Plus, Sparkles } from 'lucide-react'
 import { Logo } from './Logo'
-import { MochiPanel, type MochiMessage, type MochiSuggestionId } from './MochiPanel'
+import { MochiCat } from './MochiCat'
 import { DEFAULT_BLOCK_POSITIONS, getStudyStats, withTasks, type AppConfig, type AppConfigUpdater, type Course, type ModuleId, type StudyTask } from '../model/appConfig'
 import './workshop.css'
 
@@ -30,9 +30,8 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
   const [taskDraft, setTaskDraft] = useState('')
   const [selectedBlock, setSelectedBlock] = useState<ModuleId | null>(null)
   const [draggingBlock, setDraggingBlock] = useState<ModuleId | null>(null)
-  const { data, blockPositions } = config
+  const { idea, data, blockPositions } = config
   const { tasks, courses } = data
-  const [mochiMessages, setMochiMessages] = useState<MochiMessage[]>([])
   const canvasRef = useRef<HTMLDivElement>(null)
   const activeDragRef = useRef<ActiveDrag | null>(null)
 
@@ -100,19 +99,6 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
     activeDragRef.current = null
     setDraggingBlock(null)
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
-  }
-
-  const handleMochiMessage = (message: string) => {
-    setMochiMessages((current) => [...current, { id: `mochi-user-${Date.now()}`, role: 'user', content: message }])
-  }
-
-  const handleMochiSuggestion = (suggestionId: MochiSuggestionId) => {
-    if (suggestionId !== 'enable-task-priority') return
-    setMochiMessages((current) => [...current, {
-      id: `mochi-confirm-${Date.now()}`,
-      role: 'system',
-      content: '你已确认“启用任务优先级”建议。修改请求已交给主程序，当前 Mock 不会直接修改配置。',
-    }])
   }
 
   return (
@@ -202,12 +188,13 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
           <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
         </main>
 
-        <MochiPanel
-          selectedModuleId={selectedBlock}
-          messages={mochiMessages}
-          onSendMessage={handleMochiMessage}
-          onConfirmSuggestion={handleMochiSuggestion}
-        />
+        <aside className="workshop__nest" aria-labelledby="mochi-nest-title">
+          <div className="workshop__nest-heading"><span className="workshop__nest-spark"><Sparkles size={18} aria-hidden="true" /></span><div><h2 id="mochi-nest-title">Mochi 的小窝</h2><p>你的创作伙伴</p></div></div>
+          <div className="workshop__cat-scene"><MochiCat className="workshop__cat" /><span className="workshop__cat-ground" aria-hidden="true" /></div>
+          <div className="workshop__welcome"><span>Mochi</span><p>欢迎来到创作工坊！先看看这三块学习积木，再切到应用预览，想象它们搭在一起的样子吧。</p><p>以后每次修改功能，我都会先征得你的同意。</p></div>
+          <div className="workshop__idea"><h3>创作的起点</h3><p>{idea}</p></div>
+          <p className="workshop__nest-note">小小的想法，也能长成大大的可能。</p>
+        </aside>
       </div>
     </div>
   )

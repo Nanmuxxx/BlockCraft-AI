@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { CalendarDays, ChartNoAxesColumnIncreasing, Info, ListChecks, Send, ShieldCheck, Sparkles } from 'lucide-react'
 import { MochiCat } from './MochiCat'
+import type { MochiPanelProps as PublicMochiPanelProps, MochiSuggestionId, ModuleId } from '../model/appConfig'
 import './mochi-panel.css'
+
+export type { MochiSuggestionId } from '../model/appConfig'
 
 export type MochiMessageRole = 'user' | 'mochi' | 'assistant' | 'system'
 
@@ -11,13 +14,9 @@ export interface MochiMessage {
   content: string
 }
 
-export type MochiSuggestionId = 'enable-task-priority'
-
-export interface MochiPanelProps {
-  selectedModuleId: string | null
+export interface MochiPanelProps extends PublicMochiPanelProps {
+  selectedModuleId: ModuleId | null
   messages: MochiMessage[]
-  onSendMessage: (message: string) => void
-  onConfirmSuggestion: (suggestionId: MochiSuggestionId) => void
 }
 
 const MAX_MESSAGE_LENGTH = 240
@@ -54,7 +53,7 @@ const MODULE_GUIDANCE: Record<string, {
 
 const SUPPORTED_INPUT = /(任务|课程|统计|积木|优先级|学习|添加|功能|帮我|解释|建议)/
 
-function getGuidance(selectedModuleId: string | null) {
+function getGuidance(selectedModuleId: ModuleId | null) {
   if (!selectedModuleId) {
     return {
       label: '还没有选中积木',
@@ -74,7 +73,7 @@ function getGuidance(selectedModuleId: string | null) {
   }
 }
 
-export function MochiPanel({ selectedModuleId, messages, onSendMessage, onConfirmSuggestion }: MochiPanelProps) {
+export function MochiPanel({ selectedModuleId, messages, suggestions, onSendMessage, onConfirmSuggestion }: MochiPanelProps) {
   const [draft, setDraft] = useState('')
   const [inputNotice, setInputNotice] = useState('')
   const [suggestionVisible, setSuggestionVisible] = useState(false)
@@ -107,10 +106,15 @@ export function MochiPanel({ selectedModuleId, messages, onSendMessage, onConfir
       return
     }
 
+    if (suggestions && !suggestions.some(({ id }) => id === 'enable-task-priority')) {
+      setSuggestionVisible(false)
+      return
+    }
+
     suggestedIdsRef.current.add('enable-task-priority')
     setSuggestionVisible(true)
     setSuggestionState('visible')
-  }, [selectedModuleId])
+  }, [selectedModuleId, suggestions])
 
   const dispatchMessage = (message: string) => {
     onSendMessage(message)
