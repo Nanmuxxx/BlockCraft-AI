@@ -51,7 +51,11 @@ const MODULE_GUIDANCE: Record<string, {
   },
 }
 
-const SUPPORTED_INPUT = /(任务|课程|统计|积木|优先级|学习|添加|功能|帮我|解释|建议)/
+const SUPPORTED_MOCK_REQUESTS: Partial<Record<ModuleId, string>> = {
+  tasks: '解释任务积木',
+  courses: '解释课程积木',
+  stats: '解释学习统计',
+}
 
 function getGuidance(selectedModuleId: ModuleId | null) {
   if (!selectedModuleId) {
@@ -117,12 +121,14 @@ export function MochiPanel({ selectedModuleId, messages, suggestions, onSendMess
   }, [selectedModuleId, suggestions])
 
   const dispatchMessage = (message: string) => {
+    if (!selectedModuleId || message !== SUPPORTED_MOCK_REQUESTS[selectedModuleId]) {
+      setInputNotice('当前 Mock 只能介绍选中的任务、课程或统计积木，不能执行操作或回答其他问题。请选中对应积木后请求解释。')
+      return false
+    }
+
     onSendMessage(message)
-    setInputNotice(
-      SUPPORTED_INPUT.test(message)
-        ? '消息已交给主程序保存。当前是 Mock 交互，不会调用真实 AI。'
-        : '这条消息已交给主程序，但当前 Mock 只支持围绕功能积木的引导，不会假装调用真实 AI。',
-    )
+    setInputNotice('当前 Mock 只会返回所选积木的本地介绍，不会执行操作或调用真实 AI。')
+    return true
   }
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -139,8 +145,9 @@ export function MochiPanel({ selectedModuleId, messages, suggestions, onSendMess
       return
     }
 
-    dispatchMessage(message)
-    setDraft('')
+    if (dispatchMessage(message)) {
+      setDraft('')
+    }
   }
 
   const handleComposerKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -151,8 +158,9 @@ export function MochiPanel({ selectedModuleId, messages, suggestions, onSendMess
 
   const handleQuickPrompt = (prompt: string) => {
     if (usedQuickPrompts.has(prompt)) return
-    setUsedQuickPrompts((current) => new Set(current).add(prompt))
-    dispatchMessage(prompt)
+    if (dispatchMessage(prompt)) {
+      setUsedQuickPrompts((current) => new Set(current).add(prompt))
+    }
   }
 
   const confirmTaskPriority = () => {
