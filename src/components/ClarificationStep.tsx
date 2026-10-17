@@ -78,7 +78,7 @@ export function ClarificationStep({ idea, onComplete, onBack }: ClarificationSte
         <aside className="clarification-step__mochi" aria-label="Mochi 的提问">
           <div className="clarification-step__speech">
             <span className="clarification-step__mochi-name">Mochi</span>
-            <p>你更关注任务管理，还是课程安排？</p>
+            <p>你更关注任务管理、课程安排，还是两个都需要？</p>
           </div>
           <div className="clarification-step__cat-stage">
             <span className="clarification-step__float-brick clarification-step__float-brick--one" aria-hidden="true" />
