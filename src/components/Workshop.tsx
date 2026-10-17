@@ -1,10 +1,19 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { ArrowLeft, Blocks, BookOpen, CalendarDays, ChartNoAxesColumnIncreasing, Check, Clock3, GraduationCap, ListChecks, Monitor, Plus, Sparkles } from 'lucide-react'
 import { Logo } from './Logo'
 import { MochiCat } from './MochiCat'
 import { BlockCanvas, type BlockModuleData } from './BlockCanvas'
 import { VISUAL_EXAMPLES } from './blocks/examples'
-import { getStudyStats, withTasks, type AppConfig, type AppConfigUpdater, type BlockPosition, type Course, type ModuleId, type StudyTask } from '../model/appConfig'
+import {
+  withTasks,
+  type AppConfig,
+  type AppConfigUpdater,
+  type BlockPosition,
+  type Course,
+  type ModuleId,
+  type StudyStats,
+  type StudyTask,
+} from '../model/appConfig'
 import './workshop.css'
 
 interface WorkshopProps {
@@ -25,10 +34,7 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
   const [taskDraft, setTaskDraft] = useState('')
   const [selectedModuleId, setSelectedModuleId] = useState<ModuleId | null>(null)
   const { idea, data, blockPositions } = config
-  const { tasks, courses } = data
-
-  const taskStats = getStudyStats(tasks)
-
+  const { tasks, courses, stats: taskStats } = data
   const addTask = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const title = taskDraft.trim()
@@ -134,13 +140,22 @@ interface StudyPreviewProps {
   tasks: StudyTask[]
   courses: Course[]
   draft: string
-  stats: { total: number; completed: number; completionRate: number }
+  stats: StudyStats
   onDraftChange: (value: string) => void
   onAddTask: (event: FormEvent<HTMLFormElement>) => void
   onToggleTask: (taskId: string) => void
 }
 
 function StudyPreview({ tasks, courses, draft, stats, onDraftChange, onAddTask, onToggleTask }: StudyPreviewProps) {
+  const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all')
+  const draftRef = useRef<HTMLInputElement>(null)
+  const remaining = stats.total - stats.completed
+  const visibleTasks = tasks.filter((task) => filter === 'all' || (filter === 'completed' ? task.completed : !task.completed))
+  const filters = [
+    { id: 'all', label: '全部', count: stats.total },
+    { id: 'pending', label: '待完成', count: remaining },
+    { id: 'completed', label: '已完成', count: stats.completed },
+  ] as const
   const todayLabel = new Intl.DateTimeFormat('zh-CN', {
     month: 'long',
     day: 'numeric',
@@ -161,43 +176,62 @@ function StudyPreview({ tasks, courses, draft, stats, onDraftChange, onAddTask, 
           <section className="study-app__stats" aria-label="学习统计">
             <article className="study-app__stat study-app__stat--total"><span>任务总数</span><strong>{stats.total}<small> 项</small></strong><span className="study-app__stat-icon"><ListChecks size={18} aria-hidden="true" /></span></article>
             <article className="study-app__stat study-app__stat--done"><span>已经完成</span><strong>{stats.completed}<small> 项</small></strong><span className="study-app__stat-icon"><Check size={18} aria-hidden="true" /></span></article>
-            <article className="study-app__stat study-app__stat--rate"><span>今日完成率</span><strong>{stats.completionRate}<small>%</small></strong><span className="study-app__progress" role="progressbar" aria-label="任务完成率" aria-valuemin={0} aria-valuemax={100} aria-valuenow={stats.completionRate}><i style={{ width: `${stats.completionRate}%` }} /></span></article>
+            <article className="study-app__stat study-app__stat--rate"><span>任务完成率</span><strong>{stats.completionRate}<small>%</small></strong><span className="study-app__progress" role="progressbar" aria-label="任务完成率" aria-valuemin={0} aria-valuemax={100} aria-valuenow={stats.completionRate}><i style={{ width: `${stats.completionRate}%` }} /></span></article>
           </section>
+          <p className="study-app__summary" role="status" aria-atomic="true">
+            {stats.total === 0 ? '从第一件小事开始，安排你的学习计划。' : remaining === 0 ? `全部 ${stats.total} 项任务已完成，给今天的努力一个小小的奖励。` : `已完成 ${stats.completed} / ${stats.total} 项，还有 ${remaining} 项待完成。一步一步来。`}
+          </p>
 
           <div className="study-app__columns">
             <section className="study-app__panel study-app__task-panel" aria-labelledby="study-task-title">
-              <div className="study-app__panel-heading"><div><p className="study-app__eyebrow">YOUR PLAN</p><h4 id="study-task-title">今日任务</h4></div><span className="study-app__panel-count">{stats.completed}/{stats.total} 完成</span></div>
-              <form className="study-app__add-form" onSubmit={onAddTask}>
+              <div className="study-app__panel-heading"><div><p className="study-app__eyebrow">YOUR PLAN</p><h4 id="study-task-title">学习任务</h4></div><span className="study-app__panel-count">{stats.completed}/{stats.total} 完成</span></div>
+              <form className="study-app__add-form" onSubmit={(event) => {
+                onAddTask(event)
+                if (draft.trim()) {
+                  setFilter('all')
+                  draftRef.current?.focus()
+                }
+              }}>
                 <label className="sr-only" htmlFor="study-task-draft">新增一项学习任务</label>
-                <input id="study-task-draft" type="text" value={draft} maxLength={80} placeholder="添加一项小任务…" onChange={(event) => onDraftChange(event.target.value)} />
+                <input ref={draftRef} id="study-task-draft" type="text" value={draft} maxLength={80} placeholder="添加一项小任务…" autoComplete="off" onChange={(event) => onDraftChange(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && event.nativeEvent.isComposing) event.preventDefault() }} />
                 <button type="submit" aria-label="添加任务" disabled={!draft.trim()}><Plus size={17} aria-hidden="true" /></button>
               </form>
-              {tasks.length > 0 ? (
-                <ul className="study-app__task-list">
-                  {tasks.map((task) => (
+              <div className="study-app__filters" role="group" aria-label="任务筛选">
+                {filters.map(({ id, label, count }) => (
+                  <button key={id} type="button" aria-pressed={filter === id} aria-controls="study-task-list" onClick={() => setFilter(id)}>{label}<span>{count}</span></button>
+                ))}
+              </div>
+              <div id="study-task-list">
+              {visibleTasks.length > 0 ? (
+                <ul className="study-app__task-list" aria-label="学习任务列表">
+                  {visibleTasks.map((task) => (
                     <li className={`study-app__task${task.completed ? ' is-complete' : ''}`} key={task.id}>
-                      <button type="button" className="study-app__task-check" aria-label={task.completed ? `标记「${task.title}」为未完成` : `完成「${task.title}」`} aria-pressed={task.completed} onClick={() => onToggleTask(task.id)}>{task.completed && <Check size={13} aria-hidden="true" />}</button>
-                      <span>{task.title}</span>
+                      <label className="study-app__task-label">
+                        <input type="checkbox" className="study-app__task-check" checked={task.completed} onChange={() => onToggleTask(task.id)} />
+                        <span>{task.title}</span>
+                      </label>
                       {task.completed && <small>已完成</small>}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="study-app__empty-tasks">还没有任务，添加一件今天想完成的小事吧。</p>
+                <p className="study-app__empty-tasks">{tasks.length === 0 ? '还没有任务，添加一件想完成的小事吧。' : filter === 'pending' ? '待办清空啦！所有小目标都已完成。' : '还没有已完成的任务，完成后在这里回顾。'}</p>
               )}
-              <div className="study-app__task-footer"><span><Sparkles size={14} aria-hidden="true" />完成一件，也值得记下来</span><span>本地保存</span></div>
+              </div>
+              <div className="study-app__task-footer"><span><Sparkles size={14} aria-hidden="true" />完成一件，也值得记下来</span></div>
+              <p className="study-app__session-note">切换 B/C 视图会保留任务；刷新页面将恢复示例。</p>
             </section>
 
             <section className="study-app__panel study-app__course-panel" aria-labelledby="study-course-title">
               <div className="study-app__panel-heading"><div><p className="study-app__eyebrow">UP NEXT</p><h4 id="study-course-title">课程安排</h4></div><span className="study-app__course-calendar"><CalendarDays size={17} aria-hidden="true" /></span></div>
-              <ul className="study-app__course-list">
+              {courses.length > 0 ? <ul className="study-app__course-list" aria-label="课程列表">
                 {courses.map((course) => (
-                  <li className={`study-app__course study-app__course--${course.tone}`} key={course.id}>
+                  <li className={`study-app__course study-app__course--${course.tone ?? 'sage'}`} key={course.id}>
                     <span className="study-app__course-mark"><BookOpen size={16} aria-hidden="true" /></span>
                     <div><strong>{course.name}</strong><small>{course.teacher} · {course.room}</small><small>{course.time}</small></div>
                   </li>
                 ))}
-              </ul>
+              </ul> : <p className="study-app__empty-tasks">暂时没有课程安排，留一点时间自主学习吧。</p>}
               <p className="study-app__course-note"><Clock3 size={14} aria-hidden="true" />课程来自本地示例安排</p>
             </section>
           </div>
