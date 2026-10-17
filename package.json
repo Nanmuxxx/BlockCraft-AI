@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test src/model/appSpec.test.cjs src/components/blocks/blocks.test.cjs"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "5.3.0",

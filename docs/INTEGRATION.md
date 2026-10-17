@@ -132,3 +132,87 @@ interface ClarificationStepProps {
 
 三个功能 PR（#1 MochiPanel、#2 ClarificationStep、#3 BlockCanvas）均已合并。阶段 1 统一澄清接口并接入页面流程；阶段 2 接入 MochiPanel 的上下文、会话聊天和建议请求记录，保留现有 B/C 功能与各组件内部实现。阶段 3 接通建议确认、公共配置与 C 模式任务优先级编辑；BlockCanvas 的 builder 业务闭环仍未接入。
 
+
+## 阶段 A：独立 AppSpec v1（尚未接入 UI）
+
+旧 `AppConfig` 及上面的学习管理 Demo 协议不变。新协议不等同于旧画布的 `BlockEdit` / `BlockRelation`，本阶段没有转换器或 UI 接线，也不包含 AI、后端、动态代码执行、实体间外键或工作流。
+
+### 公共入口
+
+| 文件 | 导出接口 |
+| --- | --- |
+| `src/model/appSpec.ts` | `FieldSpec`, `EntitySpec`, `BlockSpec`, `RelationSpec`, `AppSpec`, `FieldValue`, `EntityRecord`, `ProjectState`, `AppCommand`, `CommandRequest` |
+| `src/model/appSpecValidation.ts` | `assertAppSpec(unknown)`, `assertProjectState(unknown)`, `assertCommandRequest(unknown)`, `AppSpecError` |
+| `src/model/appCommands.ts` | `createCommandSession(ProjectState)`, `processCommand(CommandSession, unknown)`, `CommandSession`, `CommandResult` |
+| `src/model/appSpecExamples.ts` | `clubRegistrationSpec`, `readingLogSpec`, `createClubRegistrationExample()`, `createReadingLogExample()` |
+
+所有输入是普通 JSON 数据；校验器拒绝未知属性、未知类型和隐式类型转换，成功返回 `void` 并收窄类型，失败抛出带 `code/message` 的 `AppSpecError`。不要传入函数、访问器、循环对象或 JS 类实例。显示名称和记录文本只是数据，不作为脚本或 HTML 执行。
+
+### 数据与绑定约束
+
+- `AppSpec = { version: 1, id, name, entities, blocks, relations }`。
+- `EntitySpec = { id, name, fields }`；字段是 `{ id, name, type, required }`。`type` 为 `text | number | boolean | date | select`，仅 `select` 额外要求非空且不重复的 `options: string[]`。
+- `BlockSpec` 使用稳定的实例 `id` 与独立的 `type`，同类可以多实例。`list/form` 必须配置非空、不重复的 `fieldIds`；`metric` 配置 `aggregation: 'count'`，或 `aggregation: 'sum' | 'average'` 加一个数字字段 `fieldId`。本阶段只定义与校验配置，不计算或渲染统计结果。
+- `RelationSpec = { id, type: 'dataBinding', blockId, entityId }` 是积木唯一的数据来源。每个积木必须且只能有一条绑定；多个积木可绑定同一实体。字段引用必须属于该绑定实体。表单必须包含实体所有必填字段。
+- App、实体、字段、积木、关系的 ID 在整个 spec 内全局唯一。ID 由调用方生成，格式为 ASCII 字母开头、后接字母/数字/下划线/连字符，长度 1–128；禁用 `constructor/prototype/__proto__`。显示名称变化不改变 ID。
+- `ProjectState = { revision, spec, records, blockPositions }`。`revision` 是非负安全整数。`records` 为实体 ID 到 `{ id, values: Record<fieldId, string | number | boolean> }[]` 的映射；记录 ID 在所属实体内唯一。未出现的实体键视为空记录集。缺失的非必填字段允许，`null/undefined` 不作为字段值；必填字符串不能全空白；数字必须有限，日期必须是实际存在的 `YYYY-MM-DD`，select 必须匹配选项。
+- `blockPositions` 按积木实例 ID 存储 `{ x, y }`，坐标范围 `[0,1]`；允许缺省位置，不允许悬空位置。业务记录与布局独立。
+
+### 受控命令
+
+AI 提案与用户操作未来必须提交同一 `CommandRequest`，不提供绕过校验的来源特权：
+
+```ts
+interface CommandRequest {
+  requestId: string
+  baseRevision: number
+  commands: AppCommand[]
+}
+```
+
+| type | 参数 | 语义 |
+| --- | --- | --- |
+| `addBlock` | `block, binding, position?` | 原子添加实例和绑定；binding 必须指向新增实例 |
+| `removeBlock` | `blockId` | 删除积木及其关系、位置，保留实体、字段与全部业务记录 |
+| `addField` | `entityId, field` | 新增字段；不自动填充或迁移记录 |
+| `updateField` | `entityId, fieldId, field` | 完整替换字段定义，不是 partial patch；ID 不可变；现有记录和引用必须继续合法 |
+| `removeField` | `entityId, fieldId` | 仅可删除无积木引用且没有记录值的字段，否则 `FIELD_REFERENCED` |
+| `configureBlockFields` | `blockId, fieldIds` | 配置 list/form 的字段及顺序；metric 使用 addBlock 时声明的聚合配置 |
+| `undo` | 无 | 单独一个命令请求，撤销最近一批成功编辑，无 redo |
+
+`commands` 非空，按顺序作用于副本，最后统一验证整个项目；因此同一批次可以同时新增必填字段并更新表单（但已有记录缺少该值仍会拒绝）。任一命令或最终状态非法，整个批次回滚，包括历史、去重收据与 revision。成功批次只增加一次 revision，并记录一个撤销快照；撤销恢复 spec、records、positions，但 revision 在当前值上递增，永不退回旧版本。revision 耗尽时拒绝新提交。
+
+`processCommand` 返回判别联合：
+
+```ts
+// success
+{ ok: true, session, duplicate: boolean, committedRevision: number }
+// failure: session 为原输入对象，未发生写入
+{ ok: false, session, error: { code: string, message: string } }
+```
+
+`CommandSession = { state, history, receipts }` 由 `createCommandSession` 创建（验证并复制初始状态）。它是宿主持有的可信会话，不是 AI 输入。调用方应将其视为不可变值，串行以最新 session 调用处理器；成功后一次性替换整个 session，不能只替换 state。无隐藏全局状态，无时间戳或随机 ID。该纯处理器不实现跨进程锁或后端存储。
+
+去重以成功请求为准，使用包含 `baseRevision` 和命令的规范化 JSON 指纹（对象属性顺序无关，数组顺序有关）。同 `requestId` 同载荷先于 revision 检查命中，返回当前 session 与原 `committedRevision`，不重复执行；同 ID 不同载荷报 `REQUEST_ID_CONFLICT`。新请求的旧 revision 报 `REVISION_CONFLICT`。失败请求不占用 requestId，修正后可重试。撤销不删除已成功请求的收据，旧重试不会重新应用已撤销操作。
+
+其他错误码：`VALIDATION`（结构/引用/记录/约束非法）、`FIELD_REFERENCED`、`NOTHING_TO_UNDO`。失败消息供诊断；调用方逻辑应依赖错误码，不匹配消息文本。历史与收据本阶段只存在调用方内存，未限制长度；重新创建 session 会丢失撤销和去重历史。未来若持久化，须一起保存会话并验证可信来源，不能将未经校验的外部 session 直接传入。
+
+```ts
+import { createReadingLogExample } from '../src/model/appSpecExamples'
+import { createCommandSession, processCommand } from '../src/model/appCommands'
+
+let session = createCommandSession(createReadingLogExample())
+const result = processCommand(session, {
+  requestId: 'edit-001',
+  baseRevision: session.state.revision,
+  commands: [{ type: 'configureBlockFields', blockId: 'bookshelf', fieldIds: ['book-title'] }],
+})
+if (result.ok) session = result.session
+```
+
+### 手写示例与验证
+
+- **社团迎新报名**：一个报名者实体，姓名/text、意向部门/select、面试意愿/boolean，报名表、名单、人数计数共三块积木。
+- **阅读记录**：书目和每日阅读两个独立实体，包含 text/select/date/number；两个 list 实例分别绑定不同实体，另有录入表和分钟 sum 指标。没有虚构实体间关联。
+- 两个工厂都返回 revision 0、示例业务记录和空布局的新对象，可直接送入 `createCommandSession`。
+- `npm test` 同时运行 AppSpec 测试与原画布测试；`npm run build` 检查 TypeScript 与生产构建；提交前运行 `git diff --check`。
