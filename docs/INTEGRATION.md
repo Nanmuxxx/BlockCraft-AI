@@ -216,3 +216,24 @@ if (result.ok) session = result.session
 - **阅读记录**：书目和每日阅读两个独立实体，包含 text/select/date/number；两个 list 实例分别绑定不同实体，另有录入表和分钟 sum 指标。没有虚构实体间关联。
 - 两个工厂都返回 revision 0、示例业务记录和空布局的新对象，可直接送入 `createCommandSession`。
 - `npm test` 同时运行 AppSpec 测试与原画布测试；`npm run build` 检查 TypeScript 与生产构建；提交前运行 `git diff --check`。
+
+## 阶段 B1：独立 C 模式渲染与业务运行时
+
+访问 `/app-renderer`（`npm run dev -- --host 127.0.0.1` 后打开 Vite 输出的端口）。根路径 `/` 继续使用原学习 Demo；没有改动 Workshop、BlockCanvas、MochiPanel 或 ClarificationStep。
+
+- `src/model/appRuntime.ts`：每个项目只有一个 runtime；以 `ProjectState.records` 为唯一业务数据源。`dispatch` 新增、整条替换更新、删除记录，克隆后通过 `assertProjectState` 再原子发布；失败不改变快照、revision 或订阅通知。成功增加 revision，深冻结快照，避免组件直接修改记录。统计从当前 records 即时派生，没有统计缓存。
+- `src/components/app-renderer/AppRenderer.tsx`：按稳定 block ID 查找 dataBinding；渲染 list、form、metric。输入控件支持 text、number、boolean、date、select，表单提交先转换并校验，再交给统一 runtime。组件的本地状态仅用于未提交草稿、错误与 UI 展开状态。
+- list 支持新增、编辑、删除；编辑保留未展示字段，清空可选字段时删除对应值。若 list 未展示实体必填字段，编辑器补充这些字段以保证新建记录有效。boolean 使用可留空的是/否选择，必填 boolean 的 false 是有效值。
+- `AppRendererDemo.tsx`：社团报名和阅读记录各自拥有一个 runtime，切换不会串数据；刷新页面恢复原始样例。此轮只做内存运行时，不写入 localStorage 或后端，也未接入 AI。
+
+### 与任务描述的协议差异
+
+实际阶段 A 的 AppSpec v1 **没有 `previewOrder` 属性**，校验器会拒绝此属性；因此保持协议不变，使用 `spec.blocks` 数组顺序。metric 仅定义 `count / sum / average`，没有条件或过滤配置；因此本轮支持数量、求和和平均值，**未实现条件数量**。这两项需要先确定后续协议扩展，当前没有添加私有属性或硬编码业务条件。
+
+### B1 验证
+
+- `npm test`：58 项通过（含 5 项新增运行时测试和既有阶段 A、画布测试）。覆盖原子回滚、共享记录 CRUD、即时统计、五种输入类型、无效日期、false/0、空数据、项目隔离、可选字段清空和快照不可修改。
+- `npm run build`：TypeScript 与 Vite 生产构建通过；`git diff --check` 通过。
+- 浏览器操作：社团空表单不提交；有效提交后名单新增、人数 1 → 2；列表修改后切换示例再切回仍保留修改；删除后人数 2 → 1。阅读记录新增 20 分钟后流水新增、累计分钟 30 → 50。
+- 旧流程浏览器冒烟：根路径首页 → 需求澄清 → Workshop B 功能积木 → 旧 C 学习应用预览均可进入；这不等于完整重测所有拖拽与聊天交互。
+- 基线：开始时工作区干净，本地 main 与缓存 origin/main 均为 `bd43b45`。`git fetch origin` 因 github.com DNS 解析失败，无法证明远端最新状态。没有自动提交、推送或合并。
