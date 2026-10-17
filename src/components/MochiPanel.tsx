@@ -161,7 +161,7 @@ export function MochiPanel({ selectedModuleId, messages, suggestions, onSendMess
     onConfirmSuggestion('enable-task-priority')
     setSuggestionVisible(false)
     setSuggestionState('confirmed')
-    setConfirmationNotice('已向主程序上报“启用任务优先级”的修改请求；Mock 不会直接修改配置。')
+    setConfirmationNotice('已确认启用任务优先级，请到 C 模式选择或修改任务优先级。')
   }
 
   const dismissTaskPriority = () => {

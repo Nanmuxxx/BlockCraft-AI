@@ -19,7 +19,7 @@ export interface StudyTask {
   id: string
   title: string
   completed: boolean
-  /** 为 Mochi 后续开启任务优先级时保留的字段。 */
+  /** 启用优先级功能后展示和编辑；关闭时仍保留数据。 */
   priority: TaskPriority
 }
 
@@ -49,6 +49,8 @@ export interface AppConfig {
   idea: string
   /** 需求澄清结果；仅记录偏好，不移除现有功能模块。 */
   clarificationChoice: ClarificationChoice | null
+  /** 当前页面会话的功能开关，只有确认 Mochi 建议后启用。 */
+  taskPriorityEnabled: boolean
   /** 功能配置与状态数据，由主程序统一管理。 */
   data: AppData
   /** 画布布局数据，独立于 data。 */
@@ -72,6 +74,7 @@ export function createInitialAppConfig(idea: string): AppConfig {
   return {
     idea,
     clarificationChoice: null,
+    taskPriorityEnabled: false,
     data: {
       tasks,
       courses: [

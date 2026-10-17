@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from 'react'
+import { useMemo, useRef, useState, type FormEvent } from 'react'
 import { ArrowLeft, Blocks, BookOpen, CalendarDays, ChartNoAxesColumnIncreasing, Check, Clock3, GraduationCap, ListChecks, Monitor, Plus, Sparkles } from 'lucide-react'
 import { Logo } from './Logo'
 import { MochiPanel, type MochiMessage } from './MochiPanel'
@@ -14,6 +14,7 @@ import {
   type MochiSuggestionId,
   type StudyStats,
   type StudyTask,
+  type TaskPriority,
 } from '../model/appConfig'
 import './workshop.css'
 
@@ -35,9 +36,13 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
   const [taskDraft, setTaskDraft] = useState('')
   const [selectedModuleId, setSelectedModuleId] = useState<ModuleId | null>(null)
   const [messages, setMessages] = useState<MochiMessage[]>([])
-  // 阶段 2 只在当前会话记录请求，不执行配置变更。
+  // 拦截同一帧的重复确认；公共配置仍是功能启用状态的唯一来源。
   const suggestionRequests = useRef<MochiSuggestionId[]>([])
-  const { data, blockPositions } = config
+  const { data, blockPositions, taskPriorityEnabled } = config
+  const suggestions = useMemo(() => taskPriorityEnabled ? [] : [{
+    id: 'enable-task-priority' as const,
+    message: '要给任务加上优先级吗？',
+  }], [taskPriorityEnabled])
   const { tasks, courses, stats: taskStats } = data
 
   const sendMessage = (message: string) => {
@@ -56,12 +61,15 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
   }
 
   const confirmSuggestion = (suggestionId: MochiSuggestionId) => {
-    if (suggestionRequests.current.includes(suggestionId)) return
+    if (suggestionId !== 'enable-task-priority' || taskPriorityEnabled || suggestionRequests.current.includes(suggestionId)) return
     suggestionRequests.current.push(suggestionId)
+    onConfigChange((current) => current.taskPriorityEnabled
+      ? current
+      : { ...current, taskPriorityEnabled: true })
     setMessages((current) => [...current, {
       id: `request-${suggestionId}`,
       role: 'system',
-      content: '已记录“启用任务优先级”的建议请求，尚未修改任务或应用配置。',
+      content: '已启用任务优先级，可在 C 模式为每项任务选择高、中、低优先级。',
     }])
   }
   const addTask = (event: FormEvent<HTMLFormElement>) => {
@@ -89,6 +97,16 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
       ...current,
       blockPositions: { ...current.blockPositions, [moduleId]: position },
     }))
+  }
+
+  const changeTaskPriority = (taskId: string, priority: TaskPriority) => {
+    onConfigChange((current) => {
+      if (!current.taskPriorityEnabled) return current
+      const tasks = current.data.tasks.map((task) => (
+        task.id === taskId ? { ...task, priority } : task
+      ))
+      return { ...current, data: { ...current.data, tasks } }
+    })
   }
 
   return (
@@ -148,6 +166,8 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
               onDraftChange={setTaskDraft}
               onAddTask={addTask}
               onToggleTask={toggleTask}
+              taskPriorityEnabled={taskPriorityEnabled}
+              onChangeTaskPriority={changeTaskPriority}
             />
           )}
           <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
@@ -156,6 +176,7 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
         <MochiPanel
           selectedModuleId={selectedModuleId}
           messages={messages}
+          suggestions={suggestions}
           onSendMessage={sendMessage}
           onConfirmSuggestion={confirmSuggestion}
         />
@@ -172,9 +193,11 @@ interface StudyPreviewProps {
   onDraftChange: (value: string) => void
   onAddTask: (event: FormEvent<HTMLFormElement>) => void
   onToggleTask: (taskId: string) => void
+  taskPriorityEnabled: boolean
+  onChangeTaskPriority: (taskId: string, priority: TaskPriority) => void
 }
 
-function StudyPreview({ tasks, courses, draft, stats, onDraftChange, onAddTask, onToggleTask }: StudyPreviewProps) {
+function StudyPreview({ tasks, courses, draft, stats, onDraftChange, onAddTask, onToggleTask, taskPriorityEnabled, onChangeTaskPriority }: StudyPreviewProps) {
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all')
   const draftRef = useRef<HTMLInputElement>(null)
   const remaining = stats.total - stats.completed
@@ -238,6 +261,13 @@ function StudyPreview({ tasks, courses, draft, stats, onDraftChange, onAddTask, 
                         <input type="checkbox" className="study-app__task-check" checked={task.completed} onChange={() => onToggleTask(task.id)} />
                         <span>{task.title}</span>
                       </label>
+                      {taskPriorityEnabled && (
+                        <select aria-label={`${task.title}的优先级`} value={task.priority} onChange={(event) => onChangeTaskPriority(task.id, event.target.value as TaskPriority)}>
+                          <option value="high">高优先级</option>
+                          <option value="medium">中优先级</option>
+                          <option value="low">低优先级</option>
+                        </select>
+                      )}
                       {task.completed && <small>已完成</small>}
                     </li>
                   ))}

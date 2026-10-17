@@ -16,15 +16,17 @@
 
 - `idea`：首页提交的创意，沿用原有首尾空白清理逻辑。
 - `clarificationChoice`：`'tasks' | 'courses' | 'both' | null`，未完成澄清时为 `null`。阶段 1 只记录偏好，不据此删减模块或生成新功能。
+- `taskPriorityEnabled`：任务优先级功能开关，默认 `false`，只在当前页面组件状态中保存；刷新恢复关闭。
 - `data`：`tasks`、`courses` 和由任务状态计算出的 `stats`，属于软件功能配置与状态。
 - `blockPositions`：`Record<ModuleId, BlockPosition>`，属于 B 模式画布布局；`x`、`y` 为画布内的 0 到 1 归一化坐标。
 
-移动积木只能更新 `blockPositions`，不得修改任务、课程或统计数据。任务使用 `StudyTask`，其中 `priority: 'high' | 'medium' | 'low'` 已为 Mochi 的优先级建议预留。
+移动积木只能更新 `blockPositions`，不得修改任务、课程或统计数据。任务使用 `StudyTask`，其中 `priority: 'high' | 'medium' | 'low'` 启用后直接用于显示和编辑，不新增另一套优先级数据。
 
 ```ts
 interface AppConfig {
   idea: string
   clarificationChoice: 'tasks' | 'courses' | 'both' | null
+  taskPriorityEnabled: boolean
   data: {
     tasks: StudyTask[]
     courses: Course[]
@@ -77,8 +79,10 @@ interface MochiPanelProps {
 - 用户确认建议时调用 `onConfirmSuggestion('enable-task-priority')`。
 - 修改任务优先级前必须经过主程序确认流程；建议 ID 不得使用显示文案代替。
 - `appConfig.ts` 定义基础回调，组件补充 `selectedModuleId` 和 `messages`。阶段 2 由 Workshop 将现有 MochiPanel 组装到右侧，传入 B 模式选中的模块 ID，并持有聊天消息。发送后保存用户消息及对应模块的本地 Mock 引导，不调用真实 AI。
-- MochiPanel 始终挂载，B/C 切换保留聊天、选中上下文和组件已有的建议确认/拒绝状态。任务优先级建议沿用组件的每会话一次展示逻辑；拒绝仅关闭建议。
-- 确认 `enable-task-priority` 时，Workshop 在当前会话记录建议 ID，并追加一条可见的请求记录；重复确认不重复记录。此流程不调用 `onConfigChange`，不修改 AppConfig、任务优先级或布局，刷新后不保留请求。
+- MochiPanel 始终挂载，B/C 切换保留聊天、选中上下文和组件已有的建议确认/拒绝状态。任务优先级建议沿用组件的每会话一次展示逻辑；拒绝仅关闭建议，不调用配置回调。Workshop 根据 `taskPriorityEnabled` 传入可用 `suggestions`，已启用时传空数组，避免再次推荐。
+- 确认 `enable-task-priority` 时，Workshop 通过现有 `onConfigChange` 将公共 `AppConfig.taskPriorityEnabled` 设为 `true`，并追加启用成功提示。会话请求去重与配置 updater 的已启用检查共同保证重复确认幂等。
+- 启用前 C 模式保留原任务交互，不显示优先级控件；启用后每项任务（含已完成任务）显示高/中/低优先级选择框，修改直接写回该任务现有 `priority`。新增任务默认中优先级。
+- 开关启用不改写任务、完成状态、课程、统计或 B 模式坐标；优先级编辑仅更新目标任务，完成切换和新增任务仍沿用 `withTasks` 计算统计。B/C 切换保留开关与任务优先级。
 
 ### ClarificationStep
 
@@ -102,7 +106,7 @@ interface ClarificationStepProps {
 - Home 保留原 UI、输入校验、示例创意与加载反馈；新增 `initialIdea: string` 属性用于返回时恢复输入。
 - 首页提交时仍按原逻辑创建本地 Mock 配置，澄清选择初始为 `null`；三个选择均保留任务、课程和统计模块。
 - Workshop 接收完整 `AppConfig`，现有 B/C 切换、任务与统计逻辑通过展开当前配置保留澄清选择。Workshop 的首页按钮也恢复创意输入。
-- 状态只保存在当前页面会话中，刷新恢复示例；本阶段不接入真实 AI、不开发阶段 2、3。
+- 状态只保存在当前页面会话中，刷新恢复示例；不接入真实 AI；阶段 2、3 的扩展见 MochiPanel 交互说明。
 
 ## 职责和修改范围
 
@@ -126,5 +130,5 @@ interface ClarificationStepProps {
 
 组员如需公共协议变化，应先提出接口变更说明，由主负责人统一修改类型和文档，再由各组件适配。组员不得在组件内复制 `AppConfig`、模块 ID 或另一份任务/课程全局状态。
 
-三个功能 PR（#1 MochiPanel、#2 ClarificationStep、#3 BlockCanvas）均已合并。阶段 1 统一澄清接口并接入页面流程；阶段 2 接入 MochiPanel 的上下文、会话聊天和建议请求记录，保留现有 B/C 功能与各组件内部实现。建议实际执行以及 BlockCanvas 的 builder 业务闭环尚未接入，留待后续阶段。
+三个功能 PR（#1 MochiPanel、#2 ClarificationStep、#3 BlockCanvas）均已合并。阶段 1 统一澄清接口并接入页面流程；阶段 2 接入 MochiPanel 的上下文、会话聊天和建议请求记录，保留现有 B/C 功能与各组件内部实现。阶段 3 接通建议确认、公共配置与 C 模式任务优先级编辑；BlockCanvas 的 builder 业务闭环仍未接入。
 
