@@ -15,7 +15,45 @@ require.extensions['.css'] = () => {}
 const { BlockCanvas } = require('../BlockCanvas.tsx')
 const { VISUAL_EXAMPLES } = require('./examples.ts')
 const { combination, hasRelation } = require('./rules.ts')
-const { arrangeScene, boardSize, collides, detachStack, findSnap, joinStacks, settleScene, stackFor, translateStack, STACK_STEP } = require('./snap-layout.ts')
+const { arrangeScene, boardSize, collides, detachStack, findSnap, joinStacks, settleScene, stackFor, translateStack, CARD_HEIGHT, STACK_STEP } = require('./snap-layout.ts')
+
+// Test-only oracle: inspect every pair, including members of the same stack.
+// Centers and body dimensions match BlockCanvas; decorative studs/shadows are excluded.
+function inspectScene(scene, expectedIds, board) {
+  assert.equal(new Set(expectedIds).size, expectedIds.length, 'expected IDs must be unique')
+  const actualIds = Object.keys(scene)
+  assert.equal(actualIds.length, expectedIds.length, 'scene ID count')
+  assert.deepEqual([...actualIds].sort(), [...expectedIds].sort(), 'scene ID set')
+  assert.ok(Number.isFinite(board.cardWidth) && board.cardWidth > 0, 'finite positive card width')
+  const rectangles = expectedIds.map((id) => {
+    const point = scene[id]
+    assert.ok(point && Number.isFinite(point.x) && Number.isFinite(point.y), `finite coordinates: ${id}`)
+    return { id, center: { ...point }, left: point.x - board.cardWidth / 2, right: point.x + board.cardWidth / 2,
+      top: point.y - CARD_HEIGHT / 2, bottom: point.y + CARD_HEIGHT / 2 }
+  })
+  const bodyOverlaps = []
+  const clearanceViolations = []
+  for (let i = 0; i < rectangles.length; i++) for (let j = i + 1; j < rectangles.length; j++) {
+    const a = rectangles[i]
+    const b = rectangles[j]
+    const overlapX = Math.min(a.right, b.right) - Math.max(a.left, b.left)
+    const overlapY = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)
+    // Expanding each body by 2px gives the existing strict 4px clearance rule.
+    // Zero body overlap is edge contact; zero expanded overlap is a legal 4px gap.
+    const clearanceOverlapX = overlapX + 4
+    const clearanceOverlapY = overlapY + 4
+    const conflict = { ids: [a.id, b.id], rectangles: [a, b], overlapX, overlapY, clearanceOverlapX, clearanceOverlapY }
+    if (overlapX > 0 && overlapY > 0) bodyOverlaps.push(conflict)
+    if (clearanceOverlapX > 0 && clearanceOverlapY > 0) clearanceViolations.push(conflict)
+  }
+  return { bodyOverlaps, clearanceViolations }
+}
+
+function assertSceneLayout(scene, expectedIds, board) {
+  const { bodyOverlaps, clearanceViolations } = inspectScene(scene, expectedIds, board)
+  assert.equal(bodyOverlaps.length, 0, `body rectangle overlaps: ${JSON.stringify(bodyOverlaps)}`)
+  assert.equal(clearanceViolations.length, 0, `4px clearance violations: ${JSON.stringify(clearanceViolations)}`)
+}
 
 // Inputs supplied by the future requirement generator, not a pretend generator.
 const todo = { id: 'personal-todos', kind: 'tasks', name: '购物待办' }
@@ -59,6 +97,67 @@ test('duplicate detection uses both endpoints and recipe', () => {
   assert.equal(hasRelation([], candidate), false)
 })
 
+for (const { name, point, overlapX, overlapY, body, clearance } of [
+  { name: 'complete overlap', point: { x: 300, y: 300 }, overlapX: 208, overlapY: 198, body: true, clearance: true },
+  { name: 'partial overlap', point: { x: 400, y: 350 }, overlapX: 108, overlapY: 148, body: true, clearance: true },
+  { name: 'normal separation', point: { x: 600, y: 300 }, overlapX: -92, overlapY: 198, body: false, clearance: false },
+  { name: 'horizontal edge contact', point: { x: 508, y: 300 }, overlapX: 0, overlapY: 198, body: false, clearance: true },
+  { name: 'vertical edge contact', point: { x: 300, y: 498 }, overlapX: 208, overlapY: 0, body: false, clearance: true },
+  { name: 'horizontal 3px gap', point: { x: 511, y: 300 }, overlapX: -3, overlapY: 198, body: false, clearance: true },
+  { name: 'horizontal 4px gap', point: { x: 512, y: 300 }, overlapX: -4, overlapY: 198, body: false, clearance: false },
+]) {
+  test(`independent scene assertions distinguish body overlap and clearance: ${name}`, () => {
+    const board = boardSize(900, 2)
+    const scene = { a: { x: 300, y: 300 }, b: point }
+    const ids = ['a', 'b']
+    const report = inspectScene(scene, ids, board)
+    assert.equal(report.bodyOverlaps.length, Number(body))
+    assert.equal(report.clearanceViolations.length, Number(clearance))
+    if (clearance) {
+      const conflict = report.clearanceViolations[0]
+      assert.deepEqual(conflict.ids, ids)
+      assert.equal(conflict.overlapX, overlapX)
+      assert.equal(conflict.overlapY, overlapY)
+      assert.equal(conflict.clearanceOverlapX, overlapX + 4)
+      assert.equal(conflict.clearanceOverlapY, overlapY + 4)
+      assert.throws(() => assertSceneLayout(scene, ids, board), (error) => {
+        assert.equal(error.code, 'ERR_ASSERTION')
+        assert.match(error.message, body ? /body rectangle overlaps/ : /4px clearance violations/)
+        assert.ok(error.message.includes('"ids":["a","b"]'))
+        return true
+      })
+    } else {
+      assertSceneLayout(scene, ids, board)
+    }
+  })
+}
+
+test('independent scene assertions identify only the overlapping pair among three bricks', () => {
+  const board = boardSize(900, 3)
+  const scene = { a: { x: 300, y: 300 }, b: { x: 400, y: 350 }, c: { x: 740, y: 700 } }
+  const report = inspectScene(scene, ['a', 'b', 'c'], board)
+  assert.deepEqual(report.bodyOverlaps.map(({ ids }) => ids), [['a', 'b']])
+  assert.deepEqual(report.clearanceViolations.map(({ ids }) => ids), [['a', 'b']])
+  assert.throws(() => assertSceneLayout(scene, ['a', 'b', 'c'], board), /body rectangle overlaps/)
+})
+
+test('independent scene assertions reject missing, extra, replaced IDs and invalid coordinates', () => {
+  const board = boardSize(900, 2)
+  const a = { x: 300, y: 300 }
+  const b = { x: 600, y: 300 }
+  for (const [scene, ids, message] of [
+    [{ a }, ['a', 'b'], /scene ID count/],
+    [{ a, b }, ['a'], /scene ID count/],
+    [{ a, c: b }, ['a', 'b'], /scene ID set/],
+    [{ a, b }, ['a', 'a'], /expected IDs must be unique/],
+    [{ a: { x: NaN, y: 300 } }, ['a'], /finite coordinates: a/],
+    [{ a: { x: 300, y: Infinity } }, ['a'], /finite coordinates: a/],
+    [{ a: { x: -Infinity, y: 300 } }, ['a'], /finite coordinates: a/],
+    [{ a: { x: '300', y: 300 } }, ['a'], /finite coordinates: a/],
+    [{ a: undefined }, ['a'], /finite coordinates: a/],
+  ]) assert.throws(() => assertSceneLayout(scene, ids, board), message)
+})
+
 test('five bricks fit narrow, medium, and wide boards with clear spacing', () => {
   for (const width of [360, 700, 1180]) {
     const count = 5
@@ -68,6 +167,7 @@ test('five bricks fit narrow, medium, and wide boards with clear spacing', () =>
     assert.equal(Object.keys(layout).length, count)
     assert.ok(board.height >= count * STACK_STEP)
     assert.equal(collides(layout, ids, board), false)
+    assertSceneLayout(layout, ids, board)
   }
 })
 
@@ -77,6 +177,7 @@ test('nearby upper or lower edges produce a snap preview; distant edges do not',
   const preview = findSnap(scene, ['b'], [], board)
   assert.equal(preview?.direction, 'below')
   assert.equal(preview?.merged.join(','), 'a,b')
+  assertSceneLayout(preview.scene, ['a', 'b', 'c', 'd', 'e'], board)
   assert.equal(findSnap({ ...scene, b: { x: 200, y: 400 } }, ['b'], [], board), null)
 })
 
@@ -88,15 +189,19 @@ test('snapping joins a group, whole group moves without changing spacing, and de
   const stacks = joinStacks([], preview)
   assert.deepEqual(stackFor('a', stacks), ['a', 'b'])
   assert.equal(preview.scene.b.y - preview.scene.a.y, STACK_STEP)
+  const ids = ['a', 'b', 'c', 'd', 'e']
+  assertSceneLayout(preview.scene, ids, board)
   const moved = translateStack(preview.scene, ['a', 'b'], 70, 80, board)
   assert.equal(moved.b.x - moved.a.x, 0)
   assert.equal(moved.b.y - moved.a.y, STACK_STEP)
   assert.equal(collides(moved, ['a', 'b'], board), false)
+  assertSceneLayout(moved, ids, board)
   const detached = detachStack(moved, 'a', stacks, board)
   assert.deepEqual(detached.stacks, [])
   assert.deepEqual(detached.scene.a, moved.a)
   assert.deepEqual(detached.scene.b, moved.b)
   assert.equal(collides(detached.scene, Object.keys(detached.scene), board), false)
+  assertSceneLayout(detached.scene, ids, board)
 })
 
 test('arrange removes all stacks and restores five separate, collision-free bricks', () => {
@@ -107,7 +212,16 @@ test('arrange removes all stacks and restores five separate, collision-free bric
   assert.equal(collides(reset, ids, board), false)
   assert.equal(Object.values(reset).length, 5)
   assert.deepEqual(settleScene(ids, reset, [], board), reset)
+  assertSceneLayout(reset, ids, board)
+  assertSceneLayout(settleScene(ids, reset, [], board), ids, board)
+  // All IDs are moving, so the existing group-vs-outsiders check excludes every pair.
   assert.equal(collides(stacked, ids, board), false)
+  const report = inspectScene(stacked, ids, board)
+  assert.deepEqual(report.bodyOverlaps.map(({ ids }) => ids), [['a', 'b']])
+  assert.deepEqual(report.clearanceViolations.map(({ ids }) => ids), [['a', 'b']])
+  assert.equal(report.bodyOverlaps[0].overlapX, 208)
+  assert.equal(report.bodyOverlaps[0].overlapY, 24)
+  assert.throws(() => assertSceneLayout(stacked, ids, board), /body rectangle overlaps/)
 })
 
 test('an unsupported feature is explained rather than rendered as a usable brick', () => {
