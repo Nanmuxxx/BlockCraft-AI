@@ -47,6 +47,8 @@ export interface AppData {
 
 export interface AppConfig {
   idea: string
+  /** 需求澄清结果；仅记录偏好，不移除现有功能模块。 */
+  clarificationChoice: ClarificationChoice | null
   /** 功能配置与状态数据，由主程序统一管理。 */
   data: AppData
   /** 画布布局数据，独立于 data。 */
@@ -69,6 +71,7 @@ export function createInitialAppConfig(idea: string): AppConfig {
 
   return {
     idea,
+    clarificationChoice: null,
     data: {
       tasks,
       courses: [
@@ -121,6 +124,8 @@ export interface MochiPanelProps {
 export type ClarificationChoice = 'tasks' | 'courses' | 'both'
 
 export interface ClarificationStepProps {
+  idea: string
   onComplete: (choice: ClarificationChoice) => void
+  onBack: () => void
 }
 

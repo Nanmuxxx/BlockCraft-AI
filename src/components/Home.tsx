@@ -4,11 +4,12 @@ import { MochiCat } from './MochiCat'
 import { IDEA_EXAMPLES, MAX_IDEA_LENGTH } from './ideas'
 
 interface HomeProps {
+  initialIdea: string
   onStart: (idea: string) => void
 }
 
-export function Home({ onStart }: HomeProps) {
-  const [value, setValue] = useState('')
+export function Home({ initialIdea, onStart }: HomeProps) {
+  const [value, setValue] = useState(initialIdea)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [activeId, setActiveId] = useState<string | null>(null)

@@ -1,13 +1,9 @@
 import { ArrowRight, CalendarDays, ChevronLeft, ListChecks, Sparkles } from 'lucide-react'
-import type { ClarificationChoice } from '../model/appConfig'
+import type { ClarificationChoice, ClarificationStepProps } from '../model/appConfig'
 import { MochiCat } from './MochiCat'
 import './clarification-step.css'
 
-export interface ClarificationStepProps {
-  idea: string
-  onComplete: (preference: ClarificationChoice) => void
-  onBack: () => void
-}
+export type { ClarificationStepProps } from '../model/appConfig'
 
 const choices: {
   id: ClarificationChoice
