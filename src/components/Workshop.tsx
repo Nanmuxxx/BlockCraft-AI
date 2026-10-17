@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from 'react'
 import { ArrowLeft, Blocks, BookOpen, CalendarDays, ChartNoAxesColumnIncreasing, Check, Clock3, GraduationCap, ListChecks, Monitor, Plus, Sparkles } from 'lucide-react'
 import { Logo } from './Logo'
-import { MochiCat } from './MochiCat'
+import { MochiPanel, type MochiMessage } from './MochiPanel'
 import { BlockCanvas, type BlockModuleData } from './BlockCanvas'
 import { VISUAL_EXAMPLES } from './blocks/examples'
 import {
@@ -11,6 +11,7 @@ import {
   type BlockPosition,
   type Course,
   type ModuleId,
+  type MochiSuggestionId,
   type StudyStats,
   type StudyTask,
 } from '../model/appConfig'
@@ -33,8 +34,36 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
   const [mode, setMode] = useState<Mode>('blocks')
   const [taskDraft, setTaskDraft] = useState('')
   const [selectedModuleId, setSelectedModuleId] = useState<ModuleId | null>(null)
-  const { idea, data, blockPositions } = config
+  const [messages, setMessages] = useState<MochiMessage[]>([])
+  // 阶段 2 只在当前会话记录请求，不执行配置变更。
+  const suggestionRequests = useRef<MochiSuggestionId[]>([])
+  const { data, blockPositions } = config
   const { tasks, courses, stats: taskStats } = data
+
+  const sendMessage = (message: string) => {
+    const content = message.trim()
+    if (!content) return
+    const selectedFeature = FEATURES.find(({ id }) => id === selectedModuleId)
+    setMessages((current) => [...current,
+      { role: 'user', content },
+      {
+        role: 'mochi',
+        content: selectedFeature
+          ? `本地 Mock · ${selectedFeature.name}：${selectedFeature.description} 你可以切到应用预览查看效果。`
+          : '本地 Mock：先选中任务、课程或统计积木，我会介绍它的作用。',
+      },
+    ])
+  }
+
+  const confirmSuggestion = (suggestionId: MochiSuggestionId) => {
+    if (suggestionRequests.current.includes(suggestionId)) return
+    suggestionRequests.current.push(suggestionId)
+    setMessages((current) => [...current, {
+      id: `request-${suggestionId}`,
+      role: 'system',
+      content: '已记录“启用任务优先级”的建议请求，尚未修改任务或应用配置。',
+    }])
+  }
   const addTask = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const title = taskDraft.trim()
@@ -124,13 +153,12 @@ export function Workshop({ config, onConfigChange, onBack }: WorkshopProps) {
           <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
         </main>
 
-        <aside className="workshop__nest" aria-labelledby="mochi-nest-title">
-          <div className="workshop__nest-heading"><span className="workshop__nest-spark"><Sparkles size={18} aria-hidden="true" /></span><div><h2 id="mochi-nest-title">Mochi 的小窝</h2><p>你的创作伙伴</p></div></div>
-          <div className="workshop__cat-scene"><MochiCat className="workshop__cat" /><span className="workshop__cat-ground" aria-hidden="true" /></div>
-          <div className="workshop__welcome"><span>Mochi</span><p>欢迎来到创作工坊！先看看这三块学习积木，再切到应用预览，想象它们搭在一起的样子吧。</p><p>以后每次修改功能，我都会先征得你的同意。</p></div>
-          <div className="workshop__idea"><h3>创作的起点</h3><p>{idea}</p></div>
-          <p className="workshop__nest-note">小小的想法，也能长成大大的可能。</p>
-        </aside>
+        <MochiPanel
+          selectedModuleId={selectedModuleId}
+          messages={messages}
+          onSendMessage={sendMessage}
+          onConfirmSuggestion={confirmSuggestion}
+        />
       </div>
     </div>
   )
