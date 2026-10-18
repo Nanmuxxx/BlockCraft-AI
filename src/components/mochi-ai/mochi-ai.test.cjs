@@ -59,3 +59,13 @@ test('reduced-motion stylesheet disables the component animations', () => {
   assert.match(css, /prefers-reduced-motion:\s*reduce/)
   assert.match(css, /animation:\s*none\s*!important/)
 })
+
+test('unavailable planner is explicit and disables prompt submission and suggestion drafts', () => {
+  const html = renderToStaticMarkup(React.createElement(MochiAiAssistant, {
+    ...props, preview: null, planningDisabledReason: 'AI 修改尚未启用：等待真实计划 API',
+  }))
+  assert.match(html, /AI 修改尚未启用：等待真实计划 API/)
+  assert.match(html, /<textarea[^>]*disabled/)
+  assert.match(html, /class="mochi-ai__send"[^>]*disabled/)
+  assert.match(html, /class="mochi-ai__suggestion-prompt"[^>]*disabled/)
+})
