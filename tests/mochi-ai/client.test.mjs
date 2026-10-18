@@ -110,3 +110,15 @@ test('late status cannot re-enable consent after explicit off', async () => {
   release({ enabled: true, proactiveEnabled: true, modificationsEnabled: false }); await pending
   assert.equal(f.client.getSnapshot().proactiveEnabled, false)
 })
+
+test('disabled reason survives selection and mode changes; C mode never sends chat', async () => {
+  const f = fixture()
+  f.api.status = async () => ({ enabled: false, proactiveEnabled: false, modificationsEnabled: false, reason: 'ACCESS_UNAVAILABLE' })
+  await f.client.refreshStatus(); const reason = f.client.getSnapshot().disabledReason
+  assert.match(reason, /可信会话认证/)
+  f.change({ ...context(), revision: 1, selectedBlockId: null }); f.client.syncContext()
+  assert.equal(f.client.getSnapshot().disabledReason, reason)
+  f.api.status = async () => ({ enabled: true, proactiveEnabled: false, modificationsEnabled: false })
+  await f.client.refreshStatus(); f.change({ ...context(), mode: 'run' }); f.client.syncContext()
+  await assert.rejects(f.client.chat('hello'), { code: 'MODE_UNAVAILABLE' }); assert.equal(f.count(), 0)
+})

@@ -17,6 +17,7 @@ test('host bridge listens to settled structural events, ignores records/anchors/
   // Measurements and record-only revision notifications are deliberately irrelevant.
   listener(); view = { ...view, context: { ...view.context, revision: 2 } }; listener()
   view = { ...view, mode: 'run' }; listener(); await settle(); assert.equal(calls, 0)
+  view = { ...view, mode: 'blocks' }; listener()
   view = structuredClone(view); view.context.entities[0].fields[0].name = '参与者姓名'; listener(); listener() // anchor notifications must not erase the scheduled event
   await settle(); assert.equal(calls, 1)
   bridge.dispose(); assert.equal(listener, null)

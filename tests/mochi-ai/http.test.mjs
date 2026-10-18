@@ -10,7 +10,7 @@ import { request, envelope, access, grant } from './fixtures.mjs'
 async function fixture(t, options = {}, handlerOptions = {}) {
   let calls = 0
   const provider = createDeepSeekProvider({ apiKey: 'OFFLINE FIXTURE ONLY', fetchImpl: async () => { calls++; return envelope() } })
-  const service = createMochiService({ provider, enabled: true, approval: grant(Date.now()), ...options })
+  const service = createMochiService({ provider, reserveBudget: () => true, enabled: true, approval: grant(Date.now()), ...options })
   let handler
   const server = createServer(async (req, res) => { if (!await handler(req,res)) { res.writeHead(404); res.end() } })
   server.listen(0, '127.0.0.1'); await once(server, 'listening')
