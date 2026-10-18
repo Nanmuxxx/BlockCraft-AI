@@ -18,6 +18,17 @@ test('builtins produce a full standalone archive, fixed scripts and configured d
   assert.ok(files.get('src/data.ts').includes('applicant-name'))
   assert.deepEqual(result.files.map(file => file.path), [...files.keys()])
 })
+test('exported list exposes update flow that preserves ids and clears stale editing state', async () => {
+  const files = unzip((await exportProjectZip(builtin())).bytes)
+  const app = files.get('src/App.tsx')
+  const list = files.get('src/components/ListBlock.tsx')
+  const form = files.get('src/components/FormBlock.tsx')
+  assert.match(list, /onClick=\{\(\) => onEdit\(row\.id\)\}/)
+  assert.match(list, /onUpdate\(editing\.id, values\)/)
+  assert.match(form, /initial \? '保存修改' : '保存'/)
+  assert.match(app, /map\(row => row\.id === id \? \{ \.\.\.row, id, values \} : row\)/)
+  assert.match(app, /current\?\.entity === entity && current\.id === id \? null : current/)
+})
 test('real TSX, helper module, exact digest, props, coordinates and interleaved order survive', async () => {
   const input = await mixed(), result = await exportProjectZip(input), files = unzip(result.bytes)
   const dataText = files.get('src/data.ts')
