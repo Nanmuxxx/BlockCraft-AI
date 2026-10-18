@@ -1,0 +1,8 @@
+.app-spec-canvas.has-move-error > .block-canvas-stage > .block-canvas-feedback {
+  display: none;
+}
+
+.app-spec-canvas__error {
+  color: #c00000;
+  margin: 0.75rem 0;
+}
