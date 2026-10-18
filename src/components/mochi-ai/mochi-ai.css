@@ -98,7 +98,7 @@
 .mochi-emotion--celebrating .mochi-emotion__spark { opacity: 1; }
 .mochi-emotion--error .mochi-emotion__image { animation: mochi-ai-wiggle .5s ease-in-out 2; }
 
-.mochi-overlay { position: absolute; z-index: 4; display: block; width: 58px; height: 52px; pointer-events: none; transform: translate(calc(var(--mochi-anchor-width) + 10px), -6px); }
+.mochi-overlay { position: absolute; left: var(--mochi-anchor-x); top: var(--mochi-anchor-y); z-index: 4; display: block; width: 58px; height: 52px; pointer-events: none; transform: translate(calc(var(--mochi-anchor-width) + 10px), -6px); }
 .mochi-overlay[data-placement="left"] { transform: translate(-68px, -6px); }
 .mochi-overlay[data-placement="top"] { transform: translate(0, -62px); }
 .mochi-overlay[data-placement="bottom"] { transform: translate(0, calc(var(--mochi-anchor-height) + 8px)); }

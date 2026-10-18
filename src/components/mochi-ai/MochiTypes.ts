@@ -38,4 +38,5 @@ export interface MochiAssistantProps extends Omit<MochiAiAssistantProps, 'mood' 
   showOverlay?: boolean
 }
 
+export type { MochiCallbacks, MochiUiContext } from './types'
 export type { MochiChatMessage, MochiContext, MochiMood, MochiPlanPreview, MochiSuggestion, ReactNode }
