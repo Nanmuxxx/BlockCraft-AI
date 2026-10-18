@@ -82,6 +82,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   let pending: AbortController | null = null
   let disposed = false
   let observedRevision = runtime.getSnapshot().revision
+  let observedAuthorization = runtime.customProject?.getAuthorization()
   let view: HostView
 
   const customInstances = () => runtime.customProject?.getSnapshot().custom.instances ?? []
@@ -128,8 +129,10 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   view = freeze({ context: context(), epoch, mode, anchor: null, preview: null, busy: false, ignoredSuggestionIds: [], error: null, receipt: null })
   const unsubscribe = runtime.subscribe(() => {
     const snapshot = runtime.getSnapshot()
-    if (snapshot.revision === observedRevision) return
+    const authorization = runtime.customProject?.getAuthorization()
+    if (snapshot.revision === observedRevision && authorization === observedAuthorization) return
     observedRevision = snapshot.revision
+    observedAuthorization = authorization
     invalidate()
     if (!exists(selectedBlockId)) selectedBlockId = null
     publish({ anchor: null, preview: null, busy: false })
@@ -141,6 +144,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
       let ownedEpoch = epoch
       try {
         alive()
+        ensure(!runtime.customProject?.getAuthorization().readOnly, '项目为只读，无法请求修改。', 'READ_ONLY')
         ensure(typeof prompt === 'string' && prompt.trim().length > 0 && prompt.length <= 4000, 'Expected a short nonempty instruction', 'INVALID_PROMPT')
         ensure(!pending, 'A plan request is already in progress', 'REQUEST_BUSY')
         const snapshot = runtime.getSnapshot()

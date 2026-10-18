@@ -2,6 +2,7 @@ import type { BlockSpec, EntityRecord, FieldSpec, FieldValue, ProjectState } fro
 import { createCommandSession, processCommand, type CommandSession } from './appCommands'
 import { createProjectSession, type CustomProjectSession } from './customProjectSession'
 import { CustomBlockError } from '../custom-block/json'
+import type { WriteAuthorization } from '../integrations/custom-block-bc/owner'
 import { AppSpecError, assertProjectState, ensure } from './appSpecValidation'
 
 export type RecordChange =
@@ -40,7 +41,7 @@ export interface AppRuntime {
   customProject: CustomProjectSession
   getSnapshot: () => ProjectState
   subscribe: (listener: () => void) => () => void
-  executeCommand: (request: unknown) => RuntimeResult
+  executeCommand: (request: unknown, authorization?: WriteAuthorization) => RuntimeResult
   updateRecords: (change: RecordChange) => RuntimeResult
   moveBlock: (blockId: string, position: { x: number; y: number }) => RuntimeResult
   canUndo: () => boolean
@@ -54,24 +55,24 @@ export function createAppRuntime(initial: ProjectState): AppRuntime {
   let metadata: Omit<CommandSession, 'state'> = freeze({ history: initialSession.history, receipts: initialSession.receipts })
   const project = createProjectSession(initial, () => { metadata = freeze({ ...metadata, history: [] }) })
   const session = (): CommandSession => ({ ...metadata, state: project.getBaseSnapshot() })
-  const publish = (next: CommandSession) => project.commitBuiltin(next.state, () => {
+  const publish = (next: CommandSession, expected: ReturnType<CustomProjectSession['getSnapshot']>, authorization: WriteAuthorization) => project.commitBuiltin(next.state, () => {
     metadata = freeze({ history: next.history, receipts: next.receipts })
-  })
+  }, expected, authorization)
   // Full-state command history cannot cross a later data/layout transaction.
   // Keep receipts so retries across this boundary remain idempotent.
   const mutate = (apply: (state: ProjectState) => ProjectState): RuntimeResult => {
+    const expected = project.owner.getSnapshot(), authorization = project.owner.getAuthorization()
     let state: ProjectState
     try { state = apply(project.getBaseSnapshot()) }
     catch (error) {
       if (!(error instanceof AppSpecError) && !(error instanceof CustomBlockError)) throw error
       return { ok: false, error: { code: error.code, message: error.message } }
     }
-    try { publish({ ...session(), state, history: [] }) }
+    try { return publish({ ...session(), state, history: [] }, expected, authorization) }
     catch (error) {
       if (!(error instanceof CustomBlockError)) throw error
       return { ok: false, error: { code: error.code, message: error.message } }
     }
-    return { ok: true, duplicate: false, committedRevision: state.revision }
   }
   const updateRecords = (change: RecordChange) => mutate(state => applyRecordChange(state, change))
   return {
@@ -79,11 +80,12 @@ export function createAppRuntime(initial: ProjectState): AppRuntime {
     getSnapshot: project.getBaseSnapshot,
     subscribe: project.owner.subscribe,
     canUndo: () => metadata.history.length > 0,
-    executeCommand(request) {
+    executeCommand(request, authorization = project.owner.getAuthorization()) {
+      const expected = project.owner.getSnapshot()
       const result = processCommand(session(), request)
       if (!result.ok) return { ok: false, error: result.error }
       if (!result.duplicate) {
-        try { publish(result.session) }
+        try { return publish(result.session, expected, authorization) }
         catch (error) {
           if (!(error instanceof CustomBlockError)) throw error
           return { ok: false, error: { code: error.code, message: error.message } }

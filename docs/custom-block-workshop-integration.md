@@ -1,12 +1,14 @@
 # CustomBlock v2 Workshop 产品接线
 
+最新 main / #24 / #27 兼容整改与本轮证据见 [兼容交付记录](custom-block-workshop-compatibility.md)。下文保留初次产品接线的基线、文件清单及证据。
+
 本轮将 PR #23 的适配层接入真实 `/ai-create` Workshop。2026-10-18 核实 #23 已合并，最新 main 为 `2d8ffe18f8c4fad787549c8998fc6175c7d9ebdc`；本分支直接基于该提交，无需改写历史。独立工作树为 `BlockCraft-AI-custom-block-workshop`，分支为 `feature/custom-block-workshop`。
 
 ## 唯一状态与接线
 
 `createAppRuntime` 在创建会话时建立唯一 `CustomProject` v2 owner。原 v1 Runtime API 读取冻结的 `{revision, ...project.base}` 投影；内置结构命令、CRUD、布局和 custom 参数/布局共享 revision、通知与原子提交边界。不存在第二套可写 v1 项目。history/receipts 只存事务元数据；custom 写入使旧全量 undo 失效，保留幂等 receipts。
 
-`customProjectSession.ts` 的公开 CAS 重新解析完整 v2，异步校验前复制候选，前后检查快照身份与 revision。builtin 同步提交保留 custom 数据，校验全局 ID 与 renderOrder。registry 只保存已重算摘要、不可变的制品输入，不是项目状态源。会话仍为内存会话，刷新清空，未增加跨刷新存储承诺。
+`customProjectSession.ts` 复用 #24 的唯一 `createProjectRevisionOwner`：公开 CAS 为同步三参数接口，最终原子边界检查当前可写、授权对象代际、快照身份与 revision；授权检查到发布没有 await。异步完整 parser/摘要准入发生在提交前，产品 wrapper 仅补充同步结构及已准入 Schema 校验。builtin 同步提交保留 custom 数据，校验全局 ID 与 renderOrder。registry 只保存已重算摘要、不可变的制品输入，不是项目状态源。会话仍为内存会话，刷新清空，未增加跨刷新存储承诺。
 
 Workshop 使用 PR #23 的 `CustomBlockCanvas`、`CustomBlockInspector`、`CustomBlockRunSurface`。B/C 均按同一 renderOrder 组合 builtin/custom。C 的内置插槽使用抽取的 **BuiltinBlockRenderer 单块渲染器**，不会每块重复挂载完整 AppRenderer；原 AppRenderer 保留组合入口。内置 Inspector 沿用原组件。
 

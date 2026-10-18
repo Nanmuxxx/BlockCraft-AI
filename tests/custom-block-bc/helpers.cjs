@@ -5,21 +5,11 @@ function freeze(value) {
   if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value) }
   return value
 }
-// TEST ONLY. Production must implement this boundary in its unique runtime owner.
+const { createProjectRevisionOwner } = require('../../src/integrations/custom-block-bc/owner.ts')
 function testOwner(initial) {
-  let state = freeze(copy(initial))
   let commits = 0
-  const listeners = new Set()
-  return {
-    getSnapshot: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn) },
-    compareAndSwap(expected, next) {
-      if (expected !== state || expected.revision !== state.revision || next.revision !== state.revision + 1) return { ok: false, error: { code: 'REVISION_CONFLICT', message: 'stale' } }
-      state = freeze(next); commits++; listeners.forEach(fn => fn())
-      return { ok: true, duplicate: false, committedRevision: state.revision }
-    },
-    commits: () => commits,
-  }
+  const owner = createProjectRevisionOwner(initial, { persist: () => { commits++ } })
+  return { ...owner, commits: () => commits }
 }
 async function fixture() {
   const data = await setup()

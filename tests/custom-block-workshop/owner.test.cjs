@@ -54,7 +54,7 @@ test('new version and definition require re-admission; old props drafts/referenc
   const { runtime, owner, adapter, request } = await setup()
   const withState = copy(owner.getSnapshot()); withState.revision++
   withState.custom.states['custom-1'] = { versionDigest: request.instance.versionDigest, stateRevision: 0, value: { remainingSeconds: 600, status: 'idle' } }
-  assert.equal((await owner.compareAndSwap(owner.getSnapshot(), withState)).ok, true)
+  assert.equal((await owner.compareAndSwap(owner.getSnapshot(), withState, owner.getAuthorization())).ok, true)
   const source = artifact(); source.manifest.definitionId = 'different-definition'; source.manifest.name = '新版本'
   source.manifest.propsSchema.properties.durationSeconds.minimum = 700
   const next = await input(runtime, source); next.instance.props.durationSeconds = 800; next.expectedReference = ref(request.instance)
@@ -74,9 +74,10 @@ test('in-flight admission and CAS cannot overwrite concurrent builtin writes', a
   assert.equal(runtime.customProject.getSnapshot().custom.instances.length, 0)
   assert.equal(await runtime.customProject.registry.resolve(ref(request.instance)), undefined)
   const expected = runtime.customProject.getSnapshot(), candidate = copy(expected); candidate.revision++
-  const cas = runtime.customProject.compareAndSwap(expected, candidate)
-  runtime.moveBlock('registration-form', { x: .5, y: .5 })
-  assert.equal((await cas).error.code, 'REVISION_CONFLICT')
+  assert.equal(runtime.moveBlock('registration-form', { x: .5, y: .5 }).ok, true)
+  const cas = runtime.customProject.compareAndSwap(expected, candidate, runtime.customProject.getAuthorization())
+  assert.equal(cas.error.code, 'REVISION_CONFLICT')
+  assert.equal(cas instanceof Promise, false)
 })
 test('install captures unknown caller input before await; stale and mismatched replacement intent reject', async () => {
   const runtime = createAppRuntime(createClubRegistrationExample()), request = await input(runtime)
@@ -127,13 +128,16 @@ test('custom selection shares Mochi epoch/revision and anchors but grants no bui
   assert.equal(calls, 0)
   host.dispose()
 })
-test('public CAS revalidates the entire candidate and copies before await', async () => {
+test('public CAS validates cached Schema synchronously and freezes the committed candidate', async () => {
   const { owner } = await setup(), before = owner.getSnapshot()
   const invalid = copy(before); invalid.revision++; invalid.custom.instances[0].props.durationSeconds = -1
-  assert.equal((await owner.compareAndSwap(before, invalid)).ok, false)
+  assert.equal((await owner.compareAndSwap(before, invalid, owner.getAuthorization())).ok, false)
   assert.equal(owner.getSnapshot(), before)
   const candidate = copy(before); candidate.revision++; candidate.custom.instances[0].props.durationSeconds = 800
-  const pending = owner.compareAndSwap(before, candidate); candidate.custom.instances[0].props.durationSeconds = 999
-  assert.equal((await pending).ok, true)
+  const result = owner.compareAndSwap(before, candidate, owner.getAuthorization())
+  assert.equal(result instanceof Promise, false)
+  assert.equal(result.ok, true)
+  assert.ok(Object.isFrozen(candidate.custom.instances[0].props))
+  Reflect.set(candidate.custom.instances[0].props, 'durationSeconds', 999)
   assert.equal(owner.getSnapshot().custom.instances[0].props.durationSeconds, 800)
 })

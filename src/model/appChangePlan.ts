@@ -1,5 +1,6 @@
 import type { AppCommand, BlockSpec, CommandRequest, FieldSpec, ProjectState } from './appSpec'
 import type { AppRuntime, RuntimeResult } from './appRuntime'
+import type { WriteAuthorization } from '../integrations/custom-block-bc/owner'
 import { createCommandSession, processCommand } from './appCommands'
 import { AppSpecError, assertCommandRequest, assertProjectState, ensure } from './appSpecValidation'
 import { getAppCapability, getBlockCapabilityId } from './appCapabilities'
@@ -197,7 +198,7 @@ function canonical(value: unknown): string {
 
 /** One planner per Runtime instance. No network, no UI, no mutation until confirm(). */
 export function createAppChangePlanner(runtime: AppRuntime): AppChangePlanner {
-  type Entry = { plan: DeepReadonly<AppChangePlan>; status: PlanStatus; fingerprint: string; receipt?: Extract<RuntimeResult, { ok: true }> }
+  type Entry = { plan: DeepReadonly<AppChangePlan>; status: PlanStatus; fingerprint: string; authorization?: WriteAuthorization; receipt?: Extract<RuntimeResult, { ok: true }> }
   const plans = new WeakMap<object, Entry>()
   const requests = new Map<string, Entry>()
   const entryFor = (plan: DeepReadonly<AppChangePlan>) => {
@@ -246,7 +247,7 @@ export function createAppChangePlanner(runtime: AppRuntime): AppChangePlanner {
         const before = structuredClone(snapshot)
         const plan = freeze({ version: 1 as const, appId: snapshot.spec.id, request, capabilityIds: candidate.capabilityIds, scope,
           before, after: result.session.state, diff: diff(before, result.session.state, request, scope), unsupportedOperations })
-        const entry: Entry = { plan, status: 'pending', fingerprint }
+        const entry: Entry = { plan, status: 'pending', fingerprint, authorization: runtime.customProject?.getAuthorization() }
         plans.set(plan, entry); requests.set(request.requestId, entry)
         return { ok: true, plan }
       } catch (error) { return { ...fail(error), unsupportedOperations } }
@@ -263,7 +264,7 @@ export function createAppChangePlanner(runtime: AppRuntime): AppChangePlanner {
         }
         entry.status = 'confirming'
         // Exact frozen object from preview. Never refresh the revision or regenerate commands.
-        const result = runtime.executeCommand(entry.plan.request)
+        const result = runtime.executeCommand(entry.plan.request, entry.authorization)
         entry.status = result.ok ? 'committed' : 'rejected'
         if (result.ok) entry.receipt = result
         return result

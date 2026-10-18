@@ -1,5 +1,7 @@
 export { createCustomBlockBCAdapter, createLayoutBatch, referenceOf, sameReference } from './adapter'
 export type { CustomBlockBCAdapter, ProjectRevisionOwner, OrderedBlock } from './adapter'
+export { createProjectRevisionOwner } from './owner'
+export type { WriteAuthorization } from './owner'
 export { viewerState } from './viewer'
 export type { ViewerState } from './viewer'
 export { CustomBlockCanvas } from './CustomBlockCanvas'

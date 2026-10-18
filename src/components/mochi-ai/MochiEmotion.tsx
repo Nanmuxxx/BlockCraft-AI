@@ -1,7 +1,7 @@
-import { Sparkles } from 'lucide-react'
 import { MochiCat } from '../MochiCat'
 import type { MochiEmotion } from './MochiTypes'
 import './mochi-ai.css'
+import './mochi-motion.css'
 
 const labels: Record<MochiEmotion, string> = {
   idle: 'Mochi 正在陪伴',
@@ -21,8 +21,12 @@ export interface MochiEmotionProps {
 export function MochiEmotion({ emotion, className = '', label }: MochiEmotionProps) {
   return (
     <span className={`mochi-emotion mochi-emotion--${emotion} ${className}`.trim()} data-emotion={emotion} role="img" aria-label={label ?? labels[emotion]}>
-      <MochiCat className="mochi-emotion__image" />
-      <Sparkles className="mochi-emotion__spark" size={14} aria-hidden="true" />
+      <span className="mochi-emotion__body" aria-hidden="true">
+        <MochiCat className="mochi-emotion__image" />
+        <span className="mochi-emotion__eyelid mochi-emotion__eyelid--left" />
+        <span className="mochi-emotion__eyelid mochi-emotion__eyelid--right" />
+      </span>
+      <span className="mochi-emotion__cue" aria-hidden="true">{{ idle: '', curious: '?', thinking: '···', happy: '♥', celebrating: '✦', error: '!' }[emotion]}</span>
     </span>
   )
 }
