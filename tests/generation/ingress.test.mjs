@@ -15,7 +15,7 @@ async function fixture(t) {
   server.listen(0, '127.0.0.1'); await once(server, 'listening')
   t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve) }))
   const port = server.address().port, origin = `http://127.0.0.1:${port}`
-  return { port, origin, calls: () => calls,
+  return { server, port, origin, calls: () => calls,
     post: () => fetch(`${origin}/api/ai/generate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: cases[0].idea }) }) }
 }
 
@@ -25,12 +25,13 @@ async function socketFor(t, port) {
   await once(socket, 'connect')
   return socket
 }
-async function rejectedUpload(t, f, request, status, code) {
+async function rejectedUpload(t, f, request, status, code, afterWrite) {
   const socket = await socketFor(t, f.port)
   let response = '', timer
   socket.setEncoding('utf8'); socket.on('data', chunk => { response += chunk })
   const closed = once(socket, 'close')
   socket.write(request)
+  await afterWrite?.()
   try {
     await Promise.race([closed, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`Rejected ${status} upload retained its socket`)), 500) })])
   } finally { clearTimeout(timer); socket.destroy() }
@@ -106,4 +107,28 @@ test('generation accepts valid multibyte JSON split inside a UTF-8 codepoint', a
     req.on('error', reject); req.write(body.subarray(0, at)); req.end(body.subarray(at))
   })
   assert.equal(response.status, 200); assert.deepEqual(response.spec, cases[0].spec); assert.equal(f.calls(), 1)
+})
+
+test('unfinished request reaches its input deadline, returns structured 408 and releases admission', { timeout: 2000 }, async t => {
+  t.mock.timers.enable({ apis: ['setTimeout'] })
+  const f = await fixture(t)
+  const bodyStarted = new Promise(resolve => f.server.once('request', req => req.once('data', resolve)))
+  await rejectedUpload(t, f, head(f), 408, 'INPUT_TIMEOUT', async () => {
+    await bodyStarted
+    t.mock.timers.tick(LIMITS.inputTimeoutMs + 1)
+  })
+  assert.equal(f.calls(), 0)
+  const next = await f.post(); assert.equal(next.status, 200); await next.json()
+  assert.equal(f.calls(), 1)
+})
+
+test('rate-limited unfinished upload receives 429 without reaching upstream or waiting for its body', { timeout: 2000 }, async t => {
+  const f = await fixture(t)
+  for (let i = 0; i < LIMITS.requestsPerMinute; i++) {
+    const response = await fetch(`${f.origin}/api/ai/generate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+    assert.equal(response.status, 400); await response.json()
+  }
+  await rejectedUpload(t, f, head(f), 429, 'RATE_LIMITED')
+  assert.equal(f.calls(), 0)
+  const health = await fetch(`${f.origin}/api/health`); assert.equal(health.status, 200); await health.json()
 })
