@@ -1,0 +1,327 @@
+{
+  "baseline": {
+    "repository": "Nanmuxxx/BlockCraft-AI",
+    "main": "c039fe9533a868425a493ed7d581774aa042a20f",
+    "pr19": "merged",
+    "phase1aPr15": "merged",
+    "phase1bPr16": "merged-diagnostics-only"
+  },
+  "buildValidation": {
+    "observedAt": "2026-10-18T09:17:02.012Z",
+    "node": "v24.22.0",
+    "compiledOnly": true,
+    "componentExecutionAttempted": false,
+    "evidence": [
+      {
+        "name": "counter",
+        "durationMs": 378,
+        "contractVersion": 1,
+        "status": "compiled",
+        "execution": "denied",
+        "reference": {
+          "definitionId": "trusted-counter",
+          "versionDigest": "sha256:616498cc16cfd7af5663c5638660dd19e913a75a22a398a13ec319128be527ec"
+        },
+        "sourceDigest": "sha256:616498cc16cfd7af5663c5638660dd19e913a75a22a398a13ec319128be527ec",
+        "sourcesDigest": "sha256:0b637929f56690933fba63fd597210984c0c1bf84e8fc7f5aa3bd5ceae635d66",
+        "bundleDigest": "sha256:70b4037a0150a17d62976fe131cdebb7928c997b3cf0371010848d61f7b3eb17",
+        "bundleBytes": 223702,
+        "toolchain": {
+          "name": "esbuild",
+          "version": "0.25.12",
+          "binaryDigest": "sha256:3e030ee2aa86ad3c33e5e95ae0e53bb03de40e0da35c9b1180a67de4a497cae5",
+          "node": "v24.22.0",
+          "parser": "typescript@5.9.3",
+          "sdk": "1.0.0",
+          "driverDigest": "sha256:5a9ceb3b0f62107ba8296b0ae627d5a0655a85f85cb2bad33ee8b9402133c92e"
+        },
+        "profile": {
+          "profile": "react-isolated-v1",
+          "toolchain": {
+            "name": "esbuild",
+            "version": "0.25.12",
+            "integrity": "sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg=="
+          },
+          "target": "es2020",
+          "format": "esm",
+          "maxBundleBytes": 524288
+        },
+        "supply": {
+          "binaryDigest": "sha256:3e030ee2aa86ad3c33e5e95ae0e53bb03de40e0da35c9b1180a67de4a497cae5",
+          "lockDigest": "sha256:81e1ad412fefdc1cfc9f66c51da8ec28dbffe03f7956666bd17117d557f04fbe",
+          "packages": [
+            {
+              "archiveSha256": "227584145829e5c4782734b3fb7b91b49c6aa12876d6cf070e6a3d9d4de543f9",
+              "fileCount": 7,
+              "integrity": "sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg==",
+              "name": "esbuild",
+              "treeSha256": "1b640d001bebc6e430dc5bdb24270c55d248580a402595f07fd4c3a88d05fe9c",
+              "version": "0.25.12"
+            },
+            {
+              "archiveSha256": "56936913918dcf1f7a6fe58784e79df54b18200a88655ce809cf5e9c4ef871aa",
+              "fileCount": 27,
+              "integrity": "sha512-QNhWdt7nrgVWWQG58QuGsAR3jv3Hbe4mb4vz7w2csnHavciZJgda1CPNaldF6eVxv90ud3jUXpKlHL69gO38yw==",
+              "name": "react",
+              "treeSha256": "3f014b751e07766efc58c3f15625d46e05372ba20fab81deb17cb5a605c48f1c",
+              "version": "19.3.1"
+            },
+            {
+              "archiveSha256": "8b49975821eec6311e00d2b3f4b8337923253c876517388a33f9839c61ab262e",
+              "fileCount": 43,
+              "integrity": "sha512-Y0bARz53lhEC1NMCASs0/j+faB/zqt3R8hpvg1e8+61ZVJ4UL0UdC4cBbXfZMcIuhrfgeILTLe+ZeBCavQPtKQ==",
+              "name": "react-dom",
+              "treeSha256": "431730c6fa403652038bfd36de90c48df11ffdf16f2c60fdc7c7baeba749da82",
+              "version": "19.3.1"
+            },
+            {
+              "archiveSha256": "302995d590e3c0a11eeb40d1d0f299c1df1800135d599d85cdd5faeb614f32d6",
+              "fileCount": 15,
+              "integrity": "sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw==",
+              "name": "scheduler",
+              "treeSha256": "b00f7acf211e288b2183028f828b695c67b3394d765a18778888c48f0be81675",
+              "version": "0.28.0"
+            },
+            {
+              "archiveSha256": "10e108c9cf7d5f2879053dff18515fb405abf2ccef63eaaf017d9c571687a1d3",
+              "fileCount": 132,
+              "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+              "name": "typescript",
+              "treeSha256": "157973716ed7eea8fef4816c93432cb12febb4c31b02360394d7767304bdb4e5",
+              "version": "5.9.3"
+            },
+            {
+              "archiveSha256": "2e0d011f852e45046ca5c107db54cfc56338f77aca49d227a063696d958451d7",
+              "fileCount": 3,
+              "integrity": "sha512-N3zl+lxHCifgIlcMUP5016ESkeQjLj/959RxxNYIthIg+CQHInujFuXeWbWMgnTo4cp5XVHqFPmpyu9J65C1Yg==",
+              "name": "@esbuild/darwin-arm64",
+              "treeSha256": "a2017baa942e0b535074048d520123906f759ec60003501e72bbd935a65e283e",
+              "version": "0.25.12"
+            }
+          ],
+          "platform": "darwin-arm64"
+        },
+        "packageInputs": {
+          "react-dom/cjs/react-dom-client.production.js": "sha256:a319b413b7a19ee34422d9a12a8e7afd003c07846716d278ba1a0898e8cb6251",
+          "react-dom/cjs/react-dom.production.js": "sha256:7a05d7f7bb2b02aae84018a88d4815a2181eef48d2cb8172d403eaa2b131eefd",
+          "react-dom/client.js": "sha256:00e348ab3d6bc2eef908345d0bc4e008c95bcfecec060dfda5c4967953761396",
+          "react-dom/index.js": "sha256:ba1a3e33489f868371561777607e3ee5091df0f7ea3f1a10f789d6b86e4c1505",
+          "react/cjs/react-jsx-runtime.production.js": "sha256:1e46f15002696985e80c61d47aaa30dabb03c954270a690f5f7dfbbacfa9002b",
+          "react/cjs/react.production.js": "sha256:0b5529981841afa1b58c76ba85c29bb681ff5f07cd8cde6a10b967d3915b8e1c",
+          "react/index.js": "sha256:60caffdecbdc5db3bc4ec4e83df9488345ccb271d07533b9210bf5750918d97e",
+          "react/jsx-runtime.js": "sha256:b392951a77d0a2e6a6bd017e49d768481ae5b63c4109c6c31f622cf7b2433edc",
+          "scheduler/cjs/scheduler.production.js": "sha256:679adff761d31e9426604f80c0e99be44a3e6f4c6834b0218ecf0312a67c171f",
+          "scheduler/index.js": "sha256:145965504d60007bc25486ab930b0367867dcd5d579ccd343c148d69349a7cfb"
+        },
+        "bootstrapDigest": "sha256:d4b99548858608ba28eedb7cc36c2b93b911974b260f990df59145a663aa9552",
+        "isolation": {
+          "build": "trusted-fixture-subprocess-only",
+          "execution": "unverified"
+        },
+        "provenance": "repository-developer-fixture",
+        "viewer": {
+          "contractVersion": 1,
+          "status": "blocked",
+          "code": "ISOLATION_UNVERIFIED",
+          "execution": "denied",
+          "instanceId": "review-counter",
+          "reference": {
+            "definitionId": "trusted-counter",
+            "versionDigest": "sha256:616498cc16cfd7af5663c5638660dd19e913a75a22a398a13ec319128be527ec"
+          }
+        }
+      },
+      {
+        "name": "temperature",
+        "durationMs": 370,
+        "contractVersion": 1,
+        "status": "compiled",
+        "execution": "denied",
+        "reference": {
+          "definitionId": "trusted-temperature",
+          "versionDigest": "sha256:039ce7baf9b902ea58c62c239a96c9599b534a64838e030a04a37085bc4bcb6a"
+        },
+        "sourceDigest": "sha256:039ce7baf9b902ea58c62c239a96c9599b534a64838e030a04a37085bc4bcb6a",
+        "sourcesDigest": "sha256:19dfb4abf3f4e3132210c6450e1574f2c65e75c3ee6f1ba55bc2c8e954c046be",
+        "bundleDigest": "sha256:297970e1e1d48f74b9799c34ee1f59a2ec9d978fdc84d39775d2298fb6045a44",
+        "bundleBytes": 223687,
+        "toolchain": {
+          "name": "esbuild",
+          "version": "0.25.12",
+          "binaryDigest": "sha256:3e030ee2aa86ad3c33e5e95ae0e53bb03de40e0da35c9b1180a67de4a497cae5",
+          "node": "v24.22.0",
+          "parser": "typescript@5.9.3",
+          "sdk": "1.0.0",
+          "driverDigest": "sha256:5a9ceb3b0f62107ba8296b0ae627d5a0655a85f85cb2bad33ee8b9402133c92e"
+        },
+        "profile": {
+          "profile": "react-isolated-v1",
+          "toolchain": {
+            "name": "esbuild",
+            "version": "0.25.12",
+            "integrity": "sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg=="
+          },
+          "target": "es2020",
+          "format": "esm",
+          "maxBundleBytes": 524288
+        },
+        "supply": {
+          "binaryDigest": "sha256:3e030ee2aa86ad3c33e5e95ae0e53bb03de40e0da35c9b1180a67de4a497cae5",
+          "lockDigest": "sha256:81e1ad412fefdc1cfc9f66c51da8ec28dbffe03f7956666bd17117d557f04fbe",
+          "packages": [
+            {
+              "archiveSha256": "227584145829e5c4782734b3fb7b91b49c6aa12876d6cf070e6a3d9d4de543f9",
+              "fileCount": 7,
+              "integrity": "sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg==",
+              "name": "esbuild",
+              "treeSha256": "1b640d001bebc6e430dc5bdb24270c55d248580a402595f07fd4c3a88d05fe9c",
+              "version": "0.25.12"
+            },
+            {
+              "archiveSha256": "56936913918dcf1f7a6fe58784e79df54b18200a88655ce809cf5e9c4ef871aa",
+              "fileCount": 27,
+              "integrity": "sha512-QNhWdt7nrgVWWQG58QuGsAR3jv3Hbe4mb4vz7w2csnHavciZJgda1CPNaldF6eVxv90ud3jUXpKlHL69gO38yw==",
+              "name": "react",
+              "treeSha256": "3f014b751e07766efc58c3f15625d46e05372ba20fab81deb17cb5a605c48f1c",
+              "version": "19.3.1"
+            },
+            {
+              "archiveSha256": "8b49975821eec6311e00d2b3f4b8337923253c876517388a33f9839c61ab262e",
+              "fileCount": 43,
+              "integrity": "sha512-Y0bARz53lhEC1NMCASs0/j+faB/zqt3R8hpvg1e8+61ZVJ4UL0UdC4cBbXfZMcIuhrfgeILTLe+ZeBCavQPtKQ==",
+              "name": "react-dom",
+              "treeSha256": "431730c6fa403652038bfd36de90c48df11ffdf16f2c60fdc7c7baeba749da82",
+              "version": "19.3.1"
+            },
+            {
+              "archiveSha256": "302995d590e3c0a11eeb40d1d0f299c1df1800135d599d85cdd5faeb614f32d6",
+              "fileCount": 15,
+              "integrity": "sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw==",
+              "name": "scheduler",
+              "treeSha256": "b00f7acf211e288b2183028f828b695c67b3394d765a18778888c48f0be81675",
+              "version": "0.28.0"
+            },
+            {
+              "archiveSha256": "10e108c9cf7d5f2879053dff18515fb405abf2ccef63eaaf017d9c571687a1d3",
+              "fileCount": 132,
+              "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+              "name": "typescript",
+              "treeSha256": "157973716ed7eea8fef4816c93432cb12febb4c31b02360394d7767304bdb4e5",
+              "version": "5.9.3"
+            },
+            {
+              "archiveSha256": "2e0d011f852e45046ca5c107db54cfc56338f77aca49d227a063696d958451d7",
+              "fileCount": 3,
+              "integrity": "sha512-N3zl+lxHCifgIlcMUP5016ESkeQjLj/959RxxNYIthIg+CQHInujFuXeWbWMgnTo4cp5XVHqFPmpyu9J65C1Yg==",
+              "name": "@esbuild/darwin-arm64",
+              "treeSha256": "a2017baa942e0b535074048d520123906f759ec60003501e72bbd935a65e283e",
+              "version": "0.25.12"
+            }
+          ],
+          "platform": "darwin-arm64"
+        },
+        "packageInputs": {
+          "react-dom/cjs/react-dom-client.production.js": "sha256:a319b413b7a19ee34422d9a12a8e7afd003c07846716d278ba1a0898e8cb6251",
+          "react-dom/cjs/react-dom.production.js": "sha256:7a05d7f7bb2b02aae84018a88d4815a2181eef48d2cb8172d403eaa2b131eefd",
+          "react-dom/client.js": "sha256:00e348ab3d6bc2eef908345d0bc4e008c95bcfecec060dfda5c4967953761396",
+          "react-dom/index.js": "sha256:ba1a3e33489f868371561777607e3ee5091df0f7ea3f1a10f789d6b86e4c1505",
+          "react/cjs/react-jsx-runtime.production.js": "sha256:1e46f15002696985e80c61d47aaa30dabb03c954270a690f5f7dfbbacfa9002b",
+          "react/cjs/react.production.js": "sha256:0b5529981841afa1b58c76ba85c29bb681ff5f07cd8cde6a10b967d3915b8e1c",
+          "react/index.js": "sha256:60caffdecbdc5db3bc4ec4e83df9488345ccb271d07533b9210bf5750918d97e",
+          "react/jsx-runtime.js": "sha256:b392951a77d0a2e6a6bd017e49d768481ae5b63c4109c6c31f622cf7b2433edc",
+          "scheduler/cjs/scheduler.production.js": "sha256:679adff761d31e9426604f80c0e99be44a3e6f4c6834b0218ecf0312a67c171f",
+          "scheduler/index.js": "sha256:145965504d60007bc25486ab930b0367867dcd5d579ccd343c148d69349a7cfb"
+        },
+        "bootstrapDigest": "sha256:98b76bf63e5be10a314756a6536caff0bd4502ab6aae1bdd3877f30acf675146",
+        "isolation": {
+          "build": "trusted-fixture-subprocess-only",
+          "execution": "unverified"
+        },
+        "provenance": "repository-developer-fixture",
+        "viewer": {
+          "contractVersion": 1,
+          "status": "blocked",
+          "code": "ISOLATION_UNVERIFIED",
+          "execution": "denied",
+          "instanceId": "review-temperature",
+          "reference": {
+            "definitionId": "trusted-temperature",
+            "versionDigest": "sha256:039ce7baf9b902ea58c62c239a96c9599b534a64838e030a04a37085bc4bcb6a"
+          }
+        }
+      }
+    ]
+  },
+  "isolationValidation": {
+    "contractVersion": 1,
+    "status": "blocked",
+    "code": "ISOLATION_UNVERIFIED",
+    "inventory": {
+      "platform": "darwin",
+      "architecture": "arm64",
+      "node": "v24.22.0",
+      "commands": {
+        "docker": null,
+        "podman": null,
+        "colima": null,
+        "limactl": null,
+        "qemu-system-aarch64": null,
+        "qemu-system-x86_64": null,
+        "sandbox-exec": "/usr/bin/sandbox-exec"
+      },
+      "dependencies": {
+        "react": "19.3.1",
+        "react-dom": "19.3.1",
+        "esbuild": null,
+        "playwright": null,
+        "puppeteer": null
+      }
+    },
+    "extraCommands": {
+      "multipass": null,
+      "tart": null,
+      "orb": null,
+      "bwrap": null,
+      "firejail": null,
+      "unshare": null
+    },
+    "surfaces": {
+      "/Applications/Docker.app": false,
+      "/Applications/OrbStack.app": false,
+      "/var/run/docker.sock": false
+    },
+    "macosDiagnostics": {
+      "status": "diagnostic-only",
+      "productionIsolationVerified": false,
+      "loopbackNetwork": {
+        "positiveControl": true,
+        "denyObserved": true,
+        "controlCode": 0,
+        "deniedCode": 7
+      },
+      "selectedFile": {
+        "positiveControl": true,
+        "denyObserved": true,
+        "controlCode": 0,
+        "deniedCode": 1
+      },
+      "limitations": [
+        "Profiles allow default except the tested operation; never use them to run untrusted code.",
+        "No external network, host secrets, arbitrary component, CPU loop or memory exhaustion was tested.",
+        "This does not establish CPU/memory/process quotas, a hardened filesystem policy, or an execution service."
+      ]
+    },
+    "acceptance": {
+      "independentLinuxBoundary": "unverified",
+      "fullNetworkDeny": "unverified",
+      "hostFilesystemDeny": "unverified",
+      "hardCpuMemoryPidsLimits": "unverified",
+      "deadlineTermination": "unverified",
+      "processTreeReaping": "unverified",
+      "browserInteraction": "not-attempted",
+      "gatewayAuthentication": "not-implemented"
+    },
+    "execution": "denied",
+    "sourceExecutionAttempted": false
+  }
+}
