@@ -204,3 +204,17 @@ test('native byte read cancellation also retires without waiting for the File pr
   f.ui.cancel(); await pending
   assert.equal(f.ui.getSnapshot().phase, 'idle'); f.ui.dispose()
 })
+
+test('an observer failure cannot turn a successful confirmed install into an error', async () => {
+  const f = setup()
+  await f.ui.readFile(input(envelope())); await f.ui.prepare()
+  const offBad = f.ui.subscribe(() => { if (f.ui.getSnapshot().phase === 'installed') throw Error('observer render failed') })
+  const phases = []
+  const offGood = f.ui.subscribe(() => { phases.push(f.ui.getSnapshot().phase) })
+  await f.ui.confirm()
+  assert.equal(f.ui.getSnapshot().phase, 'installed')
+  assert.deepEqual(phases, ['confirming', 'installed'])
+  assert.equal(f.owner.getSnapshot().custom.instances.length, 1)
+  assert.equal(f.owner.getSnapshot().revision, 1)
+  offBad(); offGood(); f.ui.dispose()
+})

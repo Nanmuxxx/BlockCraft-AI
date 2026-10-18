@@ -21,7 +21,11 @@ export function createGeneratedArtifactUI(session: CustomProjectSession) {
   let captured: { snapshot: ReturnType<typeof session.getSnapshot>; authorization: ReturnType<typeof session.getAuthorization>; input: unknown } | undefined
   let state: InstallUIState = { phase: 'idle', message: '' }
   const listeners = new Set<() => void>()
-  const publish = (next: InstallUIState) => { state = Object.freeze(next); listeners.forEach(fn => fn()) }
+  const publish = (next: InstallUIState) => {
+    state = Object.freeze(next)
+    // A render observer cannot change an already committed install receipt.
+    listeners.forEach(fn => { try { fn() } catch { /* Isolate observer failures. */ } })
+  }
   const fail = (error: unknown) => publish({ phase: 'error', message: error instanceof Error ? error.message : '制品处理失败。' })
   const unlocked = () => check(state.phase !== 'confirming', 'CONFIRM_BUSY：正在确认添加，请稍后再切换或离开。', 'CONFIRM_BUSY')
   const alive = () => check(!closed, '安装界面已关闭，请重新载入。', 'INSTALLER_DISPOSED')
