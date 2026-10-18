@@ -424,5 +424,35 @@
     "remote": "8672d8e59a104a4e26d641f328df155ffde579a9",
     "tree": "021835837e91b6a9b83c3e483296ec7802bae04f",
     "message": "test(generation): verify literal model text across formal B and C modes"
+  },
+  {
+    "local": "713f176898ca48e67f276a0040f4764f903a9264",
+    "remote": "15af6dac3e7f4355f48b6247c88399dcaa993b2b",
+    "tree": "fb7aead7d881cdf63a93cf5063d5571e55b2ad6a",
+    "message": "docs(ai-core): archive formal HTTP mobile cancellation and text safety evidence"
+  },
+  {
+    "local": "71d874d5e83b5213219d0362ae5b33d79e3b4ee4",
+    "remote": "dc0240f55856f21fe00cda3184fe07f407b47b4c",
+    "tree": "22c9b345121dae8670bda490895e89bb9144a4fa",
+    "message": "fix(mochi): reject retired ignore actions after synchronous context round trips"
+  },
+  {
+    "local": "91bbbb3267eabbfff31874906c86a41a9574abb3",
+    "remote": "8403d931faf5718eff2a503c4de7f362349d8d11",
+    "tree": "52e015e8d960ec54b4c41382c218c455665e7a27",
+    "message": "test(generation): verify incomplete HTTP uploads release bounded admission"
+  },
+  {
+    "local": "0845361fb4cda524af4f78ea63ce4832c2165229",
+    "remote": "a412cce752755b9f4d4816fb57eefdb3676e5e6e",
+    "tree": "42e78cdc4aae86809ffa5b2518f3c97d022fc5e7",
+    "message": "fix(mochi): preserve lifecycle cleanup for nonstandard adapter failures"
+  },
+  {
+    "local": "80c32a3c56c84ac9f0e2ac3ae86b0450da5adb08",
+    "remote": "2f53dd9d4d382bc43323415f847b606490afdacb",
+    "tree": "2671c2ba34546fcc070b1a0bf3c5d2dfaee4ad32",
+    "message": "fix(mochi): retire scheduled analysis when proactive consent is revoked"
   }
 ]

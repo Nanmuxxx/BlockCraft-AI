@@ -1,0 +1,118 @@
+✔ health works without a key and never calls upstream (14.191292ms)
+✔ missing key produces safe 503 without upstream call (3.76975ms)
+✔ invalid idea, unexpected fields, and malformed JSON never reach upstream (9.523042ms)
+✔ body byte limit and content type are enforced before upstream (1.934083ms)
+✔ chunked body cannot bypass byte limit (1.794792ms)
+✔ mock valid result uses official endpoint, default model, JSON mode, and actual AppSpec source (4.170791ms)
+✔ DEEPSEEK_MODEL overrides the default server-side (1.179ms)
+✔ rejects non-JSON model content with the existing validator and safe errors (1.010791ms)
+✔ rejects wrong protocol with the existing validator and safe errors (0.925333ms)
+✔ rejects extra executable property with the existing validator and safe errors (0.947875ms)
+✔ rejects missing binding with the existing validator and safe errors (0.925917ms)
+✔ rejects cross-entity field with the existing validator and safe errors (0.781042ms)
+✔ handles malformed upstream JSON (0.773208ms)
+✔ handles truncated output (0.822708ms)
+✔ handles empty choices (1.2205ms)
+✔ handles upstream HTTP failure (0.85575ms)
+✔ handles oversized envelope (0.787875ms)
+✔ handles oversized generated content (0.704041ms)
+✔ rejects ambiguous completion: multiple choices (0.579ms)
+✔ rejects ambiguous completion: tool calls (0.559208ms)
+✔ rejects ambiguous completion: legacy function call (0.558833ms)
+✔ rejects ambiguous completion: refusal with content (0.611292ms)
+✔ rejects ambiguous completion: wrong message role (0.716459ms)
+✔ rejects ambiguous completion: error with choices (0.865ms)
+✔ invalid UTF-8 input is rejected before upstream, even inside valid JSON strings (1.144458ms)
+✔ invalid UTF-8 upstream cannot silently replace bytes inside an otherwise valid AppSpec (0.729667ms)
+✔ timeout aborts an upstream call and returns safe 504 (26.952791ms)
+✔ timeout also covers upstream body consumption (28.543875ms)
+✔ rate limit ignores forged forwarding headers and leaves health available (5.6525ms)
+✔ concurrency cap rejects excess calls without starting another upstream request (7.530875ms)
+✔ cross-origin requests and wrong methods/paths never call upstream (1.301375ms)
+✔ deadline releases ignored-abort transport and cancels its late response body (12.89925ms)
+✔ HTTP and declared-size rejection cancel unused upstream bodies without blocking admission (1.243708ms)
+✔ deadline releases ignored-abort body, including nonsettling cancel (12.844459ms)
+✔ timed-out requests do not retain concurrency slots (24.39175ms)
+✔ HTTP disconnect aborts upstream and releases admission even when transport ignores cancellation (2.114458ms)
+✔ disconnect at input completion prevents a generation call before upstream dispatch (1.567083ms)
+✖ generation rejects unfinished media type uploads and closes without waiting for body (6.984584ms)
+✖ generation rejects unfinished cross-origin uploads and closes without waiting for body (2.105459ms)
+✖ generation rejects unfinished declared size uploads and closes without waiting for body (0.730667ms)
+✖ generation rejects unfinished method uploads and closes without waiting for body (1.101625ms)
+✖ generation rejects unfinished route uploads and closes without waiting for body (0.641792ms)
+✖ over-limit unfinished chunked upload is structured 413 and releases the generation slot (0.729584ms)
+✖ unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect (1.090542ms)
+✔ generation accepts valid multibyte JSON split inside a UTF-8 codepoint (4.586167ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 38
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 218.996083
+
+✖ failing tests:
+
+test at tests/generation/ingress.test.mjs:51:4
+✖ generation rejects unfinished media type uploads and closes without waiting for body (6.984584ms)
+  SyntaxError [Error]: Unexpected non-whitespace character after JSON at position 4 (line 2 column 1)
+      at JSON.parse (<anonymous>)
+      at rejectedUpload (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:39:21)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:53:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests/generation/ingress.test.mjs:51:4
+✖ generation rejects unfinished cross-origin uploads and closes without waiting for body (2.105459ms)
+  SyntaxError [Error]: Unexpected non-whitespace character after JSON at position 1 (line 1 column 2)
+      at JSON.parse (<anonymous>)
+      at rejectedUpload (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:39:21)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:53:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/generation/ingress.test.mjs:51:4
+✖ generation rejects unfinished declared size uploads and closes without waiting for body (0.730667ms)
+  SyntaxError [Error]: Unexpected non-whitespace character after JSON at position 4 (line 2 column 1)
+      at JSON.parse (<anonymous>)
+      at rejectedUpload (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:39:21)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:53:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/generation/ingress.test.mjs:51:4
+✖ generation rejects unfinished method uploads and closes without waiting for body (1.101625ms)
+  SyntaxError [Error]: Exponent part is missing a number in JSON at position 2 (line 1 column 3)
+      at JSON.parse (<anonymous>)
+      at rejectedUpload (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:39:21)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:53:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/generation/ingress.test.mjs:51:4
+✖ generation rejects unfinished route uploads and closes without waiting for body (0.641792ms)
+  SyntaxError [Error]: Unexpected non-whitespace character after JSON at position 1 (line 1 column 2)
+      at JSON.parse (<anonymous>)
+      at rejectedUpload (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:39:21)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:53:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/generation/ingress.test.mjs:59:1
+✖ over-limit unfinished chunked upload is structured 413 and releases the generation slot (0.729584ms)
+  SyntaxError [Error]: Unexpected non-whitespace character after JSON at position 4 (line 2 column 1)
+      at JSON.parse (<anonymous>)
+      at rejectedUpload (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:39:21)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:61:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/generation/ingress.test.mjs:67:1
+✖ unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect (1.090542ms)
+  SyntaxError [Error]: Exponent part is missing a number in JSON at position 2 (line 1 column 3)
+      at JSON.parse (<anonymous>)
+      at rejectedUpload (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:39:21)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generation/ingress.test.mjs:72:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

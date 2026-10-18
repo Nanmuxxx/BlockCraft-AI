@@ -1,0 +1,45 @@
+✔ analysis adapter rejection null publishes a safe error and releases busy state (1.279125ms)
+✔ consent adapter rejection null publishes a safe error and keeps proactive disabled (0.110875ms)
+✔ analysis adapter rejection undefined publishes a safe error and releases busy state (0.322ms)
+✔ consent adapter rejection undefined publishes a safe error and keeps proactive disabled (0.057208ms)
+✔ analysis adapter rejection constructor publishes a safe error and releases busy state (0.137291ms)
+✔ consent adapter rejection constructor publishes a safe error and keeps proactive disabled (0.057042ms)
+✔ analysis adapter rejection toString publishes a safe error and releases busy state (0.129459ms)
+✔ consent adapter rejection toString publishes a safe error and keeps proactive disabled (0.418833ms)
+✔ unavailable context throwing null retires the active transport and clears suggestions (0.393083ms)
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (2.180041ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (1.199709ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.3115ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.460542ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.216417ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.186875ms)
+✔ cancel retires an ignored analysis promise without altering newer history (1.754416ms)
+✔ abort listener reentry retains ownership of the newer conversation request (0.346333ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.0755ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (22.676042ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.087ms)
+✔ late status cannot re-enable consent after explicit off (0.063334ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.151209ms)
+✔ subscriber cancellation during message publication prevents analysis egress (0.10675ms)
+✔ subscriber cancellation during busy publication prevents analysis egress (0.0585ms)
+✔ subscriber replacement at request publication keeps only the fresh analysis and history (0.161375ms)
+✔ project transition publishes the new identity before abort reentry (0.177042ms)
+✔ project transition publishes the new identity before subscriber reentry (0.115292ms)
+✔ context synchronization is idempotent inside a state subscriber (0.044833ms)
+✔ a newer project transition during notification cannot be overwritten by the older transition (0.111208ms)
+✔ project changed during context notification blocks stale-context egress (0.059916ms)
+✔ project changed during busy notification blocks stale-context egress (0.05375ms)
+✔ a failing state observer cannot skip transport cancellation or later observers (0.108667ms)
+✔ disposing a conversation prevents its queued opt-in and delayed status egress (2.056084ms)
+✔ an explicitly queued opt-out still revokes after disposal and an already sent opt-in (0.352875ms)
+✔ late opt-in acknowledgment cannot mark a disabled capability as proactive (0.746042ms)
+✔ explicit opt-out publishes revocation before notifying idle subscribers (1.123042ms)
+✔ a subscriber opt-in after revocation preserves user order in the serialized queue (0.102792ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 63.695584

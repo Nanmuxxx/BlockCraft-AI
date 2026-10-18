@@ -7,7 +7,7 @@
 - Agent B：`agent-b/react-zip-night-20261019`，正在修改 `tools/project-zip-export/templates.mjs`。本分支禁止编辑导出器、模板、部署及冻结材料。
 - REAL_MODEL_CALLS=0。服务测试显式注入固定 Fixture；不读取 `.env`、生产密钥或私人材料。
 
-## 当前任务（2026-10-19 04:34）
+## 当前任务（2026-10-19 04:47）
 
 已完成第一轮链路恢复、生成/协议/取消修复和离线端到端验证；继续接口审计、核心回归、生产浏览器盲区与 Draft PR 准备。六小时窗口尚未结束，不声称已工作六小时。
 
@@ -46,7 +46,7 @@
 - 正式 Mochi 修改入口仍 unavailablePlanProvider；新 seam 不隐式启用付费或网络。需要独立服务鉴权/费用接口契约。
 - 任意 TSX Viewer 缺少验收隔离后端：保持 execution denied。
 - 会话内参数保存/重装已测，不提供跨刷新持久化。保留版本历史可能长期增长，需设计保留策略而非直接删除回滚证据。
-- 下一步：更新差距矩阵及跨模块契约；相关完整回归；浏览器覆盖剩余边界；发布 Draft；持续推进安全独立队列。
+- 下一步：归档已发布至80c32a3的差距矩阵和浏览器证据，发布ff61d48及本轮账本；继续检查源码与Artifact安装映射、Owner/CAS及协议兼容边界。
 
 - 最新完整核心回归 core-complete：568/568；正式 CustomBlock Workshop 桌面/手机均通过。
 - `4c40e94`：Mochi instruction+选中上下文 UTF-8 64 KiB 出站限制；model-request-bound-fixed 14/14（首次测试使用错 fixture 层级，已保留失败）。
@@ -147,3 +147,12 @@
 - 当前修改：mochi-ai/client.mjs、suggestion-actions.test.mjs、generation/browser.cjs及新增cancellation.browser.cjs。下一任务：正式生成结果HTML/URL文字惰性显示验证，继续独立安全审计。REAL_MODEL_CALLS=0。
 
 95d4156新增正式HTTP纯文字安全浏览器：桌面1366/移动390均验证AppSpec应用/积木名、字段、select选项及记录创建/编辑/B-C往返；HTML、URL、事件文字无探针DOM/执行标记/弹窗/外部请求，0页面错误。命令generation-text-safety退出0，baseline a3c2b0b+未提交测试，生产代码未变。没有执行生成TSX。
+
+## 第十一轮补充证据（04:47，继续开发）
+
+- 71d874d：忽略建议的通知期间cancel、项目A→B→A、选择A→空→A不得发送退休ignore；旧3失败，修复相关41/41。
+- 91bbbb3及后续入站测试：真实socket未完成上传的415/403/413/405/404/503、超限chunked、断开释放、UTF-8跨块、408截止及429限流；相关47/47退出0。首次7失败为测试未解码HTTP chunk framing，修正测试后45/45，未修改生产服务以通过。
+- 0845361：适配器throw null/undefined及constructor/toString错误码，旧9失败；修复相关37/37，不再跳过上下文退休或向界面发布函数文案，保留原始拒绝。
+- 80c32a3：撤销主动授权或能力关闭立即清除已排队settle事件，之后重新授权不复活旧事件；旧2失败，修复相关31/31。真实正式/ai-create桌面1366/移动390验证旧事件零请求、新事件正常；consent-timer报告0页面错误/外部请求，10次离线Provider/12次Fixture预留。
+- 最新较广核心808/808与build-consent-timer退出0，代码80c32a3；之后仅新增408/429测试，已单独47/47。adapter-errors正式页亦通过，浏览器没有注入非标准异常，异常专由单元测试验证。
+- 四项生产/测试提交已推送Draft #40，本地80c32a3对应远端2f53dd9d4d382bc43323415f847b606490afdacb，树一致；最后408/429测试待下一次同步。未合并、部署或执行生成TSX，REAL_MODEL_CALLS=0。

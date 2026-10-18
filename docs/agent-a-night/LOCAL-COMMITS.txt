@@ -69,3 +69,9 @@ bf11cb6c20f6054b2743d6330dd1075a5c739c5b fix(mochi): bind continued suggestion t
 7b3fd01fe105cd16ff681915bcf976718f4f4973 test(generation): report actual HTTP application flows on desktop and mobile
 a3c2b0ba68c0680e6b08843948a793a39fee107c fix(mochi): retire focused actions after cancellation and context round trips
 95d415669ba58c4d9c8f9e0943465d9c66a5aa80 test(generation): verify literal model text across formal B and C modes
+713f176898ca48e67f276a0040f4764f903a9264 docs(ai-core): archive formal HTTP mobile cancellation and text safety evidence
+71d874d5e83b5213219d0362ae5b33d79e3b4ee4 fix(mochi): reject retired ignore actions after synchronous context round trips
+91bbbb3267eabbfff31874906c86a41a9574abb3 test(generation): verify incomplete HTTP uploads release bounded admission
+0845361fb4cda524af4f78ea63ce4832c2165229 fix(mochi): preserve lifecycle cleanup for nonstandard adapter failures
+80c32a3c56c84ac9f0e2ac3ae86b0450da5adb08 fix(mochi): retire scheduled analysis when proactive consent is revoked
+ff61d487719fdacf72ca9c6ea290710680e6967a test(generation): cover input deadline and rate-limited incomplete uploads

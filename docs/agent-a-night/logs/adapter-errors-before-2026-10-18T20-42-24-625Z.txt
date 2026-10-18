@@ -1,0 +1,211 @@
+✖ analysis adapter rejection null publishes a safe error and releases busy state (1.355833ms)
+✖ consent adapter rejection null publishes a safe error and keeps proactive disabled (0.136375ms)
+✖ analysis adapter rejection undefined publishes a safe error and releases busy state (0.247166ms)
+✖ consent adapter rejection undefined publishes a safe error and keeps proactive disabled (0.075667ms)
+✖ analysis adapter rejection constructor publishes a safe error and releases busy state (0.28525ms)
+✖ consent adapter rejection constructor publishes a safe error and keeps proactive disabled (0.35225ms)
+✖ analysis adapter rejection toString publishes a safe error and releases busy state (0.144666ms)
+✖ consent adapter rejection toString publishes a safe error and keeps proactive disabled (0.06425ms)
+✖ unavailable context throwing null retires the active transport and clears suggestions (0.20425ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 0
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32.323292
+
+✖ failing tests:
+
+test at tests/mochi-ai/adapter-errors.test.mjs:16:3
+✖ analysis adapter rejection null publishes a safe error and releases busy state (1.355833ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  TypeError: Cannot read properties of null (reading 'code')
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:18:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of null (reading 'code')
+        at run (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:206:69)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:18:5)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3),
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/adapter-errors.test.mjs:24:3
+✖ consent adapter rejection null publishes a safe error and keeps proactive disabled (0.136375ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  TypeError: Cannot read properties of null (reading 'code')
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:26:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of null (reading 'code')
+        at Object.setProactive (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:164:110)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:26:5)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/adapter-errors.test.mjs:16:3
+✖ analysis adapter rejection undefined publishes a safe error and releases busy state (0.247166ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  TypeError: Cannot read properties of undefined (reading 'code')
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:18:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of undefined (reading 'code')
+        at run (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:206:69)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:18:5)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/adapter-errors.test.mjs:24:3
+✖ consent adapter rejection undefined publishes a safe error and keeps proactive disabled (0.075667ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  TypeError: Cannot read properties of undefined (reading 'code')
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:26:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of undefined (reading 'code')
+        at Object.setProactive (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:164:110)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:26:5)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/adapter-errors.test.mjs:16:3
+✖ analysis adapter rejection constructor publishes a safe error and releases busy state (0.28525ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'function'
+  - 'string'
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:20:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'function',
+    expected: 'string',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/adapter-errors.test.mjs:24:3
+✖ consent adapter rejection constructor publishes a safe error and keeps proactive disabled (0.35225ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'constructor'
+  - 'AI_UNAVAILABLE'
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:28:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'constructor',
+    expected: 'AI_UNAVAILABLE',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/adapter-errors.test.mjs:16:3
+✖ analysis adapter rejection toString publishes a safe error and releases busy state (0.144666ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'function'
+  - 'string'
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:20:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'function',
+    expected: 'string',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/adapter-errors.test.mjs:24:3
+✖ consent adapter rejection toString publishes a safe error and keeps proactive disabled (0.06425ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'toString'
+  - 'AI_UNAVAILABLE'
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:28:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'toString',
+    expected: 'AI_UNAVAILABLE',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/adapter-errors.test.mjs:32:1
+✖ unavailable context throwing null retires the active transport and clears suggestions (0.20425ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  TypeError: Cannot read properties of null (reading 'code')
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:36:27)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of null (reading 'code')
+        at Object.syncContext (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:111:92)
+        at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:36:49
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/adapter-errors.test.mjs:36:27)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    operator: 'throws',
+    diff: 'simple'
+  }
