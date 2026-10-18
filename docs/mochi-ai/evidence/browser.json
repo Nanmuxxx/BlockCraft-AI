@@ -1,0 +1,199 @@
+{
+  "offline": true,
+  "realApiCalls": 0,
+  "fixtureCalls": 4,
+  "captures": [
+    {
+      "version": 1,
+      "kind": "chat",
+      "context": {
+        "appId": "signup",
+        "instanceId": "mochi-fixture",
+        "revision": 0,
+        "selectedBlockId": "form",
+        "mode": "blocks",
+        "blocks": [
+          {
+            "id": "form",
+            "name": "报名表",
+            "type": "form",
+            "fieldIds": [
+              "name"
+            ]
+          }
+        ],
+        "entities": [
+          {
+            "id": "people",
+            "name": "参与者",
+            "fields": [
+              {
+                "id": "name",
+                "name": "姓名",
+                "type": "text"
+              }
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "blockId": "form",
+            "entityId": "people"
+          }
+        ]
+      },
+      "history": [],
+      "prompt": "下一步还能怎样优化报名应用？"
+    },
+    {
+      "version": 1,
+      "kind": "chat",
+      "context": {
+        "appId": "signup",
+        "instanceId": "mochi-fixture",
+        "revision": 0,
+        "selectedBlockId": "form",
+        "mode": "blocks",
+        "blocks": [
+          {
+            "id": "form",
+            "name": "报名表",
+            "type": "form",
+            "fieldIds": [
+              "name"
+            ]
+          }
+        ],
+        "entities": [
+          {
+            "id": "people",
+            "name": "参与者",
+            "fields": [
+              {
+                "id": "name",
+                "name": "姓名",
+                "type": "text"
+              }
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "blockId": "form",
+            "entityId": "people"
+          }
+        ]
+      },
+      "history": [
+        "下一步还能怎样优化报名应用？"
+      ],
+      "prompt": "请解释这条建议：要不要加一个报名截止时间？"
+    },
+    {
+      "version": 1,
+      "kind": "proactive",
+      "context": {
+        "appId": "signup",
+        "instanceId": "mochi-fixture",
+        "revision": 1,
+        "selectedBlockId": "form",
+        "mode": "blocks",
+        "blocks": [
+          {
+            "id": "form",
+            "name": "报名表",
+            "type": "form",
+            "fieldIds": [
+              "name",
+              "date"
+            ]
+          }
+        ],
+        "entities": [
+          {
+            "id": "people",
+            "name": "参与者",
+            "fields": [
+              {
+                "id": "name",
+                "name": "姓名",
+                "type": "text"
+              },
+              {
+                "id": "date",
+                "name": "活动日期",
+                "type": "date"
+              }
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "blockId": "form",
+            "entityId": "people"
+          }
+        ]
+      },
+      "history": [],
+      "event": {
+        "type": "structure-changed"
+      }
+    },
+    {
+      "version": 1,
+      "kind": "chat",
+      "context": {
+        "appId": "signup",
+        "instanceId": "mochi-fixture",
+        "revision": 1,
+        "selectedBlockId": "form",
+        "mode": "blocks",
+        "blocks": [
+          {
+            "id": "form",
+            "name": "报名表",
+            "type": "form",
+            "fieldIds": [
+              "name",
+              "date"
+            ]
+          }
+        ],
+        "entities": [
+          {
+            "id": "people",
+            "name": "参与者",
+            "fields": [
+              {
+                "id": "name",
+                "name": "姓名",
+                "type": "text"
+              },
+              {
+                "id": "date",
+                "name": "活动日期",
+                "type": "date"
+              }
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "blockId": "form",
+            "entityId": "people"
+          }
+        ]
+      },
+      "history": [
+        "下一步还能怎样优化报名应用？",
+        "请解释这条建议：要不要加一个报名截止时间？"
+      ],
+      "prompt": "请再给我一个建议"
+    }
+  ],
+  "usage": {
+    "calls": 4,
+    "reservedTokens": 11735,
+    "inFlight": 0
+  }
+}
