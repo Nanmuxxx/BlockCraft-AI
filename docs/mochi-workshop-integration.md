@@ -1,13 +1,13 @@
 # Mochi × Phase A Workshop integration: design and implementation report
 
-## Verified upstream and review sequence
+## Final upstream and integration status
 
-- 2026-10-18: PR #18 merged at 08:38:11 UTC. The independent worktree starts from main `65e1f813949ceb1bc74064d338a04f99351c244e`.
-- Final refresh found PR #19 merged during this task. Integrated latest main `c039fe9533a868425a493ed7d581774aa042a20f` without conflicts and reran tests/build/Chromium acceptance. Its 16 upstream CustomBlock paths are retained byte-for-byte; this task adds no CustomBlock changes.
-- PR #17 was open/unmerged at verification, head `e6f94fa591aea3111bbc811c7b20c98a74f45cdf`. Its exact Git commit was integrated locally; no other Agent working directory was read or copied.
-- [PR #20](https://github.com/Nanmuxxx/BlockCraft-AI/pull/20) targets #17's branch with the formal component contract and browser-discovered corrections. Review #20 into #17 first, then #17 into main; this integration is dependent and must be reconciled/retested against that merged main. This integration branch includes the committed dependency so the result can be reviewed now.
-- No GitHub PR was merged and nothing was deployed by this task.
-- [Integration draft PR #21](https://github.com/Nanmuxxx/BlockCraft-AI/pull/21) targets main and contains the dependent reviewable implementation. #17 and #20 remain unmerged.
+- PR #18 and #19 were already merged. Following the user's explicit approval, PR #17 was merged through GitHub on 2026-10-18 at 09:18:54 UTC with an ordinary merge commit, preserving original history.
+- Latest verified main and actual #17 merge SHA: `16cd342550b7989ad2d555687b8b867a06f3a2bf`.
+- PR #20 final fix `3a9c1fcd7e8b906c50820be44693f65024097d89` entered #17 through merge `e747cce253edc8f8095f52f5d07728956ead62e8`. Both callbacks return `void | Promise<void>`; the extra TypeScript contract test is preserved.
+- The clean independent integration worktree was backed up before an ordinary merge of actual main into prior #21 head `ecf7864bbdee109295122a27ae400ad38a519c36`. No conflict, rebase, force push or original-history rewrite. No source was copied from another Agent's uncommitted worktree.
+- All files under `src/components/mochi-ai/` are byte-for-byte identical to latest main. #21 now adds only the 10 integration/style/planning/test/documentation paths listed below. It does not replace the original Mochi components with an older copy.
+- PR #21 remains unmerged pending a new explicit approval. Nothing was deployed.
 
 ## Ownership and lifecycle
 
@@ -15,7 +15,7 @@ The generated-app caller still creates the only AppRuntime. AppSpecWorkshop acqu
 
 MochiWorkshop subscribes to the host's stable external snapshot. Mode and selectedBlockId come from that snapshot. Canvas selection calls host.setSelection; B/C navigation calls host.setMode. Both existing canvas and renderer stay mounted as before. The old static AppSpecMochiPanel is replaced at this mount point by one MochiAssistant. Original Demo remains unchanged.
 
-All four callbacks use the shared MochiCallbacks contract: onRequestPlan(prompt, uiContext): Promise<void>; onConfirm(planId): Promise<void>; onCancel(planId): void; onIgnore(suggestionId): void. UI sends display context only. Host ignores that second argument and independently derives the current selection, entity binding and revision. UI catches callback failures and retains failed drafts. The host alone owns plans, permissions, cancellation, request epochs and receipts.
+All four callbacks use the shared MochiCallbacks contract: onRequestPlan(prompt, uiContext): void | Promise<void>; onConfirm(planId): void | Promise<void>; onCancel(planId): void; onIgnore(suggestionId): void. UI sends display context only. Host ignores that second argument and independently derives the current selection, entity binding and revision. UI catches callback failures and retains failed drafts. The host alone owns plans, permissions, cancellation, request epochs and receipts.
 
 ## Preview and commit boundary
 
@@ -39,18 +39,41 @@ Chat is outside canvas drag handlers and stops pointer/key propagation. Real poi
 
 ## Validation and evidence
 
-- `npm test`: **156/156** passed, including the inherited 24 host security tests, Phase A/Runtime tests, component tests and new fail-closed/data-minimization tests.
+- `npm test`: **157/157** passed, including the inherited 24 host security tests, Phase A/Runtime tests, component tests and new fail-closed/data-minimization tests.
+- `npm run test:mochi-host`: **24/24** passed separately (these cases are also included in npm test).
+- `npm run test:generation`: **23/23** passed with its server TypeScript build.
+- `npx tsc -b --force`: passed.
 - `npm run build`: passed. Production JS excludes Mock planner and browser fixture.
 - `git diff --check`: passed.
 - `NODE_PATH=<Playwright module directory> npm run test:mochi:browser`: real headless Chromium, **1366×900 and 390×900**, all checks passed. See [structured report](mochi-workshop-audit/browser-report.json). Zero page errors, asset HTTP errors or external network calls.
 - Real-browser checks at both widths: production disabled state; one chat entry; StrictMode/B/C subscription stability and unmount cleanup; preview zero writes; cancel/reselection/mode invalidation; duplicate confirmation; real Runtime receipt; B/C schema/record consistency; suggestion ignore; chat drag isolation; canvas dragging; failure after commit preserves app and draft; history anchor; overlay anchor/fallback; reduced motion; no horizontal page overflow.
 - Existing `tests/generation/browser.cjs`: passed with 7 distinct offline apps, records/aggregates, B inspector edits/C data, edit/delete, 5 failures retaining old app, retry; 13 local HTTP requests using injected DeepSeek responses, zero paid calls.
-- Screenshots and full browser report: `/tmp/blockcraft-mochi-audit/production-1366.png`, `production-390.png`, `integrated-1366.png`, `integrated-390.png`, `report.json`. Screenshots were visually inspected. Initial dependency symlink blocked font files in Vite; replaced with a clean worktree-local `npm ci --ignore-scripts` and reran both browser suites with fonts/assets passing.
+- Screenshots and full browser report: `/tmp/blockcraft-mochi-final-audit/production-1366.png`, `production-390.png`, `integrated-1366.png`, `integrated-390.png`, `report.json`. Screenshots were visually inspected. Final rerun used worktree-local dependencies; fonts and all assets loaded successfully.
+
+Final checks were rerun after merging actual main. Validated application tree before documentation-only evidence updates: `c1bdc49e989cfbd3abc04fa45e6c3e4a9fe7f789`. Logs: `/tmp/mochi21-final-{tests,host,generation,build,browser,generation-browser}.log`.
 
 These checks use a real browser and Runtime with a fixed Mock candidate; they do not establish model planning quality, a live DeepSeek modification endpoint, Safari behavior or physical touch-device behavior.
 
 ## Next requirements
 
-1. Tech Lead review and explicit authorization for the #20 → #17 → integration merge sequence; refresh/retest on merged main if upstream changes.
+1. Review this final integration diff and grant a new explicit approval before merging #21. #20 and #17 are already merged in order. If main or the PR head changes, recheck the resulting diff and affected validation.
 2. Implement a real server-side DeepSeek modification-plan API with the minimal DTO, cancellation/timeout/error contract, unknown JSON validation, credentials kept server-side, and no record egress by default. Return requestId/baseRevision binding; never execute commands server-side on behalf of UI.
 3. Add real API success/failure/timeout and malicious-output integration cases before replacing unavailablePlanProvider. Keep preview/confirm and trusted Phase A scope unchanged; enable the composer only when that production capability actually exists.
+
+
+## Final effective file list against main
+
+- `docs/mochi-workshop-audit/browser-report.json`
+- `docs/mochi-workshop-integration.md`
+- `package.json`
+- `src/components/app-builder/AppSpecWorkshop.tsx`
+- `src/components/app-builder/app-spec-workshop.css`
+- `src/integrations/mochi/WorkshopMochi.tsx`
+- `src/integrations/mochi/planning.test.cjs`
+- `src/integrations/mochi/planning.ts`
+- `tests/mochi/browser.cjs`
+- `tests/mochi/fixture.tsx`
+
+The original Demo, Workshop.tsx/workshop.css, brand assets, AppSpecCanvas, AppSpecInspector, AppRenderer, model/Runtime/Phase A, CustomBlock server/executor and Docker paths have zero diff against main. Runtime creation remains with the existing caller; this integration only creates/disposes its host. Production disabled behavior and Mock exclusion were checked again against the production build. The browser fixture runs the actual AppSpecWorkshop production wrapper for disabled-state checks, and the explicit fixed-plan test seam for confirmation/cancellation; no live model planning API was called.
+
+Recommendation: ready for Tech Lead's final #21 merge approval, scoped to integration with AI modification disabled. A real modification-plan API and live-model quality remain separate work.

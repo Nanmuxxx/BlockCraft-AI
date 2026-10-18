@@ -69,3 +69,36 @@ test('unavailable planner is explicit and disables prompt submission and suggest
   assert.match(html, /class="mochi-ai__send"[^>]*disabled/)
   assert.match(html, /class="mochi-ai__suggestion-prompt"[^>]*disabled/)
 })
+
+test('TypeScript callback contract accepts synchronous and asynchronous hosts through both UI entries', () => {
+  const path = require('node:path')
+  const filename = path.join(__dirname, '__callback_contract_test__.ts')
+  const source = `
+    import type { MochiCallbacks, MochiAiAssistantProps } from './types'
+    import type { MochiAssistantProps } from './MochiTypes'
+    type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? true : false
+    type Assert<T extends true> = T
+    type RequestReturn = Assert<Equal<ReturnType<MochiCallbacks['onRequestPlan']>, void | Promise<void>>>
+    type ConfirmReturn = Assert<Equal<ReturnType<MochiCallbacks['onConfirm']>, void | Promise<void>>>
+    const sync: MochiCallbacks = { onRequestPlan(prompt, ui) { prompt.toUpperCase(); ui.blocks.map(b => b.id) }, onConfirm(id) { id.toUpperCase() }, onCancel() {}, onIgnore() {} }
+    const asyncHost: MochiCallbacks = { ...sync, async onRequestPlan() {}, async onConfirm() {} }
+    const mixed: MochiCallbacks = { ...sync, onRequestPlan: () => Math.random() ? undefined : Promise.resolve(), onConfirm: () => Math.random() ? undefined : Promise.resolve() }
+    const base = { context: { blocks: [] }, messages: [], suggestions: [] }
+    const chats: MochiAiAssistantProps[] = [sync, asyncHost, mixed].map(callbacks => ({ ...base, ...callbacks }))
+    const assistants: MochiAssistantProps[] = [sync, asyncHost, mixed].map(callbacks => ({ ...base, ...callbacks }))
+    // @ts-expect-error A callback cannot return a plan as authority.
+    const invalidRequest: MochiCallbacks['onRequestPlan'] = () => ({ planId: 'untrusted' })
+    // @ts-expect-error A confirmation cannot return an arbitrary promise payload.
+    const invalidConfirm: MochiCallbacks['onConfirm'] = async () => 1
+  `
+  const options = { strict: true, noEmit: true, skipLibCheck: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.Bundler }
+  const host = ts.createCompilerHost(options)
+  const getSourceFile = host.getSourceFile.bind(host)
+  host.getSourceFile = (file, languageVersion, ...rest) => file === filename
+    ? ts.createSourceFile(file, source, languageVersion, true)
+    : getSourceFile(file, languageVersion, ...rest)
+  const diagnostics = ts.getPreEmitDiagnostics(ts.createProgram([filename], options, host))
+  assert.equal(diagnostics.length, 0, ts.formatDiagnosticsWithColorAndContext(diagnostics, {
+    getCanonicalFileName: f => f, getCurrentDirectory: () => __dirname, getNewLine: () => '\n',
+  }))
+})
