@@ -7,6 +7,7 @@ const { once } = require('node:events')
 const assert = require('node:assert/strict')
 const path = require('node:path')
 const root = path.resolve(__dirname, '../..')
+const output = process.env.GENERATION_QA_OUTPUT || '/tmp/blockcraft-g2-audit'
 
 async function run() {
   const { cases } = await import('./fixtures.mjs')
@@ -43,9 +44,14 @@ async function run() {
   let browser
   try {
     await vite.listen()
-    await mkdir('/tmp/blockcraft-g2-audit', { recursive: true })
+    await mkdir(output, { recursive: true })
     browser = await chromium.launch({ headless: true })
-    const page = await browser.newPage()
+    const page = await browser.newPage({ serviceWorkers: 'block' })
+    await page.route('**/*', route => {
+      const target = new URL(route.request().url())
+      if (target.origin === 'http://127.0.0.1:5193') return route.continue()
+      return route.abort('blockedbyclient')
+    })
     const failures = []
     const assetFailures = []
     page.on('response', response => {
@@ -99,7 +105,7 @@ async function run() {
     await inspector.getByLabel('字段名称', { exact: true }).fill('导演')
     await inspector.getByRole('button', { name: '新增字段', exact: true }).click()
     await inspector.getByRole('checkbox', { name: '展示 导演', exact: true }).check()
-    await page.screenshot({ path: '/tmp/blockcraft-g2-audit/generated-b.png', fullPage: true })
+    await page.screenshot({ path: path.join(output, 'generated-b.png'), fullPage: true })
     await page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
     const region = page.getByRole('region', { name: '已看电影记录', exact: true })
     await region.getByRole('button', { name: '编辑', exact: true }).click()
@@ -110,7 +116,7 @@ async function run() {
     await expect(inspector.getByRole('checkbox', { name: '展示 导演', exact: true })).toBeChecked()
     await page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
     await expect(region.getByRole('cell', { name: '宫崎骏', exact: true })).toBeVisible()
-    await page.screenshot({ path: '/tmp/blockcraft-g2-audit/generated-c.png', fullPage: true })
+    await page.screenshot({ path: path.join(output, 'generated-c.png'), fullPage: true })
     if (!await page.getByLabel('你想做什么软件？').isVisible()) await page.locator('.ai-create-regenerate > summary').click()
     for (mode of ['failure', 'invalid', 'empty', 'no-input', 'network']) {
       await page.getByRole('button', { name: /^(生成新应用|重试生成)$/ }).click()

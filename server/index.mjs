@@ -55,7 +55,7 @@ function readInput(req) {
     }
     const onEnd = () => {
       cleanup()
-      try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8'))) }
+      try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))) }
       catch { reject(fail(400, 'INVALID_INPUT', '请求必须为有效 JSON。')) }
     }
     const timer = setTimeout(() => stop(fail(408, 'INPUT_TIMEOUT', '读取请求超时。')), LIMITS.inputTimeoutMs)
@@ -82,7 +82,7 @@ async function readUpstream(response, controller) {
       }
       chunks.push(Buffer.from(value))
     }
-    return JSON.parse(Buffer.concat(chunks).toString('utf8'))
+    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))
   } finally { reader.releaseLock() }
 }
 
@@ -110,7 +110,14 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
     const envelope = await readUpstream(response, controller)
     const choice = envelope?.choices?.[0]
     const content = choice?.message?.content
-    if (choice?.finish_reason !== 'stop' || typeof content !== 'string') {
+    // A successful JSON completion must be unambiguous. Never accept tool or
+    // refusal envelopes merely because they also contain plausible AppSpec text.
+    if (!Array.isArray(envelope?.choices) || envelope.choices.length !== 1
+      || choice?.finish_reason !== 'stop' || typeof content !== 'string'
+      || (choice.message.role !== undefined && choice.message.role !== 'assistant')
+      || (choice.message.refusal !== undefined && choice.message.refusal !== null)
+      || choice.message.tool_calls !== undefined || choice.message.function_call !== undefined
+      || envelope.error !== undefined) {
       throw fail(502, 'AI_INVALID_RESPONSE', 'AI 未返回完整的 JSON 结果。')
     }
     if (Buffer.byteLength(content) > LIMITS.outputBytes) throw fail(502, 'AI_OUTPUT_TOO_LARGE', 'AI 结果超过大小限制。')
