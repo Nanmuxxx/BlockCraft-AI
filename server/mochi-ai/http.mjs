@@ -52,9 +52,15 @@ export function createMochiHandler({ service, resolveAccess, allowedOrigin, acce
       }
       if (++ingress.get(key).count > 60) throw new MochiError('THROTTLED', '请求过于频繁。', 429)
       controller.signal.throwIfAborted()
-      const deadline = setTimeout(() => controller.abort(new MochiError('ACCESS_UNAVAILABLE', 'Mochi AI 可信访问权限暂不可用。', 503)), accessTimeoutMs)
+      let accessTimedOut = false
+      const deadline = setTimeout(() => { accessTimedOut = true; controller.abort() }, accessTimeoutMs)
       let access
       try { access = await abortable(Promise.resolve(resolveAccess(req, { signal: controller.signal })), controller.signal) }
+      catch {
+        // Resolver exceptions are adapter data, never public HTTP metadata.
+        if (controller.signal.aborted && !accessTimedOut) throw new MochiError('CANCELLED', '已取消请求。', 499)
+        throw new MochiError('ACCESS_UNAVAILABLE', 'Mochi AI 可信访问权限暂不可用。', 503)
+      }
       finally { clearTimeout(deadline) }
       if (!access) throw new MochiError('UNAUTHORIZED', '请先建立可信应用会话。', 401)
       controller.signal.throwIfAborted()

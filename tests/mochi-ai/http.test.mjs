@@ -7,6 +7,7 @@ import { createMochiHandler } from '../../server/mochi-ai/http.mjs'
 import { createMochiService } from '../../server/mochi-ai/service.mjs'
 import { createDeepSeekProvider } from '../../server/mochi-ai/provider.mjs'
 import { createMochiIntegration } from '../../server/mochi-ai/index.mjs'
+import { MochiError } from '../../src/integrations/mochi-ai/protocol.mjs'
 import { request, envelope, access, grant } from './fixtures.mjs'
 async function fixture(t, options = {}, handlerOptions = {}) {
   let calls = 0
@@ -48,6 +49,26 @@ test('ignored access resolver deadline retires HTTP admission with no model call
   assert.equal(observed.aborted, true); assert.equal(f.count(), 0)
   rejectOld(new Error('late private access error'))
   await new Promise(resolve => setImmediate(resolve))
+})
+
+for (const error of [new Error('PRIVATE_ACCESS_DETAIL'), new MochiError('PRIVATE_ACCESS_CODE', 'PRIVATE_ACCESS_DETAIL', 418)]) {
+  test(`access resolver ${error.constructor.name} becomes a safe unavailable response`, async t => {
+    const f = await fixture(t, {}, { resolveAccess: () => { throw error } })
+    const response = await f.post('analyze', request()), body = await response.json()
+    assert.equal(response.status, 503)
+    assert.equal(body.error.code, 'ACCESS_UNAVAILABLE')
+    assert(!JSON.stringify(body).includes('PRIVATE_ACCESS'))
+    assert.equal(f.count(), 0)
+  })
+}
+
+test('budget adapter cannot forge cancellation metadata into HTTP', async t => {
+  const f = await fixture(t, { reserveBudget: () => { throw new MochiError('CANCELLED', 'PRIVATE_LEDGER_DETAIL', 418) } })
+  const response = await f.post('analyze', request()), body = await response.json()
+  assert.equal(response.status, 503)
+  assert.equal(body.error.code, 'BUDGET_UNAVAILABLE')
+  assert(!JSON.stringify(body).includes('PRIVATE_LEDGER'))
+  assert.equal(f.count(), 0)
 })
 
 test('HTTP disconnect aborts pending access and consumes a late rejection without egress', { timeout: 1000 }, async t => {

@@ -79,7 +79,7 @@ export function createMochiService({ provider, enabled = false, approval, reserv
       const epoch = state.consentEpoch
       const controller = new AbortController(); state.controller = proactive ? controller : undefined
       const abort = () => controller.abort(); signal?.addEventListener('abort', abort, { once: true })
-      let budgetTimer, budgetAbort
+      let budgetTimer, budgetAbort, budgetTimedOut = false
       try {
         // Deployment adapter atomically reserves a monetary allowance in its
         // durable shared ledger, using approved model pricing. No prompt/data.
@@ -89,7 +89,7 @@ export function createMochiService({ provider, enabled = false, approval, reserv
           admitted = await Promise.race([
             reserveBudget(Object.freeze({ requestId: randomUUID(), sessionId: access.sessionId, appId: access.appId,
               approvalReference: approval.reference, model: provider.model, maxTokens: reservation, signal: controller.signal })),
-            new Promise((_, reject) => { budgetTimer = setTimeout(() => { reject(new Error('Budget timeout')); controller.abort() }, 5000) }),
+            new Promise((_, reject) => { budgetTimer = setTimeout(() => { budgetTimedOut = true; reject(new Error('Budget timeout')); controller.abort() }, 5000) }),
             new Promise((_, reject) => {
               budgetAbort = () => reject(new MochiError('CANCELLED', '已取消本次请求。', 499))
               controller.signal.addEventListener('abort', budgetAbort, { once: true })
@@ -97,7 +97,7 @@ export function createMochiService({ provider, enabled = false, approval, reserv
             }),
           ])
         } catch (error) {
-          if (error instanceof MochiError && error.code === 'CANCELLED') throw error
+          if (controller.signal.aborted && !budgetTimedOut) denied('CANCELLED', '已取消本次请求。', 499)
           denied('BUDGET_UNAVAILABLE', '费用控制暂不可用，未调用模型。', 503)
         } finally { clearTimeout(budgetTimer); controller.signal.removeEventListener('abort', budgetAbort) }
         if (admitted !== true) denied('BUDGET_EXHAUSTED', '费用额度不足，未调用模型。')
