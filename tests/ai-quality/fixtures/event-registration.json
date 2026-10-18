@@ -1,0 +1,172 @@
+{
+  "version": 1,
+  "id": "qa-event-registration",
+  "name": "活动报名",
+  "entities": [
+    {
+      "id": "event-registration-events",
+      "name": "活动资料",
+      "fields": [
+        {
+          "id": "event-registration-events-title",
+          "name": "活动名称",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "event-registration-events-date",
+          "name": "活动日期",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "event-registration-events-venue",
+          "name": "地点",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "event-registration-events-capacity",
+          "name": "参考名额",
+          "type": "number",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "event-registration-registrations",
+      "name": "活动报名",
+      "fields": [
+        {
+          "id": "event-registration-registrations-event",
+          "name": "活动名称",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "event-registration-registrations-name",
+          "name": "参与者姓名",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "event-registration-registrations-contact",
+          "name": "联系方式",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "event-registration-registrations-tickets",
+          "name": "报名票数",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "event-registration-registrations-checkedIn",
+          "name": "是否签到",
+          "type": "boolean",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "id": "event-registration-event-form",
+      "name": "维护活动资料",
+      "type": "form",
+      "fieldIds": [
+        "event-registration-events-title",
+        "event-registration-events-date",
+        "event-registration-events-venue",
+        "event-registration-events-capacity"
+      ]
+    },
+    {
+      "id": "event-registration-event-list",
+      "name": "活动资料列表",
+      "type": "list",
+      "fieldIds": [
+        "event-registration-events-title",
+        "event-registration-events-date",
+        "event-registration-events-venue",
+        "event-registration-events-capacity"
+      ]
+    },
+    {
+      "id": "event-registration-registration-form",
+      "name": "活动报名表",
+      "type": "form",
+      "fieldIds": [
+        "event-registration-registrations-event",
+        "event-registration-registrations-name",
+        "event-registration-registrations-contact",
+        "event-registration-registrations-tickets",
+        "event-registration-registrations-checkedIn"
+      ]
+    },
+    {
+      "id": "event-registration-registration-list",
+      "name": "活动报名名单",
+      "type": "list",
+      "fieldIds": [
+        "event-registration-registrations-event",
+        "event-registration-registrations-name",
+        "event-registration-registrations-contact",
+        "event-registration-registrations-tickets",
+        "event-registration-registrations-checkedIn"
+      ]
+    },
+    {
+      "id": "event-registration-registration-count",
+      "name": "报名记录数",
+      "type": "metric",
+      "aggregation": "count"
+    },
+    {
+      "id": "event-registration-ticket-sum",
+      "name": "累计报名票数",
+      "type": "metric",
+      "aggregation": "sum",
+      "fieldId": "event-registration-registrations-tickets"
+    }
+  ],
+  "relations": [
+    {
+      "id": "event-registration-event-form-binding",
+      "type": "dataBinding",
+      "blockId": "event-registration-event-form",
+      "entityId": "event-registration-events"
+    },
+    {
+      "id": "event-registration-event-list-binding",
+      "type": "dataBinding",
+      "blockId": "event-registration-event-list",
+      "entityId": "event-registration-events"
+    },
+    {
+      "id": "event-registration-registration-form-binding",
+      "type": "dataBinding",
+      "blockId": "event-registration-registration-form",
+      "entityId": "event-registration-registrations"
+    },
+    {
+      "id": "event-registration-registration-list-binding",
+      "type": "dataBinding",
+      "blockId": "event-registration-registration-list",
+      "entityId": "event-registration-registrations"
+    },
+    {
+      "id": "event-registration-registration-count-binding",
+      "type": "dataBinding",
+      "blockId": "event-registration-registration-count",
+      "entityId": "event-registration-registrations"
+    },
+    {
+      "id": "event-registration-ticket-sum-binding",
+      "type": "dataBinding",
+      "blockId": "event-registration-ticket-sum",
+      "entityId": "event-registration-registrations"
+    }
+  ]
+}

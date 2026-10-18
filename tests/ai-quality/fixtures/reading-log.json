@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "id": "qa-reading-log",
+  "name": "阅读记录",
+  "entities": [
+    {
+      "id": "reading-log-books",
+      "name": "书目",
+      "fields": [
+        {
+          "id": "reading-log-books-title",
+          "name": "书名",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "reading-log-books-author",
+          "name": "作者",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "reading-log-books-status",
+          "name": "阅读状态",
+          "type": "select",
+          "required": true,
+          "options": [
+            "想读",
+            "在读",
+            "读完"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading-log-sessions",
+      "name": "阅读流水",
+      "fields": [
+        {
+          "id": "reading-log-sessions-title",
+          "name": "书名",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "reading-log-sessions-date",
+          "name": "阅读日期",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "reading-log-sessions-minutes",
+          "name": "阅读分钟",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "reading-log-sessions-notes",
+          "name": "摘记",
+          "type": "text",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "id": "reading-log-book-form",
+      "name": "添加书目",
+      "type": "form",
+      "fieldIds": [
+        "reading-log-books-title",
+        "reading-log-books-author",
+        "reading-log-books-status"
+      ]
+    },
+    {
+      "id": "reading-log-book-list",
+      "name": "我的书架",
+      "type": "list",
+      "fieldIds": [
+        "reading-log-books-title",
+        "reading-log-books-author",
+        "reading-log-books-status"
+      ]
+    },
+    {
+      "id": "reading-log-reading-form",
+      "name": "记录阅读",
+      "type": "form",
+      "fieldIds": [
+        "reading-log-sessions-title",
+        "reading-log-sessions-date",
+        "reading-log-sessions-minutes",
+        "reading-log-sessions-notes"
+      ]
+    },
+    {
+      "id": "reading-log-reading-list",
+      "name": "每日阅读流水",
+      "type": "list",
+      "fieldIds": [
+        "reading-log-sessions-title",
+        "reading-log-sessions-date",
+        "reading-log-sessions-minutes",
+        "reading-log-sessions-notes"
+      ]
+    },
+    {
+      "id": "reading-log-reading-sum",
+      "name": "累计阅读分钟",
+      "type": "metric",
+      "aggregation": "sum",
+      "fieldId": "reading-log-sessions-minutes"
+    },
+    {
+      "id": "reading-log-reading-average",
+      "name": "平均阅读分钟",
+      "type": "metric",
+      "aggregation": "average",
+      "fieldId": "reading-log-sessions-minutes"
+    }
+  ],
+  "relations": [
+    {
+      "id": "reading-log-book-form-binding",
+      "type": "dataBinding",
+      "blockId": "reading-log-book-form",
+      "entityId": "reading-log-books"
+    },
+    {
+      "id": "reading-log-book-list-binding",
+      "type": "dataBinding",
+      "blockId": "reading-log-book-list",
+      "entityId": "reading-log-books"
+    },
+    {
+      "id": "reading-log-reading-form-binding",
+      "type": "dataBinding",
+      "blockId": "reading-log-reading-form",
+      "entityId": "reading-log-sessions"
+    },
+    {
+      "id": "reading-log-reading-list-binding",
+      "type": "dataBinding",
+      "blockId": "reading-log-reading-list",
+      "entityId": "reading-log-sessions"
+    },
+    {
+      "id": "reading-log-reading-sum-binding",
+      "type": "dataBinding",
+      "blockId": "reading-log-reading-sum",
+      "entityId": "reading-log-sessions"
+    },
+    {
+      "id": "reading-log-reading-average-binding",
+      "type": "dataBinding",
+      "blockId": "reading-log-reading-average",
+      "entityId": "reading-log-sessions"
+    }
+  ]
+}
