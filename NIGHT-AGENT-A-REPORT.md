@@ -1,6 +1,6 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 04:58（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
+阶段检查点：2026-10-19 05:06（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
@@ -24,11 +24,11 @@
 - 分支`agent-a/ai-core-night-20261019`；worktree `/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a`。
 - 精确提交：[LOCAL-COMMITS.txt](docs/agent-a-night/LOCAL-COMMITS.txt)；本地/远端SHA及逐一校验的同一文件树：[COMMIT-MAPPING.json](docs/agent-a-night/COMMIT-MAPPING.json)。Git-data API提交时间不同，不能将本地SHA当作远端SHA。
 - 审查命令：`git diff --stat 4044fb1...HEAD`和`git diff 4044fb1...HEAD`。
-- 最新本地提交：`dccde1073b97e29c72b049feaa6cdc0732a57549`；远端对应`2aca6a4cbaee00c162b6cdf90baa80fc5f68d44d`，tree逐一校验。之前发布的远端提交metadata trailer误填了本地SHA（tree一致）；本报告及映射已用实际`git rev-parse`结果校正。最后一个远端提交是分支HEAD。
+- 交付文档校正提交：本地`dccde1073b97e29c72b049feaa6cdc0732a57549`→远端`2aca6a4cbaee00c162b6cdf90baa80fc5f68d44d`；随后本地`b646eea904b35497b96326df868531e27e5c4562`→远端`3bf225f400756da4c51bc74ad45dfe3669d103d5`，两组tree逐一校验。dccde发布时metadata trailer误填本地SHA（文件tree一致），b646完成账本校正；细节见映射和queue。
 
 ## 3. Draft PR
 
-[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署；远端核验状态open/draft，HEAD=`2aca6a4cbaee00c162b6cdf90baa80fc5f68d44d`。后续同步见映射。
+[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署；最近核验状态open/draft，HEAD=`3bf225f400756da4c51bc74ad45dfe3669d103d5`。后续同步见映射。
 
 ## 4. 测试命令及退出码
 
@@ -124,3 +124,11 @@ status格式/异常关闭旧能力；主动建议的迟到确认、撤销通知�
 - 最新核心回归810/810、安装/重装和协议兼容聚焦集119/119、默认`npm test`192/192及`npm run build`均退出0。命令/参数/时间/HEAD/退出码及原始输出见TEST-COMMANDS.md和commands.jsonl。
 - 复核`createProjectRevisionOwner`、`createProjectSession`、Generated Artifact installer的单一快照/CAS、授权身份、异步prepare退休、确认租约和精确版本替换；对应owner/reinstall/install测试覆盖。本轮没有发现新的可复现生产缺陷。
 - PR #40保持open/draft，未合并；此检查点远端HEAD仍对应本地378b178。122eb1c映射提交与04:51后报告整理仍待发布，不计为远端成果。
+
+## 第十三轮独立审计与浏览器证据（05:06）
+
+- 协议/Artifact/Runtime/Mochi聚焦回归：`tests/ai-core-night/check.mjs interop-audit`记录，210/210退出0；覆盖v1/v2兼容、schema、B/C owner/CAS、Viewer fail-closed、安装/重装及源码plan版本冲突。
+- 当前工作树正式`/ai-create`桌面1366/移动390：7种离线AppSpec、13次本机HTTP往返、B Inspector编辑/C记录一致、5种失败保留旧项目及空项目替换，退出0；0外部请求、0真实模型调用。
+- 当前工作树取消/迟到响应桌面/移动：每视口6次本机HTTP；取消保留记录、响应体释放、迟到成功/拒绝不污染状态、导航取消，退出0。`reloadPersistence=false`明确表示未验收刷新存储。
+- 当前工作树恶意HTML/URL纯文字安全桌面/移动：脚本/iframe/event文字显示无探针节点、执行标志、弹窗、外部请求，B/C记录编辑往返通过，退出0。
+- 三份报告、截图/trace及命令原文/退出码写入`docs/agent-a-night/browser/final-*`与`logs/commands.jsonl`；Chrome 151.0.7922.34。移动仅模拟视口/触摸，不是真机。测试代码未改，REAL_MODEL_CALLS=0。

@@ -1,0 +1,61 @@
+5:04:08 AM [vite] (client) Re-optimizing dependencies because vite config has changed
+{
+  "repositoryHead": "b646eea904b35497b96326df868531e27e5c4562",
+  "browser": "151.0.7922.34",
+  "scope": "formal /ai-create -> actual local HTTP service; only upstream DeepSeek fetch injected with hand-authored offline fixtures",
+  "realModelCalls": 0,
+  "cases": [
+    {
+      "width": 1366,
+      "offlineApplications": 7,
+      "injectedUpstreamCalls": 13,
+      "httpResponses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        502,
+        502,
+        502,
+        502,
+        502,
+        200
+      ],
+      "bInspectorEditAndCRecords": true,
+      "failuresRetainOldProject": 5,
+      "retryReplacesWithEmptyRecords": true,
+      "errors": [],
+      "assetFailures": [],
+      "external": []
+    },
+    {
+      "width": 390,
+      "offlineApplications": 7,
+      "injectedUpstreamCalls": 13,
+      "httpResponses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        502,
+        502,
+        502,
+        502,
+        502,
+        200
+      ],
+      "bInspectorEditAndCRecords": true,
+      "failuresRetainOldProject": 5,
+      "retryReplacesWithEmptyRecords": true,
+      "errors": [],
+      "assetFailures": [],
+      "external": []
+    }
+  ]
+}

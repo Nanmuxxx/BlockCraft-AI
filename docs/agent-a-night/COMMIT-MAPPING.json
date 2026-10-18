@@ -484,5 +484,11 @@
     "remote": "2aca6a4cbaee00c162b6cdf90baa80fc5f68d44d",
     "tree": "ff25e1f352134369d31e10604c94b0f904199d10",
     "message": "docs(ai-core): sync night evidence and remote head"
+  },
+  {
+    "local": "b646eea904b35497b96326df868531e27e5c4562",
+    "remote": "3bf225f400756da4c51bc74ad45dfe3669d103d5",
+    "tree": "8d313e3eb2e8c5741885a5d50582b2e0b27d772e",
+    "message": "docs(ai-core): correct published commit mapping"
   }
 ]

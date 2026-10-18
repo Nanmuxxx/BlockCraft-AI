@@ -460,6 +460,101 @@
     "sha256": "deb4c55644ea40859dff2131077e4d96f6f87056608934a4036b15e84b4d3b54"
   },
   {
+    "path": "docs/agent-a-night/browser/final-cancel/disposed-1366.png",
+    "bytes": 433512,
+    "sha256": "b99452186b288501a1f4f8d4e29ac1603878e1b66274be71a0e4f0e5e502bc2d"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-cancel/disposed-390.png",
+    "bytes": 191943,
+    "sha256": "5abfed71e28f17e2c86667839380fc8074f46bce08f75a24f384d35979032c9f"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-cancel/late-success-1366.png",
+    "bytes": 183856,
+    "sha256": "b1073de9d96e6c40ad0f64ca24023a36da3523ad51bddadb67ef35409d700b16"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-cancel/late-success-390.png",
+    "bytes": 163379,
+    "sha256": "c2eef58c4cf3a2d52415f7a4de7a6b156c52734d657764e068227fbe87fafd57"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-cancel/report.json",
+    "bytes": 982,
+    "sha256": "bb79657fd8ab1ab413e4c29bc48706c1284347a28aed91ce97613fcc7f907095"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-cancel/trace-1366.zip",
+    "bytes": 3621595,
+    "sha256": "91d28e9c1e1278457e2bbdc06a76cb308a2916514c57e98010a3c93be1f2694c"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-cancel/trace-390.zip",
+    "bytes": 3671039,
+    "sha256": "9a662c4dfd34a8b1a9f8150f2fad341fc30d65c01eb98e923582ecf515b189d3"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-generation/generated-b-1366.png",
+    "bytes": 261791,
+    "sha256": "6f6043edc246b2a60fd194b551ff24831210a27e192dac07c94ad34a1d7251ba"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-generation/generated-b-390.png",
+    "bytes": 228978,
+    "sha256": "cc500d264c9bb7fdeee0dd119ac58fc530e58f50c9985cfff953c57848d3957d"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-generation/generated-c-1366.png",
+    "bytes": 126298,
+    "sha256": "a85c891f78794b3568ff806302ac5b97339e5f06b9091b169cab8ec26cc90ad1"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-generation/generated-c-390.png",
+    "bytes": 117672,
+    "sha256": "3d7262ce2a99c4e1124ab769d49eabeecd2226c82c8c1191662849d855e3a8c6"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-generation/report.json",
+    "bytes": 1260,
+    "sha256": "6c81af1ae770d18f05a402e000aa5749032177a6d41ba9e7da67e7bec10af33a"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-text-safety/literal-1366.zip",
+    "bytes": 1733172,
+    "sha256": "7adb9830d39c54f25c8321b684f564eba44b419615982ada3cf6ceca5686f764"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-text-safety/literal-390.zip",
+    "bytes": 1364227,
+    "sha256": "c2460e707464afa470e7f6229c6823d9656b19b74eb6f7ec99e9a2ddff866079"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-text-safety/literal-b-1366.png",
+    "bytes": 329299,
+    "sha256": "4d0036df35382382c5b52b841c2edfdd20e4585fded2990ad40e6d4a6fa82bd5"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-text-safety/literal-b-390.png",
+    "bytes": 286213,
+    "sha256": "884a0f904ce857ad6f30d7ade9cda977cf75fa1c2f8a20088773de25da726d21"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-text-safety/literal-c-1366.png",
+    "bytes": 219304,
+    "sha256": "7d6ab292dbe201d747fcd2f868facb9568681dbf9e27bc0c0a09d549d9f33ea9"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-text-safety/literal-c-390.png",
+    "bytes": 202618,
+    "sha256": "e3791e7829bfa6e92754dab2074e7b6930c9bb4f3d321062e4d35e9348aaadc2"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-text-safety/report.json",
+    "bytes": 991,
+    "sha256": "ae71900d98ab409ac6d63d08eaa35205a2d606c381817a155a21c2dae63f62f9"
+  },
+  {
     "path": "docs/agent-a-night/browser/focus-epoch/chat-1366.png",
     "bytes": 350333,
     "sha256": "9f63e9291a58fd3af6c8a8138d3bc4602d647a66c663ad1d1f624a6686746a7c"
@@ -493,16 +588,6 @@
     "path": "docs/agent-a-night/browser/focus-epoch/report.json",
     "bytes": 1686,
     "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
-  },
-  {
-    "path": "docs/agent-a-night/browser/generation/generated-b.png",
-    "bytes": 260869,
-    "sha256": "f0b56d72471b3b596c5b1aeda9acff9fa6ea9a2fd3b8bac3a36c51aab0791593"
-  },
-  {
-    "path": "docs/agent-a-night/browser/generation/generated-c.png",
-    "bytes": 125147,
-    "sha256": "e377f381e8e97823aa0d9fbf3bf6823435a3245e27a0713a59a7514bdcb47f1b"
   },
   {
     "path": "docs/agent-a-night/browser/generation-cancellation/disposed-1366.png",
@@ -610,6 +695,16 @@
     "sha256": "cb15d5d760aaae67c1cdfc08afd5ebacbc763f3de8e6c581987ff42694d9ad7d"
   },
   {
+    "path": "docs/agent-a-night/browser/generation/generated-b.png",
+    "bytes": 260869,
+    "sha256": "f0b56d72471b3b596c5b1aeda9acff9fa6ea9a2fd3b8bac3a36c51aab0791593"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation/generated-c.png",
+    "bytes": 125147,
+    "sha256": "e377f381e8e97823aa0d9fbf3bf6823435a3245e27a0713a59a7514bdcb47f1b"
+  },
+  {
     "path": "docs/agent-a-night/browser/host-retirement/chat-1366.png",
     "bytes": 350662,
     "sha256": "50537afcfe27b1285c801230acd3ef7b57a726c0fc3d8fe92b7e72fb6348d037"
@@ -680,41 +775,6 @@
     "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
   },
   {
-    "path": "docs/agent-a-night/browser/mochi-advice/chat-1366.png",
-    "bytes": 350747,
-    "sha256": "bb4ce886fd445a5ba7bb91d2cf46b0d3d7e5be083bdedbd1511ee208263aa4f7"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-advice/chat-390.png",
-    "bytes": 312309,
-    "sha256": "118d84a7b44238ae444578c51ffdc55e1310bf1898b0929ad756a8b1febc835b"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-advice/disabled-1366.png",
-    "bytes": 302584,
-    "sha256": "c22c19a426a58384a2188656e8219e32ecc9a6d303a34d7423d190f0becc9c48"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-advice/disabled-390.png",
-    "bytes": 265590,
-    "sha256": "db243c90eae2f10572ea1b8b7f3dc24e80a81c46c5c8402c1026617222ef33eb"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-advice/panel-1366.png",
-    "bytes": 72000,
-    "sha256": "378749614619a720c9b1663ffd1714344f49156434097a943c1d35eb627f97b5"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-advice/panel-390.png",
-    "bytes": 77143,
-    "sha256": "f8d3418f25905058b5b6931cffa4f07c37f596524ee8b8fa4b0160ca850cd9d0"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-advice/report.json",
-    "bytes": 1686,
-    "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
-  },
-  {
     "path": "docs/agent-a-night/browser/mochi-advice-final/chat-1366.png",
     "bytes": 350247,
     "sha256": "70eb26e5a0888480569ba82e83eb14e65b0f0865a884029fe708c459f82b0a0a"
@@ -746,6 +806,41 @@
   },
   {
     "path": "docs/agent-a-night/browser/mochi-advice-final/report.json",
+    "bytes": 1686,
+    "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-advice/chat-1366.png",
+    "bytes": 350747,
+    "sha256": "bb4ce886fd445a5ba7bb91d2cf46b0d3d7e5be083bdedbd1511ee208263aa4f7"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-advice/chat-390.png",
+    "bytes": 312309,
+    "sha256": "118d84a7b44238ae444578c51ffdc55e1310bf1898b0929ad756a8b1febc835b"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-advice/disabled-1366.png",
+    "bytes": 302584,
+    "sha256": "c22c19a426a58384a2188656e8219e32ecc9a6d303a34d7423d190f0becc9c48"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-advice/disabled-390.png",
+    "bytes": 265590,
+    "sha256": "db243c90eae2f10572ea1b8b7f3dc24e80a81c46c5c8402c1026617222ef33eb"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-advice/panel-1366.png",
+    "bytes": 72000,
+    "sha256": "378749614619a720c9b1663ffd1714344f49156434097a943c1d35eb627f97b5"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-advice/panel-390.png",
+    "bytes": 77143,
+    "sha256": "f8d3418f25905058b5b6931cffa4f07c37f596524ee8b8fa4b0160ca850cd9d0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-advice/report.json",
     "bytes": 1686,
     "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
   },
@@ -783,191 +878,6 @@
     "path": "docs/agent-a-night/browser/mochi-client-cancel/report.json",
     "bytes": 1686,
     "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/applied-1366.png",
-    "bytes": 311908,
-    "sha256": "c05897184f4d263329a7bdaa5982fdf74df7e0389ae3bc362cbcf1db36dcc2c9"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/applied-390.png",
-    "bytes": 274039,
-    "sha256": "b7b481b9154b3c33f43c114db305823fb0bacb8cb34ddfd180c416caaa19a9e2"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/before-drag-1366.png",
-    "bytes": 100076,
-    "sha256": "72e7d743c96d97f9abb3126077fdc010a06118b0ce54eabe71f781603df79827"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/before-drag-390.png",
-    "bytes": 51536,
-    "sha256": "31cf726819e5d4290739d5e45d357db0583efc443aa74be00cc899955510edbf"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/commit-failed-1366.png",
-    "bytes": 152578,
-    "sha256": "c0293c01134196c79304a7b534a98b3f03af12752afd18deee1f9a4649ed51aa"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/commit-failed-390.png",
-    "bytes": 140154,
-    "sha256": "32240849f1e91235767e18c9684d2e38fd695a6dd80d6c96a53f1f09d213be01"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/commit-unknown-1366.png",
-    "bytes": 165648,
-    "sha256": "40e0662b4c06bcbdac44d821a159e9856607769e9271e9760081431ddd5e55b1"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/commit-unknown-390.png",
-    "bytes": 151772,
-    "sha256": "25c23e1cf35d19adca0eb1c188ba0c0c7011400837b90cde8c6a93411aa0be14"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/demo-cancel-feedback-1366.png",
-    "bytes": 212569,
-    "sha256": "02f0190a63a1c0ae4d981a41a61e7d7bc532ed43c7f700b0dedc7c2084569db0"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/demo-cancel-feedback-390.png",
-    "bytes": 190769,
-    "sha256": "e7cc853bfd3677969b1b7d53527a3c1b435eecbc86470876e0bec28f0832c046"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/demo-cancel-result-1366.png",
-    "bytes": 192936,
-    "sha256": "b270291be2637d62f038fa57910d334c090108807a539d9c78e61a7813f21b37"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/demo-cancel-result-390.png",
-    "bytes": 179967,
-    "sha256": "22b7e3ca862cab6c05dae9e38ba911f178272af61fd9c8892759d94daa1dc7ca"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/demo-confirm-feedback-1366.png",
-    "bytes": 214167,
-    "sha256": "85d4b79c63aac79b64c70aaa019fc9c930263d907d1a31ba1cc02450152ddd2e"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/demo-confirm-feedback-390.png",
-    "bytes": 190734,
-    "sha256": "6e1a49044b20174b6a480d7ba1048f4a030cf4fe70b1d3bbdc0b397142404215"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/demo-confirm-result-1366.png",
-    "bytes": 199349,
-    "sha256": "3c6d907c7ef0675bc4199e1a307b7c79a36f7f75955f3fac7dc001fd48126558"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/demo-confirm-result-390.png",
-    "bytes": 184624,
-    "sha256": "f49800a3be82006a70112edc6bd324012613a3f7b69e4ae9bef652f9be2cd973"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/f1-corrected-preview-1366.png",
-    "bytes": 343144,
-    "sha256": "3b82cac0d5b7e8c3af00c13909d8b092db7b0c010db9181d4fc0efac410ad50d"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/f1-corrected-preview-390.png",
-    "bytes": 295965,
-    "sha256": "74492b7044fc2ac107445a6f2bc5962466b9200d74a54626f288f616846f321b"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/f1-invalid-preview-1366.png",
-    "bytes": 346997,
-    "sha256": "fa8f1186f8a94b04ec8119754d9212b369883ee254b4cf9a473855b71a4c92e8"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/f1-invalid-preview-390.png",
-    "bytes": 296307,
-    "sha256": "0f869fd5499baa3c8a0caa470788c311a56585b13967f293a6781c272288d311"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/f2-missed-notification-stale-1366.png",
-    "bytes": 158443,
-    "sha256": "c0d9442031adcc884044842d78b72a316b7a12f33f9117800f5927b582820948"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/f2-missed-notification-stale-390.png",
-    "bytes": 144905,
-    "sha256": "0553d46096933f5142d892e81a566607b931f7fb0ec784a31f1786d974806a6c"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/integrated-1366.png",
-    "bytes": 303793,
-    "sha256": "88d5f28f97afedd4e9a119da654512eaa9befff56729e3a51bef43986921723a"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/integrated-390.png",
-    "bytes": 270622,
-    "sha256": "b39bf5c94185c5a53304b1bf2be5c6f24e150748e23c9d7d893736002ef092d3"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/preview-1366.png",
-    "bytes": 343159,
-    "sha256": "5e858764fe9fd29540729430761fbcbb72a31aa6ed2bcc679ab9013f5af747e2"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/preview-390.png",
-    "bytes": 295976,
-    "sha256": "7db37115aef6dcb5d63d8922ded95a1f550428e0ec8249183f9f2994e149e671"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/production-1366.png",
-    "bytes": 198436,
-    "sha256": "96692b93122ea036eb7b5f94f12f33a4ebf49fd675fda5745628727a4cd44c88"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/production-390.png",
-    "bytes": 180904,
-    "sha256": "9a0f93c7ec90e07a5959c42658873dfbcf6d3a22cec7db3bc1176aed0b40c800"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/report.json",
-    "bytes": 60646,
-    "sha256": "a691f673ba002222a30c41eeca146d329184aa6228f2414924fe631fd6dc10b9"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/request-failed-1366.png",
-    "bytes": 313859,
-    "sha256": "3975ec239d79081b66fc586e07713d439e8606a2b99dabf6b5c2d4f789ff00b4"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/request-failed-390.png",
-    "bytes": 275171,
-    "sha256": "4282e57e55e151e0d291abff29c9803fe1172d4d1d2c76cd247a8b5314c16596"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/requesting-false-1366.png",
-    "bytes": 272338,
-    "sha256": "24a9d9b396f6780cc465ed812f6ac23ce1ee20bfe1619596a503c94e1727a0e3"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/requesting-false-390.png",
-    "bytes": 243248,
-    "sha256": "c0e40ffb43c0680c17effdb8cf4cf2e9e14b667425c7effe5c41ded2a9bda4aa"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/requesting-true-1366.png",
-    "bytes": 276674,
-    "sha256": "be71be102e1c49404102806cf6d9a67dd3174bfd1a2339b11205f687258a054e"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/requesting-true-390.png",
-    "bytes": 247393,
-    "sha256": "b32c929561a5e879b7542ba549f375a0521ed0f1a0931f33ec0df11cf743bd51"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/stale-1366.png",
-    "bytes": 266332,
-    "sha256": "21d1a9dbb4a62d487fb48d309f9b483922f66dd0e496a152cfb1918147cf95f0"
-  },
-  {
-    "path": "docs/agent-a-night/browser/mochi-model/stale-390.png",
-    "bytes": 238846,
-    "sha256": "a9819e08dcb11c9e7624791b78918dd59258b18364bb2f673271ba5b9bc62ac2"
   },
   {
     "path": "docs/agent-a-night/browser/mochi-model-final/applied-1366.png",
@@ -1153,6 +1063,191 @@
     "path": "docs/agent-a-night/browser/mochi-model-final/stale-390.png",
     "bytes": 238843,
     "sha256": "5b84364ff5703a9afa723b3140cca8b12c4de364bc20aecd520078c31982e61e"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/applied-1366.png",
+    "bytes": 311908,
+    "sha256": "c05897184f4d263329a7bdaa5982fdf74df7e0389ae3bc362cbcf1db36dcc2c9"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/applied-390.png",
+    "bytes": 274039,
+    "sha256": "b7b481b9154b3c33f43c114db305823fb0bacb8cb34ddfd180c416caaa19a9e2"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/before-drag-1366.png",
+    "bytes": 100076,
+    "sha256": "72e7d743c96d97f9abb3126077fdc010a06118b0ce54eabe71f781603df79827"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/before-drag-390.png",
+    "bytes": 51536,
+    "sha256": "31cf726819e5d4290739d5e45d357db0583efc443aa74be00cc899955510edbf"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/commit-failed-1366.png",
+    "bytes": 152578,
+    "sha256": "c0293c01134196c79304a7b534a98b3f03af12752afd18deee1f9a4649ed51aa"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/commit-failed-390.png",
+    "bytes": 140154,
+    "sha256": "32240849f1e91235767e18c9684d2e38fd695a6dd80d6c96a53f1f09d213be01"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/commit-unknown-1366.png",
+    "bytes": 165648,
+    "sha256": "40e0662b4c06bcbdac44d821a159e9856607769e9271e9760081431ddd5e55b1"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/commit-unknown-390.png",
+    "bytes": 151772,
+    "sha256": "25c23e1cf35d19adca0eb1c188ba0c0c7011400837b90cde8c6a93411aa0be14"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/demo-cancel-feedback-1366.png",
+    "bytes": 212569,
+    "sha256": "02f0190a63a1c0ae4d981a41a61e7d7bc532ed43c7f700b0dedc7c2084569db0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/demo-cancel-feedback-390.png",
+    "bytes": 190769,
+    "sha256": "e7cc853bfd3677969b1b7d53527a3c1b435eecbc86470876e0bec28f0832c046"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/demo-cancel-result-1366.png",
+    "bytes": 192936,
+    "sha256": "b270291be2637d62f038fa57910d334c090108807a539d9c78e61a7813f21b37"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/demo-cancel-result-390.png",
+    "bytes": 179967,
+    "sha256": "22b7e3ca862cab6c05dae9e38ba911f178272af61fd9c8892759d94daa1dc7ca"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/demo-confirm-feedback-1366.png",
+    "bytes": 214167,
+    "sha256": "85d4b79c63aac79b64c70aaa019fc9c930263d907d1a31ba1cc02450152ddd2e"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/demo-confirm-feedback-390.png",
+    "bytes": 190734,
+    "sha256": "6e1a49044b20174b6a480d7ba1048f4a030cf4fe70b1d3bbdc0b397142404215"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/demo-confirm-result-1366.png",
+    "bytes": 199349,
+    "sha256": "3c6d907c7ef0675bc4199e1a307b7c79a36f7f75955f3fac7dc001fd48126558"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/demo-confirm-result-390.png",
+    "bytes": 184624,
+    "sha256": "f49800a3be82006a70112edc6bd324012613a3f7b69e4ae9bef652f9be2cd973"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/f1-corrected-preview-1366.png",
+    "bytes": 343144,
+    "sha256": "3b82cac0d5b7e8c3af00c13909d8b092db7b0c010db9181d4fc0efac410ad50d"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/f1-corrected-preview-390.png",
+    "bytes": 295965,
+    "sha256": "74492b7044fc2ac107445a6f2bc5962466b9200d74a54626f288f616846f321b"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/f1-invalid-preview-1366.png",
+    "bytes": 346997,
+    "sha256": "fa8f1186f8a94b04ec8119754d9212b369883ee254b4cf9a473855b71a4c92e8"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/f1-invalid-preview-390.png",
+    "bytes": 296307,
+    "sha256": "0f869fd5499baa3c8a0caa470788c311a56585b13967f293a6781c272288d311"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/f2-missed-notification-stale-1366.png",
+    "bytes": 158443,
+    "sha256": "c0d9442031adcc884044842d78b72a316b7a12f33f9117800f5927b582820948"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/f2-missed-notification-stale-390.png",
+    "bytes": 144905,
+    "sha256": "0553d46096933f5142d892e81a566607b931f7fb0ec784a31f1786d974806a6c"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/integrated-1366.png",
+    "bytes": 303793,
+    "sha256": "88d5f28f97afedd4e9a119da654512eaa9befff56729e3a51bef43986921723a"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/integrated-390.png",
+    "bytes": 270622,
+    "sha256": "b39bf5c94185c5a53304b1bf2be5c6f24e150748e23c9d7d893736002ef092d3"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/preview-1366.png",
+    "bytes": 343159,
+    "sha256": "5e858764fe9fd29540729430761fbcbb72a31aa6ed2bcc679ab9013f5af747e2"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/preview-390.png",
+    "bytes": 295976,
+    "sha256": "7db37115aef6dcb5d63d8922ded95a1f550428e0ec8249183f9f2994e149e671"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/production-1366.png",
+    "bytes": 198436,
+    "sha256": "96692b93122ea036eb7b5f94f12f33a4ebf49fd675fda5745628727a4cd44c88"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/production-390.png",
+    "bytes": 180904,
+    "sha256": "9a0f93c7ec90e07a5959c42658873dfbcf6d3a22cec7db3bc1176aed0b40c800"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/report.json",
+    "bytes": 60646,
+    "sha256": "a691f673ba002222a30c41eeca146d329184aa6228f2414924fe631fd6dc10b9"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/request-failed-1366.png",
+    "bytes": 313859,
+    "sha256": "3975ec239d79081b66fc586e07713d439e8606a2b99dabf6b5c2d4f789ff00b4"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/request-failed-390.png",
+    "bytes": 275171,
+    "sha256": "4282e57e55e151e0d291abff29c9803fe1172d4d1d2c76cd247a8b5314c16596"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/requesting-false-1366.png",
+    "bytes": 272338,
+    "sha256": "24a9d9b396f6780cc465ed812f6ac23ce1ee20bfe1619596a503c94e1727a0e3"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/requesting-false-390.png",
+    "bytes": 243248,
+    "sha256": "c0e40ffb43c0680c17effdb8cf4cf2e9e14b667425c7effe5c41ded2a9bda4aa"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/requesting-true-1366.png",
+    "bytes": 276674,
+    "sha256": "be71be102e1c49404102806cf6d9a67dd3174bfd1a2339b11205f687258a054e"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/requesting-true-390.png",
+    "bytes": 247393,
+    "sha256": "b32c929561a5e879b7542ba549f375a0521ed0f1a0931f33ec0df11cf743bd51"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/stale-1366.png",
+    "bytes": 266332,
+    "sha256": "21d1a9dbb4a62d487fb48d309f9b483922f66dd0e496a152cfb1918147cf95f0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/stale-390.png",
+    "bytes": 238846,
+    "sha256": "a9819e08dcb11c9e7624791b78918dd59258b18364bb2f673271ba5b9bc62ac2"
   },
   {
     "path": "docs/agent-a-night/browser/model-deadline/applied-1366.png",
@@ -1410,6 +1505,41 @@
     "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
   },
   {
+    "path": "docs/agent-a-night/browser/trusted-races/confirm-gate-1440.png",
+    "bytes": 335339,
+    "sha256": "0c1918859626c7aea84fe17e0828b3b676f364e5445b80a7ba9bffd6b274531f"
+  },
+  {
+    "path": "docs/agent-a-night/browser/trusted-races/confirm-gate-390.png",
+    "bytes": 305711,
+    "sha256": "53b067e047657d771f8e8a785a47039facda35d3a691b578e6f8c488eb2943eb"
+  },
+  {
+    "path": "docs/agent-a-night/browser/trusted-races/invalid-fixture-1440.png",
+    "bytes": 320249,
+    "sha256": "71c24ecc3ab8a32575968622d09cd273ded0a5aed6b69026ed0641cddb6c7e72"
+  },
+  {
+    "path": "docs/agent-a-night/browser/trusted-races/invalid-fixture-390.png",
+    "bytes": 290144,
+    "sha256": "32ff2006cbe6f0928d6a360b67475cb5ecc7b3e9612e90c0a29b8da7f2f845ac"
+  },
+  {
+    "path": "docs/agent-a-night/browser/trusted-races/report.json",
+    "bytes": 1906,
+    "sha256": "e095368cc549cdccbd5d311d0b20f38d6ce2d7251b5011e6651d3a51173e5add"
+  },
+  {
+    "path": "docs/agent-a-night/browser/trusted-races/trace-1440.zip",
+    "bytes": 3177142,
+    "sha256": "7eb023ff47cf13e01adacb4d3c9d9117470ebe90e3bc4cd282b120f0946e0dad"
+  },
+  {
+    "path": "docs/agent-a-night/browser/trusted-races/trace-390.zip",
+    "bytes": 3341957,
+    "sha256": "e53da18a04a67ae839025c648f91e0aee164b72e03b5681778ba0535ca768e65"
+  },
+  {
     "path": "docs/agent-a-night/browser/trusted/b-1440.png",
     "bytes": 211809,
     "sha256": "21e4fc9af2853079fd694b7a1911d76697268727a576b2913b370eac0bb0d7d9"
@@ -1453,40 +1583,5 @@
     "path": "docs/agent-a-night/browser/trusted/video/page@f2130b8abc1d5200a2e189b9b13e3f3d.webm",
     "bytes": 283634,
     "sha256": "37da9230814e5912289a7158d1777c9770ab0eb0ad46f8a27a0840911e84df1f"
-  },
-  {
-    "path": "docs/agent-a-night/browser/trusted-races/confirm-gate-1440.png",
-    "bytes": 335339,
-    "sha256": "0c1918859626c7aea84fe17e0828b3b676f364e5445b80a7ba9bffd6b274531f"
-  },
-  {
-    "path": "docs/agent-a-night/browser/trusted-races/confirm-gate-390.png",
-    "bytes": 305711,
-    "sha256": "53b067e047657d771f8e8a785a47039facda35d3a691b578e6f8c488eb2943eb"
-  },
-  {
-    "path": "docs/agent-a-night/browser/trusted-races/invalid-fixture-1440.png",
-    "bytes": 320249,
-    "sha256": "71c24ecc3ab8a32575968622d09cd273ded0a5aed6b69026ed0641cddb6c7e72"
-  },
-  {
-    "path": "docs/agent-a-night/browser/trusted-races/invalid-fixture-390.png",
-    "bytes": 290144,
-    "sha256": "32ff2006cbe6f0928d6a360b67475cb5ecc7b3e9612e90c0a29b8da7f2f845ac"
-  },
-  {
-    "path": "docs/agent-a-night/browser/trusted-races/report.json",
-    "bytes": 1906,
-    "sha256": "e095368cc549cdccbd5d311d0b20f38d6ce2d7251b5011e6651d3a51173e5add"
-  },
-  {
-    "path": "docs/agent-a-night/browser/trusted-races/trace-1440.zip",
-    "bytes": 3177142,
-    "sha256": "7eb023ff47cf13e01adacb4d3c9d9117470ebe90e3bc4cd282b120f0946e0dad"
-  },
-  {
-    "path": "docs/agent-a-night/browser/trusted-races/trace-390.zip",
-    "bytes": 3341957,
-    "sha256": "e53da18a04a67ae839025c648f91e0aee164b72e03b5681778ba0535ca768e65"
   }
 ]
