@@ -42,12 +42,16 @@ export function createDeepSeekProvider({ allowPaid = false, apiKey, model = 'dee
   ensure(['deepseek-v4-flash', 'deepseek-chat'].includes(model) && typeof fetchImpl === 'function', 'API_CONFIGURATION')
   ensure(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= LIMITS.timeoutMs, 'API_CONFIGURATION')
   // No key on the public object, in prompts, persisted metadata, logs or errors.
-  return Object.freeze({ kind: 'deepseek', async generate(request) {
+  return Object.freeze({ kind: 'deepseek', async generate(request, { signal } = {}) {
+    ensure(!signal?.aborted, 'CANCELLED')
     const messages = buildMessages(request)
     const controller = new AbortController()
+    const abort = () => controller.abort(new GenerationError('CANCELLED'))
+    signal?.addEventListener('abort', abort, { once: true })
     const timer = setTimeout(() => controller.abort(new GenerationError('UPSTREAM_TIMEOUT')), timeoutMs)
     let received
     const operation = async () => {
+      controller.signal.throwIfAborted()
       const fetching = Promise.resolve(fetchImpl(ENDPOINT, {
         method: 'POST', redirect: 'error', signal: controller.signal,
         headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -59,10 +63,11 @@ export function createDeepSeekProvider({ allowPaid = false, apiKey, model = 'dee
     }
     try { return await operation() }
     catch (error) {
+      if (signal?.aborted) throw new GenerationError('CANCELLED')
       if (error instanceof GenerationError) throw error
       throw new GenerationError('UPSTREAM_INVALID')
     } finally {
-      clearTimeout(timer); controller.abort()
+      clearTimeout(timer); signal?.removeEventListener('abort', abort); controller.abort()
       if (received?.body && !received.body.locked) void received.body.cancel().catch(() => {})
     }
   } })

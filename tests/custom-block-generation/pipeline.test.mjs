@@ -139,3 +139,39 @@ test('all JSON files are inert source artifacts, not generated source module fil
   assert.equal(content.status, 'pending-build')
   assert.equal((await readdir(directory)).some(p => /\.(tsx?|jsx?)$/.test(p)), false)
 })
+
+test('caller cancellation retires ignored provider work before any pending-store write', { timeout: 1000 }, async () => {
+  let rejectOld, calls = 0, puts = 0, oldSignal
+  const provider = { kind: 'mock', generate(_request, { signal } = {}) {
+    calls++; oldSignal = signal
+    return calls === 1 ? new Promise((_, reject) => { rejectOld = reject }) : JSON.stringify(response())
+  } }
+  const store = { async put(record) { puts++; return record } }
+  const generator = createGenerator({ enabled: true, provider, store })
+  const controller = new AbortController()
+  const old = generator.generate(request(), { signal: controller.signal })
+  const rejected = assert.rejects(old, { code: 'CANCELLED' })
+  controller.abort(); await rejected
+  assert.equal(oldSignal.aborted, true); assert.equal(puts, 0)
+  const fresh = await generator.generate(request())
+  assert.equal(fresh.execution, 'denied'); assert.equal(puts, 1)
+  rejectOld(Error('late provider secret')); await new Promise(resolve => setImmediate(resolve))
+  assert.equal(puts, 1)
+})
+
+test('pre-cancelled generator performs no provider or storage calls', async () => {
+  let calls = 0; const controller = new AbortController(); controller.abort()
+  const generator = createGenerator({ enabled: true, provider: { kind: 'mock', generate() { calls++; return '{}' } }, store: { put() { calls++ } } })
+  await assert.rejects(generator.generate(request(), { signal: controller.signal }), { code: 'CANCELLED' })
+  assert.equal(calls, 0)
+})
+
+test('cancellation during output admission prevents storage; admitted storage retains an honest outcome', async () => {
+  const controller = new AbortController(); let puts = 0
+  const provider = { kind: 'mock', generate() { queueMicrotask(() => controller.abort()); return JSON.stringify(response()) } }
+  const generator = createGenerator({ enabled: true, provider, store: { put() { puts++; throw Error('must not store') } } })
+  await assert.rejects(generator.generate(request(), { signal: controller.signal }), { code: 'CANCELLED' }); assert.equal(puts, 0)
+  const next = new AbortController()
+  const committed = createGenerator({ enabled: true, provider: mock(response()), store: { async put(record) { next.abort(); return record } } })
+  assert.equal((await committed.generate(request(), { signal: next.signal })).status, 'pending-build')
+})

@@ -101,3 +101,30 @@ test('timeout releases late and hanging response bodies; early HTTP/size rejecti
     assert.equal(released, 1)
   }
 })
+
+test('caller cancellation rejects before fetch and retires ignored transport with late body cleanup', async () => {
+  let calls = 0, release, cancelled = 0, transportSignal
+  const provider = make(async (_url, init) => {
+    calls++; transportSignal = init.signal
+    return new Promise(resolve => { release = resolve })
+  })
+  const pre = new AbortController(); pre.abort(Error('private caller reason'))
+  await assert.rejects(provider.generate(request(), { signal: pre.signal }), { code: 'CANCELLED' })
+  assert.equal(calls, 0)
+  const controller = new AbortController()
+  const pending = provider.generate(request(), { signal: controller.signal })
+  controller.abort(Error('private cancellation detail'))
+  await assert.rejects(pending, { code: 'CANCELLED', message: 'CANCELLED' })
+  assert.equal(transportSignal.aborted, true)
+  release(new Response(new ReadableStream({ cancel() { cancelled++ } })))
+  await new Promise(resolve => setImmediate(resolve)); assert.equal(cancelled, 1)
+})
+
+test('caller cancellation retires a nonsettling upstream body without awaiting its cancel', { timeout: 1000 }, async () => {
+  let started, cancelled = 0
+  const reading = new Promise(resolve => { started = resolve })
+  const provider = make(async () => new Response(new ReadableStream({ pull() { started(); return new Promise(() => {}) }, cancel() { cancelled++; return new Promise(() => {}) } })))
+  const controller = new AbortController(), pending = provider.generate(request(), { signal: controller.signal })
+  await reading; controller.abort()
+  await assert.rejects(pending, { code: 'CANCELLED' }); assert.equal(cancelled, 1)
+})
