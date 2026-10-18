@@ -1,0 +1,211 @@
+{
+  "date": "2026-10-18",
+  "mainSha": "94262b3307274b2bae0ad5f7782cd7088228574f",
+  "branch": "feature/project-zip-export",
+  "scope": "fixed developer catalogue ONLY; arbitrary AI source was not built or run",
+  "checks": [
+    {
+      "command": "node --test tests/project-zip-export/export.test.mjs",
+      "passed": 56,
+      "failed": 0
+    },
+    {
+      "command": "npm test",
+      "passed": 158,
+      "failed": 0
+    },
+    {
+      "command": "node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs",
+      "passed": 224,
+      "failed": 0
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc -b --force",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --skipLibCheck --moduleResolution bundler --module esnext --target es2022 tools/project-zip-export/export.d.mts",
+      "exitCode": 0
+    }
+  ],
+  "trustedAcceptance": {
+    "install": {
+      "exitCode": 0,
+      "lifecycleScripts": false,
+      "inheritedConfiguration": false
+    },
+    "browser": "151.0.7922.34",
+    "viewports": [
+      {
+        "width": 650,
+        "height": 950
+      },
+      {
+        "width": 1366,
+        "height": 950
+      }
+    ],
+    "screenshots": 12,
+    "outboundRequests": 0,
+    "pageErrors": 0,
+    "cases": [
+      {
+        "name": "mixed",
+        "sha256": "2ecc08d1d016b258e48075fe86fe0b2a22ac9cfcc4682bc9f2edff8740ccfbbf",
+        "files": 17,
+        "zipBytes": 17359,
+        "runtime": [
+          {
+            "mode": "dev",
+            "passed": true,
+            "checks": [
+              "renderOrder",
+              "form-to-list/metric data flow",
+              "count",
+              "delete",
+              "exact props",
+              "Counter increment/reset",
+              "Temperature relative import",
+              "desktop saved coordinates",
+              "unpositioned fallback"
+            ]
+          },
+          {
+            "mode": "production",
+            "passed": true,
+            "checks": [
+              "renderOrder",
+              "form-to-list/metric data flow",
+              "count",
+              "delete",
+              "exact props",
+              "Counter increment/reset",
+              "Temperature relative import",
+              "desktop saved coordinates",
+              "unpositioned fallback"
+            ]
+          }
+        ],
+        "build": {
+          "command": "npm run build",
+          "exitCode": 0
+        }
+      },
+      {
+        "name": "builtin",
+        "sha256": "cb404204a938a7369a63fd5bc0499d1458d5047b1ca4c7f8dea55fccb973bc53",
+        "files": 14,
+        "zipBytes": 15657,
+        "runtime": [
+          {
+            "mode": "dev",
+            "passed": true,
+            "checks": [
+              "renderOrder",
+              "form-to-list/metric data flow",
+              "count",
+              "delete",
+              "inherited-name IDs and empty optional fields"
+            ]
+          },
+          {
+            "mode": "production",
+            "passed": true,
+            "checks": [
+              "renderOrder",
+              "form-to-list/metric data flow",
+              "count",
+              "delete",
+              "inherited-name IDs and empty optional fields"
+            ]
+          }
+        ],
+        "build": {
+          "command": "npm run build",
+          "exitCode": 0
+        }
+      },
+      {
+        "name": "reading",
+        "sha256": "95708874444f83f3d921bb96e1a2cccc6949852abfc8b2101704a097570458b9",
+        "files": 14,
+        "zipBytes": 15610,
+        "runtime": [
+          {
+            "mode": "dev",
+            "passed": true,
+            "checks": [
+              "renderOrder",
+              "form-to-list/metric data flow",
+              "sum",
+              "average",
+              "empty aggregation"
+            ]
+          },
+          {
+            "mode": "production",
+            "passed": true,
+            "checks": [
+              "renderOrder",
+              "form-to-list/metric data flow",
+              "sum",
+              "average",
+              "empty aggregation"
+            ]
+          }
+        ],
+        "build": {
+          "command": "npm run build",
+          "exitCode": 0
+        }
+      }
+    ]
+  },
+  "independentPythonZipfile": [
+    {
+      "name": "mixed",
+      "crc": true,
+      "files": 17,
+      "unpackedBytes": 15385
+    },
+    {
+      "name": "builtin",
+      "crc": true,
+      "files": 14,
+      "unpackedBytes": 14133
+    },
+    {
+      "name": "reading",
+      "crc": true,
+      "files": 14,
+      "unpackedBytes": 14086
+    }
+  ],
+  "limitations": [
+    "No arbitrary AI source was installed, built or executed.",
+    "Admission does not prove semantic typing, behavior or sandbox security.",
+    "No production UI or transport endpoint wired; reserved for the product integration task.",
+    "Draft PR publication authorized; no merge, deployment or paid API call performed."
+  ],
+  "mergedOwnerCompatibility": {
+    "pr24Merged": true,
+    "pr25Merged": true,
+    "snapshotType": "CustomProject (formatVersion 2; no CustomProjectV2 alias)",
+    "session": "AppRuntime.customProject: CustomProjectSession",
+    "readInputs": [
+      "getSnapshot",
+      "registry.resolve(exactReference)"
+    ],
+    "exportWrites": 0,
+    "casCalls": 0,
+    "revisionChanges": 0,
+    "cases": [
+      "readonly builtin and mixed session; snapshot/projection/authorization identity and notifications unchanged",
+      "replacement selects only current digest while historical registered version remains available"
+    ]
+  }
+}

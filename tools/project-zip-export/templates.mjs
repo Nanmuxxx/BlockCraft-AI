@@ -1,0 +1,145 @@
+// Developer-authored scaffolding. Artifact text is only copied as text by export.mjs.
+export const packageJson = {
+  name: 'blockcraft-export', version: '1.0.0', private: true, type: 'module',
+  engines: { node: '>=22.16.0' },
+  scripts: { dev: 'vite --host 127.0.0.1', build: 'tsc --noEmit && vite build', preview: 'vite preview --host 127.0.0.1' },
+  dependencies: { react: '19.3.1', 'react-dom': '19.3.1' },
+  devDependencies: { '@types/react': '19.3.0', '@types/react-dom': '19.3.0', typescript: '5.9.3', vite: '8.3.4' },
+}
+export const tsconfig = {
+  compilerOptions: {
+    target: 'ES2020', lib: ['ES2020', 'DOM', 'DOM.Iterable'], module: 'ESNext', moduleResolution: 'bundler',
+    jsx: 'react-jsx', strict: true, esModuleInterop: true, skipLibCheck: true, noEmit: true,
+    resolveJsonModule: true, allowImportingTsExtensions: true, isolatedModules: true,
+  }, include: ['src', 'vite.config.ts'],
+}
+export const model = `export type Value = string | number | boolean;
+export type Row = { id: string; values: Record<string, Value> };
+export type Field = { id: string; name: string; required: boolean } & ({ type: 'text' | 'number' | 'boolean' | 'date' } | { type: 'select'; options: string[] });
+export type Block = { id: string; name: string } & ({ type: 'form'; fieldIds: string[] } | { type: 'list'; fieldIds: string[] } | { type: 'metric'; aggregation: 'count' } | { type: 'metric'; aggregation: 'sum' | 'average'; fieldId: string });
+export type Records = Record<string, Row[]>;
+export type Project = {
+  formatVersion: 2; revision: number;
+  base: { spec: { version: 1; id: string; name: string; entities: { id: string; name: string; fields: Field[] }[]; blocks: Block[]; relations: { id: string; type: 'dataBinding'; blockId: string; entityId: string }[] }; records: Records; blockPositions: Record<string, { x: number; y: number }> };
+  custom: { instances: { id: string; definitionId: string; versionDigest: string; props: Record<string, unknown> }[]; positions: Record<string, { x: number; y: number }>; states: Record<string, never> };
+  renderOrder: { kind: 'builtin' | 'custom'; id: string }[];
+};
+`
+export const form = `import { useState, type FormEvent } from 'react';
+import type { Field, Row, Value } from '../model';
+export default function FormBlock({ fields, onAdd }: { fields: Field[]; onAdd: (row: Row) => void }) {
+  const [error, setError] = useState('');
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); const form = event.currentTarget, data = new FormData(form), values: Record<string, Value> = {};
+    for (const field of fields) {
+      const raw = String(data.get(field.id) ?? '');
+      if (field.type === 'boolean') { values[field.id] = data.has(field.id); continue; }
+      if (raw.trim() === '') { if (field.required) { setError('请填写：' + field.name); return; } continue; }
+      if (field.type === 'number') { const value = Number(raw); if (!Number.isFinite(value)) { setError('无效数字'); return; } values[field.id] = value; }
+      else { values[field.id] = raw; }
+    }
+    onAdd({ id: crypto.randomUUID(), values }); form.reset(); setError('');
+  }
+  return <form onSubmit={submit}>{fields.map(field => <label key={field.id}>{field.name}{field.required ? ' *' : ''}
+    {field.type === 'select' ? <select name={field.id} required={field.required} defaultValue=""><option value="">请选择</option>{field.options.map(value => <option key={value}>{value}</option>)}</select>
+    : <input name={field.id} type={field.type === 'boolean' ? 'checkbox' : field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'} step={field.type === 'number' ? 'any' : undefined} required={field.type !== 'boolean' && field.required} />}
+  </label>)}<button type="submit">保存</button>{error && <p role="alert">{error}</p>}</form>;
+}
+`
+export const list = `import type { Field, Row } from '../model';
+export default function ListBlock({ fields, rows, onDelete }: { fields: Field[]; rows: Row[]; onDelete: (id: string) => void }) {
+  return <div className="table-scroll"><table><thead><tr>{fields.map(field => <th key={field.id}>{field.name}</th>)}<th>操作</th></tr></thead>
+    <tbody>{rows.map(row => <tr key={row.id}>{fields.map(field => { const value = Object.prototype.hasOwnProperty.call(row.values, field.id) ? row.values[field.id] : undefined; return <td key={field.id}>{typeof value === 'boolean' ? (value ? '是' : '否') : String(value ?? '')}</td>; })}<td><button onClick={() => onDelete(row.id)}>删除</button></td></tr>)}</tbody>
+  </table>{rows.length === 0 && <p>暂无记录</p>}</div>;
+}
+`
+export const metric = `import type { Block, Row } from '../model';
+export default function MetricBlock({ block, rows }: { block: Extract<Block, { type: 'metric' }>; rows: Row[] }) {
+  const numbers = block.aggregation === 'count' ? [] : rows.map(row => row.values[block.fieldId]).filter((value): value is number => typeof value === 'number');
+  const sum = numbers.reduce((a, b) => a + b, 0);
+  const value = block.aggregation === 'count' ? rows.length : block.aggregation === 'sum' ? sum : numbers.length ? sum / numbers.length : 0;
+  return <output className="metric">{Number.isFinite(value) ? value : '数值超出范围'}</output>;
+}
+`
+export const main = `import { createRoot } from 'react-dom/client';
+import App from './App';
+import './styles.css';
+createRoot(document.getElementById('root')!).render(<App />);
+`
+export function app(customImports, customCases) {
+  return `import { useState } from 'react';
+import type { ComponentType, CSSProperties } from 'react';
+import type { Records, Row, Block } from './model';
+import { project } from './data';
+import FormBlock from './components/FormBlock';
+import ListBlock from './components/ListBlock';
+import MetricBlock from './components/MetricBlock';
+${customImports}
+// Records live only in this standalone app's memory. Reload restores exported data.
+const customComponents: Record<string, ComponentType<any>> = { ${customCases} };
+function own<T>(values: Record<string, T>, key: string): T | undefined { return Object.prototype.hasOwnProperty.call(values, key) ? values[key] : undefined; }
+export default function App() {
+  const [records, setRecords] = useState<Records>(project.base.records);
+  const positionedHeight = Math.max(0, ...[...Object.values(project.base.blockPositions), ...Object.values(project.custom.positions)].map(position => position.y * 800 + 620));
+  function add(entity: string, row: Row) { setRecords(current => ({ ...current, [entity]: [...(own(current, entity) ?? []), row] })); }
+  function remove(entity: string, id: string) { setRecords(current => ({ ...current, [entity]: (own(current, entity) ?? []).filter(row => row.id !== id) })); }
+  return <main><h1>{project.base.spec.name}</h1><div className="board" style={{ '--positioned-height': positionedHeight + 'px' } as CSSProperties}>{project.renderOrder.map((item, index) => {
+    const position = item.kind === 'builtin' ? own(project.base.blockPositions, item.id) : own(project.custom.positions, item.id);
+    // Normalized saved coordinates determine the desktop board; DOM/tab order stays renderOrder.
+    const style = position ? { '--x': position.x, '--y': position.y, zIndex: index + 1 } as CSSProperties : undefined;
+    if (item.kind === 'custom') {
+      const instance = project.custom.instances.find(instance => instance.id === item.id)!;
+      const Component = customComponents[instance.id];
+      return <section key={'custom:' + item.id} data-block-id={item.id} data-positioned={!!position} className="block" style={style}><Component {...instance.props} /></section>;
+    }
+    const block: Block = project.base.spec.blocks.find(block => block.id === item.id)!;
+    const binding = project.base.spec.relations.find(binding => binding.blockId === block.id)!;
+    const entity = project.base.spec.entities.find(entity => entity.id === binding.entityId)!;
+    const rows = own(records, entity.id) ?? [];
+    const fields = block.type === 'metric' ? [] : block.fieldIds.map(id => entity.fields.find(field => field.id === id)!);
+    return <section key={'builtin:' + item.id} data-block-id={item.id} data-positioned={!!position} className="block" style={style}><h2>{block.name}</h2>
+      {block.type === 'form' ? <FormBlock fields={fields} onAdd={row => add(entity.id, row)} /> : block.type === 'list' ? <ListBlock fields={fields} rows={rows} onDelete={id => remove(entity.id, id)} /> : <MetricBlock block={block} rows={rows} />}
+    </section>;
+  })}</div></main>;
+}
+`
+}
+export const css = `:root { font-family: system-ui, sans-serif; color: #26354b; background: #f4f6fb; } * { box-sizing: border-box; }
+main { max-width: 1280px; margin: auto; padding: 24px; } h1 { margin-top: 0; } h2 { font-size: 1.2rem; }
+.board { position: relative; padding-top: var(--positioned-height, 0px); display: grid; gap: 20px; align-content: start; }
+.block { background: white; border: 1px solid #d6deed; border-radius: 12px; padding: 20px; min-width: 0; overflow: auto; }
+.block[data-positioned="true"] { position: absolute; width: 320px; max-height: 600px; left: calc(var(--x) * (100% - 320px)); top: calc(var(--y) * 800px); }
+label { display: grid; gap: 6px; margin-bottom: 12px; } input, select, button { padding: 8px; font: inherit; } input[type="checkbox"] { justify-self: start; }
+button { cursor: pointer; } table { border-collapse: collapse; width: 100%; } td, th { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; }
+.table-scroll { overflow: auto; } .metric { font-size: 2.2rem; }
+@media (max-width: 700px) { .board { padding-top: 0; } .block[data-positioned="true"] { position: static; width: auto; max-height: none; } }
+`
+export const readme = `# 独立 React + TypeScript + Vite 工程
+
+要求 Node.js >= 22.16。审查源码后，在本目录运行：
+
+\`\`\`sh
+npm install
+npm run dev
+npm run build
+npm run preview
+\`\`\`
+
+dev 的回环地址由 Vite 显示；build 产物位于 dist/。可编辑 src/App.tsx、src/components/ 和 src/data.ts。
+无需 BlockCraft 网站、账号、API 或远程 Runtime。React/Vite 依赖来自 npm，需要用户自行联网安装。
+package.json 固定版本且不接受制品提供的脚本。首次安装后保留生成的 package-lock.json。
+制品 SRI 作为版本准入核对声明，不代表本导出器已下载并认证 npm 包或其传递依赖。
+
+内置 form 保存记录，list 展示/删除记录，metric count/sum/average 自动更新；业务数据保存在内存，刷新恢复导出的初始记录。
+字段顺序按配置；桌面保留归一化坐标与 renderOrder 的层叠/DOM 顺序，未设置坐标的积木排在坐标区域下方，手机全部按 renderOrder 顺排。此工程是独立功能布局，不是编辑器像素快照。
+CustomBlock 仅支持默认 React 组件接收 props、使用组件本地状态的独立协议。宿主状态槽、声明状态、事件、能力请求均拒绝。
+provenance.json 记录准确 definitionId/versionDigest；src/components/custom/ 中保留原始源文本和相对模块路径。
+
+## 安全和数据
+
+第三方及 AI 生成源码必须由你自行审查。摘要与静态语法/import 检查不等于安全沙箱认证、语义类型检查或行为正确性证明。
+导出器没有安装或运行这些源码；只有仓库中固定且经过哈希确认的人工样本可进入独立验收环境。
+代码在你启动后可获得普通网页的能力，不提供 CustomBlock 隔离。请勿将秘密、真实个人记录或凭据交给未审查代码。
+导出包含项目已存记录和参数；共享 ZIP 前自行确认数据。已知凭据/环境文件/宿主路径模式会被拒绝，但文本扫描无法识别所有秘密。
+不要把此工程接入可信服务器自动执行，也不要把它视为已经通过安全 Viewer 的制品。
+`
