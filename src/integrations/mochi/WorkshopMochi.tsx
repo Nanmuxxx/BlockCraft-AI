@@ -57,20 +57,20 @@ export function WorkshopMochi({ host, view, root, planningDisabledReason, canvas
   useBlockAnchor(host, view, root, canvasReady)
   const [messages, setMessages] = useState<MochiChatMessage[]>([])
   const lastEvent = useRef({ receipt: '', error: '' })
-  const receipt = view.receipt
+  const receipt = view.receipt?.ok ? view.receipt : null
   useEffect(() => {
     const next: MochiChatMessage[] = []
-    const receiptKey = receipt ? String(receipt.committedRevision) : ''
+    const receiptKey = receipt ? `${view.requestId}:${receipt.committedRevision}` : ''
     const errorKey = JSON.stringify(view.error)
-    if (receipt && receiptKey !== lastEvent.current.receipt) next.push({ id: `receipt-${receiptKey}`, role: 'system', content: `Runtime 已确认应用修改，当前回执版本：${receipt.committedRevision}。` })
+    if (receipt && receiptKey !== lastEvent.current.receipt) next.push({ id: `receipt-${receiptKey}`, role: 'system', content: `Runtime 已确认应用修改，本次提交回执版本：${receipt.committedRevision}。` })
     if (view.error && errorKey !== lastEvent.current.error) next.push({ id: crypto.randomUUID(), role: 'system', content: `${view.error.code}：${view.error.message}` })
     lastEvent.current = { receipt: receiptKey, error: errorKey }
     if (next.length) setMessages(previous => [...previous, ...next].slice(-100))
-  }, [receipt, view.error])
+  }, [receipt, view.requestId, view.error])
   const callbacks: MochiCallbacks = useMemo(() => ({ ...host.callbacks,
-    async onRequestPlan(prompt, uiContext) {
+    onRequestPlan(prompt, uiContext) {
       setMessages(previous => [...previous, { id: crypto.randomUUID(), role: 'user' as const, content: prompt }].slice(-100))
-      await host.callbacks.onRequestPlan(prompt, uiContext)
+      return host.callbacks.onRequestPlan(prompt, uiContext)
     },
   }), [host])
   const customSelected = view.context.blocks.some(block => block.id === view.context.selectedBlockId && block.type === 'custom')
@@ -78,7 +78,7 @@ export function WorkshopMochi({ host, view, root, planningDisabledReason, canvas
     .filter(item => !view.ignoredSuggestionIds.includes(item.id)) : []
   return <div className="app-spec-workshop__mochi" onPointerDown={event => event.stopPropagation()} onKeyDown={event => event.stopPropagation()}>
     <MochiAssistant {...callbacks} context={view.context} messages={messages}
-      suggestions={suggestions} preview={view.preview} planningDisabledReason={customSelected ? '自定义积木请使用参数面板；修改计划尚未开放。' : planningDisabledReason}
+      suggestions={suggestions} preview={view.preview} operation={view} onCancelRequest={host.cancelRequest} planningDisabledReason={customSelected ? '自定义积木请使用参数面板；修改计划尚未开放。' : planningDisabledReason}
       emotion={view.error ? 'error' : view.busy ? 'thinking' : receipt ? 'happy' : 'idle'}
       anchor={view.anchor} showOverlay={view.mode === 'blocks'} />
   </div>

@@ -103,3 +103,42 @@ test('TypeScript callback contract accepts synchronous and asynchronous hosts th
     getCanonicalFileName: f => f, getCurrentDirectory: () => __dirname, getNewLine: () => '\n',
   }))
 })
+
+
+test('controlled Host states distinguish current receipts, history, explicit failure and unknown outcome', () => {
+  const operation = { phase: 'REQUEST_FAILED', requestId: 'new', busy: false, error: { code: 'FAILED', message: '请求失败' }, receipt: null, lastApplied: { requestId: 'old', receipt: { committedRevision: 1 } } }
+  const render = patch => renderToStaticMarkup(React.createElement(MochiAiAssistant, { ...props, preview: null, operation: { ...operation, ...patch }, onCancelRequest() {} }))
+  const failed = render({})
+  assert.match(failed, /历史成功回执版本：1/)
+  assert.doesNotMatch(failed, /本次修改已应用|本次提交回执版本/)
+  assert.match(render({ phase: 'COMMIT_FAILED' }), /提交失败，本次未写入/)
+  const unknown = render({ phase: 'COMMIT_OUTCOME_UNKNOWN', error: { code: 'COMMIT_OUTCOME_UNKNOWN', message: '请核对应用' } })
+  assert.match(unknown, /提交结果未确认/)
+  assert.doesNotMatch(unknown, /请检查后重试|已回滚|本次修改已应用/)
+  assert.match(render({ phase: 'APPLIED', receipt: { ok: true, committedRevision: 2 }, error: null }), /本次提交回执版本：2/)
+  assert.match(render({ phase: 'REQUESTING', busy: true, error: null }), /取消请求/)
+})
+
+test('preview renders untrusted text safely and keeps shared entity impact visible', () => {
+  const attack = '<img src=x onerror=alert(1)>'
+  const html = renderToStaticMarkup(React.createElement(MochiAiAssistant, { ...props, preview: {
+    ...props.preview, title: attack, changes: [{ operation: 'sharedEntityImpact', target: 'applicants', description: '共享实体影响：applicant-list；直接授权外：applicant-list', before: attack, after: attack }],
+  } }))
+  assert.ok(html.includes('&lt;img'))
+  assert.ok(!html.includes(attack))
+  assert.match(html, /共享实体影响：applicant-list/)
+})
+
+test('invalid input feedback coexists with a valid preview; stale feedback removes confirmation', () => {
+  const operation = { phase: 'PREVIEW', requestId: 'valid-preview', busy: false, receipt: null, lastApplied: null,
+    error: { code: 'INVALID_PROMPT', message: 'Expected a short nonempty instruction' } }
+  const html = renderToStaticMarkup(React.createElement(MochiAiAssistant, { ...props, operation }))
+  assert.match(html, /role="alert">INVALID_PROMPT/)
+  assert.match(html, /为任务增加优先级/)
+  assert.match(html, />确认<\/button>/)
+  const stale = renderToStaticMarkup(React.createElement(MochiAiAssistant, { ...props, preview: null,
+    operation: { ...operation, phase: 'STALE', error: { code: 'CONTEXT_CHANGED', message: 'Context changed; request a new preview' } } }))
+  assert.match(stale, /上下文已变化，请重新预览/)
+  assert.match(stale, /role="alert">CONTEXT_CHANGED/)
+  assert.doesNotMatch(stale, /修改计划预览|>确认<\/button>/)
+})

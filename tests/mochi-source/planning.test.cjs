@@ -134,6 +134,8 @@ test('confirm lease blocks selection/cancel/dispose/reentrant confirm while real
   const f = await setup(), plan = await f.request()
   const pending = f.planner.confirm(plan.planId)
   assert.throws(() => f.planner.setSelection('sibling'), { code: 'CONFIRM_BUSY' })
+  // A future Workshop mode bridge must invalidate synchronously before changing UI mode.
+  assert.throws(() => f.planner.invalidate(), { code: 'CONFIRM_BUSY' })
   assert.throws(() => f.planner.cancel(plan.planId), { code: 'CONFIRM_BUSY' })
   assert.throws(() => f.planner.dispose(), { code: 'CONFIRM_BUSY' })
   await assert.rejects(f.planner.confirm(plan.planId), { code: 'CONFIRM_BUSY' })

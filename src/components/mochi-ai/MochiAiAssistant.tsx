@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { Check, CircleHelp, LoaderCircle, Send, Sparkles, X } from 'lucide-react'
 import { MochiCat } from '../MochiCat'
 import { claimPlanConfirmation, shouldSubmitComposerKey, type MochiAiAssistantProps, type MochiMood } from './types'
@@ -13,20 +13,28 @@ const MOOD_LABELS: Record<MochiMood, string> = {
   error: '刚才没有完成',
 }
 
-export function MochiAiAssistant({ context, messages, suggestions, preview, mood, planningDisabledReason, onRequestPlan, onConfirm, onCancel, onIgnore }: MochiAiAssistantProps) {
+export function MochiAiAssistant({ context, messages, suggestions, preview, mood, planningDisabledReason, operation, onCancelRequest, onRequestPlan, onConfirm, onCancel, onIgnore }: MochiAiAssistantProps) {
   const [draft, setDraft] = useState('')
   const [requestPending, setRequestPending] = useState(false)
   const [confirmPending, setConfirmPending] = useState(false)
   const [requestError, setRequestError] = useState('')
+  const lifetime = useRef(0)
+  useEffect(() => { lifetime.current++; return () => { lifetime.current++ } }, [])
+  useEffect(() => {
+    if (operation) { requestLockRef.current = operation.busy; setRequestError('') }
+  }, [operation])
   const isComposingRef = useRef(false)
   const requestLockRef = useRef(false)
+  const requestSequenceRef = useRef(0)
+  const operationRef = useRef(operation)
+  operationRef.current = operation
   const confirmedPlanIdsRef = useRef(new Set<string>())
   const historyRef = useRef<HTMLElement>(null)
   const followHistoryRef = useRef(true)
   const currentMood = mood ?? (requestPending ? 'thinking' : context.blocks.length ? 'curious' : 'idle')
-  const isBusy = requestPending || confirmPending || currentMood === 'thinking'
+  const isBusy = operation ? operation.busy : requestPending || confirmPending || currentMood === 'thinking'
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const history = historyRef.current
     if (history && followHistoryRef.current) history.scrollTop = history.scrollHeight
   }, [messages, isBusy])
@@ -46,16 +54,31 @@ export function MochiAiAssistant({ context, messages, suggestions, preview, mood
     if (!prompt || isBusy || planningDisabledReason || requestLockRef.current) return
 
     requestLockRef.current = true
+    const requestSequence = ++requestSequenceRef.current
+    const ownedLifetime = lifetime.current
+    setRequestError('')
+    if (operation) {
+      // Host publishes normal request outcomes. A callback rejected before any
+      // view change still needs feedback/unlock, but only its own invocation may
+      // do so. Cancelled/obsolete promises cannot release a newer request's lock.
+      try { await onRequestPlan(prompt, context) } catch {
+        if (ownedLifetime === lifetime.current && requestSequence === requestSequenceRef.current && operationRef.current === operation) {
+          setRequestError('这次请求未完成，请检查输入和当前计划状态。')
+        }
+      } finally {
+        if (ownedLifetime === lifetime.current && requestSequence === requestSequenceRef.current && !operationRef.current?.busy) requestLockRef.current = false
+      }
+      return
+    }
     setRequestPending(true)
     setRequestError('')
     try {
       await onRequestPlan(prompt, context)
-      setDraft('')
+      if (ownedLifetime === lifetime.current) setDraft('')
     } catch {
-      setRequestError('这次没有完成，请稍后重试。')
+      if (ownedLifetime === lifetime.current) setRequestError('这次没有完成，请稍后重试。')
     } finally {
-      requestLockRef.current = false
-      setRequestPending(false)
+      if (ownedLifetime === lifetime.current) { requestLockRef.current = false; setRequestPending(false) }
     }
   }
 
@@ -72,20 +95,27 @@ export function MochiAiAssistant({ context, messages, suggestions, preview, mood
 
   const confirmPlan = async () => {
     if (!preview || isBusy || !claimPlanConfirmation(confirmedPlanIdsRef.current, preview.planId)) return
+    if (operation) {
+      try { void Promise.resolve(onConfirm(preview.planId)).catch(() => {}) } catch { /* Host reports the outcome; never suggest retrying an uncertain commit. */ }
+      return
+    }
+    const ownedLifetime = lifetime.current
     setConfirmPending(true)
     setRequestError('')
     try {
       await onConfirm(preview.planId)
     } catch {
-      confirmedPlanIdsRef.current.delete(preview.planId)
-      setRequestError('这次修改没有完成，请检查后重试。')
+      if (ownedLifetime === lifetime.current) {
+        confirmedPlanIdsRef.current.delete(preview.planId)
+        setRequestError('这次修改没有完成，请检查后重试。')
+      }
     } finally {
-      setConfirmPending(false)
+      if (ownedLifetime === lifetime.current) setConfirmPending(false)
     }
   }
 
   return (
-    <aside className="mochi-ai" aria-labelledby="mochi-ai-title" data-mood={currentMood}>
+    <aside className="mochi-ai" aria-labelledby="mochi-ai-title" data-mood={currentMood} data-phase={operation?.phase}>
       <header className="mochi-ai__header">
         <span className="mochi-ai__avatar"><MochiCat className="mochi-ai__avatar-image" /></span>
         <div className="mochi-ai__heading">
@@ -140,6 +170,13 @@ export function MochiAiAssistant({ context, messages, suggestions, preview, mood
         {isBusy && <p className="mochi-ai__thinking"><LoaderCircle size={14} className="mochi-ai__spinner" aria-hidden="true" />Mochi 正在思考</p>}
       </section>
 
+      {operation && <section className="mochi-ai__context" aria-label="计划状态">
+        <p role="status">{({ IDLE: '等待指令', REQUESTING: '正在请求计划', PREVIEW: '等待确认', CONFIRMING: '正在提交', APPLIED: '本次修改已应用', CANCELLED: '已取消，未撤销任何已提交操作', STALE: '上下文已变化，请重新预览', REQUEST_FAILED: '请求失败', PREVIEW_REJECTED: '预览被拒绝', COMMIT_FAILED: '提交失败，本次未写入', COMMIT_OUTCOME_UNKNOWN: '提交结果未确认，请核对应用，勿重试旧计划' } as Record<string, string>)[operation.phase]}</p>
+        {operation.phase === 'REQUESTING' && operation.requestId && onCancelRequest && <button type="button" className="mochi-ai__button" onClick={() => onCancelRequest(operation.requestId!)}>取消请求</button>}
+        {operation.phase === 'APPLIED' && operation.receipt?.ok && <p>本次提交回执版本：{operation.receipt.committedRevision}</p>}
+        {operation.lastApplied && <p className="mochi-ai__muted">历史成功回执版本：{operation.lastApplied.receipt.committedRevision}（不代表当前版本）</p>}
+      </section>}
+
       {preview && (
         <section className="mochi-ai__preview" aria-label="修改计划预览">
           <div className="mochi-ai__preview-heading"><div><span>修改预览</span><h3>{preview.title}</h3></div></div>
@@ -161,7 +198,7 @@ export function MochiAiAssistant({ context, messages, suggestions, preview, mood
         </section>
       )}
 
-      {requestError && <p className="mochi-ai__error" role="alert">{requestError}</p>}
+      {(operation?.error || requestError) && <p className="mochi-ai__error" role="alert">{operation?.error ? `${operation.error.code}：${operation.error.message}` : requestError}</p>}
       {planningDisabledReason && <p className="mochi-ai__context-summary" role="status">{planningDisabledReason}</p>}
       <form className="mochi-ai__composer" onSubmit={submit}>
         <label className="mochi-ai__sr-only" htmlFor="mochi-ai-input">给 Mochi 发消息</label>
