@@ -9,7 +9,7 @@ const root = path.resolve(__dirname, '../..')
 const output = process.env.MOCHI_QA_OUTPUT || '/tmp/blockcraft-mochi-audit'
 async function run() {
   const { createServer } = await import('vite')
-  const vite = await createServer({ root, server: { host: '127.0.0.1', port: 5197, strictPort: true },
+  const vite = await createServer({ root, cacheDir: path.join(root, '.cache', 'mochi-host-browser'), server: { host: '127.0.0.1', port: 5197, strictPort: true, fs: { allow: [root, require('node:fs').realpathSync(path.join(root, 'node_modules')), path.dirname(require.resolve('@fontsource/pixelify-sans/500.css'))] } },
     plugins: [{ name: 'offline-mochi-qa-only', configureServer(server) {
       server.middlewares.use('/__mochi', async (_req, res, next) => {
         try {
@@ -118,22 +118,20 @@ async function run() {
       await request('查看历史时保持滚动位置')
       await expect(send).toBeEnabled()
       assert.equal(await history.evaluate(e => e.scrollTop), 0)
-      // A selected block's overlay tracks window scroll and actual canvas dragging.
-      await block.scrollIntoViewIfNeeded()
+      // Center first: a viewport edge intentionally changes Mochi's safe side.
+      await block.evaluate(e => e.scrollIntoView({ block: 'center' }))
+      await page.waitForTimeout(120)
+      await expect(page.locator('.mochi-overlay')).toHaveAttribute('data-locomotion', 'rest')
       await expect(page.locator('.mochi-overlay')).toBeVisible()
-      if (width === 1366) {
+      {
         const delta = () => page.evaluate(() => {
           const block = document.querySelector('[data-block-key="module:registration-form"]').getBoundingClientRect()
           const overlay = document.querySelector('.mochi-overlay').getBoundingClientRect()
           return { x: overlay.x - block.x, y: overlay.y - block.y }
         })
         const before = await delta()
-        await page.mouse.wheel(0, 120)
+        await page.mouse.wheel(0, -65)
         await expect.poll(async () => Math.abs((await delta()).y - before.y)).toBeLessThan(2)
-      } else {
-        assert.equal(await page.locator('.mochi-overlay').evaluate(e => getComputedStyle(e).position), 'fixed')
-        await expect.poll(() => page.locator('.mochi-overlay').evaluate(e => Math.abs(innerWidth - e.getBoundingClientRect().right - 12))).toBeLessThan(1)
-        await expect.poll(() => page.locator('.mochi-overlay').evaluate(e => Math.abs(innerHeight - e.getBoundingClientRect().bottom - 12))).toBeLessThan(1)
       }
       await block.scrollIntoViewIfNeeded()
       const dragBox = await block.boundingBox()

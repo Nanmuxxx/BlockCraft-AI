@@ -55,11 +55,12 @@ test('rich host context keeps selected block and entity association visible', ()
   assert.match(html, /关联实体：报名者/)
 })
 
-test('overlay is anchored without intercepting pointer input and supports narrow-screen fallback', () => {
+test('overlay exposes an accessible chat button inside a non-interactive motion layer', () => {
   const html = renderToStaticMarkup(React.createElement(MochiOverlay, { anchor: { x: 20, y: 30, width: 100, height: 40, placement: 'right' }, emotion: 'curious' }))
   assert.match(html, /data-placement="right"/)
-  const css = fs.readFileSync(require.resolve('./mochi-ai.css'), 'utf8')
+  const css = fs.readFileSync(require.resolve('./mochi-motion.css'), 'utf8')
   assert.match(css, /\.mochi-overlay[^}]*pointer-events:\s*none/) // class is styled as non-interactive
-  assert.match(css, /max-width: 390px/)
+  assert.match(html, /打开 Mochi 聊天与建议/)
+  assert.match(css, /data-dragging/)
   assert.match(css, /prefers-reduced-motion: reduce/)
 })
