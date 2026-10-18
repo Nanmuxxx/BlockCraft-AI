@@ -13,7 +13,6 @@ const root = path.resolve(__dirname, '../..')
 const output = process.env.MOCHI_QA_OUTPUT || path.join(root, '.cache/mochi-browser/evidence')
 async function run() {
   const { createServer } = await import(pathToFileURL(require.resolve('vite')).href)
-  const { localProjectExportPlugin } = await import('../../server/project-export/vite-plugin.mjs')
   const { default: react } = await import(pathToFileURL(require.resolve('@vitejs/plugin-react')).href)
   const { localProjectExportPlugin } = await import(pathToFileURL(path.join(root, 'server/project-export/vite-plugin.mjs')).href)
   const alias = ['react', 'react-dom', 'lucide-react', '@fontsource/pixelify-sans'].map(name => ({ find: new RegExp(`^${name}(/|$)`), replacement: path.dirname(require.resolve(`${name}/package.json`)).replaceAll('\\', '/') + '$1' }))

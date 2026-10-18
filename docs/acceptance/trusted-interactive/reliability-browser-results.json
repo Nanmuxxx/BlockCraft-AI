@@ -11,7 +11,7 @@
         "visible"
       ],
       "intervalPolicy": "100ms repaint callbacks deliberately slowed to 2000ms",
-      "recoveryDisplayErrorMs": 446,
+      "recoveryDisplayErrorMs": 466,
       "beforeBackgroundTicks": 0,
       "completionDisplayTransitions": 1,
       "completedOwnerWrites": 0,
@@ -38,7 +38,7 @@
         "visible"
       ],
       "intervalPolicy": "100ms repaint callbacks deliberately slowed to 2000ms",
-      "recoveryDisplayErrorMs": 459,
+      "recoveryDisplayErrorMs": 456,
       "beforeBackgroundTicks": 0,
       "completionDisplayTransitions": 1,
       "completedOwnerWrites": 0,

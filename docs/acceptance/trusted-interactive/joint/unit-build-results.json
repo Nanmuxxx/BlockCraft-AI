@@ -1,0 +1,78 @@
+[
+  {
+    "name": "core",
+    "command": "npm test",
+    "exitCode": 0,
+    "seconds": 1.04,
+    "tests": 192,
+    "pass": 192,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "server",
+    "command": "npm --prefix server test",
+    "exitCode": 0,
+    "seconds": 0.6,
+    "tests": 23,
+    "pass": 23,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "generation",
+    "command": "npm run test:generation",
+    "exitCode": 0,
+    "seconds": 0.52,
+    "tests": 24,
+    "pass": 24,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "mochi-host",
+    "command": "npm run test:mochi-host",
+    "exitCode": 0,
+    "seconds": 0.53,
+    "tests": 55,
+    "pass": 55,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "mochi-conversation",
+    "command": "node --test tests/mochi-ai/*.test.mjs",
+    "exitCode": 0,
+    "seconds": 0.34,
+    "tests": 40,
+    "pass": 40,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "compatibility",
+    "command": "node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs tests/generated-artifact/*.test.cjs tests/generated-artifact-ui/*.test.cjs tests/project-zip-export/*.test.mjs tests/workshop-export/*.test.*",
+    "exitCode": 0,
+    "seconds": 1.29,
+    "tests": 315,
+    "pass": 315,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "trusted",
+    "command": "npm run test:trusted-interactive",
+    "exitCode": 0,
+    "seconds": 0.85,
+    "tests": 17,
+    "pass": 17,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "build",
+    "command": "npm run build",
+    "exitCode": 0,
+    "seconds": 1.34
+  }
+]

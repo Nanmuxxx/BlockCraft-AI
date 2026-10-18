@@ -1,0 +1,33 @@
+
+> blockcraft-ai@0.1.0 test:trusted-interactive
+> npm --prefix server run build && node tools/project-zip-export/prepare.mjs && node --test tests/trusted-interactive/*.test.*
+
+
+> build
+> tsc -p tsconfig.json
+
+✔ client validates complete v2 envelope and rejects permissions, invalid schemas and fake successful errors (20.520625ms)
+✔ pure ZIP boundary explicitly rejects v2 even when caller bypasses UI capture (1.425334ms)
+✔ pomodoro details accurately declare no data binding and expose no CRUD editor (3.795667ms)
+✔ CRUD details preserve valid entity and warn on missing or ambiguous binding (1.212125ms)
+✔ strict v2 config accepts boundaries and rejects executable/unknown/malformed fields (1.126ms)
+✔ timer anchors survive mode-like remounts, pause/resume/reset, completion and backwards wall clock (3.424708ms)
+✔ same owner preserves CRUD, custom state and layout; read-only and stale CAS fail atomically (1.665167ms)
+✔ state schema rejects dangling/invalid timers; removing timer cleans state and undo restores it (0.645083ms)
+✔ timer commits preserve admitted custom props/state and exact render order (7.944291ms)
+✔ Mochi can select/read timer metadata but cannot grant timer modification authority (19.086959ms)
+✔ duplicate actions and rapid switching never extend a running deadline or subtract twice (5.309459ms)
+✔ completion is a stable read-only derived state until an explicit reset (0.475959ms)
+✔ real provider HTTP request shape is reused, paid fetch replaced by fixture, both ends validated (20.921917ms)
+✔ all authorization and budget gates reject before upstream; no body can grant approval (21.724167ms)
+✔ approved call cap and origin remain enforced (4.931041ms)
+✔ malformed, incompatible and executable model outputs fail closed; legacy route cannot admit v2 (6.686042ms)
+✔ provider errors, truncated completion and invalid JSON never become successful configurations (10.556875ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 265.257583

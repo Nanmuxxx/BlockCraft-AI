@@ -84,7 +84,7 @@ export function AppSpecInspector({ runtime, snapshot, blockId }: AppSpecInspecto
       <details><summary>积木与数据详情</summary><dl>
         <dt>类型</dt><dd>{block.type}</dd>
         <dt>积木 ID</dt><dd><code>{block.id}</code></dd>
-        <dt>绑定实体</dt><dd>{entity ? <>{entity.name}<br /><code>{entity.id}</code></> : '绑定异常'}</dd>
+        <dt>绑定实体</dt><dd>{block.type === 'pomodoro' ? '无需数据绑定' : entity ? <>{entity.name}<br /><code>{entity.id}</code></> : '绑定异常'}</dd>
       </dl></details>
       {block.type === 'pomodoro' ? <section aria-label="番茄钟配置"><p>时长：{block.durationSeconds} 秒</p><p>可信交互协议：1 · AppSpec v2</p><p>开始 / 暂停 / 重置由内置 React 组件执行。此版本暂不支持 ZIP 导出。</p></section> : !entity ? <p role="alert">绑定异常：当前积木需要唯一的数据绑定及有效实体，请联系负责人修复。</p> : <>
         {block.type === 'metric' ? <section aria-label="当前配置">
