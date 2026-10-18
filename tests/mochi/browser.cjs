@@ -14,10 +14,11 @@ const output = process.env.MOCHI_QA_OUTPUT || path.join(root, '.cache/mochi-brow
 async function run() {
   const { createServer } = await import(pathToFileURL(require.resolve('vite')).href)
   const { default: react } = await import(pathToFileURL(require.resolve('@vitejs/plugin-react')).href)
+  const { localProjectExportPlugin } = await import(pathToFileURL(path.join(root, 'server/project-export/vite-plugin.mjs')).href)
   const alias = ['react', 'react-dom', 'lucide-react', '@fontsource/pixelify-sans'].map(name => ({ find: new RegExp(`^${name}(/|$)`), replacement: path.dirname(require.resolve(`${name}/package.json`)).replaceAll('\\', '/') + '$1' }))
   const localNodeModules = path.join(root, 'node_modules')
   const vite = await createServer({ root, configFile: false, cacheDir: path.join(root, '.cache', 'mochi-host-browser'), resolve: { alias }, optimizeDeps: { include: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom/client', 'lucide-react'] }, server: { host: '127.0.0.1', port: 5197, strictPort: true, proxy: {}, fs: { allow: [root, ...(existsSync(localNodeModules) ? [realpathSync(localNodeModules)] : []), path.dirname(require.resolve('@fontsource/pixelify-sans/500.css')), ...alias.map(item => item.replacement.slice(0, -2))] } },
-    plugins: [react(), { name: 'offline-mochi-qa-only', configureServer(server) {
+    plugins: [react(), localProjectExportPlugin(), { name: 'offline-mochi-qa-only', configureServer(server) {
       server.middlewares.use('/__mochi', async (_req, res, next) => {
         try {
           const html = await server.transformIndexHtml('/__mochi', '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="root"></div><script type="module" src="/tests/mochi/fixture.tsx"></script></body></html>')
