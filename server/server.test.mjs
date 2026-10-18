@@ -220,6 +220,16 @@ test('deadline releases ignored-abort transport and cancels its late response bo
   await new Promise(r => setImmediate(r))
   assert.equal(cancelled, 1)
 })
+test('HTTP and declared-size rejection cancel unused upstream bodies without blocking admission', async t => {
+  for (const [init, code] of [[{ status: 503 }, 'AI_UNAVAILABLE'], [{ headers: { 'content-length': '9999999' } }, 'AI_OUTPUT_TOO_LARGE']]) {
+    let cancelled = 0
+    const s = await setup(t, { fetchImpl: async () => new Response(new ReadableStream({
+      cancel() { cancelled++; return new Promise(() => {}) },
+    }), init) })
+    await errorIs(await s.post(), 502, code)
+    assert.equal(cancelled, 1)
+  }
+})
 test('deadline releases ignored-abort body, including nonsettling cancel', async t => {
   let cancelled = 0
   const s = await setup(t, { aiTimeoutMs: 10, fetchImpl: async () => new Response(new ReadableStream({

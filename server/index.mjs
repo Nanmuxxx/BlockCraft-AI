@@ -93,6 +93,7 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
   const timer = setTimeout(() => { timedOut = true; controller.abort() }, aiTimeoutMs)
   const onClose = () => { if (!res.writableEnded) controller.abort() }
   res.on('close', onClose)
+  let received
   try {
     controller.signal.throwIfAborted()
     const fetching = Promise.resolve(fetchImpl(ENDPOINT, {
@@ -109,8 +110,8 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
       }),
     }))
     // A late response after timeout/disconnect must release its unused body.
-    void fetching.then(response => { if (controller.signal.aborted) void response.body?.cancel().catch(() => {}) }, () => {})
-    const response = await abortable(fetching, controller.signal)
+    void fetching.then(response => { if (controller.signal.aborted) void response.body?.cancel().catch(() => {}) }).catch(() => {})
+    const response = received = await abortable(fetching, controller.signal)
     if (!response.ok) throw fail(502, 'AI_UNAVAILABLE', 'AI 服务暂时不可用，请稍后重试。')
     const envelope = await readUpstream(response, controller)
     const choice = envelope?.choices?.[0]
@@ -144,6 +145,7 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
   } finally {
     clearTimeout(timer)
     controller.abort()
+    if (received?.body && !received.body.locked) void received.body.cancel().catch(() => {})
     res.off('close', onClose)
   }
 }

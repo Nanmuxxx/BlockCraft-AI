@@ -32,13 +32,14 @@ export function createDeepSeekProvider({ apiKey = process.env.DEEPSEEK_API_KEY?.
     const abort = () => controller.abort(); signal?.addEventListener('abort', abort, { once: true })
     if (signal?.aborted) controller.abort()
     const timer = setTimeout(() => { timedOut = true; controller.abort() }, timeoutMs)
+    let received
     try {
       controller.signal.throwIfAborted()
       const fetching = Promise.resolve(fetchImpl(ENDPOINT, { method: 'POST', redirect: 'error', signal: controller.signal,
         headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ model, messages: buildMessages(input), response_format: { type: 'json_object' }, stream: false, max_tokens: MAX_OUTPUT_TOKENS }) }))
-      void fetching.then(response => { if (controller.signal.aborted) void response.body?.cancel().catch(() => {}) }, () => {})
-      const response = await abortable(fetching, controller.signal)
+      void fetching.then(response => { if (controller.signal.aborted) void response.body?.cancel().catch(() => {}) }).catch(() => {})
+      const response = received = await abortable(fetching, controller.signal)
       if (!response.ok) throw new MochiError('AI_UNAVAILABLE', 'Mochi 暂时连不上服务，请稍后再试。', 502)
       const envelope = await readBounded(response, controller.signal)
       controller.signal.throwIfAborted()
@@ -57,6 +58,9 @@ export function createDeepSeekProvider({ apiKey = process.env.DEEPSEEK_API_KEY?.
       if (signal?.aborted) throw new MochiError('CANCELLED', '已取消本次请求。', 499)
       if (error instanceof MochiError) throw error
       throw new MochiError('AI_UNAVAILABLE', 'Mochi 暂时无法回答，请稍后再试。', 502)
-    } finally { clearTimeout(timer); controller.abort(); signal?.removeEventListener('abort', abort) }
+    } finally {
+      clearTimeout(timer); controller.abort(); signal?.removeEventListener('abort', abort)
+      if (received?.body && !received.body.locked) void received.body.cancel().catch(() => {})
+    }
   } }
 }

@@ -54,6 +54,17 @@ test('provider fails closed without key and never retries/falls back on HTTP, JS
   }
 })
 
+test('HTTP and declared-size rejection cancel unused bodies without waiting for cleanup', async () => {
+  for (const init of [{ status: 503 }, { headers: { 'content-length': '999999' } }]) {
+    let cancelled = 0
+    const p = createDeepSeekProvider({ apiKey: 'offline', fetchImpl: async () => new Response(new ReadableStream({
+      cancel() { cancelled++; return new Promise(() => {}) },
+    }), init) })
+    await assert.rejects(p.analyze(request()))
+    assert.equal(cancelled, 1)
+  }
+})
+
 test('provider aborts on deadline and external cancellation, including body reads', async () => {
   const hangingFetch = async (_url, { signal }) => { await new Promise((_, reject) => signal.addEventListener('abort', () => reject(new Error('abort')), { once: true })) }
   await assert.rejects(createDeepSeekProvider({ apiKey: 'offline', timeoutMs: 10, fetchImpl: hangingFetch }).analyze(request()), { code: 'AI_TIMEOUT' })

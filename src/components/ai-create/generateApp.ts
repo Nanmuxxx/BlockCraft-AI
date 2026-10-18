@@ -29,7 +29,10 @@ const CANCELLED = '生成已取消或超时，请重试。'
 
 /** Abort also wins against transports/readers that settle after cancellation. */
 async function abortable<T>(operation: Promise<T>, signal: AbortSignal): Promise<T> {
-  signal.throwIfAborted()
+  if (signal.aborted) {
+    void operation.catch(() => {})
+    signal.throwIfAborted()
+  }
   let abort: () => void = () => {}
   const cancelled = new Promise<never>((_, reject) => {
     abort = () => reject(signal.reason)
@@ -73,13 +76,19 @@ async function requestGeneration(idea: string, signal?: AbortSignal, interactive
   signal?.addEventListener('abort', abort, { once: true })
   if (signal?.aborted) abort()
   const timer = setTimeout(abort, 45000)
+  let received: Response | undefined
   try {
     controller.signal.throwIfAborted()
-    const response = await abortable(fetch('/api/ai/generate', {
+    const fetching = fetch('/api/ai/generate', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       credentials: 'same-origin', redirect: 'error',
       body: JSON.stringify({ idea: input, ...(interactive ? { protocol: 'trusted-interactive/1' } : {}) }), signal: controller.signal,
-    }), controller.signal)
+    })
+    // Cancellation can win before a transport returns its response body.
+    void fetching.then(response => {
+      if (controller.signal.aborted) void response.body?.cancel().catch(() => {})
+    }).catch(() => {})
+    const response = received = await abortable(fetching, controller.signal)
     const body = await readGenerationResponse(response, controller.signal)
     controller.signal.throwIfAborted()
     if (!response.ok) {
@@ -99,6 +108,8 @@ async function requestGeneration(idea: string, signal?: AbortSignal, interactive
     clearTimeout(timer)
     signal?.removeEventListener('abort', abort)
     controller.abort()
+    // Covers declared-size rejection before a reader is acquired.
+    if (received?.body && !received.body.locked) void received.body.cancel().catch(() => {})
   }
 }
 

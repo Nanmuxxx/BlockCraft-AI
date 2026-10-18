@@ -8,6 +8,31 @@ const interactive = () => ({ protocol: 'trusted-interactive/1', spec: timerSpec,
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r }); return { resolve, promise } }
 
 for (const [name, generate, result] of [['v1', generateProject, spec], ['v2', generateInteractiveProject, interactive]]) {
+  test(`${name}: unused oversized and late response streams are cancelled`, async t => {
+    const original = global.fetch; t.after(() => { global.fetch = original })
+    let cancelled = 0
+    global.fetch = async () => new Response(new ReadableStream({ cancel() { cancelled++; return new Promise(() => {}) } }), {
+      headers: { 'content-length': String(128 * 1024 + 1) },
+    })
+    await assert.rejects(generate('离线需求'), /响应过大/)
+    assert.equal(cancelled, 1)
+    const slow = deferred(), controller = new AbortController()
+    global.fetch = () => slow.promise
+    const pending = generate('离线需求', controller.signal)
+    controller.abort(); await assert.rejects(pending, /取消或超时/)
+    slow.resolve(new Response(new ReadableStream({ cancel() { cancelled++ } })))
+    await new Promise(resolve => setImmediate(resolve))
+    assert.equal(cancelled, 2)
+  })
+
+  test(`${name}: synchronous transport cancellation consumes a late rejection`, async t => {
+    const original = global.fetch; t.after(() => { global.fetch = original })
+    const controller = new AbortController()
+    global.fetch = () => { controller.abort(); return Promise.reject(new Error('late transport failure')) }
+    await assert.rejects(generate('离线需求', controller.signal), /取消或超时/)
+    await new Promise(resolve => setImmediate(resolve))
+  })
+
   test(`${name}: deadline terminates uncooperative fetch without retry`, async t => {
     const original = global.fetch; t.after(() => { global.fetch = original })
     t.mock.timers.enable({ apis: ['setTimeout'] })
