@@ -31,9 +31,9 @@
 ## Tech Lead 收敛裁决（05:35）
 
 - 本地 `a4678f5` 的最终 tree=`b56d512dccadcac6abf7742e6791a52f22fdef26` 已通过 GitHub 授权 Git-data API 发布为远端 `16d8920b0de1bccf847af3f01426d1deb59ce21b`；更新 ref 时 expected head=`7a88a776c7b3c1b463e446d1803edd60c4767db1`，force=false，未覆盖并发更新。
-- PR #40 的功能基线为 84 commits/378 files，当前 GitHub 总数为 86（另含两条 docs-only 收敛提交）。按审核顺序拆为：①生成与 DeepSeek ingress/协议准入；②Artifact prepare/install/CAS 与 CustomBlock 映射；③Mochi host/conversation/owner/revision/CAS 生命周期；④B/C runtime、安全文字渲染与隔离边界；⑤测试、浏览器证据及交付文档。建议按此顺序分组审查，再整体运行回归；不建议在当前 Draft 上继续加入生产功能。
+- PR #40 的功能基线为 84 commits/378 files，当前 GitHub 总数为 88（另含四条 docs-only 收敛/映射提交）。按审核顺序拆为：①生成与 DeepSeek ingress/协议准入；②Artifact prepare/install/CAS 与 CustomBlock 映射；③Mochi host/conversation/owner/revision/CAS 生命周期；④B/C runtime、安全文字渲染与隔离边界；⑤测试、浏览器证据及交付文档。建议按此顺序分组审查，再整体运行回归；不建议在当前 Draft 上继续加入生产功能。
 - PR #35 依赖核对：其 Docker acceptance 已由 GitHub Actions 在 `f6e7b9c` 通过（镜像构建、container health、`server/.generated/appSpecValidation.js`、`server/trusted-interactive.mjs` 等）；本地无 Docker CLI，不能重复声称容器实测。Agent A 仅提供 `docs/agent-a-night/DEPLOYMENT-INTERFACE-NOTE.md` 交接，不修改 Docker/workflow。
-- 最终候选：远端 `1cecc1bb6f338c0d148c807ae9a3c8b2d6616ec0`，PR #40 保持 Draft/open/unmerged；REAL_MODEL_CALLS=0，不部署、不执行生成 TSX。
+- 最终候选：远端 `2ff2b8063b2d0a35a52fa930244fae6f38b76ae1`，PR #40 保持 Draft/open/unmerged；REAL_MODEL_CALLS=0，不部署、不执行生成 TSX。
 
 ## 已完成与 Commit
 
