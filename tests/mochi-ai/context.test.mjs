@@ -53,3 +53,21 @@ for (const succeeds of [true, false]) test(`metadata ${succeeds ? 'success' : 'f
   else assert.throws(f.projection.read, { code: 'CONTEXT_UNAVAILABLE' })
   f.projection.dispose()
 })
+
+test('a new admitted reference recovers metadata after failure without forwarding old parameters', async () => {
+  const pending = new Map(), f = fixture(ref => new Promise((resolve, reject) => pending.set(ref.versionDigest, { resolve, reject })))
+  pending.get('v1').reject(new Error('temporary unavailable metadata'))
+  await settle()
+  assert.throws(f.projection.read, { code: 'CONTEXT_UNAVAILABLE' })
+  f.change([{ id: 'custom-1', definitionId: 'counter', versionDigest: 'v2' }])
+  assert.throws(f.projection.read, { code: 'CONTEXT_PENDING' })
+  const recovered = entry('v2')
+  recovered.artifact.manifest.name = '恢复后的版本'
+  recovered.artifact.manifest.propsSchema = { type: 'object', properties: { count: { type: 'integer' } }, required: [] }
+  pending.get('v2').resolve(recovered)
+  await settle()
+  const block = f.projection.read().blocks.at(-1)
+  assert.equal(block.name, '恢复后的版本')
+  assert.deepEqual(block.parameters, [{ name: 'count', type: 'integer', required: false }])
+  f.projection.dispose()
+})
