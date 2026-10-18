@@ -1,0 +1,126 @@
+{
+  "scope": "fixed developer catalogue ONLY; arbitrary AI source was not built or run",
+  "npmInstall": {
+    "command": "npm install --ignore-scripts --no-audit --no-fund --userconfig /dev/null --globalconfig /var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/blockcraft-zip-acceptance-PI5ELl/empty-global.npmrc --registry https://registry.npmjs.org --cache /var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/blockcraft-zip-acceptance-PI5ELl/npm-cache",
+    "exitCode": 0,
+    "stdout": "added 23 packages in 6s"
+  },
+  "cases": [
+    {
+      "name": "mixed",
+      "sha256": "710e57e58ca3a879739d1e1471333fd5197fec9bd5eeaf61b5442bd255c5faba",
+      "files": 18,
+      "zipBytes": 41590,
+      "build": {
+        "command": "npm run build",
+        "exitCode": 0,
+        "stdout": "> blockcraft-export@1.0.0 build\n> tsc --noEmit && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 23 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.36 kB │ gzip:  0.27 kB\ndist/assets/index-ChP0rGjP.css    0.96 kB │ gzip:  0.53 kB\ndist/assets/index-N-ZShNVW.js   227.45 kB │ gzip: 71.65 kB\n\n✓ built in 428ms"
+      },
+      "runtime": [
+        {
+          "mode": "dev",
+          "passed": true,
+          "checks": [
+            "renderOrder",
+            "form-to-list/metric data flow",
+            "count",
+            "delete",
+            "exact props",
+            "Counter increment/reset",
+            "Temperature relative import",
+            "desktop saved coordinates",
+            "unpositioned fallback"
+          ]
+        },
+        {
+          "mode": "production",
+          "passed": true,
+          "checks": [
+            "renderOrder",
+            "form-to-list/metric data flow",
+            "count",
+            "delete",
+            "exact props",
+            "Counter increment/reset",
+            "Temperature relative import",
+            "desktop saved coordinates",
+            "unpositioned fallback"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "builtin",
+      "sha256": "164fbd89715e767d7eafa149d5ae7c1a1c66be936a8b758a02d3c0d44e48dd3d",
+      "files": 15,
+      "zipBytes": 39888,
+      "build": {
+        "command": "npm run build",
+        "exitCode": 0,
+        "stdout": "> blockcraft-export@1.0.0 build\n> tsc --noEmit && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 20 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.36 kB │ gzip:  0.27 kB\ndist/assets/index-ChP0rGjP.css    0.96 kB │ gzip:  0.53 kB\ndist/assets/index-DXg-DcUj.js   226.60 kB │ gzip: 71.15 kB\n\n✓ built in 54ms"
+      },
+      "runtime": [
+        {
+          "mode": "dev",
+          "passed": true,
+          "checks": [
+            "renderOrder",
+            "form-to-list/metric data flow",
+            "count",
+            "delete",
+            "inherited-name IDs and empty optional fields"
+          ]
+        },
+        {
+          "mode": "production",
+          "passed": true,
+          "checks": [
+            "renderOrder",
+            "form-to-list/metric data flow",
+            "count",
+            "delete",
+            "inherited-name IDs and empty optional fields"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "reading",
+      "sha256": "cdf5da32a36af7c106cdc63dcf221fdd83a58fa843ba2d917b1345fb65814296",
+      "files": 15,
+      "zipBytes": 39841,
+      "build": {
+        "command": "npm run build",
+        "exitCode": 0,
+        "stdout": "> blockcraft-export@1.0.0 build\n> tsc --noEmit && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 20 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.36 kB │ gzip:  0.27 kB\ndist/assets/index-ChP0rGjP.css    0.96 kB │ gzip:  0.53 kB\ndist/assets/index-Bxp3bglH.js   226.56 kB │ gzip: 71.16 kB\n\n✓ built in 53ms"
+      },
+      "runtime": [
+        {
+          "mode": "dev",
+          "passed": true,
+          "checks": [
+            "renderOrder",
+            "form-to-list/metric data flow",
+            "sum",
+            "average",
+            "empty aggregation"
+          ]
+        },
+        {
+          "mode": "production",
+          "passed": true,
+          "checks": [
+            "renderOrder",
+            "form-to-list/metric data flow",
+            "sum",
+            "average",
+            "empty aggregation"
+          ]
+        }
+      ]
+    }
+  ],
+  "outbound": [],
+  "errors": [],
+  "browser": "156.0.8078.4"
+}
