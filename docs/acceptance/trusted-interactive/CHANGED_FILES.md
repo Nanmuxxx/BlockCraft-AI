@@ -1,6 +1,6 @@
 # 相对 main 的完整文件清单与影响范围
 
-基线：`7e94dc9568501dd4ad218a43b5aca31026aed2b2`。清单包含核心与可靠性增补提交；证据文件也逐一列出。
+基线：`eb8b35c041fd158c9050899ed9d2804c9aaea174`（已合并 #37）。清单包含核心、可靠性与最终整改；最新验收见 JOINT_ACCEPTANCE.md。
 
 ## 主集成人重点审核
 
@@ -18,6 +18,7 @@
 
 - `docs/acceptance/trusted-interactive/CHANGED_FILES.md`
 - `docs/acceptance/trusted-interactive/INTEGRATION.md`
+- `docs/acceptance/trusted-interactive/JOINT_ACCEPTANCE.md`
 - `docs/acceptance/trusted-interactive/REPORT.md`
 - `docs/acceptance/trusted-interactive/browser-results.json`
 - `docs/acceptance/trusted-interactive/desktop-b.png`
@@ -32,6 +33,34 @@
 - `docs/acceptance/trusted-interactive/final-specific.log.txt`
 - `docs/acceptance/trusted-interactive/final-unit.log.txt`
 - `docs/acceptance/trusted-interactive/final-validation-results.json`
+- `docs/acceptance/trusted-interactive/joint/bc-browser-rerun.log`
+- `docs/acceptance/trusted-interactive/joint/bc-browser.log`
+- `docs/acceptance/trusted-interactive/joint/browser-results.json`
+- `docs/acceptance/trusted-interactive/joint/build.log`
+- `docs/acceptance/trusted-interactive/joint/compatibility.log`
+- `docs/acceptance/trusted-interactive/joint/core.log`
+- `docs/acceptance/trusted-interactive/joint/generated-production.log`
+- `docs/acceptance/trusted-interactive/joint/generated-production/report.json`
+- `docs/acceptance/trusted-interactive/joint/generated-ui.log`
+- `docs/acceptance/trusted-interactive/joint/generated-ui/offline-pomodoro.install.json`
+- `docs/acceptance/trusted-interactive/joint/generated-ui/report.json`
+- `docs/acceptance/trusted-interactive/joint/generation-browser.log`
+- `docs/acceptance/trusted-interactive/joint/generation.log`
+- `docs/acceptance/trusted-interactive/joint/mochi-browser-rerun.log`
+- `docs/acceptance/trusted-interactive/joint/mochi-browser.log`
+- `docs/acceptance/trusted-interactive/joint/mochi-conversation.log`
+- `docs/acceptance/trusted-interactive/joint/mochi-host.log`
+- `docs/acceptance/trusted-interactive/joint/mochi/report.json`
+- `docs/acceptance/trusted-interactive/joint/server.log`
+- `docs/acceptance/trusted-interactive/joint/source-sha256.json`
+- `docs/acceptance/trusted-interactive/joint/trusted-browser-rerun.log`
+- `docs/acceptance/trusted-interactive/joint/trusted-browser.log`
+- `docs/acceptance/trusted-interactive/joint/trusted-reliability.log`
+- `docs/acceptance/trusted-interactive/joint/trusted.log`
+- `docs/acceptance/trusted-interactive/joint/unit-build-results.json`
+- `docs/acceptance/trusted-interactive/joint/workshop-browser.log`
+- `docs/acceptance/trusted-interactive/joint/zip-browser.log`
+- `docs/acceptance/trusted-interactive/joint/zip/browser-report.json`
 - `docs/acceptance/trusted-interactive/legacy-export-browser.log.txt`
 - `docs/acceptance/trusted-interactive/legacy-generation-browser.log.txt`
 - `docs/acceptance/trusted-interactive/legacy-mochi-browser.json`
@@ -69,11 +98,11 @@
 - `tests/custom-block/project.test.cjs`
 - `tests/generation/browser.cjs`
 - `tests/generation/generation.test.mjs`
-- `tests/mochi/browser.cjs`
 - `tests/trusted-interactive/browser.cjs`
 - `tests/trusted-interactive/client.test.cjs`
 - `tests/trusted-interactive/export.test.mjs`
 - `tests/trusted-interactive/index.html`
+- `tests/trusted-interactive/inspector.test.cjs`
 - `tests/trusted-interactive/main.tsx`
 - `tests/trusted-interactive/pomodoro.json`
 - `tests/trusted-interactive/reliability.browser.cjs`
@@ -83,7 +112,3 @@
 - `tests/trusted-interactive/serve.mjs`
 - `tests/trusted-interactive/server.test.mjs`
 - `tools/project-zip-export/export.mjs`
-
-## 明确排除
-
-`CustomBlockImport.tsx`、`AppSpecWorkshop.tsx` 与 `AiCreate.tsx` 不在 PR。AiCreate 早先本地 Diff 为 +8/-4，保持不变；本地 `coordination/AiCreate.pending.patch` 保留且不应用、不提交。node_modules 依赖符号链接及生成编译产物不提交。
