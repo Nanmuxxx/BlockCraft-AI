@@ -56,7 +56,7 @@ test('cancelled late completion cannot replace newer preview or apply receipt/hi
   })
   const first = host.callbacks.onRequestPlan('旧修改')
   const rejected = assert.rejects(first)
-  await started.promise; host.cancelRequest()
+  await started.promise; host.cancelRequest(host.getSnapshot().requestId)
   await host.callbacks.onRequestPlan('新修改')
   const second = host.getSnapshot()
   old.resolve(); await rejected
@@ -80,4 +80,24 @@ test('authorization ABA and concurrent revision invalidate exact preview without
   const winner = runtime.getSnapshot()
   await assert.rejects(host.callbacks.onConfirm(next))
   assert.equal(runtime.getSnapshot(), winner)
+})
+
+test('cancel retires Host await even when completion never settles; late failures stay obsolete', { timeout: 1000 }, async t => {
+  let rejectOld, calls = 0
+  const { runtime, host } = setup(t, async ({ request }) => {
+    if (++calls === 1) return new Promise((_, reject) => { rejectOld = reject })
+    return JSON.stringify(candidate(request))
+  })
+  const before = runtime.getSnapshot()
+  const first = host.callbacks.onRequestPlan('不再等待的修改')
+  const rejected = assert.rejects(first)
+  host.cancelRequest(host.getSnapshot().requestId); await rejected
+  assert.equal(runtime.getSnapshot(), before)
+  await host.callbacks.onRequestPlan('新修改')
+  const current = host.getSnapshot()
+  rejectOld(new Error('obsolete transport rejection'))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(host.getSnapshot(), current)
+  await host.callbacks.onConfirm(current.preview.planId)
+  assert.equal(runtime.getSnapshot().revision, 1)
 })

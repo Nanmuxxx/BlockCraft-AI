@@ -32,7 +32,24 @@ export function createModelPlanProvider(complete: ModelPlanCompletion): PlanProv
   return async request => {
     request.signal.throwIfAborted()
     const input = toMinimalPlanInput(request)
-    const output = await complete({ instruction: APP_SPEC_EDIT_INSTRUCTION, request: input, signal: request.signal })
+    // A completion transport may ignore cancellation. Retire the Host await
+    // promptly, while still consuming a late rejection from that transport.
+    let abort: () => void = () => {}
+    const cancelled = new Promise<never>((_, reject) => {
+      abort = () => reject(request.signal.reason)
+      request.signal.addEventListener('abort', abort, { once: true })
+    })
+    // Also consume cancellation if a completion throws synchronously before
+    // Promise.race can attach its handlers.
+    void cancelled.catch(() => {})
+    let output: string
+    try {
+      if (request.signal.aborted) abort()
+      output = await Promise.race([
+        cancelled,
+        complete({ instruction: APP_SPEC_EDIT_INSTRUCTION, request: input, signal: request.signal }),
+      ])
+    } finally { request.signal.removeEventListener('abort', abort) }
     request.signal.throwIfAborted()
     if (typeof output !== 'string' || new TextEncoder().encode(output).byteLength > 64 * 1024) throw new AppSpecError('INVALID_MODEL_RESPONSE', '修改计划超出响应限制。')
     try { return JSON.parse(output) as unknown }
