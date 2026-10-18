@@ -32,6 +32,7 @@ async function run() {
   const report = { startedAt: new Date().toISOString(), command: [process.execPath, ...process.argv.slice(1)],
     baseline: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), sourceBefore: fingerprint(),
     browser: process.env.MOCHI_QA_BROWSER_PATH || 'Chromium', browserVersion: null, touchDevice: false,
+    planProvider: process.env.MOCHI_QA_MODEL_PLAN === '1' ? 'bounded JSON completion fixture (zero model calls)' : 'fixed mock',
     cases: [], scenarios: [], errors: [], consoleErrors: [], blockedRequests: [] }
   let activePage
   try {
@@ -73,7 +74,7 @@ async function run() {
       assert.equal((await state()).calls, 0)
       assert.equal(outbound, 0)
       await page.screenshot({ path: path.join(output, `production-${width}.png`), fullPage: true })
-      await page.goto(url)
+      await page.goto(url + (process.env.MOCHI_QA_MODEL_PLAN === '1' ? '?model-plan' : ''))
       await block.click()
       await expect(page.locator('.mochi-overlay')).toBeVisible()
       const original = await state()

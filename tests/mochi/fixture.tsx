@@ -9,6 +9,7 @@ import { AppSpecWorkshop, MochiWorkshop } from '../../src/components/app-builder
 import { createAppRuntime } from '../../src/model/appRuntime'
 import { createClubRegistrationExample } from '../../src/model/appSpecExamples'
 import { createMochiHost } from '../../src/integrations/mochi/host'
+import { createModelPlanProvider } from '../../src/integrations/mochi/modelPlanProvider'
 import { mockAddOptionalField } from '../../src/integrations/mochi/mockPlanner'
 import { toMinimalPlanInput } from '../../src/integrations/mochi/planning'
 
@@ -29,7 +30,20 @@ function Fixture() {
   qa.replaceHost = () => setGeneration(value => value + 1)
   const [host, setHost] = useState<ReturnType<typeof createMochiHost> | null>(null)
   useEffect(() => {
-    const instance = createMochiHost(runtime, async request => {
+    const fixedJsonProvider = createModelPlanProvider(async ({ request }) => {
+      qa.calls++; qa.inputs.push(request)
+      const response = () => JSON.stringify({ request: {
+        requestId: request.requestId, baseRevision: request.baseRevision, commands: [
+          { type: 'addField', entityId: request.entity.id, field: { id: `${request.requestId}-field`, name: 'Mock 备注', type: 'text', required: false } },
+          { type: 'configureBlockFields', blockId: request.block.id, fieldIds: [...request.block.fieldIds, `${request.requestId}-field`] },
+        ],
+      }, capabilityIds: [] })
+      // Fixed JSON completion only; never call a model, even for arbitrary input.
+      if (qa.defer) return new Promise((resolve, reject) => { qa.pending.push({ resolve: () => resolve(response()), reject: () => reject(new Error('Late offline test failure')) }) })
+      if (qa.failure) throw new Error('Offline test failure')
+      return response()
+    })
+    const instance = createMochiHost(runtime, new URLSearchParams(location.search).has('model-plan') ? fixedJsonProvider : async request => {
       qa.calls++; qa.inputs.push(toMinimalPlanInput(request))
       // Deliberately ignore abort to exercise late-provider isolation end to end.
       if (qa.defer) return new Promise((resolve, reject) => { qa.pending.push({ resolve: () => resolve(mockAddOptionalField(request)), reject: () => reject(new Error('Late offline test failure')) }) })
