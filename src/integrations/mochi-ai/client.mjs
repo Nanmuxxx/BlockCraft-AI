@@ -2,31 +2,56 @@ import { LIMITS, MochiError, check, object, projectContext, validateAdvice, bind
 const errors = { UNAUTHORIZED: 'Mochi AI 尚未启用：需要可信会话认证和项目访问权限。', ORIGIN_REJECTED: 'Mochi AI 请求来源未获允许。', CONTEXT_MISMATCH: '当前项目与可信访问范围不一致，请重新打开项目。', MODE_UNAVAILABLE: '请回到 B 模式再和 Mochi 聊聊。', ACCESS_UNAVAILABLE: 'Mochi AI 尚未启用：可信会话认证与项目权限尚未配置。', BUDGET_UNAVAILABLE: 'Mochi AI 尚未启用：持久费用预算控制尚未配置或不可用。', CONTEXT_PENDING: '正在读取积木结构…', CONTEXT_UNAVAILABLE: '积木结构暂不可用，请重新载入。', CONTEXT_TOO_LARGE: '当前结构超出分析范围，请减少积木或字段后重试。', INVALID_INPUT: '当前积木结构暂不支持分析。', AI_DISABLED: 'Mochi AI 尚未启用。', AI_NOT_CONFIGURED: 'Mochi AI 尚未配置。', AI_MODIFICATION_DISABLED: '目前只能解释和建议，修改计划尚未接通。',
   AI_TIMEOUT: 'Mochi 想得有点久，请稍后重试。', AI_BUSY: 'Mochi 正在思考。', THROTTLED: '先消化一下刚才的想法吧。', BUDGET_EXHAUSTED: '本次 AI 预算已用完。',
   PROACTIVE_DISABLED: '主动建议尚未开启。', DUPLICATE_EVENT: '这个变化已经分析过了。', CANCELLED: '已取消请求。' }
+async function abortable(operation, signal) {
+  let abort
+  const cancelled = new Promise((_, reject) => {
+    abort = () => reject(signal.reason)
+    signal.addEventListener('abort', abort, { once: true })
+    if (signal.aborted) abort()
+  })
+  try { return await Promise.race([operation, cancelled]) }
+  finally { signal.removeEventListener('abort', abort) }
+}
 export function createMochiApi({ fetchImpl = globalThis.fetch, timeoutMs = 25_000 } = {}) {
   async function request(path, input, { signal } = {}) {
     const controller = new AbortController(); let timedOut = false
     const abort = () => controller.abort(); signal?.addEventListener('abort', abort, { once: true }); if (signal?.aborted) controller.abort()
     const timer = setTimeout(() => { timedOut = true; controller.abort() }, timeoutMs)
+    let received
     try {
       controller.signal.throwIfAborted()
-      const response = await fetchImpl(`/api/mochi-ai/${path}`, { method: input === undefined ? 'GET' : 'POST', credentials: 'same-origin', redirect: 'error', signal: controller.signal,
-        headers: input === undefined ? {} : { 'Content-Type': 'application/json' }, ...(input === undefined ? {} : { body: JSON.stringify(input) }) })
+      const fetching = Promise.resolve(fetchImpl(`/api/mochi-ai/${path}`, { method: input === undefined ? 'GET' : 'POST', credentials: 'same-origin', redirect: 'error', signal: controller.signal,
+        headers: input === undefined ? {} : { 'Content-Type': 'application/json' }, ...(input === undefined ? {} : { body: JSON.stringify(input) }) }))
+      void fetching.then(response => { if (controller.signal.aborted) void response.body?.cancel().catch(() => {}) }).catch(() => {})
+      const response = received = await abortable(fetching, controller.signal)
       check(response.body && Number(response.headers.get('content-length')) <= LIMITS.responseBytes, 'AI_INVALID_RESPONSE', 'Mochi 返回了无效数据。', 502)
-      const reader = response.body.getReader(); const decoder = new TextDecoder(); let content = '', size = 0
+      const reader = response.body.getReader(); const decoder = new TextDecoder('utf-8', { fatal: true }); let content = '', size = 0
       try {
-        for (;;) { const { done, value } = await reader.read(); if (done) break; size += value.byteLength
+        for (;;) { controller.signal.throwIfAborted(); const { done, value } = await abortable(reader.read(), controller.signal); if (done) break; size += value.byteLength
           check(size <= LIMITS.responseBytes, 'AI_INVALID_RESPONSE', 'Mochi 回复过大。', 502); content += decoder.decode(value, { stream: true }) }
-        content += decoder.decode()
-      } finally { await reader.cancel().catch(() => {}); reader.releaseLock() }
-      const result = JSON.parse(content)
-      if (!response.ok) throw new MochiError(result?.error?.code in errors ? result.error.code : 'AI_UNAVAILABLE', errors[result?.error?.code] || 'Mochi 暂时无法回答，请稍后重试。', response.status)
+        controller.signal.throwIfAborted(); content += decoder.decode()
+      } catch (error) {
+        if (controller.signal.aborted || error instanceof MochiError) throw error
+        throw new MochiError('AI_INVALID_RESPONSE', 'Mochi 返回了无效数据。', 502)
+      } finally { void reader.cancel().catch(() => {}); reader.releaseLock() }
+      let result
+      try { result = JSON.parse(content) }
+      catch { throw new MochiError('AI_INVALID_RESPONSE', 'Mochi 返回了无效数据。', 502) }
+      if (!response.ok) {
+        const code = result?.error?.code
+        const known = typeof code === 'string' && Object.hasOwn(errors, code)
+        throw new MochiError(known ? code : 'AI_UNAVAILABLE', known ? errors[code] : 'Mochi 暂时无法回答，请稍后重试。', response.status)
+      }
       return result
     } catch (error) {
       if (timedOut) throw new MochiError('AI_TIMEOUT', errors.AI_TIMEOUT, 504)
       if (signal?.aborted) throw new MochiError('CANCELLED', errors.CANCELLED, 499)
       if (error instanceof MochiError) throw error
       throw new MochiError('AI_UNAVAILABLE', 'Mochi 暂时无法回答，请稍后重试。', 502)
-    } finally { clearTimeout(timer); controller.abort(); signal?.removeEventListener('abort', abort) }
+    } finally {
+      clearTimeout(timer); controller.abort(); signal?.removeEventListener('abort', abort)
+      if (received?.body && !received.body.locked) void received.body.cancel().catch(() => {})
+    }
   }
   return { status: options => request('status', undefined, options), async analyze(input, options) { const safe = validateRequest(input); return validateReply(await request('analyze', safe, options), safe.context) },
     consent: enabled => request('consent', { enabled }), ignore: id => request('ignore', { id }) }
