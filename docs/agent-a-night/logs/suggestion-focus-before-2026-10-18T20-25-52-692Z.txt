@@ -1,0 +1,59 @@
+✔ queued suggestion actions from a disposed conversation cannot focus or send network requests (1.786833ms)
+✔ ignore publication followed by dispose cannot dispatch a retired action (0.289458ms)
+✔ ignore publication followed by replace cannot dispatch a retired action (0.17975ms)
+✖ continued suggestion cannot cross a project replacement during focus (sync=false) (0.764542ms)
+✖ continued suggestion cannot cross a project replacement during focus (sync=true) (0.285167ms)
+✖ continued suggestion cannot cross a structural edit during focus (0.210375ms)
+✔ continued suggestion accepts its own target selection change (0.205792ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 4
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32.991375
+
+✖ failing tests:
+
+test at tests/mochi-ai/suggestion-actions.test.mjs:48:42
+✖ continued suggestion cannot cross a project replacement during focus (sync=false) (0.764542ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/suggestion-actions.test.mjs:53:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'CONTEXT_CHANGED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/suggestion-actions.test.mjs:48:42
+✖ continued suggestion cannot cross a project replacement during focus (sync=true) (0.285167ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/suggestion-actions.test.mjs:53:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'CONTEXT_CHANGED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/suggestion-actions.test.mjs:59:1
+✖ continued suggestion cannot cross a structural edit during focus (0.210375ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/suggestion-actions.test.mjs:61:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'CONTEXT_CHANGED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

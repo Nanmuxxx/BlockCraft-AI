@@ -1,0 +1,1 @@
+PASS: 7 distinct offline apps rendered and recorded data; aggregates, B Inspector edits / C records, edit/delete, 5 failures retain old app, retry; 13 real local HTTP requests with injected DeepSeek; zero paid calls.

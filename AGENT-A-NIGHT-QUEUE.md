@@ -7,11 +7,11 @@
 - Agent B：`agent-b/react-zip-night-20261019`，正在修改 `tools/project-zip-export/templates.mjs`。本分支禁止编辑导出器、模板、部署及冻结材料。
 - REAL_MODEL_CALLS=0。服务测试显式注入固定 Fixture；不读取 `.env`、生产密钥或私人材料。
 
-## 当前任务（2026-10-19 04:20）
+## 当前任务（2026-10-19 04:34）
 
 已完成第一轮链路恢复、生成/协议/取消修复和离线端到端验证；继续接口审计、核心回归、生产浏览器盲区与 Draft PR 准备。六小时窗口尚未结束，不声称已工作六小时。
 
-当前：第九轮元数据恢复与建议动作退休已完成，归档回归并同步Draft #40。下一任务：补充实际HTTP生成页的桌面/移动与取消竞态证据；正式修改服务、隔离Viewer、付费语义验收和跨刷新设计仍受阻。详细本轮记录在末尾。
+当前：第十轮正式HTTP生成桌面/移动及取消竞态已完成，核心786/786通过；归档定位回调项目/取消门禁并继续纯文字安全浏览器测试。正式修改服务、隔离Viewer、付费语义验收和跨刷新设计仍受阻。详细本轮记录在末尾。
 
 ## 已完成与 Commit
 
@@ -137,3 +137,13 @@
 - 全量775/775、npm test192/192、隔离质量93/93均退出0，baseline2e40b76；之后改动单独验证，不混称最新全量。
 - 当前：归档证据并继续服务资源/正式页面生命周期审计。下一任务：请求体、异常及建议操作跨层边界；正式修改服务、隔离Viewer、付费语义和持久化仍受阻。
 - 修改文件：部署交接文档、runtime-inventory.mjs、context.test.mjs、client.mjs、suggestion-actions.test.mjs；其余详见提交清单。REAL_MODEL_CALLS=0。
+
+## 第十轮进展（04:34，继续开发）
+
+- aeb97c0：正式/ai-create实际HTTP取消/迟到结果，桌面1366/移动390各6次HTTP和注入上游；取消保留旧记录、替换后旧响应体释放、迟到失败不覆盖、新导航取消，0页面错误/外部请求/未处理拒绝。
+- 7b3fd01：实际HTTP生成扩展移动视口，各7种AppSpec、13次HTTP；B Inspector新增字段、C数据编辑和B/C往返；5种服务失败保留旧记录、重试空项目替换。仅上游注入，无生产测试开关。
+- bf11cb6及a3c2b0b：继续建议定位回调期间换项目/revision/取消/上下文往返不得发送旧建议；允许一次真实目标选择同步。旧实现分别3和2失败，修复相关47/47。
+- 最新自动发现核心786/786、build-focus-epoch退出0，代码a3c2b0b；focus-epoch正式Mochi桌面/移动通过，0页面错误/外部请求，10次离线Provider及12次fixture预留。
+- 当前修改：mochi-ai/client.mjs、suggestion-actions.test.mjs、generation/browser.cjs及新增cancellation.browser.cjs。下一任务：正式生成结果HTML/URL文字惰性显示验证，继续独立安全审计。REAL_MODEL_CALLS=0。
+
+95d4156新增正式HTTP纯文字安全浏览器：桌面1366/移动390均验证AppSpec应用/积木名、字段、select选项及记录创建/编辑/B-C往返；HTML、URL、事件文字无探针DOM/执行标记/弹窗/外部请求，0页面错误。命令generation-text-safety退出0，baseline a3c2b0b+未提交测试，生产代码未变。没有执行生成TSX。

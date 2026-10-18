@@ -1,6 +1,6 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 04:20（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
+阶段检查点：2026-10-19 04:34（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
@@ -28,15 +28,15 @@
 
 ## 3. Draft PR
 
-[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署。当前已发布代码至本地`f95d6877e1342ae33fbaa1682b6c50a2f7c5f256`对应远端`dbeb007505496c27127713280ebac00a75cb5e2e`，树一致；后续同步见映射。
+[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署。当前已发布代码至本地`95d415669ba58c4d9c8f9e0943465d9c66a5aa80`对应远端`8672d8e59a104a4e26d641f328df155ffde579a9`，树一致；后续同步见映射。
 
 ## 4. 测试命令及退出码
 
 每条命令、cwd、时间、退出码和原始日志见[TEST-COMMANDS.md](docs/agent-a-night/TEST-COMMANDS.md)与[commands.jsonl](docs/agent-a-night/logs/commands.jsonl)。修复前失败、前置产物缺失、一次启动参数错误和修正后重跑均保留。
 
-- 最新`node tests/ai-core-night/regression.mjs`：**775/775，退出码0**（baseline 2e40b76，涵盖HTTP scope修复；之后元数据恢复和建议操作新增另有43/43、40/40），自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
+- 最新`node tests/ai-core-night/regression.mjs`：**786/786，退出码0**（baseline a3c2b0b，涵盖本轮Mochi定位回调所有权修复），自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
 - 组合安装/编辑1/1，重装相关26/26，惰性源码/Viewer25/25，鉴权异常HTTP19/19，跨进程存储/安装32/32，退出码均0；这些属于各次运行，不能相加成另一项全量结果。
-- 最近生产构建`build-metadata-observer`退出0，对应代码HEAD `f1df14f`；之后仅改服务HTTP scope及其测试，相关33/33通过。
+- 最近生产构建`build-focus-epoch`退出0，对应代码HEAD `a3c2b0b`。
 - 存储短读修复前2项失败，修复后相关37/37、精确上限19/19；源码截止首次3项失败，修复后含owner组合50/50；AppSpec截止首次2项失败，第一次修复改变调用时序导致旧取消测试超时，恢复时序后相关73/73及同步异常16/16，全部保留日志。
 - 历史较广核心649/649、622/622、568/568，安全/编译/质量187/187、默认npm test192/192；准确范围及当时提交以日志为准。
 
@@ -99,3 +99,12 @@ status格式/异常关闭旧能力；主动建议的迟到确认、撤销通知�
 - 本地383c64f对应远端cb16eeffcc9bbb053c65581041cfb5f32db862e8，文件树相同，Draft #40仍未合并。继续安全独立队列，REAL_MODEL_CALLS=0。
 
 383c64f之后生产构建退出0；suggestion-actions正式页桌面1366/移动390通过，0页面异常、0外部请求、10次离线Provider与12次fixture预留。首次运行缺少NODE_PATH退出1，纠正环境后退出0；两次原始输出均保留。
+
+## 第十轮补充证据（04:34，继续开发）
+
+- 正式HTTP生成浏览器扩展桌面1366/移动390，各7个不同受控应用、13次实际HTTP。B新增导演字段、C记录编辑和B/C往返一致；5种服务失败保留记录，重试创建空的新项目。上游仍显式注入Fixture，真实模型调用0。
+- cancellation.browser.cjs验证桌面/移动各6次请求：主动取消、替换后迟到成功/失败、旧响应体释放、导航退休均符合所有权；0页面异常/外部请求/Node未处理拒绝。报告分别generation-http-mobile及generation-cancellation。
+- bf11cb6/a3c2b0b修复继续建议的focus回调换项目/revision、取消和上下文往返复活旧动作；旧代码3及2失败，修复相关47/47，允许正常一次目标选中同步。无修改权限新增。
+- a3c2b0b最新全量786/786、build-focus-epoch退出0；focus-epoch正式Mochi桌面/移动通过，10次离线Provider/12次fixture预算，0外部请求/页面异常。仍未合并或部署。
+
+95d4156新增正式HTTP纯文字安全浏览器：桌面1366/移动390均验证AppSpec应用/积木名、字段、select选项及记录创建/编辑/B-C往返；HTML、URL、事件文字无探针DOM/执行标记/弹窗/外部请求，0页面错误。命令generation-text-safety退出0，baseline a3c2b0b+未提交测试，生产代码未变。没有执行生成TSX。

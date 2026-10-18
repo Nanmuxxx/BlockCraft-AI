@@ -1,0 +1,38 @@
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (2.241834ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.838458ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.3355ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.283375ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.173209ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.172583ms)
+✔ cancel retires an ignored analysis promise without altering newer history (1.833958ms)
+✔ abort listener reentry retains ownership of the newer conversation request (0.333375ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.08125ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (22.919041ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.3325ms)
+✔ late status cannot re-enable consent after explicit off (0.261167ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.472084ms)
+✔ subscriber cancellation during message publication prevents analysis egress (0.27975ms)
+✔ subscriber cancellation during busy publication prevents analysis egress (0.197625ms)
+✔ subscriber replacement at request publication keeps only the fresh analysis and history (0.486209ms)
+✔ project transition publishes the new identity before abort reentry (0.406166ms)
+✔ project transition publishes the new identity before subscriber reentry (0.252875ms)
+✔ context synchronization is idempotent inside a state subscriber (0.096125ms)
+✔ a newer project transition during notification cannot be overwritten by the older transition (0.223458ms)
+✔ project changed during context notification blocks stale-context egress (0.139458ms)
+✔ project changed during busy notification blocks stale-context egress (0.128417ms)
+✔ a failing state observer cannot skip transport cancellation or later observers (0.277042ms)
+✔ queued suggestion actions from a disposed conversation cannot focus or send network requests (2.001375ms)
+✔ ignore publication followed by dispose cannot dispatch a retired action (0.299083ms)
+✔ ignore publication followed by replace cannot dispatch a retired action (0.208167ms)
+✔ continued suggestion cannot cross a project replacement during focus (sync=false) (0.512417ms)
+✔ continued suggestion cannot cross a project replacement during focus (sync=true) (0.185625ms)
+✔ continued suggestion cannot cross a structural edit during focus (0.155625ms)
+✔ continued suggestion accepts its own target selection change (0.219333ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 80.783375

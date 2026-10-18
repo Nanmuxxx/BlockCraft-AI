@@ -1,0 +1,60 @@
+{
+  "repositoryHead": "bf11cb6c20f6054b2743d6330dd1075a5c739c5b",
+  "browser": "151.0.7922.34",
+  "scope": "formal /ai-create -> actual local HTTP service; only upstream DeepSeek fetch injected with hand-authored offline fixtures",
+  "realModelCalls": 0,
+  "cases": [
+    {
+      "width": 1366,
+      "offlineApplications": 7,
+      "injectedUpstreamCalls": 13,
+      "httpResponses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        502,
+        502,
+        502,
+        502,
+        502,
+        200
+      ],
+      "bInspectorEditAndCRecords": true,
+      "failuresRetainOldProject": 5,
+      "retryReplacesWithEmptyRecords": true,
+      "errors": [],
+      "assetFailures": [],
+      "external": []
+    },
+    {
+      "width": 390,
+      "offlineApplications": 7,
+      "injectedUpstreamCalls": 13,
+      "httpResponses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        502,
+        502,
+        502,
+        502,
+        502,
+        200
+      ],
+      "bInspectorEditAndCRecords": true,
+      "failuresRetainOldProject": 5,
+      "retryReplacesWithEmptyRecords": true,
+      "errors": [],
+      "assetFailures": [],
+      "external": []
+    }
+  ]
+}

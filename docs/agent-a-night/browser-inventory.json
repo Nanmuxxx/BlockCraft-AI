@@ -390,6 +390,41 @@
     "sha256": "deb4c55644ea40859dff2131077e4d96f6f87056608934a4036b15e84b4d3b54"
   },
   {
+    "path": "docs/agent-a-night/browser/focus-epoch/chat-1366.png",
+    "bytes": 350333,
+    "sha256": "9f63e9291a58fd3af6c8a8138d3bc4602d647a66c663ad1d1f624a6686746a7c"
+  },
+  {
+    "path": "docs/agent-a-night/browser/focus-epoch/chat-390.png",
+    "bytes": 312310,
+    "sha256": "0371673198f6b09d69dbd4b3a9078dc67bcd80e6250fbe5b2ce09b315160b0bd"
+  },
+  {
+    "path": "docs/agent-a-night/browser/focus-epoch/disabled-1366.png",
+    "bytes": 302604,
+    "sha256": "f866ab4f4973b344321465d97aea8eb924581010a0b6324076fa591c0b34d9a8"
+  },
+  {
+    "path": "docs/agent-a-night/browser/focus-epoch/disabled-390.png",
+    "bytes": 265627,
+    "sha256": "8763f3a7abf6b5a26fac0e533df0eb5a5f64c3e417c7753440eaaf7e554f54f9"
+  },
+  {
+    "path": "docs/agent-a-night/browser/focus-epoch/panel-1366.png",
+    "bytes": 72000,
+    "sha256": "378749614619a720c9b1663ffd1714344f49156434097a943c1d35eb627f97b5"
+  },
+  {
+    "path": "docs/agent-a-night/browser/focus-epoch/panel-390.png",
+    "bytes": 77143,
+    "sha256": "f8d3418f25905058b5b6931cffa4f07c37f596524ee8b8fa4b0160ca850cd9d0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/focus-epoch/report.json",
+    "bytes": 1686,
+    "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
+  },
+  {
     "path": "docs/agent-a-night/browser/generation/generated-b.png",
     "bytes": 260869,
     "sha256": "f0b56d72471b3b596c5b1aeda9acff9fa6ea9a2fd3b8bac3a36c51aab0791593"
@@ -398,6 +433,111 @@
     "path": "docs/agent-a-night/browser/generation/generated-c.png",
     "bytes": 125147,
     "sha256": "e377f381e8e97823aa0d9fbf3bf6823435a3245e27a0713a59a7514bdcb47f1b"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-cancellation/disposed-1366.png",
+    "bytes": 433496,
+    "sha256": "ddfaca73916170c9674c4b3f90757e2acfbbfb5474cdabbccee3d999810233a4"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-cancellation/disposed-390.png",
+    "bytes": 191943,
+    "sha256": "5abfed71e28f17e2c86667839380fc8074f46bce08f75a24f384d35979032c9f"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-cancellation/late-success-1366.png",
+    "bytes": 183856,
+    "sha256": "b1073de9d96e6c40ad0f64ca24023a36da3523ad51bddadb67ef35409d700b16"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-cancellation/late-success-390.png",
+    "bytes": 163379,
+    "sha256": "c2eef58c4cf3a2d52415f7a4de7a6b156c52734d657764e068227fbe87fafd57"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-cancellation/report.json",
+    "bytes": 982,
+    "sha256": "76d0075b5a026b28b124899fd22a8a8ef363973f49fa32fdc76639f74ec21595"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-cancellation/trace-1366.zip",
+    "bytes": 3633333,
+    "sha256": "396e101643cc96d9b94b5c56020bb928dfb796cb2cf5ef9b6e528b0c4df8297e"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-cancellation/trace-390.zip",
+    "bytes": 3681736,
+    "sha256": "89cb99f6fdd84fb767fbad3872635ad0d89b1bbaaefc661667a6c1cca32ca0bb"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-http-latest/generated-b.png",
+    "bytes": 260078,
+    "sha256": "5cad648b3c4fc53f33c6d93acaa0244ce537f5304887cf4c90860d593404d34e"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-http-latest/generated-c.png",
+    "bytes": 125115,
+    "sha256": "0d7b25a19a00bde6ae45ebb0b19831613c66188ca85d8c25cccd794002a12108"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-http-mobile/generated-b-1366.png",
+    "bytes": 261681,
+    "sha256": "4aba35787eb71dddc6a8fe43460f0955e3fa6fa1741a10798c819760f5af2e11"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-http-mobile/generated-b-390.png",
+    "bytes": 228871,
+    "sha256": "9651bea55813790b67da2aa4a9a093c98bf4122d3990fc3f1a3e33800792be90"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-http-mobile/generated-c-1366.png",
+    "bytes": 126298,
+    "sha256": "a85c891f78794b3568ff806302ac5b97339e5f06b9091b169cab8ec26cc90ad1"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-http-mobile/generated-c-390.png",
+    "bytes": 117606,
+    "sha256": "d8fb731aac6a7c96102740652c649e4e2495ea6c4cd2cdb9fcced4b3344078c2"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-http-mobile/report.json",
+    "bytes": 1260,
+    "sha256": "7c2f0753d11fa032897af26dd2074c8fc964a5938ad21e09f2ef46505a05fa2c"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-text-safety/literal-1366.zip",
+    "bytes": 1658836,
+    "sha256": "be1b80f3f817397313401deff3cea604f919cc4275f0e503d2244c1af02c2602"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-text-safety/literal-390.zip",
+    "bytes": 1288283,
+    "sha256": "a7f4f0b7575a43c05aca0abc30cb10a9e0ada0db4722609796df56853a7bc222"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-text-safety/literal-b-1366.png",
+    "bytes": 329717,
+    "sha256": "eea237dad52b4754b16a18c63488354ea8f93bfbbcc52a9aaf576cbd2f9104b9"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-text-safety/literal-b-390.png",
+    "bytes": 286055,
+    "sha256": "e41c41d2dc6e4ece23107d4beef5d8dd23d53733be1ef2f27194eef501470b42"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-text-safety/literal-c-1366.png",
+    "bytes": 219271,
+    "sha256": "034c014dea2ced2417a09f85e0fe38e76ea611f08b490eef11f90ebda31dbc40"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-text-safety/literal-c-390.png",
+    "bytes": 202658,
+    "sha256": "1e5657c6c1bb74bef23a110148bdf67cd87ee99d2d04f2beb608df4578417323"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-text-safety/report.json",
+    "bytes": 991,
+    "sha256": "cb15d5d760aaae67c1cdfc08afd5ebacbc763f3de8e6c581987ff42694d9ad7d"
   },
   {
     "path": "docs/agent-a-night/browser/host-retirement/chat-1366.png",

@@ -1,0 +1,47 @@
+✔ queued suggestion actions from a disposed conversation cannot focus or send network requests (2.179917ms)
+✔ ignore publication followed by dispose cannot dispatch a retired action (0.28575ms)
+✔ ignore publication followed by replace cannot dispatch a retired action (0.184791ms)
+✔ continued suggestion cannot cross a project replacement during focus (sync=false) (0.565541ms)
+✔ continued suggestion cannot cross a project replacement during focus (sync=true) (0.200625ms)
+✔ continued suggestion cannot cross a structural edit during focus (0.160541ms)
+✔ continued suggestion accepts its own target selection change (0.236125ms)
+✖ continued suggestion is retired by cancel during focus (0.414667ms)
+✖ continued suggestion is retired by project-round-trip during focus (0.181084ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 7
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34.990542
+
+✖ failing tests:
+
+test at tests/mochi-ai/suggestion-actions.test.mjs:73:60
+✖ continued suggestion is retired by cancel during focus (0.414667ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/suggestion-actions.test.mjs:81:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'CONTEXT_CHANGED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/suggestion-actions.test.mjs:73:60
+✖ continued suggestion is retired by project-round-trip during focus (0.181084ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/suggestion-actions.test.mjs:81:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'CONTEXT_CHANGED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

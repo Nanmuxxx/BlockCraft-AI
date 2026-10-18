@@ -126,3 +126,16 @@ core-caller-cancel最新649/649；REAL_MODEL_CALLS=0。上述VERIFIED仅指Fixtu
 | 镜像运行依赖集成 | BLOCKED | server/ai-abort.mjs；DEPLOYMENT-INTERFACE-NOTE.md | 固定PR35 inventory缺文件时Node链接失败，补单文件成功；部署负责人需真实组合镜像验收 |
 
 全量775/775、默认192/192和隔离质量93/93退出0，baseline2e40b76；晚于此基线的测试/建议动作改动分别独立验证。未执行TSX，REAL_MODEL_CALLS=0。
+
+## 第十轮边界证据（04:34，持续开发）
+
+| 项目 | 状态 | 函数/文件 | 验证 |
+|---|---|---|---|
+| 正式生成HTTP桌面/移动 | VERIFIED | tests/generation/browser.cjs；server/index.mjs既有路由 | generation-http-mobile：各7应用/13HTTP，B新增字段和C记录一致，5失败保留数据，重试替换成功 |
+| 正式生成取消/迟到/导航 | VERIFIED | tests/generation/cancellation.browser.cjs | 各6HTTP；迟到body释放/拒绝消费、旧结果不覆盖、导航取消，0页面异常/外部请求/Node未处理拒绝 |
+| 建议定位回调所有权 | VERIFIED | mochi-ai/client.mjs:continueSuggestion/syncContext/retire | suggestion-actions.test.mjs：项目、revision、取消、上下文往返拒绝；单次目标选中允许；相关47/47 |
+| 最新核心与正式建议页 | VERIFIED | regression.mjs；focus-epoch/report.json | a3c2b0b核心786/786、构建0、正式桌面/移动0异常/外部请求 |
+
+上述HTTP上游均固定离线completion，未声称真实模型语义生成。正式修改Provider仍MISSING，Viewer隔离执行仍BLOCKED，REAL_MODEL_CALLS=0。
+
+95d4156新增正式HTTP纯文字安全浏览器：桌面1366/移动390均验证AppSpec应用/积木名、字段、select选项及记录创建/编辑/B-C往返；HTML、URL、事件文字无探针DOM/执行标记/弹窗/外部请求，0页面错误。命令generation-text-safety退出0，baseline a3c2b0b+未提交测试，生产代码未变。没有执行生成TSX。

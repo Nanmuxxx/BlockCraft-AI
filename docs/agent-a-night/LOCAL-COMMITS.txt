@@ -63,3 +63,9 @@ f95d6877e1342ae33fbaa1682b6c50a2f7c5f256 fix(mochi): bind HTTP access scope befo
 2e40b76429c0ab85180f204ef6b57c5410c82066 docs(ai-core): specify runtime module handoff without editing deployment files
 2abfb7d30b71a0c124995d328785e9534c41f4c0 test(mochi): verify metadata recovery on a new admitted reference
 383c64f4fa7f311552e0dc1a0dcc6ff49aec83ea fix(mochi): retire suggestion actions with their conversation context
+e572f2d5bb44042c0c3bc2e9ce4fe946171c1883 docs(ai-core): archive metadata recovery and retired suggestion evidence
+aeb97c0d08f7dd5ce6d47d82243c8816d2b9185f test(generation): cover formal HTTP cancellation and late results on desktop and mobile
+bf11cb6c20f6054b2743d6330dd1075a5c739c5b fix(mochi): bind continued suggestion to its project across focus callbacks
+7b3fd01fe105cd16ff681915bcf976718f4f4973 test(generation): report actual HTTP application flows on desktop and mobile
+a3c2b0ba68c0680e6b08843948a793a39fee107c fix(mochi): retire focused actions after cancellation and context round trips
+95d415669ba58c4d9c8f9e0943465d9c66a5aa80 test(generation): verify literal model text across formal B and C modes

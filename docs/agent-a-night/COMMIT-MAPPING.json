@@ -388,5 +388,41 @@
     "remote": "cb16eeffcc9bbb053c65581041cfb5f32db862e8",
     "tree": "d93a5462ad2154c79273f67dbca6ef1b14c4cab7",
     "message": "fix(mochi): retire suggestion actions with their conversation context"
+  },
+  {
+    "local": "e572f2d5bb44042c0c3bc2e9ce4fe946171c1883",
+    "remote": "e2dcd9fef262c8e258abcc110076181a3cb53b30",
+    "tree": "1a7b492fc45a1629d5211ce1dc178bbeaf4b8842",
+    "message": "docs(ai-core): archive metadata recovery and retired suggestion evidence"
+  },
+  {
+    "local": "aeb97c0d08f7dd5ce6d47d82243c8816d2b9185f",
+    "remote": "7d7f7aa03994eaa03893da55082ec0813452a744",
+    "tree": "cd054b1c88a70386912c4ef6b16dc36b9d0c3ea8",
+    "message": "test(generation): cover formal HTTP cancellation and late results on desktop and mobile"
+  },
+  {
+    "local": "bf11cb6c20f6054b2743d6330dd1075a5c739c5b",
+    "remote": "0a5c8abf172bcba7d07c8e67d7a4b87185be7396",
+    "tree": "434c95a8ed6f203f96bffae78c242609ab2b65a6",
+    "message": "fix(mochi): bind continued suggestion to its project across focus callbacks"
+  },
+  {
+    "local": "7b3fd01fe105cd16ff681915bcf976718f4f4973",
+    "remote": "e8ac1c4f0a347dc1621fdcd695d41e95134c8e69",
+    "tree": "4716c2d592e72cb7a406f73611cf5e0bc940ec12",
+    "message": "test(generation): report actual HTTP application flows on desktop and mobile"
+  },
+  {
+    "local": "a3c2b0ba68c0680e6b08843948a793a39fee107c",
+    "remote": "f2e514e9b708cac5b33b0c3c72500dd099ebc575",
+    "tree": "68e25b3b4d0f4f3f26d8dd47741e4a028a15f1ab",
+    "message": "fix(mochi): retire focused actions after cancellation and context round trips"
+  },
+  {
+    "local": "95d415669ba58c4d9c8f9e0943465d9c66a5aa80",
+    "remote": "8672d8e59a104a4e26d641f328df155ffde579a9",
+    "tree": "021835837e91b6a9b83c3e483296ec7802bae04f",
+    "message": "test(generation): verify literal model text across formal B and C modes"
   }
 ]
