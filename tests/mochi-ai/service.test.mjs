@@ -5,7 +5,7 @@ import { request, advice, access, grant } from './fixtures.mjs'
 function fixture(options = {}) {
   let time = 1000, count = 0
   const provider = { configured: true, analyze: async () => { count++; return advice() } }
-  const service = createMochiService({ provider, enabled: true, approval: grant(time), now: () => time, ...options })
+  const service = createMochiService({ provider, reserveBudget: () => true, enabled: true, approval: grant(time), now: () => time, ...options })
   return { service, tick(ms = 31_000) { time += ms }, count: () => count }
 }
 
@@ -72,6 +72,7 @@ test('revoking proactive consent aborts and discards an outstanding response', a
   let release, signal
   const f = fixture({ provider: { configured: true, analyze: (_input, options) => { signal = options.signal; return new Promise(resolve => { release = resolve }) } } })
   f.service.consent(access, { enabled: true }); const pending = f.service.analyze(access, request('proactive'))
+  await new Promise(resolve => setImmediate(resolve))
   f.service.consent(access, { enabled: false }); assert(signal.aborted); release(advice())
   await assert.rejects(pending, { code: 'CANCELLED' }); assert.equal(f.service.usage().inFlight, 0)
 })
@@ -82,4 +83,41 @@ test('approval is snapshotted so caller mutation cannot increase the grant', asy
   await f.service.analyze(access, request()); f.tick()
   await assert.rejects(f.service.analyze(access, request()), { code: 'BUDGET_EXHAUSTED' })
   assert.equal(f.count(), 1)
+})
+
+
+test('durable monetary adapter required, deny/error/abort never reach provider', async () => {
+  for (const [reserveBudget, code] of [[undefined, 'BUDGET_UNAVAILABLE'], [() => false, 'BUDGET_EXHAUSTED'], [() => { throw new Error('ledger down') }, 'BUDGET_UNAVAILABLE']]) {
+    const f = fixture({ reserveBudget })
+    await assert.rejects(f.service.analyze(access, request()), { code })
+    assert.equal(f.count(), 0); assert.equal(f.service.usage().inFlight, 0)
+  }
+  let reservation, finish
+  const f = fixture({ reserveBudget: input => { reservation = input; return new Promise(resolve => { finish = resolve }) } })
+  f.service.consent(access, { enabled: true })
+  const pending = f.service.analyze(access, request('proactive'))
+  const rejected = assert.rejects(pending, { code: 'CANCELLED' })
+  assert.equal(Object.isFrozen(reservation), true)
+  assert.deepEqual(Object.keys(reservation).sort(), ['requestId','sessionId','appId','approvalReference','model','maxTokens','signal'].sort())
+  assert(reservation.maxTokens > 0); assert.match(reservation.requestId, /^[a-f0-9-]{36}$/)
+  f.service.consent(access, { enabled: false }); await rejected
+  finish(true); await new Promise(resolve => setImmediate(resolve))
+  assert.equal(f.count(), 0); assert.equal(f.service.usage().inFlight, 0)
+})
+
+test('C-mode requests are rejected before budget reservation or provider', async () => {
+  let reserved = 0
+  const f = fixture({ reserveBudget: () => { reserved++; return true } }), input = request()
+  input.context.mode = 'run'
+  await assert.rejects(f.service.analyze(access, input), { code: 'MODE_UNAVAILABLE' })
+  assert.equal(reserved, 0); assert.equal(f.count(), 0)
+})
+
+test('durable ledger timeout is unavailable and releases concurrency without provider egress', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout'] })
+  const f = fixture({ reserveBudget: () => new Promise(() => {}) })
+  const pending = f.service.analyze(access, request())
+  const rejected = assert.rejects(pending, { code: 'BUDGET_UNAVAILABLE' })
+  t.mock.timers.tick(5000); await rejected
+  assert.equal(f.count(), 0); assert.equal(f.service.usage().inFlight, 0)
 })

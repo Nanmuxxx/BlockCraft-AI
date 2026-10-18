@@ -57,12 +57,12 @@ test('real HTTP returns complete builtins and exact CustomBlock sources, retaini
   assert(![...otherFiles.keys()].some(p => p.includes('/custom/')))
 })
 
-test('missing, tampered and unsupported protocol artifacts reject the WHOLE response', async t => {
+test('missing, tampered and non-empty stateSchema artifacts reject the WHOLE response', async t => {
   const { post } = await server(t)
   const missing = await mixed(); missing.artifacts.pop()
   const tampered = await mixed(); tampered.artifacts[0].artifact.sources['Counter.tsx'] += '\n// changed'
   const unsupported = await mixed()
-  unsupported.artifacts[0].artifact.manifest.events = { changed: { type: 'object', properties: {}, required: [], additionalProperties: false } }
+  unsupported.artifacts[0].artifact.manifest.stateSchema.properties.remainingSeconds = { type: 'integer', minimum: 0 }
   await rehash(unsupported)
   for (const [input, code] of [[missing, 'VERSION_MISSING'], [tampered, 'DIGEST_MISMATCH'], [unsupported, 'UNSUPPORTED_PROTOCOL']]) {
     const response = await post(input)

@@ -53,7 +53,19 @@ export interface MochiCallbacks {
   onIgnore: (suggestionId: string) => void
 }
 
+/** Controlled host projection. It carries no planner handles or authority. */
+export interface MochiOperation {
+  phase: string
+  requestId: string | null
+  busy: boolean
+  error: { code: string; message: string } | null
+  receipt: { ok: boolean; committedRevision?: number } | null
+  lastApplied: { requestId: string; receipt: { committedRevision: number } } | null
+}
+
 export interface MochiAiAssistantProps extends MochiCallbacks {
+  operation?: MochiOperation
+  onCancelRequest?: (requestId: string) => void
   context: MochiContext
   messages: MochiChatMessage[]
   suggestions: MochiSuggestion[]

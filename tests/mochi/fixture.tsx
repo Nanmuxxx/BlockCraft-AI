@@ -17,23 +17,28 @@ let subscriptions = 0
 const subscribe = runtime.subscribe
 runtime.subscribe = listener => {
   subscriptions++
-  const unsubscribe = subscribe(listener)
+  const unsubscribe = subscribe(() => { if (!qa.missNextNotification) listener() })
   return () => { subscriptions--; unsubscribe() }
 }
-const qa = { runtime, host: null as ReturnType<typeof createMochiHost> | null, failure: false,
-  calls: 0, get subscriptions() { return subscriptions }, inputs: [] as unknown[], unmount: () => root.unmount() }
+const qa = { runtime, host: null as ReturnType<typeof createMochiHost> | null, failure: false, missNextNotification: false,
+  defer: false, pending: [] as Array<{ resolve: () => void; reject: () => void }>, replaceHost: () => {},
+  calls: 0, get subscriptions() { return subscriptions }, inputs: [] as unknown[], unmount: () => { root.unmount() } }
 Object.assign(window, { mochiQA: qa })
 function Fixture() {
+  const [generation, setGeneration] = useState(0)
+  qa.replaceHost = () => setGeneration(value => value + 1)
   const [host, setHost] = useState<ReturnType<typeof createMochiHost> | null>(null)
   useEffect(() => {
     const instance = createMochiHost(runtime, async request => {
       qa.calls++; qa.inputs.push(toMinimalPlanInput(request))
+      // Deliberately ignore abort to exercise late-provider isolation end to end.
+      if (qa.defer) return new Promise((resolve, reject) => { qa.pending.push({ resolve: () => resolve(mockAddOptionalField(request)), reject: () => reject(new Error('Late offline test failure')) }) })
       if (qa.failure) throw new Error('Offline test failure')
       return mockAddOptionalField(request)
     })
     qa.host = instance; setHost(instance)
     return () => { instance.dispose(); qa.host = null }
-  }, [])
+  }, [generation])
   return host ? <><p role="note">验收夹具：固定 Mock 计划，不理解自然语言，不调用 AI。</p><MochiWorkshop runtime={runtime} host={host} /></> : null
 }
 const root = createRoot(document.getElementById('root')!)

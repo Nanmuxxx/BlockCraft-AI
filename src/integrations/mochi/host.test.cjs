@@ -32,6 +32,15 @@ async function plan(host) { await host.callbacks.onRequestPlan('这是固定 Moc
 const rejects = (promise, code) => assert.rejects(promise, error => error.code === code)
 function defer() { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b }); return { promise, resolve, reject } }
 
+// Inject notification loss at the Runtime boundary. The production v2 owner
+// isolates observer exceptions, so throwing subscribers no longer drop events.
+function notificationGate(runtime) {
+  const subscribe = runtime.subscribe
+  let paused = false
+  runtime.subscribe = listener => subscribe(() => { if (!paused) listener() })
+  return action => { paused = true; try { return action() } finally { paused = false } }
+}
+
 test('Mock preview is isolated, immutable, complete; confirm updates real B/C renderers exactly once', async () => {
   const s = setup()
   const before = s.runtime.getSnapshot()
@@ -161,22 +170,26 @@ test('ignoring suggestions only updates host state and leaves pending plan intac
   assert.strictEqual(s.runtime.getSnapshot(), before); assert.equal(s.executions(), 0)
 })
 
-test('B/C mode changes revoke pending plans and reject late responses', async () => {
+test('B/C mode changes preserve in-flight requests and previews without rebuilding Runtime', async () => {
   const deferred = defer()
   let request
   const s = setup(req => { request = req; return deferred.promise })
+  const before = s.runtime.getSnapshot()
   const inflight = s.host.callbacks.onRequestPlan('mock')
-  await rejects(s.host.callbacks.onRequestPlan('double submit'), 'REQUEST_BUSY')
+  const epoch = s.host.getSnapshot().epoch
   s.host.setMode('run')
-  assert.ok(request.signal.aborted)
+  assert.equal(request.signal.aborted, false)
+  assert.equal(s.host.getSnapshot().phase, 'REQUESTING')
   deferred.resolve(mockAddOptionalField(request))
-  await rejects(inflight, 'CONTEXT_CHANGED')
-  assert.equal(s.host.getSnapshot().preview, null); assert.equal(s.host.getSnapshot().error, null)
-  s.host.setMode('blocks')
-  assert.equal(s.runtime.getSnapshot().revision, 0)
-  const other = setup(), id = await plan(other.host)
-  other.host.setMode('run'); other.host.setMode('blocks')
-  await rejects(other.host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  await inflight
+  const id = s.host.getSnapshot().preview.planId
+  s.host.setMode('blocks'); s.host.setMode('run')
+  assert.equal(s.host.getSnapshot().epoch, epoch)
+  assert.equal(s.host.getSnapshot().preview.planId, id)
+  assert.strictEqual(s.runtime.getSnapshot(), before)
+  await s.host.callbacks.onConfirm(id)
+  assert.equal(s.executions(), 1)
+  assert.equal(s.host.getSnapshot().phase, 'APPLIED')
 })
 
 for (const lateFailure of [false, true]) test(`obsolete async ${lateFailure ? 'failure' : 'success'} cannot clear a newer preview`, async () => {
@@ -215,7 +228,9 @@ test('failed next plan or rejected execution retains the previously confirmed ap
   fail = true
   await rejects(plan(s.host), 'PLAN_PROVIDER_FAILED')
   assert.strictEqual(s.runtime.getSnapshot(), confirmed)
-  assert.equal(s.host.getSnapshot().receipt.committedRevision, 1)
+  assert.equal(s.host.getSnapshot().receipt, null)
+  assert.equal(s.host.getSnapshot().lastApplied.receipt.committedRevision, 1)
+  assert.equal(s.host.getSnapshot().phase, 'REQUEST_FAILED')
   fail = false
   const id = await plan(s.host)
   s.runtime.executeCommand = () => ({ ok: false, error: { code: 'TEST_REJECTED', message: 'atomic failure' } })
@@ -242,4 +257,418 @@ test('disposal aborts requests, cancels pending confirmation and releases Runtim
   other.host.dispose()
   await rejects(other.host.callbacks.onConfirm(id), 'HOST_DISPOSED')
   assert.equal(other.executions(), 0)
+})
+
+for (const lateFailure of [false, true]) test(`requestId cancellation ignores late ${lateFailure ? 'reject' : 'resolve'} and cannot clear the next busy state`, async () => {
+  const old = defer(), next = defer()
+  const requests = []
+  const s = setup(req => { requests.push(req); return requests.length === 1 ? old.promise : next.promise })
+  const first = s.host.callbacks.onRequestPlan('old')
+  const oldId = s.host.getSnapshot().requestId
+  s.host.cancelRequest('foreign')
+  assert.equal(requests[0].signal.aborted, false)
+  s.host.cancelRequest(oldId)
+  const cancelled = s.host.getSnapshot()
+  assert.equal(cancelled.phase, 'CANCELLED'); assert.equal(cancelled.busy, false)
+  assert.equal(requests[0].signal.aborted, true)
+  const second = s.host.callbacks.onRequestPlan('new')
+  const current = s.host.getSnapshot()
+  s.host.cancelRequest(oldId)
+  if (lateFailure) old.reject(new Error('late failure'))
+  else old.resolve(mockAddOptionalField(requests[0]))
+  await assert.rejects(first)
+  assert.strictEqual(s.host.getSnapshot(), current)
+  assert.equal(current.phase, 'REQUESTING'); assert.equal(current.busy, true)
+  next.resolve(mockAddOptionalField(requests[1])); await second
+  assert.equal(s.host.getSnapshot().phase, 'PREVIEW')
+  assert.equal(s.updates(), 0); assert.equal(s.executions(), 0)
+})
+
+for (const lateFailure of [false, true]) test(`new request supersedes old ${lateFailure ? 'failure' : 'success'} without requiring cancellation`, async () => {
+  const deferred = defer()
+  let oldRequest, count = 0
+  const s = setup(req => { if (++count === 1) { oldRequest = req; return deferred.promise } return mockAddOptionalField(req) })
+  const first = s.host.callbacks.onRequestPlan('old')
+  const second = s.host.callbacks.onRequestPlan('new')
+  await second
+  const current = s.host.getSnapshot()
+  assert.equal(oldRequest.signal.aborted, true)
+  if (lateFailure) deferred.reject(new Error('old'))
+  else deferred.resolve(mockAddOptionalField(oldRequest))
+  await assert.rejects(first)
+  assert.strictEqual(s.host.getSnapshot(), current)
+})
+
+test('abort reentrancy starts a newer request without resurrecting the cancelled attempt', async () => {
+  const deferred = defer()
+  let count = 0, newer
+  const s = setup(req => {
+    if (++count === 1) {
+      req.signal.addEventListener('abort', () => { newer = s.host.callbacks.onRequestPlan('from abort') })
+      return deferred.promise
+    }
+    return mockAddOptionalField(req)
+  })
+  const old = s.host.callbacks.onRequestPlan('old')
+  const id = s.host.getSnapshot().requestId
+  s.host.cancelRequest(id)
+  await newer
+  const current = s.host.getSnapshot()
+  deferred.reject(new Error('late'))
+  await assert.rejects(old)
+  assert.equal(current.phase, 'PREVIEW')
+  assert.strictEqual(s.host.getSnapshot(), current)
+})
+
+test('request replacement abort callbacks cannot overwrite the newest owner', async () => {
+  const deferred = defer()
+  let count = 0, fromAbort
+  const s = setup(req => {
+    if (++count === 1) {
+      req.signal.addEventListener('abort', () => { fromAbort = s.host.callbacks.onRequestPlan('third') })
+      return deferred.promise
+    }
+    return mockAddOptionalField(req)
+  })
+  const first = s.host.callbacks.onRequestPlan('first')
+  const second = s.host.callbacks.onRequestPlan('second')
+  await rejects(second, 'CONTEXT_CHANGED')
+  await fromAbort
+  const current = s.host.getSnapshot()
+  deferred.reject(new Error('late')); await assert.rejects(first)
+  assert.equal(count, 2) // Superseded second request never reaches provider.
+  assert.equal(current.phase, 'PREVIEW')
+  assert.strictEqual(s.host.getSnapshot(), current)
+})
+
+test('authorization identity invalidates plans but never grants scope', async () => {
+  const s = setup(), id = await plan(s.host), before = s.runtime.getSnapshot()
+  s.host.setAuthorizationContextKey('changed')
+  assert.equal(s.host.getSnapshot().phase, 'STALE')
+  await rejects(s.host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  assert.strictEqual(s.runtime.getSnapshot(), before)
+  s.host.setAuthorizationContextKey('allowedBlockIds=all')
+  await plan(s.host)
+  const shared = s.host.getSnapshot().preview.changes.find(c => c.operation === 'sharedEntityImpact')
+  assert.match(shared.description, /直接授权外：applicant-list/)
+})
+
+test('confirm locks before Host observers and own Runtime notifications never publish stale', async () => {
+  const s = setup(), id = await plan(s.host), phases = []
+  let reentrant
+  s.host.subscribe(() => {
+    phases.push(s.host.getSnapshot().phase)
+    if (s.host.getSnapshot().phase === 'CONFIRMING') reentrant = rejects(s.host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  })
+  s.host.subscribe(() => { throw new Error('UI observer failure') })
+  await s.host.callbacks.onConfirm(id); await reentrant
+  assert.equal(s.executions(), 1)
+  assert.deepEqual(phases, ['CONFIRMING', 'APPLIED'])
+  assert.equal(s.host.getSnapshot().receipt.ok, true)
+})
+
+test('synchronous context change while publishing CONFIRMING prevents any write', async () => {
+  const s = setup(), id = await plan(s.host), before = s.runtime.getSnapshot()
+  s.host.subscribe(() => {
+    if (s.host.getSnapshot().phase === 'CONFIRMING') s.host.setSelection('applicant-list')
+  })
+  await rejects(s.host.callbacks.onConfirm(id), 'CONTEXT_CHANGED')
+  assert.strictEqual(s.runtime.getSnapshot(), before)
+  assert.equal(s.executions(), 0)
+  assert.equal(s.host.getSnapshot().phase, 'STALE')
+})
+
+test('explicit failure with identical immutable snapshot is COMMIT_FAILED and terminal', async () => {
+  const s = setup(), id = await plan(s.host), before = s.runtime.getSnapshot()
+  s.runtime.executeCommand = () => ({ ok: false, error: { code: 'REJECTED', message: 'no write' } })
+  await rejects(s.host.callbacks.onConfirm(id), 'REJECTED')
+  assert.strictEqual(s.runtime.getSnapshot(), before)
+  assert.equal(s.host.getSnapshot().phase, 'COMMIT_FAILED')
+  assert.equal(s.host.getSnapshot().receipt.ok, false)
+  const failed = s.host.getSnapshot()
+  await rejects(s.host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  assert.strictEqual(s.host.getSnapshot(), failed)
+})
+
+for (const afterWrite of [false, true]) test(`unexpected exception ${afterWrite ? 'after Runtime writes' : 'before known receipt'} is UNKNOWN, never a rollback claim`, async () => {
+  const s = setup(), id = await plan(s.host), before = s.runtime.getSnapshot()
+  if (afterWrite) {
+    const execute = s.runtime.executeCommand
+    s.runtime.executeCommand = (...args) => { execute(...args); throw new Error('receipt unavailable AFTER session changed') }
+  }
+  else s.runtime.executeCommand = () => { throw new Error('unexpected exception') }
+  await rejects(s.host.callbacks.onConfirm(id), 'COMMIT_OUTCOME_UNKNOWN')
+  assert.equal(s.host.getSnapshot().phase, 'COMMIT_OUTCOME_UNKNOWN')
+  assert.equal(s.host.getSnapshot().receipt, null)
+  assert.equal(s.host.getSnapshot().lastApplied, null)
+  assert.doesNotMatch(s.host.getSnapshot().error.message, /回滚|保持不变/)
+  assert.equal(s.runtime.getSnapshot().revision, before.revision + (afterWrite ? 1 : 0))
+  const executions = s.executions()
+  await rejects(s.host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  assert.equal(s.executions(), executions)
+})
+
+test('a failure receipt after a write is UNKNOWN even without a thrown exception', async () => {
+  const s = setup(), id = await plan(s.host)
+  const execute = s.runtime.executeCommand
+  s.runtime.executeCommand = request => { execute(request); return { ok: false, error: { code: 'MISLEADING', message: 'failed' } } }
+  await rejects(s.host.callbacks.onConfirm(id), 'COMMIT_OUTCOME_UNKNOWN')
+  assert.equal(s.runtime.getSnapshot().revision, 1)
+  assert.equal(s.host.getSnapshot().phase, 'COMMIT_OUTCOME_UNKNOWN')
+  assert.equal(s.host.getSnapshot().receipt, null)
+})
+
+test('new attempts clear current receipt while retaining history across cancel and preview rejection', async () => {
+  let invalid = false
+  const s = setup(req => invalid ? {} : mockAddOptionalField(req))
+  const committed = await plan(s.host)
+  await s.host.callbacks.onConfirm(committed)
+  const history = s.host.getSnapshot().lastApplied
+  const next = await plan(s.host)
+  assert.equal(s.host.getSnapshot().receipt, null)
+  s.host.callbacks.onCancel(next)
+  assert.equal(s.host.getSnapshot().phase, 'CANCELLED')
+  assert.strictEqual(s.host.getSnapshot().lastApplied, history)
+  await s.host.callbacks.onConfirm(committed) // Historical idempotence cannot restore APPLIED.
+  assert.equal(s.host.getSnapshot().phase, 'CANCELLED')
+  invalid = true
+  await assert.rejects(plan(s.host))
+  assert.equal(s.host.getSnapshot().phase, 'PREVIEW_REJECTED')
+  assert.equal(s.host.getSnapshot().receipt, null)
+  assert.strictEqual(s.host.getSnapshot().lastApplied, history)
+})
+
+for (const reject of [false, true]) test(`disposed host cannot publish a late ${reject ? 'failure' : 'success'} into its replacement`, async () => {
+  const deferred = defer()
+  let request, notifications = 0
+  const s = setup(req => { request = req; return deferred.promise })
+  s.host.subscribe(() => notifications++)
+  const old = s.host.callbacks.onRequestPlan('old')
+  s.host.dispose()
+  const frozen = s.host.getSnapshot(), count = notifications
+  const replacement = createMochiHost(s.runtime, mockAddOptionalField)
+  replacement.setSelection('registration-form')
+  await plan(replacement)
+  const current = replacement.getSnapshot()
+  if (reject) deferred.reject(new Error('late'))
+  else deferred.resolve(mockAddOptionalField(request))
+  await assert.rejects(old)
+  assert.strictEqual(s.host.getSnapshot(), frozen)
+  assert.strictEqual(replacement.getSnapshot(), current)
+  assert.equal(notifications, count)
+  replacement.dispose()
+})
+
+
+test('invalid initial input reports an attempt without superseding a valid request', async () => {
+  const deferred = defer()
+  let request
+  const s = setup(req => { request = req; return deferred.promise })
+  s.host.setSelection(null)
+  await rejects(s.host.callbacks.onRequestPlan('mock'), 'SELECTION_REQUIRED')
+  assert.equal(s.host.getSnapshot().phase, 'REQUEST_FAILED')
+  assert.equal(s.host.getSnapshot().error.code, 'SELECTION_REQUIRED')
+  s.host.setSelection('registration-form')
+  const pending = s.host.callbacks.onRequestPlan('valid')
+  const view = s.host.getSnapshot()
+  await rejects(s.host.callbacks.onRequestPlan(''), 'INVALID_PROMPT')
+  assert.strictEqual(s.host.getSnapshot(), view)
+  assert.equal(request.signal.aborted, false)
+  deferred.resolve(mockAddOptionalField(request)); await pending
+})
+
+test('context invalidation inside Runtime publication cannot hide an uncertain write', async () => {
+  const s = setup(), id = await plan(s.host)
+  s.runtime.subscribe(() => { s.host.setSelection('applicant-list') })
+  const execute = s.runtime.executeCommand
+  s.runtime.executeCommand = (...args) => { execute(...args); throw new Error('receipt unavailable after write') }
+  await rejects(s.host.callbacks.onConfirm(id), 'COMMIT_OUTCOME_UNKNOWN')
+  assert.equal(s.runtime.getSnapshot().revision, 1)
+  assert.equal(s.host.getSnapshot().phase, 'COMMIT_OUTCOME_UNKNOWN')
+  assert.equal(s.host.getSnapshot().preview, null)
+})
+
+test('invalid input over 4000 characters reports an error without revoking a valid preview; corrected input retries', async () => {
+  const s = setup(), id = await plan(s.host), before = s.runtime.getSnapshot()
+  const preview = s.host.getSnapshot().preview, requestId = s.host.getSnapshot().requestId
+  await rejects(s.host.callbacks.onRequestPlan('x'.repeat(4001)), 'INVALID_PROMPT')
+  assert.equal(s.host.getSnapshot().error?.code, 'INVALID_PROMPT')
+  assert.equal(s.host.getSnapshot().phase, 'PREVIEW')
+  assert.strictEqual(s.host.getSnapshot().preview, preview)
+  assert.equal(s.host.getSnapshot().requestId, requestId)
+  assert.equal(s.host.getSnapshot().busy, false)
+  const corrected = await plan(s.host)
+  assert.notEqual(corrected, id)
+  assert.equal(s.host.getSnapshot().error, null)
+  assert.strictEqual(s.runtime.getSnapshot(), before)
+  assert.equal(s.executions(), 0); assert.equal(s.updates(), 0)
+})
+
+for (const reenter of [false, true]) test(`missed Runtime notification terminates stale preview before confirm${reenter ? ' without cancelling a reentrant newer request' : ''}`, async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample())
+  const withoutNotification = notificationGate(runtime)
+  const deferred = defer()
+  let calls = 0, nextRequest, nextPromise, writes = 0, notifications = 0
+  const execute = runtime.executeCommand
+  runtime.executeCommand = input => { writes++; return execute(input) }
+  const host = createMochiHost(runtime, request => {
+    if (++calls === 1) return mockAddOptionalField(request)
+    nextRequest = request; return deferred.promise
+  })
+  host.setSelection('registration-form')
+  const id = await plan(host), view = host.getSnapshot()
+  host.subscribe(() => {
+    notifications++
+    if (reenter && host.getSnapshot().phase === 'STALE') nextPromise = host.callbacks.onRequestPlan('newer after stale')
+  })
+  assert.equal(withoutNotification(() => runtime.moveBlock('applicant-list', { x: 0.3, y: 0.4 })).ok, true)
+  const changed = runtime.getSnapshot()
+  assert.equal(changed.revision, view.context.revision + 1)
+  assert.equal(changed.blockPositions['applicant-list'].x, 0.3)
+  assert.strictEqual(host.getSnapshot(), view, 'Host missed the notification')
+  assert.equal(notifications, 0)
+  await rejects(host.callbacks.onConfirm(id), 'CONTEXT_CHANGED')
+  assert.equal(writes, 0)
+  assert.strictEqual(runtime.getSnapshot(), changed, 'confirmation makes no additional write')
+  if (reenter) {
+    assert.equal(host.getSnapshot().phase, 'REQUESTING')
+    assert.equal(nextRequest.signal.aborted, false)
+    deferred.resolve(mockAddOptionalField(nextRequest)); await nextPromise
+    assert.equal(host.getSnapshot().phase, 'PREVIEW')
+    assert.notEqual(host.getSnapshot().preview.planId, id)
+  } else {
+    assert.equal(host.getSnapshot().phase, 'STALE')
+    assert.equal(host.getSnapshot().preview, null)
+    assert.equal(host.getSnapshot().error.code, 'CONTEXT_CHANGED')
+    assert.equal(host.getSnapshot().busy, false)
+  }
+  const final = host.getSnapshot()
+  await rejects(host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  assert.strictEqual(host.getSnapshot(), final)
+  host.dispose()
+})
+
+test('revision changed by a CONFIRMING observer with missed notification also terminates the preview', async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample())
+  const withoutNotification = notificationGate(runtime)
+  const host = createMochiHost(runtime, mockAddOptionalField)
+  host.setSelection('registration-form')
+  const id = await plan(host)
+  let changed
+  host.subscribe(() => {
+    if (host.getSnapshot().phase === 'CONFIRMING') {
+      assert.equal(withoutNotification(() => runtime.moveBlock('applicant-list', { x: 0.2, y: 0.4 })).ok, true)
+      changed = runtime.getSnapshot()
+    }
+  })
+  await rejects(host.callbacks.onConfirm(id), 'CONTEXT_CHANGED')
+  assert.equal(changed.revision, 1)
+  assert.strictEqual(runtime.getSnapshot(), changed)
+  assert.equal(host.getSnapshot().phase, 'STALE')
+  assert.equal(host.getSnapshot().preview, null)
+  assert.equal(host.getSnapshot().error.code, 'CONTEXT_CHANGED')
+  await rejects(host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  host.dispose()
+})
+
+for (const restore of [false, true]) test(`missed authorization notification retires in-flight response${restore ? ' after regrant' : ''}`, async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample()), withoutNotification = notificationGate(runtime)
+  const response = defer()
+  let request
+  const host = createMochiHost(runtime, input => { request = input; return response.promise })
+  host.setSelection('registration-form')
+  const before = runtime.customProject.getSnapshot(), pending = host.callbacks.onRequestPlan('old authorization')
+  withoutNotification(() => { runtime.customProject.setReadOnly(true); if (restore) runtime.customProject.setReadOnly(false) })
+  response.resolve(mockAddOptionalField(request))
+  await rejects(pending, 'CONTEXT_CHANGED')
+  assert.equal(host.getSnapshot().phase, 'STALE')
+  assert.equal(host.getSnapshot().preview, null); assert.equal(host.getSnapshot().busy, false)
+  assert.equal(request.signal.aborted, true)
+  assert.strictEqual(runtime.customProject.getSnapshot(), before)
+  host.dispose()
+})
+
+for (const duringConfirm of [false, true]) test(`missed authorization generation cannot commit${duringConfirm ? ' from CONFIRMING observer' : ' an old preview'}`, async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample()), withoutNotification = notificationGate(runtime)
+  const host = createMochiHost(runtime, mockAddOptionalField)
+  host.setSelection('registration-form')
+  const id = await plan(host), before = runtime.customProject.getSnapshot()
+  let writes = 0
+  const execute = runtime.executeCommand
+  runtime.executeCommand = (...args) => { writes++; return execute(...args) }
+  const revoke = () => withoutNotification(() => { runtime.customProject.setReadOnly(true); runtime.customProject.setReadOnly(false) })
+  if (duringConfirm) host.subscribe(() => { if (host.getSnapshot().phase === 'CONFIRMING') revoke() })
+  else revoke()
+  await rejects(host.callbacks.onConfirm(id), 'CONTEXT_CHANGED')
+  assert.equal(writes, 0)
+  assert.equal(host.getSnapshot().phase, 'STALE'); assert.equal(host.getSnapshot().preview, null)
+  assert.strictEqual(runtime.customProject.getSnapshot(), before)
+  await rejects(host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  host.dispose()
+})
+
+test('observed authorization revocation while CONFIRMING prevents writes', async () => {
+  const s = setup(), id = await plan(s.host), before = s.runtime.customProject.getSnapshot()
+  s.host.subscribe(() => { if (s.host.getSnapshot().phase === 'CONFIRMING') s.runtime.customProject.setReadOnly(true) })
+  await rejects(s.host.callbacks.onConfirm(id), 'CONTEXT_CHANGED')
+  assert.equal(s.executions(), 0); assert.strictEqual(s.runtime.customProject.getSnapshot(), before)
+  assert.equal(s.host.getSnapshot().phase, 'STALE'); assert.equal(s.host.getSnapshot().preview, null)
+  s.host.dispose()
+})
+
+test('production owner isolates throwing observers and preserves a known successful receipt', async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample())
+  runtime.subscribe(() => { throw new Error('early observer cannot hide successful publication') })
+  const host = createMochiHost(runtime, mockAddOptionalField)
+  host.setSelection('registration-form')
+  const id = await plan(host)
+  runtime.subscribe(() => { throw new Error('late observer cannot hide successful publication') })
+  await host.callbacks.onConfirm(id)
+  assert.equal(host.getSnapshot().phase, 'APPLIED')
+  assert.equal(host.getSnapshot().receipt.committedRevision, runtime.getSnapshot().revision)
+  await host.callbacks.onConfirm(id)
+  assert.equal(runtime.getSnapshot().revision, 1)
+  host.dispose()
+})
+
+test('readonly request never reaches provider or changes the sole owner', async () => {
+  let calls = 0
+  const s = setup(() => { calls++ }), owner = s.runtime.customProject, before = owner.getSnapshot()
+  owner.setReadOnly(true)
+  await rejects(plan(s.host), 'READ_ONLY')
+  assert.equal(calls, 0); assert.equal(s.executions(), 0)
+  assert.strictEqual(s.runtime.customProject, owner); assert.strictEqual(owner.getSnapshot(), before)
+  s.host.dispose()
+})
+
+test('missed revision notification rejects the in-flight provider response', async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample()), withoutNotification = notificationGate(runtime)
+  const response = defer()
+  let request
+  const host = createMochiHost(runtime, input => { request = input; return response.promise })
+  host.setSelection('registration-form')
+  const pending = host.callbacks.onRequestPlan('stale response')
+  withoutNotification(() => runtime.moveBlock('applicant-list', { x: .7, y: .6 }))
+  const changed = runtime.customProject.getSnapshot()
+  response.resolve(mockAddOptionalField(request))
+  await rejects(pending, 'CONTEXT_CHANGED')
+  assert.equal(host.getSnapshot().phase, 'STALE'); assert.equal(host.getSnapshot().preview, null)
+  assert.strictEqual(runtime.customProject.getSnapshot(), changed)
+  host.dispose()
+})
+
+test('a missed context change while publishing REQUESTING never reaches provider', async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample()), withoutNotification = notificationGate(runtime)
+  let calls = 0
+  const host = createMochiHost(runtime, input => { calls++; return mockAddOptionalField(input) })
+  host.setSelection('registration-form')
+  host.subscribe(() => {
+    if (host.getSnapshot().phase === 'REQUESTING') withoutNotification(() => runtime.customProject.setReadOnly(true))
+  })
+  const before = runtime.customProject.getSnapshot()
+  await rejects(host.callbacks.onRequestPlan('revoked before provider'), 'CONTEXT_CHANGED')
+  assert.equal(calls, 0); assert.equal(host.getSnapshot().busy, false)
+  assert.equal(host.getSnapshot().phase, 'STALE'); assert.equal(host.getSnapshot().preview, null)
+  assert.strictEqual(runtime.customProject.getSnapshot(), before)
+  host.dispose()
 })

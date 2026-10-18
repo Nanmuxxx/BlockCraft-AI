@@ -1,6 +1,6 @@
 export interface ContextSource {
   appId: string; instanceId: string; revision: number; selectedBlockId: string | null; mode: 'blocks' | 'run'
-  blocks: Array<{ id: string; name: string; type: string; fieldIds?: readonly string[] }>
+  blocks: Array<{ id: string; name: string; type: string; fieldIds?: readonly string[]; parameters?: Array<{ name: string; type: string; required: boolean }> }>
   entities: Array<{ id: string; name: string; fields: Array<{ id: string; name: string; type: string }> }>
   relations: Array<{ blockId: string; entityId: string }>
 }
@@ -9,7 +9,7 @@ export interface Advice {
   requiresUserAction: boolean; kind: 'explain' | 'design-change'
 }
 export interface ConversationState {
-  enabled: boolean; proactiveEnabled: boolean; busy: boolean; modificationsEnabled: false
+  contextAvailable: boolean; enabled: boolean; disabledReason: string | null; proactiveEnabled: boolean; busy: boolean; modificationsEnabled: false
   messages: ReadonlyArray<{ role: 'user' | 'assistant'; content: string }>
   suggestions: ReadonlyArray<Readonly<Advice>>; error: { code: string; message: string } | null
 }

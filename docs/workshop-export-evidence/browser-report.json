@@ -9,7 +9,7 @@
         "label": "builtin-c",
         "revision": 4,
         "bytes": 15288,
-        "sha256": "18420e7f4d15491f914517b6cbf57becd473cc9ed8d46db72e6c6f5a7eefea07",
+        "sha256": "2b8166f0adb82907b35e988c894006ce0fa24e7a84b6613ccd5dcd14cacff593",
         "files": [
           "README.md",
           "index.html",
@@ -31,7 +31,7 @@
         "label": "mixed-b",
         "revision": 6,
         "bytes": 16364,
-        "sha256": "5e966a5fb68d2949dec1f6a446e87c1a4297543a91e05675cda43f922bd4f407",
+        "sha256": "f3ddb2395cf76eccdfc781f0dba7a3352939d1746f112c17b1d951a3f425dac8",
         "files": [
           "README.md",
           "index.html",
@@ -57,10 +57,12 @@
         "metric updates",
         "B/C retention",
         "B and C real ZIP downloads + CRC + central directory + required files",
-        "exact digest and edited props",
+        "package build scripts and pinned versions",
+        "exact digest, project revision and edited props",
         "export revision unchanged",
         "stale snapshot blocks download",
-        "unsupported protocol blocks whole ZIP",
+        "non-empty stateSchema blocks whole ZIP",
+        "Mochi conversation panel remains visible and disabled",
         "single Mochi mount",
         "no CustomBlock execution",
         "no horizontal overflow",
@@ -74,7 +76,7 @@
         "label": "builtin-c",
         "revision": 4,
         "bytes": 15288,
-        "sha256": "9901513e9adfacad31c43764e417bde52d649f671c7cab917ab41c77d2872359",
+        "sha256": "f2ac2c9fff68363f6c2f440a6cf3f5b740730e7bb6b84e3bb78fcf0f2498b065",
         "files": [
           "README.md",
           "index.html",
@@ -96,7 +98,7 @@
         "label": "mixed-b",
         "revision": 6,
         "bytes": 16364,
-        "sha256": "991e40a55caffe9b572dafb921f6bb6d4b9467f76a8303d8604a502e60f2dd9e",
+        "sha256": "71a2eea914e8e2cb75eb3fb455462f8cb98541c231e023ee296b4e2a5bb126db",
         "files": [
           "README.md",
           "index.html",
@@ -122,10 +124,12 @@
         "metric updates",
         "B/C retention",
         "B and C real ZIP downloads + CRC + central directory + required files",
-        "exact digest and edited props",
+        "package build scripts and pinned versions",
+        "exact digest, project revision and edited props",
         "export revision unchanged",
         "stale snapshot blocks download",
-        "unsupported protocol blocks whole ZIP",
+        "non-empty stateSchema blocks whole ZIP",
+        "Mochi conversation panel remains visible and disabled",
         "single Mochi mount",
         "no CustomBlock execution",
         "no horizontal overflow",
@@ -147,5 +151,5 @@
   ],
   "errors": [],
   "paidCalls": 0,
-  "version": "153.0.8010.12"
+  "version": "155.0.4283.45"
 }

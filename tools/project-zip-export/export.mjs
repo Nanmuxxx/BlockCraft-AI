@@ -38,6 +38,10 @@ function sourcePolicy(artifact) {
   // parser checks syntax, bounded complexity, exact imports, reachability and entry.
   guarded(() => checkImports(artifact), 'UNSUPPORTED_SOURCE')
   const forbidden = new Set(['window', 'document', 'globalThis', 'parent', 'top', 'opener', 'frames', 'self', 'postMessage', 'MessageChannel', 'MessagePort', 'localStorage', 'sessionStorage', 'indexedDB', 'navigator', 'location', 'fetch', 'XMLHttpRequest', 'WebSocket', 'EventSource', 'process'])
+  // DOM event/ref objects expose Window through properties that deliberately do
+  // not spell "window". The token scanner alone misses `event.view`,
+  // `node.ownerDocument.defaultView` and `iframe.contentWindow`.
+  const forbiddenWindowHandles = new Set(['view', 'defaultView', 'contentWindow', 'ownerDocument', 'parentWindow'])
   for (const [path, source] of Object.entries(artifact.sources)) {
     assertOutputPath(`src/components/custom/a/${path}`)
     checkPrivateText(source)
@@ -49,6 +53,16 @@ function sourcePolicy(artifact) {
       if (token === ts.SyntaxKind.Identifier) ensure(!forbidden.has(scanner.getTokenValue()), 'UNSUPPORTED_PROTOCOL')
     }
     ensure(!/\bimport\s*\.\s*meta\b/.test(source), 'UNSUPPORTED_SOURCE')
+    const file = ts.createSourceFile(path, source, ts.ScriptTarget.ES2020, true, path.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS)
+    const stack = [file]
+    while (stack.length) {
+      const node = stack.pop()
+      if (ts.isPropertyAccessExpression(node)) ensure(!forbiddenWindowHandles.has(node.name.text), 'UNSUPPORTED_PROTOCOL')
+      if (ts.isElementAccessExpression(node) && ts.isStringLiteral(node.argumentExpression)) {
+        ensure(!forbiddenWindowHandles.has(node.argumentExpression.text), 'UNSUPPORTED_PROTOCOL')
+      }
+      ts.forEachChild(node, child => { stack.push(child) })
+    }
   }
 }
 

@@ -31,6 +31,7 @@ async function run() {
         const url = new URL(route.request().url())
         if (!['127.0.0.1', 'localhost'].includes(url.hostname)) { outbound.push(url.href); return route.abort() }
         if (url.pathname === '/api/ai/generate') return route.fulfill({ json: createClubRegistrationExample().spec })
+        if (url.pathname === '/api/mochi-ai/status') return route.fulfill({ status: 503, json: { error: { code: 'AI_UNAVAILABLE' } } })
         if (url.pathname === '/api/local-project-export') sent.push(route.request().postDataJSON())
         else if (url.pathname.startsWith('/api/')) return route.abort()
         return route.continue()
@@ -44,6 +45,11 @@ async function run() {
       const feedback = page.locator('#workshop-export-feedback')
       const card = id => page.locator(`[data-block-key="${id}"]`)
       await expect(card('builtin:registration-form')).toBeVisible()
+      const mochiPanel = page.getByRole('region', { name: '和 Mochi 聊聊', exact: true })
+      await expect(mochiPanel).toBeVisible()
+      await expect(mochiPanel).toContainText('Mochi 暂时无法连接')
+      await expect(mochiPanel.getByLabel('向 Mochi 提问', { exact: true })).toBeDisabled()
+      assert.equal(await page.locator('.mochi-ai').count(), 1)
       await card('builtin:applicant-list').click()
       const inspector = page.getByRole('complementary', { name: '积木属性', exact: true })
       await inspector.getByLabel('字段名称', { exact: true }).fill('备注')
@@ -75,9 +81,31 @@ async function run() {
         const last = sent.at(-1)
         const provenance = JSON.parse(files.get('provenance.json'))
         assert.equal(provenance.projectRevision, last.project.revision)
+        assert.equal(provenance.profile, 'react-props-local-v1')
+        assert.deepEqual(provenance.artifacts, last.artifacts.map(entry => ({
+          definitionId: entry.artifact.manifest.definitionId, versionDigest: entry.versionDigest,
+        })).sort((a, b) => `${a.definitionId}/${a.versionDigest}` < `${b.definitionId}/${b.versionDigest}` ? -1 : 1))
+        const dataText = files.get('src/data.ts')
+        const data = JSON.parse(dataText.slice(dataText.indexOf(' = ') + 3, dataText.lastIndexOf(';')))
+        assert.deepEqual(data, last.project)
+        assert.equal(data.revision, provenance.projectRevision)
         assert(files.get('src/data.ts').includes('已编辑的报名人'))
         assert(files.get('src/data.ts').includes('导出当前快照'))
-        for (const required of ['package.json', 'index.html', 'src/main.tsx', 'src/App.tsx', 'src/model.ts', 'src/components/FormBlock.tsx', 'src/components/ListBlock.tsx', 'src/components/MetricBlock.tsx']) assert(files.has(required))
+        for (const required of ['package.json', 'index.html', 'tsconfig.json', 'vite.config.ts', 'README.md', 'provenance.json', 'src/main.tsx', 'src/App.tsx', 'src/model.ts', 'src/components/FormBlock.tsx', 'src/components/ListBlock.tsx', 'src/components/MetricBlock.tsx']) assert(files.has(required))
+        const packageJson = JSON.parse(files.get('package.json'))
+        assert.deepEqual(Object.keys(packageJson.scripts).sort(), ['build', 'dev', 'preview'])
+        assert.equal(packageJson.dependencies.react, '19.3.1')
+        assert.equal(packageJson.dependencies['react-dom'], '19.3.1')
+        assert.equal(packageJson.devDependencies.typescript, '5.9.3')
+        assert.equal(packageJson.devDependencies.vite, '8.3.4')
+        const tsconfig = JSON.parse(files.get('tsconfig.json'))
+        assert.equal(tsconfig.compilerOptions.jsx, 'react-jsx')
+        assert.equal(tsconfig.compilerOptions.strict, true)
+        assert.deepEqual(tsconfig.include, ['src', 'vite.config.ts'])
+        assert.match(files.get('vite.config.ts'), /base: '\.\/'/)
+        for (const entry of last.artifacts) for (const [sourcePath, sourceText] of Object.entries(entry.artifact.sources)) {
+          assert([...files].some(([name, text]) => name.endsWith('/' + sourcePath) && text === sourceText))
+        }
         assert(![...files.keys()].some(p => /node_modules|\.env|server\//.test(p)))
         return { label, revision: provenance.projectRevision, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex'), files: [...files.keys()] }
       }
@@ -112,7 +140,8 @@ async function run() {
       await saveZip('mixed-repeat')
       assert.deepEqual(sent.at(-1), mixedInput)
       assert.equal(await page.locator('[data-workshop-panel="mochi"]').count(), 1)
-      assert.equal(await page.locator('.mochi-ai').count(), 1)
+      await expect(mochiPanel).toBeVisible()
+      await expect(mochiPanel.getByLabel('向 Mochi 提问', { exact: true })).toBeDisabled()
       assert.equal(await page.locator('iframe').count(), 0)
       assert.equal(await page.locator('script[src*="Counter"]').count(), 0)
       await importer.locator('summary').click()
@@ -132,10 +161,11 @@ async function run() {
       await expect(feedback).toContainText('项目已变化')
       assert.equal(downloadsSeen.length, countBeforeStale)
       await page.unroute('**/api/local-project-export', hold)
-      // Rehash metadata with a forbidden host event, import it inertly, refuse ZIP.
+      // Rehash metadata with a non-empty stateSchema, import it inertly, refuse ZIP.
       await b.click()
       const unsupported = structuredClone(entry)
-      unsupported.artifact.manifest.events = { changed: { type: 'object', properties: {}, required: [], additionalProperties: false } }
+      unsupported.artifact.manifest.name = 'DeepSeek 番茄钟协议回归（非空 stateSchema）'
+      unsupported.artifact.manifest.stateSchema.properties.remainingSeconds = { type: 'integer', minimum: 0 }
       unsupported.versionDigest = await api.computeVersionDigest(unsupported.artifact)
       await install(unsupported)
       const beforeRefusal = downloadsSeen.length
@@ -145,7 +175,7 @@ async function run() {
       await page.screenshot({ path: path.join(output, `refused-${width}.png`), fullPage: true })
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false)
       assert.deepEqual(outbound, [])
-      report.cases.push({ width, passed: true, builtinZip, mixedZip, checks: ['creation', 'Inspector field edit', 'form/list create-update-delete', 'metric updates', 'B/C retention', 'B and C real ZIP downloads + CRC + central directory + required files', 'exact digest and edited props', 'export revision unchanged', 'stale snapshot blocks download', 'unsupported protocol blocks whole ZIP', 'single Mochi mount', 'no CustomBlock execution', 'no horizontal overflow', 'no external requests'] })
+      report.cases.push({ width, passed: true, builtinZip, mixedZip, checks: ['creation', 'Inspector field edit', 'form/list create-update-delete', 'metric updates', 'B/C retention', 'B and C real ZIP downloads + CRC + central directory + required files', 'package build scripts and pinned versions', 'exact digest, project revision and edited props', 'export revision unchanged', 'stale snapshot blocks download', 'non-empty stateSchema blocks whole ZIP', 'Mochi conversation panel remains visible and disabled', 'single Mochi mount', 'no CustomBlock execution', 'no horizontal overflow', 'no external requests'] })
       await page.close()
     }
     await vite.close()

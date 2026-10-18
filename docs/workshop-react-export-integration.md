@@ -10,6 +10,12 @@
 
 Node 边界只调用 #30 `exportProjectZip({ project, artifacts })`，没有复制 ZIP 算法。浏览器不 import Node 导出器、TypeScript parser 或打包算法。form/list/metric 和 `react-props-local-v1` CustomBlock 沿用 #30 范围；缺失/不匹配制品、宿主 state/events/capabilities、未知依赖等整体失败，成功响应头只在完整 ZIP 验证生成后发送。错误仅返回稳定错误码，不回传源码、记录、栈或任意异常消息。数据与源码只以文本处理，不安装/编译/执行 CustomBlock。
 
+真实 DeepSeek 番茄钟制品已确认会因非空 `stateSchema` 返回 `UNSUPPORTED_PROTOCOL`；正式 exporter 不放宽这个限制。该原始制品字节未包含在本次 checkout 中，因此本轮回归使用同协议条件的静态拒绝输入，不把重建输入称为原始制品。前端把该错误显示为“暂不支持的宿主状态、事件或能力协议”，且不会生成或发起 ZIP 下载。
+
+## 静态扫描边界
+
+导出器使用 TypeScript 5.9.3 的 `ts.createScanner`（JSX、ES2020）扫描标识符，再做受限 import/执行入口检查。仅扫描“是否出现 `window` 标识符”不足：`event.view`、`node.ownerDocument.defaultView` 和 `iframe.contentWindow` 都能取得 Window，却不包含名为 `window` 的标识符。新增的 AST 属性访问检查会拒绝 `view`、`defaultView`、`contentWindow`、`ownerDocument`、`parentWindow`，并覆盖字符串下标形式。最小复现为 `onClick={event => event.view.open('https://example.com')}`；对应回归测试要求 `UNSUPPORTED_PROTOCOL`。动态计算属性仍不在静态保证范围内，这不是沙箱或完整 JavaScript 安全分析。
+
 ## 受控本机启动与手动操作
 
 需要 Node.js >=22.16，现有项目依赖：
@@ -52,7 +58,8 @@ Workshop 负责唯一 host 的创建/销毁以及 mode/selection/owner；面板�
 ```powershell
 npm test
 npm run test:workshop-export
-node --test tests/project-zip-export/export.test.mjs tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs tests/mochi-ai/*.test.mjs src/integrations/mochi/host.test.cjs
+node --test tests/project-zip-export/export.test.mjs tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs tests/mochi-ai/*.test.mjs tests/mochi-source/*.test.cjs src/integrations/mochi/host.test.cjs
+npm --prefix server test
 node node_modules/typescript/bin/tsc -b --force
 npm run build
 # 使用已有 Playwright + Chromium；如位于外部目录，设置 NODE_PATH。
@@ -61,10 +68,10 @@ npm run test:workshop-export:browser
 node tests/custom-block-workshop/browser.cjs
 ```
 
-结果：主测试 158/158；CustomBlock/导出器/Mochi 集成 336/336；本轮导出 capture/HTTP/边界专项 9/9；强制 TypeScript 和生产构建通过。Windows 修复仅将 Mochi 内存编译测试路径双方用 `path.resolve` 规范化，消除 TS6053；没有改变聊天实现。`.gitattributes` 固定可信样本 LF，避免 Windows checkout CRLF 破坏既定 SHA-256，未放宽白名单或修改样本源码。
+同步基线：`origin/main` `f0ddd21cb44749adf34fa473f3ae52115e273d3f`（含 #28、#29、#32、#33）。结果：主测试 192/192；CustomBlock/导出器/Mochi 集成 415/415；本轮导出 capture/HTTP/边界专项 9/9；服务端 23/23；强制 TypeScript 和生产构建通过。Windows 修复将 Mochi 内存编译测试的虚拟文件名及 TypeScript host 返回路径统一规范为 `/`，消除 TS6053；没有改变聊天实现。`.gitattributes` 固定可信样本 LF，避免 Windows checkout CRLF 破坏既定 SHA-256，未放宽白名单或修改样本源码。
 
-真实 Chromium 153，1366×900 桌面及 390×900 手机触控视口：正式路由创建、内置 Inspector 配置、CustomBlock 参数保存、B/C 轮转、form/list CRUD 与实时 metric；B/C 实际 ZIP 下载、CRC/central directory/文件集合、当前记录及精确制品绑定；重复导出 revision 不变；响应在途编辑后拒绝下载；不支持协议整体拒绝；普通 dev 和生产 preview 均显示部署阻塞且不能得到 ZIP。没有页面异常或非本机请求，paidCalls=0。
+真实 Microsoft Edge 155（Chromium 155.0.4283.45），1366×900 桌面及 390×900 手机触控视口：正式路由创建、内置 Inspector 配置、CustomBlock 参数保存、B/C 轮转、form/list CRUD 与实时 metric；B/C 实际 ZIP 下载、CRC/central directory/完整文件集合、构建脚本与固定版本、当前记录/编辑参数及精确制品绑定；重复导出 revision 不变；响应在途编辑后拒绝下载；非空 `stateSchema` 请求整体拒绝且不产生下载；Mochi 对话面板保持存在并显示禁用原因；普通 dev 和生产 preview 均显示部署阻塞且不能得到 ZIP。没有页面异常或非本机请求，paidCalls=0。另有 Mochi Workshop 专项在桌面/手机真实服务端、Provider、Schema 与 Client 链路上通过，离线 Provider 调用 10 次、付费调用 0 次，修改入口保持禁用。
 
-另复跑原 `tests/custom-block-workshop/browser.cjs`，桌面鼠标/手机 CDP 触控拖拽、布局保留、选中/Inspector、摘要拒绝、并发导入、版本 Schema 切换、CRUD、Mochi/Logo/字体、无水平溢出和旧 Demo 任务往返均通过。测试启动器只将 Playwright 的 executablePath 指向机器已有 Chromium，没有下载软件或执行制品。
+另复跑原 `tests/custom-block-workshop/browser.cjs`，桌面鼠标/手机触控拖拽、布局保留、选中/Inspector、摘要拒绝、并发导入、版本 Schema 切换、CRUD、Mochi/Logo/字体、无水平溢出和旧 Demo 任务往返均通过。测试启动器将 Playwright 的 executablePath 指向机器已有 Microsoft Edge，没有下载浏览器或执行制品。
 
-证据：`docs/workshop-export-evidence/browser-report.json`、`regression-report.json`、`verification.json` 及六张桌面/手机 B/C/拒绝截图。下载 ZIP 留在 ignored `.cache/workshop-export-downloads/`，报告记录其 SHA-256 和完整文件清单；没有将项目 ZIP 打入网站 bundle。
+证据：`docs/workshop-export-evidence/browser-report.json`、`mochi-workshop-report.json`、`regression-report.json`、`verification.json` 及桌面/手机 B/C/拒绝/旧 Demo 截图。六个实际下载 ZIP 另经 Python `zipfile.testzip()` 校验 CRC，并核对 14/15 文件结构、构建脚本、固定依赖、`provenance.json` revision 与 `src/data.ts` revision；`verification.json` 记录 SHA-256 和最终下载目录。没有将项目 ZIP 打入网站 bundle。

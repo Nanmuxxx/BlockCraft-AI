@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { ArrowLeft, Blocks, Monitor } from 'lucide-react'
 import type { AppRuntime } from '../../model/appRuntime'
 import { Logo } from '../Logo'
@@ -13,6 +13,7 @@ import { ExportProjectButton } from '../../integrations/project-export/ExportPro
 import { createMochiHost } from '../../integrations/mochi/host'
 import { AI_MODIFICATION_DISABLED, unavailablePlanProvider } from '../../integrations/mochi/planning'
 import { WorkshopMochi, type MochiHost, type WorkshopMochiProps } from '../../integrations/mochi/WorkshopMochi'
+import { MochiConversationPanel } from '../../integrations/mochi-ai/MochiConversationPanel'
 import '../workshop.css'
 import './app-spec-workshop.css'
 
@@ -40,6 +41,12 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
   runtime: AppRuntime; host: MochiHost; planningDisabledReason?: string
 } & WorkshopPanelMount) {
   const root = useRef<HTMLElement>(null)
+  // Only exact admitted references and the existing owner's immutable registry.
+  // No new Host, Runtime, owner or plan authority is created for advice.
+  const customContext = useMemo(() => ({
+    readReferences: () => runtime.customProject.getSnapshot().custom.instances.map(({ id, definitionId, versionDigest }) => ({ id, definitionId, versionDigest })),
+    registry: runtime.customProject.registry,
+  }), [runtime])
   const view = useSyncExternalStore(host.subscribe, host.getSnapshot, host.getSnapshot)
   const mode = view.mode
   const selectedId = view.context.selectedBlockId
@@ -72,7 +79,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
         <div className="workshop__preview-stage" id="generated-preview" hidden={mode !== 'run'}><div className="study-app"><header className="study-app__topbar"><div className="study-app__brand"><span><Blocks size={18} aria-hidden="true" /></span><strong>{snapshot.spec.name}</strong><small>YOUR APP</small></div></header><div className="app-spec-preview-content">{adapter ? <CustomBlockRunSurface adapter={adapter} renderBuiltin={block => <BuiltinBlockRenderer runtime={runtime} blockId={block.id} />} /> : admission}</div></div></div>
         <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
       </div>
-      <aside className="app-spec-workshop__sidebar" aria-label="创作助手与积木属性"><div data-workshop-panel="mochi">{renderMochi ? renderMochi(mochiProps) : <WorkshopMochi {...mochiProps} />}</div><div hidden={mode !== 'blocks'}>{customSelected ? adapter ? <CustomBlockInspector adapter={adapter} instanceId={selected} /> : admission : <AppSpecInspector key={selected ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selected} />}</div></aside>
+      <aside className="app-spec-workshop__sidebar" aria-label="创作助手与积木属性"><div data-workshop-panel="mochi">{renderMochi ? renderMochi(mochiProps) : <WorkshopMochi key={view.context.instanceId} {...mochiProps} />}</div><div hidden={mode !== 'blocks'}><MochiConversationPanel host={host} customContext={customContext} />{customSelected ? adapter ? <CustomBlockInspector adapter={adapter} instanceId={selected} /> : admission : <AppSpecInspector key={selected ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selected} />}</div></aside>
     </div>
   </section>
 }

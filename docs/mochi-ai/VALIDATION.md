@@ -1,5 +1,9 @@
 # 验证记录
 
+## 当前正式 Workshop 聊天接线
+
+最新实现与验证以 [WORKSHOP-INTEGRATION.md](WORKSHOP-INTEGRATION.md) 为准：混合 custom 上下文现已使用可信只读投影，正式面板与服务端路由已接线但默认禁用，新增持久费用适配器硬门禁。Mochi AI 40/40、专项合集 291/291、npm test 158/158、server 23/23、TypeScript 与构建通过。桌面/手机模拟浏览器证据见新报告；下方 #26 尚未接线的结论是历史记录，已被本次接线替代。真实付费调用仍为 0。
+
 ## #24/#25 合并后的 Ready 复核
 
 2026-10-18：安全合入 `origin/main@94262b3307274b2bae0ad5f7782cd7088228574f`（包含 #24/#25/#27），保留原 PR 提交历史，自动合并无文本冲突。生产 Workshop、Mochi Host、动画、Runtime、CustomProjectV2 owner 与服务端入口相对该 main 均零改动。只新增回归与说明。
