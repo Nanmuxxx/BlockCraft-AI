@@ -2,6 +2,7 @@ import { useState, useSyncExternalStore } from 'react'
 import type { CustomBlockInstance, JsonObject, JsonValue, ObjectSchema, RestrictedSchema } from '../../custom-block'
 import { cloneJson } from '../../custom-block/json'
 import { referenceOf, type CustomBlockBCAdapter } from './adapter'
+import { configurationState } from './metadata'
 import './custom-block-bc.css'
 
 function Fields({ schema, value, path, change }: {
@@ -33,8 +34,8 @@ function emptyValue(schema: RestrictedSchema): JsonValue {
   if (schema.type !== 'object' && schema.enum) return schema.enum[0]
   return schema.type === 'object' ? {} : schema.type === 'string' ? '' : schema.type === 'boolean' ? false : 0
 }
-function Editor({ adapter, instance, schema, baseRevision }: {
-  adapter: CustomBlockBCAdapter; instance: CustomBlockInstance; schema: ObjectSchema; baseRevision: number
+function Editor({ adapter, instance, schema, baseRevision, readOnly }: {
+  adapter: CustomBlockBCAdapter; instance: CustomBlockInstance; schema: ObjectSchema; baseRevision: number; readOnly: boolean
 }) {
   const [draft, setDraft] = useState(() => ({ props: cloneJson(instance.props), baseRevision }))
   const [feedback, setFeedback] = useState('')
@@ -61,21 +62,24 @@ function Editor({ adapter, instance, schema, baseRevision }: {
       if (current && current.versionDigest === instance.versionDigest && current.definitionId === instance.definitionId) setDraft({ props: cloneJson(current.props), baseRevision: latest.revision })
     }
   }}>
-    <fieldset disabled={busy}><legend>可编辑参数</legend><Fields schema={schema} value={draft.props} path={[]} change={change} /></fieldset>
+    <fieldset disabled={busy || readOnly}><legend>可编辑参数</legend><Fields schema={schema} value={draft.props} path={[]} change={change} /></fieldset>
     {stale && <p role="alert">项目已变化；请重新载入参数后再保存。</p>}
-    <div className="custom-block-bc__actions"><button type="submit" disabled={busy || stale}>保存参数</button>
+    <div className="custom-block-bc__actions"><button type="submit" disabled={busy || stale || readOnly}>保存参数</button>
       <button type="button" disabled={busy} onClick={() => { setDraft({ props: cloneJson(instance.props), baseRevision }); setFeedback('') }}>重新载入参数</button></div>
     {feedback && <p role={feedback.startsWith('参数已') ? 'status' : 'alert'}>{feedback}</p>}
   </form>
 }
 export function CustomBlockInspector({ adapter, instanceId }: { adapter: CustomBlockBCAdapter; instanceId: string | null }) {
   const snapshot = useSyncExternalStore(adapter.subscribe, adapter.getSnapshot, adapter.getSnapshot)
+  const authorization = useSyncExternalStore(adapter.subscribe, adapter.getAuthorization, adapter.getAuthorization)
   const instance = snapshot.custom.instances.find(item => item.id === instanceId)
   const manifest = instance && adapter.manifestFor(instance)
+  const state = configurationState(manifest?.propsSchema, authorization.readOnly)
   return <aside className="custom-block-bc custom-block-bc__inspector" aria-label="自定义积木属性"><h2>积木属性</h2>
-    {!instance ? <p>请选择一块自定义积木。</p> : !manifest ? <p role="alert">此版本的元数据不可用，暂时无法编辑。</p> : <>
-      <h3>{manifest.name}</h3><p>参数修改将在宿主校验通过后保存。</p>
-      <Editor key={`${instance.id}/${instance.definitionId}/${instance.versionDigest}`} adapter={adapter} instance={instance} schema={manifest.propsSchema} baseRevision={snapshot.revision} />
+    {!instance ? <p>请选择一块自定义积木。</p> : <>
+      <h3>{manifest?.name ?? '自定义积木'}</h3><p data-configuration-state={state.status}>{state.label} · {state.writeLabel} · {state.executionLabel}</p>
+      <p role={state.schema ? undefined : 'alert'}>{state.message}</p>
+      {state.schema && <Editor key={`${instance.id}/${instance.definitionId}/${instance.versionDigest}`} adapter={adapter} instance={instance} schema={state.schema} baseRevision={snapshot.revision} readOnly={authorization.readOnly} />}
     </>}
   </aside>
 }
