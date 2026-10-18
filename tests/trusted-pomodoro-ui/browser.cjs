@@ -1,0 +1,133 @@
+// Actual /ai-create components without transforms or QA hooks. Only legacy API
+// replies are intercepted; the new trusted fixture path must make zero API calls.
+const { chromium } = require('playwright')
+const { expect } = require('playwright/test')
+const assert = require('node:assert/strict')
+const path = require('node:path')
+const { realpathSync } = require('node:fs')
+const { mkdir, writeFile } = require('node:fs/promises')
+const { createClubRegistrationExample } = require('../custom-block/fixtures.cjs')
+const root = path.resolve(__dirname, '../..')
+const output = path.resolve(process.env.TRUSTED_UI_EVIDENCE || path.join(root, 'docs/acceptance/trusted-pomodoro-ui/browser'))
+async function run() {
+  await mkdir(output, { recursive: true })
+  const { createServer } = await import('vite')
+  const vite = await createServer({ root, server: { host: '127.0.0.1', port: 5210, strictPort: true, fs: { allow: [root, realpathSync(path.join(root, 'node_modules'))] } } })
+  await vite.listen()
+  const browser = await chromium.launch({ headless: true })
+  const report = { browser: browser.version(), base: '1a45d748027dea8e8e00dba336ed03b7d117284b', scope: 'actual /ai-create, no source transforms or runtime introspection; legacy HTTP intercepted offline', paidCalls: 0, cases: [], errors: [] }
+  try {
+    for (const width of [1440, 390]) {
+      const context = await browser.newContext({ viewport: { width, height: width === 390 ? 844 : 1000 }, isMobile: width === 390, hasTouch: width === 390, recordVideo: { dir: path.join(output, 'video') } })
+      const page = await context.newPage(), errors = [], external = [], requests = []
+      let reply = 'success', release
+      page.on('pageerror', error => errors.push(error.message))
+      await page.route('**/*', async route => {
+        const url = new URL(route.request().url())
+        if (url.hostname !== '127.0.0.1') { external.push(url.href); return route.abort() }
+        if (url.pathname === '/api/ai/generate') {
+          const body = route.request().postDataJSON(); requests.push(body)
+          assert.deepEqual(Object.keys(body), ['idea'], 'only legacy generation may reach HTTP')
+          if (reply === 'delay') await new Promise(resolve => { release = resolve })
+          if (reply === 'invalid') return route.fulfill({ json: { ...createClubRegistrationExample().spec, script: 'alert(1)' } })
+          if (reply === 'error') return route.fulfill({ status: 502, json: { error: { code: 'AI_UPSTREAM_ERROR' } } })
+          return route.fulfill({ json: createClubRegistrationExample().spec })
+        }
+        if (url.pathname === '/api/mochi-ai/status') return route.fulfill({ json: { enabled: false, proactiveEnabled: false, modificationsEnabled: false, reason: 'ACCESS_UNAVAILABLE' } })
+        if (url.pathname.startsWith('/api/')) { errors.push('Unexpected API: ' + url.pathname); return route.abort() }
+        return route.continue()
+      })
+      const mode = page.getByLabel('创建方式', { exact: true })
+      const b = page.getByRole('button', { name: 'B 模式 · 编辑积木', exact: true }), c = page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true })
+      const source = page.getByLabel('当前应用来源', { exact: true })
+      const openComposer = async () => {
+        const details = page.locator('.ai-create-regenerate')
+        if (!await details.evaluate(e => e.open)) await details.locator('summary').click()
+      }
+      await page.goto('http://127.0.0.1:5210/ai-create')
+      await expect(mode).toHaveValue('legacy-v1')
+      await mode.selectOption('trusted-fixture')
+      assert.equal(requests.length, 0)
+      await expect(page.locator('[data-block-key]')).toHaveCount(0)
+      await expect(page.getByText('离线固定 Fixture，非真实 DeepSeek 调用。加载固定的', { exact: false })).toBeVisible()
+      await page.screenshot({ path: path.join(output, `entry-${width}.png`), fullPage: true })
+      await page.getByRole('button', { name: '加载离线番茄钟', exact: true }).click()
+      await expect(b).toHaveAttribute('aria-pressed', 'true')
+      await expect(page.locator('[data-block-key]')).toHaveCount(1)
+      await expect(source).toHaveText('离线固定 Fixture，非真实 DeepSeek 调用')
+      await page.getByRole('button', { name: '数学专注', exact: true }).click()
+      const inspector = page.getByRole('complementary', { name: '积木属性', exact: true })
+      await inspector.getByText('积木与数据详情', { exact: true }).click()
+      await expect(inspector).toContainText('无需数据绑定')
+      await expect(inspector).toContainText('1500 秒')
+      await expect(inspector).not.toContainText('绑定异常')
+      await page.screenshot({ path: path.join(output, `b-${width}.png`), fullPage: true })
+      await c.click()
+      const timer = page.getByRole('region', { name: '数学专注', exact: true }), time = timer.getByLabel('剩余时间')
+      await expect(time).toHaveText('25:00')
+      await timer.getByRole('button', { name: '开始', exact: true }).click()
+      await expect(time).not.toHaveText('25:00')
+      await b.click(); await c.click()
+      await expect(time).not.toHaveText('25:00')
+      await timer.getByRole('button', { name: '暂停', exact: true }).click()
+      const paused = await time.textContent()
+      await page.waitForTimeout(1100); await expect(time).toHaveText(paused)
+      await timer.getByRole('button', { name: '开始', exact: true }).click()
+      await expect(time).not.toHaveText(paused)
+      await page.screenshot({ path: path.join(output, `c-running-${width}.png`), fullPage: true })
+      await timer.getByRole('button', { name: '重置', exact: true }).click()
+      await expect(time).toHaveText('25:00')
+      await expect(timer.getByRole('button', { name: '暂停', exact: true })).toBeDisabled()
+      let downloads = 0; page.on('download', () => downloads++)
+      await page.getByRole('button', { name: '导出 React 项目', exact: true }).click()
+      await expect(page.getByRole('alert').filter({ hasText: '暂不支持 React ZIP 导出' })).toBeVisible()
+      assert.equal(downloads, 0)
+      assert.equal(requests.length, 0, 'entire trusted flow never requests generation HTTP')
+      assert.equal(await page.locator('iframe').count(), 0)
+      assert.equal(await page.locator('body').evaluate(e => e.scrollWidth <= innerWidth), true)
+
+      // Legacy succeeds as before; schema/provider failures and cancellation keep
+      // an actual user-entered record. Selecting a mode alone never replaces it.
+      await openComposer(); await mode.selectOption('legacy-v1')
+      await expect(source).toHaveText('离线固定 Fixture，非真实 DeepSeek 调用')
+      await page.getByLabel('你想做什么软件？').fill('离线兼容验收：社团报名工具')
+      await page.getByRole('button', { name: '生成新应用', exact: true }).click()
+      await expect(page.locator('[data-block-key]')).toHaveCount(3)
+      await expect(source).toContainText('原有 AppSpec v1')
+      await c.click()
+      const form = page.getByRole('region', { name: '报名表', exact: true })
+      await form.getByLabel('姓名', { exact: false }).fill('失败和取消必须保留')
+      await form.getByLabel('意向部门', { exact: false }).selectOption('技术部')
+      await form.getByRole('button', { name: '提交', exact: true }).click()
+      const record = page.getByRole('cell', { name: '失败和取消必须保留', exact: true })
+      await expect(record).toBeVisible()
+      for (reply of ['invalid', 'error']) {
+        await openComposer()
+        await page.getByRole('button', { name: /重试生成|生成新应用/, exact: true }).click()
+        await expect(page.locator('.ai-create-error')).toContainText('当前应用和数据已保留')
+        await expect(record).toBeVisible(); await expect(source).toContainText('原有 AppSpec v1')
+      }
+      reply = 'delay'; await page.getByRole('button', { name: '重试生成', exact: true }).click()
+      await expect.poll(() => Boolean(release)).toBe(true)
+      await page.getByRole('button', { name: '取消生成', exact: true }).click()
+      await expect(page.locator('.ai-create-error')).toContainText('已取消生成')
+      await expect(record).toBeVisible()
+      release(); reply = 'success'; await page.waitForTimeout(100)
+      await expect(record).toBeVisible()
+      await mode.selectOption('trusted-fixture')
+      await expect(record).toBeVisible(); await expect(source).toContainText('原有 AppSpec v1')
+      const beforeLoad = requests.length
+      await page.getByRole('button', { name: '加载离线番茄钟', exact: true }).click()
+      await expect(page.locator('[data-block-key]')).toHaveCount(1)
+      await expect(source).toHaveText('离线固定 Fixture，非真实 DeepSeek 调用')
+      assert.equal(requests.length, beforeLoad)
+      assert.deepEqual(errors, []); assert.deepEqual(external, [])
+      assert.equal(await page.evaluate(() => '__entryQA' in window), false)
+      const video = page.video(); await context.close()
+      report.cases.push({ width, passed: true, generationHTTP: requests, trustedGenerationHTTP: 0, downloadsForV2: downloads, errors, external, video: await video.path(), checks: ['explicit choice, no action on selection', 'fully validated bundled fixture', 'persistent accurate source', 'B params/no data binding', 'C start/pause/resume/reset', 'B/C preserves countdown', 'v2 whole ZIP refused', 'legacy v1 success/CRUD', 'invalid/provider error/cancel preserve record and source', 'late cancelled response ignored', 'mode choice retains old app', 'no TSX execution', 'no page overflow', 'no QA bridge in normal UI'] })
+    }
+  } catch (error) { report.errors.push(error.stack || String(error)); throw error }
+  finally { await writeFile(path.join(output, 'report.json'), JSON.stringify(report, null, 2)); await browser.close(); await vite.close() }
+  console.log(JSON.stringify({ passed: report.cases.length, paidCalls: 0, evidence: output }))
+}
+run().catch(error => { console.error(error); process.exitCode = 1 })

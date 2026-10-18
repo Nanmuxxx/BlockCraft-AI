@@ -18,7 +18,9 @@
     "test:trusted-interactive": "npm --prefix server run build && node tools/project-zip-export/prepare.mjs && node --test tests/trusted-interactive/*.test.*",
     "test:trusted-interactive:browser": "npm --prefix server run build && node tests/trusted-interactive/browser.cjs",
     "dev:trusted-fixture": "npm --prefix server run build && node tests/trusted-interactive/serve.mjs",
-    "test:trusted-interactive:reliability": "node tests/trusted-interactive/reliability.browser.cjs"
+    "test:trusted-interactive:reliability": "node tests/trusted-interactive/reliability.browser.cjs",
+    "test:trusted-pomodoro-ui": "node --test tests/trusted-pomodoro-ui/*.test.cjs",
+    "test:trusted-pomodoro-ui:browser": "npm --prefix server run build && node server/custom-block/build-protocol.mjs && node tools/project-zip-export/prepare.mjs && node tests/trusted-pomodoro-ui/browser.cjs && node tests/trusted-pomodoro-ui/races.browser.cjs"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "5.3.0",
