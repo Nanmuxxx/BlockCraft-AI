@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strict": true,
+    "skipLibCheck": true,
+    "rootDir": "../../src",
+    "outDir": ".generated",
+    "noEmitOnError": true,
+    "types": []
+  },
+  "include": ["../../src/custom-block/**/*.ts"]
+}
