@@ -1,6 +1,6 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 05:13（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
+阶段检查点：2026-10-19 05:22（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
@@ -29,7 +29,7 @@
 
 ## 3. Draft PR
 
-[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署；2026-10-19 05:12核验状态open/draft，HEAD=`947079c26ac467a6d41f83f375965bde0bb56ac3`。描述已更新至最近回归结果。
+[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署；2026-10-19 05:14核验状态open/draft，HEAD=`7a88a776c7b3c1b463e446d1803edd60c4767db1`。描述已更新至最近回归结果。
 
 ## 4. 测试命令及退出码
 
@@ -43,6 +43,7 @@
 - 历史较广核心649/649、622/622、568/568，安全/编译/质量187/187、默认npm test192/192；准确范围及当时提交以日志为准。
 
 - 第六轮：未完成上传32/32，chunked兼容14/14，上下文重入37/37，观察者取消38/38，适配器异常37/37，访问scope30/30，Artifact回执36/36；均退出0。build-context-atomic退出0，早于最后服务/Artifact修改。
+- 本检查点新增：`npm run test:trusted-interactive` 31/31退出0；`npm run test:generation` 34/34退出0；`npm run test:trusted-pomodoro-ui` 2/2退出0，均使用离线Fixture。`npm run test:trusted-interactive:browser` 退出1，因缺少`playwright`包（`MODULE_NOT_FOUND`）而未运行用例。
 
 ## 5. 真实模型调用
 
@@ -56,6 +57,8 @@
 
 第六轮正式页面`context-atomic`桌面/移动通过，0外部请求、0页面异常；证据对应当时客户端代码66eddef，后续服务和Artifact修改需另行验证。
 
+本检查点人工浏览器检查本机`http://127.0.0.1:5174/ai-create`：切换至明确标注离线演示后成功创建应用，显示`AppSpec v2 · 可信交互 / 1`，B模式默认选中；Mochi修改输入禁用并标注Provider未接入。该检查不是自然语言/真实模型生成，也不是新增的Chromium自动化截图证据。
+
 ## 7. 新发现的问题
 
 - AbortSignal不保证外部操作完成；所有可撤销等待需主动退休、消费迟到拒绝，确认租约/CAS不可提前解锁。
@@ -63,6 +66,7 @@
 - UTF-8替换解码会静默改变JSON字符串；字节入口已严格解码。
 - 共享v1/v2 schema曾令v1质量评估误收v2，现明确分离。
 - 私有store的先读目录后写入配额有并发竞态，已用跨进程非等待目录租约修复。崩溃残留`.write-lock`需可信宿主检查后恢复；不自动删除未知锁。
+- 本机无Playwright依赖，trusted-interactive浏览器脚本本次退出1；此前已归档的浏览器证据可查，但本轮不能重跑自动化浏览器。
 - 单次文件read不保证读完，旧实现可漏检尾部；现读到EOF且限制实际累计字节。两个可注入模型completion原先没有独立截止时间，现最长45秒并保留取消/迟到结果门禁。
 - 源码语法准入不是沙箱认证：危险DOM/网络/无限循环源码可作为数据保存，但不得执行；Viewer仍拒绝。
 - 会话历史长期保留可能增长，需持久化/保留策略，不随意删除回滚证据。
@@ -145,3 +149,4 @@ status格式/异常关闭旧能力；主动建议的迟到确认、撤销通知�
 - `generation-artifact-retry-boundaries`：60/60退出0，覆盖无密钥/非法输入不触发上游、错误/模糊/超限响应拒绝、单次调用上限、超时/断连/迟到body释放，以及安装确认租约、重复提交、并发CAS冲突后票据终态、同版本重装与新版本状态隔离。
 - 审计未发现可复现的新缺陷。生成服务每个用户请求最多发出一次模型transport；没有自动修复或语义复核的隐藏重试。需要重新生成时由用户提交新请求。Artifact安装不是可重试的远端副作用：CAS失败后当前ticket终止，用户须重新prepare以获取新revision/授权并再次确认；重复确认不重复写入。
 - `npm test`192/192退出0；`npm run build`退出0（2005 modules transformed）。运行记录基线为ddf9d9b，codeChanges为空；REAL_MODEL_CALLS=0。
+- 结果证据本地`a8461ea581c5d7413743e0eb376930dc0a7ae8e8`已发布为远端`7a88a776c7b3c1b463e446d1803edd60c4767db1`，tree=`b619975b452a03e7f5538b32b0e2b00df4d37ec4`。差异只有账本、报告、命令日志与原始测试输出。

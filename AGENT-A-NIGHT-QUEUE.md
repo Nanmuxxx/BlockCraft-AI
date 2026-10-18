@@ -18,7 +18,15 @@
 - 本地`ddf9d9b4ba991f2339801470b218e6a67893109b`浏览器/互操作证据已经GitHub Git-data API发布为远端`947079c26ac467a6d41f83f375965bde0bb56ac3`；tree均为`2cbba5f82b62807c37b595ade6814c64a8829d1e`。更新PR描述；PR #40核验仍open/draft、未合并，head匹配。
 - Git HTTPS push仍无凭据；通过API先核验期望head `3bf225f400756da4c51bc74ad45dfe3669d103d5`，再fast-forward更新，未强推。
 - 当前继续审计：生成错误与恢复每请求至多一次上游调用、Artifact确认回执及重复确认语义；review现有测试后运行聚焦回归。下一项：发现新的失败边界则加窄测试/修复；否则刷新总回归和交付报告。
+- 聚焦回归`generation-artifact-retry-boundaries`60/60、`npm test`192/192、`npm run build`退出0；未发现新缺陷。所有记录已发布：本地a8461ea→远端`7a88a776c7b3c1b463e446d1803edd60c4767db1`，tree=`b619975b452a03e7f5538b32b0e2b00df4d37ec4`。
 - REAL_MODEL_CALLS=0，不执行生成TSX；未触碰禁止文件。`node_modules`为既存未跟踪依赖链接，不纳入版本控制。
+
+## 第十五轮协议复测与页面核对（05:22）
+
+- `npm run test:trusted-interactive` 31/31、`npm run test:generation` 34/34、`npm run test:trusted-pomodoro-ui` 2/2，退出码均0；均为离线Fixture，REAL_MODEL_CALLS=0。
+- `npm run test:trusted-interactive:browser`退出1：缺少Playwright模块，测试用例未运行。使用Cua检查本机正式`/ai-create`：离线演示加载成功，v2番茄钟积木在B模式显示；Mochi修改入口禁用。该观察不是自动化浏览器截图或自然语言生成证明。
+- 更新Draft PR #40描述至远端HEAD `7a88a776c7b3c1b463e446d1803edd60c4767db1`，核实仍open/draft/未合并。浏览器与本轮回归详情已记入报告。报告映射更正commit `479c0d613a59a4bd79d3ca44379fa76ae0ca3331`仍为本地未发布。
+- 本轮无代码修改；继续任务：补上Playwright依赖条件后复跑可信交互浏览器脚本；检查PR远端HEAD与当前映射；六小时窗口仍未结束。
 
 ## 已完成与 Commit
 

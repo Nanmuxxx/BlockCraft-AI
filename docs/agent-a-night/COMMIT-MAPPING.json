@@ -496,5 +496,11 @@
     "remote": "947079c26ac467a6d41f83f375965bde0bb56ac3",
     "tree": "2cbba5f82b62807c37b595ade6814c64a8829d1e",
     "message": "docs(ai-core): archive final browser and interop evidence"
+  },
+  {
+    "local": "a8461ea581c5d7413743e0eb376930dc0a7ae8e8",
+    "remote": "7a88a776c7b3c1b463e446d1803edd60c4767db1",
+    "tree": "b619975b452a03e7f5538b32b0e2b00df4d37ec4",
+    "message": "docs(ai-core): record generation and install retry audit"
   }
 ]
