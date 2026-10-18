@@ -101,3 +101,18 @@ test('cancel retires Host await even when completion never settles; late failure
   await host.callbacks.onConfirm(current.preview.planId)
   assert.equal(runtime.getSnapshot().revision, 1)
 })
+
+test('large valid selected metadata is rejected by UTF-8 bytes before completion, without truncation or mutation', async t => {
+  const spec = createClubRegistrationExample()
+  spec.spec.entities[0].name = '界'.repeat(24000)
+  const runtime = createAppRuntime(spec)
+  let calls = 0
+  const host = createMochiHost(runtime, createModelPlanProvider(async () => { calls++; throw new Error('must not call transport') }))
+  t.after(() => host.dispose()); host.setSelection('registration-form')
+  const before = runtime.getSnapshot()
+  await assert.rejects(host.callbacks.onRequestPlan('添加备注'), { code: 'MODEL_REQUEST_TOO_LARGE' })
+  assert.equal(calls, 0)
+  assert.equal(runtime.getSnapshot(), before)
+  assert.equal(host.getSnapshot().preview, null)
+  assert.equal(host.getSnapshot().error.code, 'MODEL_REQUEST_TOO_LARGE')
+})

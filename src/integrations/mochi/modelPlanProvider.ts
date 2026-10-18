@@ -32,6 +32,12 @@ export function createModelPlanProvider(complete: ModelPlanCompletion): PlanProv
   return async request => {
     request.signal.throwIfAborted()
     const input = toMinimalPlanInput(request)
+    // Imported AppSpecs can contain large labels even when structurally valid.
+    // Bound actual UTF-8 egress before invoking any authorized transport; never
+    // truncate metadata because that could change the meaning of an edit.
+    if (new TextEncoder().encode(JSON.stringify({ instruction: APP_SPEC_EDIT_INSTRUCTION, request: input })).byteLength > 64 * 1024) {
+      throw new AppSpecError('MODEL_REQUEST_TOO_LARGE', '选中积木的修改上下文超出请求限制。')
+    }
     // A completion transport may ignore cancellation. Retire the Host await
     // promptly, while still consuming a late rejection from that transport.
     let abort: () => void = () => {}
