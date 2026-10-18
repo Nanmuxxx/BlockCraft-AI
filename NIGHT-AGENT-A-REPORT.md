@@ -1,6 +1,6 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 05:22（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
+阶段检查点：2026-10-19 05:35（Asia/Shanghai），约01:48开始，按 Tech Lead 裁决进入 PR 收敛。本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
@@ -29,7 +29,7 @@
 
 ## 3. Draft PR
 
-[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署；2026-10-19 05:14核验状态open/draft，HEAD=`7a88a776c7b3c1b463e446d1803edd60c4767db1`。描述已更新至最近回归结果。
+[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署；最终候选 HEAD=`16d8920b0de1bccf847af3f01426d1deb59ce21b`，由本地 `a4678f5` tree 精确发布。描述应以该候选为准。
 
 ## 4. 测试命令及退出码
 
@@ -43,7 +43,7 @@
 - 历史较广核心649/649、622/622、568/568，安全/编译/质量187/187、默认npm test192/192；准确范围及当时提交以日志为准。
 
 - 第六轮：未完成上传32/32，chunked兼容14/14，上下文重入37/37，观察者取消38/38，适配器异常37/37，访问scope30/30，Artifact回执36/36；均退出0。build-context-atomic退出0，早于最后服务/Artifact修改。
-- 本检查点新增：`npm run test:trusted-interactive` 31/31退出0；`npm run test:generation` 34/34退出0；`npm run test:trusted-pomodoro-ui` 2/2退出0，均使用离线Fixture。`npm run test:trusted-interactive:browser` 退出1，因缺少`playwright`包（`MODULE_NOT_FOUND`）而未运行用例。
+- 本检查点新增：`npm run test:trusted-interactive` 31/31退出0；`npm run test:generation` 34/34退出0；`npm run test:trusted-pomodoro-ui` 2/2退出0，均使用离线Fixture。`npm run test:trusted-interactive:browser` 退出1，因缺少`playwright`包（`MODULE_NOT_FOUND`）而未运行用例，状态为 BLOCKED，不得视为通过。
 
 ## 5. 真实模型调用
 
@@ -150,3 +150,9 @@ status格式/异常关闭旧能力；主动建议的迟到确认、撤销通知�
 - 审计未发现可复现的新缺陷。生成服务每个用户请求最多发出一次模型transport；没有自动修复或语义复核的隐藏重试。需要重新生成时由用户提交新请求。Artifact安装不是可重试的远端副作用：CAS失败后当前ticket终止，用户须重新prepare以获取新revision/授权并再次确认；重复确认不重复写入。
 - `npm test`192/192退出0；`npm run build`退出0（2005 modules transformed）。运行记录基线为ddf9d9b，codeChanges为空；REAL_MODEL_CALLS=0。
 - 结果证据本地`a8461ea581c5d7413743e0eb376930dc0a7ae8e8`已发布为远端`7a88a776c7b3c1b463e446d1803edd60c4767db1`，tree=`b619975b452a03e7f5538b32b0e2b00df4d37ec4`。差异只有账本、报告、命令日志与原始测试输出。
+
+## Tech Lead 收敛结论
+
+- PR #40 统计为 84 commits、378 files。审核顺序：生成/协议 ingress -> Artifact/CustomBlock/CAS -> Mochi owner/revision/CAS -> B/C runtime 与安全隔离 -> 测试与浏览器证据/文档。建议后续按职责拆成四个功能审查包与一个证据包；当前候选不再加入生产功能。
+- PR #35 依赖核对结论：GitHub Actions run `39144809852` 的 Docker acceptance 通过，覆盖 image/build/container health/static routes、generated validator 与 trusted-interactive server module；本地无 Docker CLI，Agent A 不作本地容器验收声明。依赖交接见 [DEPLOYMENT-INTERFACE-NOTE.md](docs/agent-a-night/DEPLOYMENT-INTERFACE-NOTE.md)。
+- 最终候选远端 commit：`16d8920b0de1bccf847af3f01426d1deb59ce21b`，tree=`b56d512dccadcac6abf7742e6791a52f22fdef26`；由 expected head `7a88a776c7b3c1b463e446d1803edd60c4767db1`、force=false 快进更新。REAL_MODEL_CALLS=0。

@@ -25,8 +25,15 @@
 
 - `npm run test:trusted-interactive` 31/31、`npm run test:generation` 34/34、`npm run test:trusted-pomodoro-ui` 2/2，退出码均0；均为离线Fixture，REAL_MODEL_CALLS=0。
 - `npm run test:trusted-interactive:browser`退出1：缺少Playwright模块，测试用例未运行。使用Cua检查本机正式`/ai-create`：离线演示加载成功，v2番茄钟积木在B模式显示；Mochi修改入口禁用。该观察不是自动化浏览器截图或自然语言生成证明。
-- 更新Draft PR #40描述至远端HEAD `7a88a776c7b3c1b463e446d1803edd60c4767db1`，核实仍open/draft/未合并。浏览器与本轮回归详情已记入报告。报告映射更正commit `479c0d613a59a4bd79d3ca44379fa76ae0ca3331`仍为本地未发布。
-- 本轮无代码修改；继续任务：补上Playwright依赖条件后复跑可信交互浏览器脚本；检查PR远端HEAD与当前映射；六小时窗口仍未结束。
+- 更新Draft PR #40描述至远端HEAD `7a88a776c7b3c1b463e446d1803edd60c4767db1`，核实仍open/draft/未合并。浏览器与本轮回归详情已记入报告。
+- `npm run test:trusted-interactive:browser` 明确标记 BLOCKED（缺少 Playwright，未运行用例），不作为通过证据；本轮不再扩张生产功能。
+
+## Tech Lead 收敛裁决（05:35）
+
+- 本地 `a4678f5` 的最终 tree=`b56d512dccadcac6abf7742e6791a52f22fdef26` 已通过 GitHub 授权 Git-data API 发布为远端 `16d8920b0de1bccf847af3f01426d1deb59ce21b`；更新 ref 时 expected head=`7a88a776c7b3c1b463e446d1803edd60c4767db1`，force=false，未覆盖并发更新。
+- PR #40 的 84 commits/378 files 按审核顺序拆为：①生成与 DeepSeek ingress/协议准入；②Artifact prepare/install/CAS 与 CustomBlock 映射；③Mochi host/conversation/owner/revision/CAS 生命周期；④B/C runtime、安全文字渲染与隔离边界；⑤测试、浏览器证据及交付文档。建议按此顺序分组审查，再整体运行回归；不建议在当前 Draft 上继续加入生产功能。
+- PR #35 依赖核对：其 Docker acceptance 已由 GitHub Actions 在 `f6e7b9c` 通过（镜像构建、container health、`server/.generated/appSpecValidation.js`、`server/trusted-interactive.mjs` 等）；本地无 Docker CLI，不能重复声称容器实测。Agent A 仅提供 `docs/agent-a-night/DEPLOYMENT-INTERFACE-NOTE.md` 交接，不修改 Docker/workflow。
+- 最终候选：远端 `16d8920b0de1bccf847af3f01426d1deb59ce21b`，PR #40 保持 Draft/open/unmerged；REAL_MODEL_CALLS=0，不部署、不执行生成 TSX。
 
 ## 已完成与 Commit
 

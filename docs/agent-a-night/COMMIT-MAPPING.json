@@ -502,5 +502,11 @@
     "remote": "7a88a776c7b3c1b463e446d1803edd60c4767db1",
     "tree": "b619975b452a03e7f5538b32b0e2b00df4d37ec4",
     "message": "docs(ai-core): record generation and install retry audit"
+  },
+  {
+    "local": "a4678f580337bf6c52cf0afe2d34cadfb5644498",
+    "remote": "16d8920b0de1bccf847af3f01426d1deb59ce21b",
+    "tree": "b56d512dccadcac6abf7742e6791a52f22fdef26",
+    "message": "docs(ai-core): record browser verification state"
   }
 ]
