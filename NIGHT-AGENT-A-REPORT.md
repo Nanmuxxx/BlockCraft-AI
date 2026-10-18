@@ -153,6 +153,6 @@ status格式/异常关闭旧能力；主动建议的迟到确认、撤销通知�
 
 ## Tech Lead 收敛结论
 
-- PR #40 功能基线统计为 84 commits、378 files；当前 GitHub 总数为 88，新增的 4 个仅为收敛/映射文档提交。审核顺序：生成/协议 ingress -> Artifact/CustomBlock/CAS -> Mochi owner/revision/CAS -> B/C runtime 与安全隔离 -> 测试与浏览器证据/文档。建议后续按职责拆成四个功能审查包与一个证据包；当前候选不再加入生产功能。
+- PR #40 功能基线统计为 84 commits、378 files；最终候选将为 90 commits，新增的 6 个仅为收敛/映射文档提交。审核顺序：生成/协议 ingress -> Artifact/CustomBlock/CAS -> Mochi owner/revision/CAS -> B/C runtime 与安全隔离 -> 测试与浏览器证据/文档。建议后续按职责拆成四个功能审查包与一个证据包；当前候选不再加入生产功能。
 - PR #35 依赖核对结论：GitHub Actions run `39144809852` 的 Docker acceptance 通过，覆盖 image/build/container health/static routes、generated validator 与 trusted-interactive server module；本地无 Docker CLI，Agent A 不作本地容器验收声明。依赖交接见 [DEPLOYMENT-INTERFACE-NOTE.md](docs/agent-a-night/DEPLOYMENT-INTERFACE-NOTE.md)。
 - 最终候选远端 commit：`2ff2b8063b2d0a35a52fa930244fae6f38b76ae1`，tree=`21184c504fb698c33f5f210625291ae94ab6ab9b`；由 expected head `1cecc1bb6f338c0d148c807ae9a3c8b2d6616ec0`、force=false 快进更新。REAL_MODEL_CALLS=0。

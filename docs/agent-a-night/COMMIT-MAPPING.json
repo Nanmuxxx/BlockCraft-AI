@@ -526,5 +526,11 @@
     "remote": "2ff2b8063b2d0a35a52fa930244fae6f38b76ae1",
     "tree": "21184c504fb698c33f5f210625291ae94ab6ab9b",
     "message": "docs(ai-core): map final convergence commit"
+  },
+  {
+    "local": "9360b44126a5e3cfb31231a19f258edd271c0e24",
+    "remote": "e04ab5351bdcab5ee69a04d29f2d47cc6d446166",
+    "tree": "1f65d481e41b0e12767ecd95b573b02790f99987",
+    "message": "docs(ai-core): normalize final candidate references"
   }
 ]
