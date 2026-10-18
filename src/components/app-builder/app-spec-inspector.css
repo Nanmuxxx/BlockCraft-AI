@@ -1,0 +1,37 @@
+.app-spec-inspector {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #d9d8d2;
+  border-radius: 14px;
+  background: #fffdf8;
+  color: #343b38;
+  overflow-wrap: anywhere;
+}
+
+.app-spec-inspector h2 { margin: 0 0 16px; font-size: 18px; }
+.app-spec-inspector h3 { margin: 16px 0 10px; font-size: 15px; }
+.app-spec-inspector p, .app-spec-inspector li, .app-spec-inspector dl { font-size: 13px; line-height: 1.6; }
+.app-spec-inspector dt { margin-top: 8px; color: #606963; }
+.app-spec-inspector dd { margin: 0; }
+.app-spec-inspector ol { padding-left: 22px; }
+.app-spec-inspector fieldset { min-width: 0; margin: 18px 0; padding: 12px; border: 1px solid #d9d8d2; border-radius: 8px; }
+.app-spec-inspector label { display: grid; gap: 6px; margin: 12px 0; font-size: 13px; }
+.app-spec-inspector input:not([type="checkbox"]), .app-spec-inspector select, .app-spec-inspector textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #aeb8b0;
+  border-radius: 6px;
+  color: inherit;
+  background: white;
+  font: inherit;
+}
+.app-spec-inspector textarea { min-height: 90px; resize: vertical; }
+.app-spec-inspector .app-spec-inspector__choice { display: flex; align-items: flex-start; gap: 8px; }
+.app-spec-inspector__choice input { margin-top: 3px; }
+.app-spec-inspector__choice small { display: block; color: #606963; }
+.app-spec-inspector button { padding: 8px 14px; border: 1px solid #688675; border-radius: 6px; color: #fff; background: #3e6852; cursor: pointer; }
+.app-spec-inspector :focus-visible { outline: 2px solid #3e6852; outline-offset: 3px; }
+.app-spec-inspector__error { color: #a72323; }
+.app-spec-inspector__success { color: #305d40; }

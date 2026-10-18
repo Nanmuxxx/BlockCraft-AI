@@ -1,6 +1,7 @@
 import { useState, useSyncExternalStore } from 'react'
 import { BlockCanvas, toAppCanvasModules } from '../BlockCanvas'
 import type { AppRuntime } from '../../model/appRuntime'
+import { AppSpecInspector } from './AppSpecInspector'
 import './app-spec-canvas.css'
 
 interface AppSpecCanvasProps {
@@ -26,5 +27,6 @@ export function AppSpecCanvas({ runtime }: AppSpecCanvasProps) {
       }}
     />
     {moveError && <p className="app-spec-canvas__error" role="alert">{moveError}</p>}
+    <AppSpecInspector key={selectedModuleId ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selectedModuleId} />
   </div>
 }
