@@ -3,22 +3,16 @@ import type { RuntimeResult } from '../../model/appRuntime'
 import type { ArtifactReference, ArtifactRegistry, CustomBlockInstance, CustomBlockManifest, CustomProject } from '../../custom-block'
 import { assertArtifactReference, parseCustomProject, resolveArtifact } from '../../custom-block'
 import { assertJson, check, cloneJson, CustomBlockError, id, keys, object, revision } from '../../custom-block/json'
+import type { ProjectRevisionOwner } from './owner'
+export type { ProjectRevisionOwner } from './owner'
 
-/** Implemented by the ONE project owner, never by a second adapter store.
- * Both checks and publication must be atomic. Freeze nextProject and publish once.
- * Builtin commands/records/undo, custom edits and persistence share this owner.
- */
-export interface ProjectRevisionOwner {
-  getSnapshot: () => CustomProject
-  subscribe: (listener: () => void) => () => void
-  compareAndSwap: (expectedSnapshot: CustomProject, nextProject: CustomProject) => RuntimeResult
-}
 export type OrderedBlock =
   | { kind: 'builtin'; id: string; block: BlockSpec }
   | { kind: 'custom'; id: string; instance: CustomBlockInstance; manifest?: CustomBlockManifest }
 export interface CustomBlockBCAdapter {
   getSnapshot: ProjectRevisionOwner['getSnapshot']
   subscribe: ProjectRevisionOwner['subscribe']
+  getAuthorization: ProjectRevisionOwner['getAuthorization']
   manifestFor: (reference: ArtifactReference) => CustomBlockManifest | undefined
   orderedBlocks: (snapshot: CustomProject) => OrderedBlock[]
   /** Unknown at the trusted boundary, even when called by a typed React control. */
@@ -63,6 +57,7 @@ export async function createCustomBlockBCAdapter(owner: ProjectRevisionOwner, re
     try {
       assertJson(request); object(request); revision(request.baseRevision)
       const current = owner.getSnapshot()
+      const authorization = owner.getAuthorization()
       check(request.baseRevision === current.revision, '配置已变化，请检查当前项目后重新操作。', 'REVISION_CONFLICT')
       check(current.revision < Number.MAX_SAFE_INTEGER, '项目版本号已用尽。', 'REVISION_EXHAUSTED')
       const next = cloneJson(current)
@@ -71,12 +66,13 @@ export async function createCustomBlockBCAdapter(owner: ProjectRevisionOwner, re
       // Copies synchronously before await; no caller-owned draft aliases survive.
       const validated = freeze(await parseCustomProject(next, registry))
       check(owner.getSnapshot() === current, '校验期间项目已变化，请重新操作。', 'REVISION_CONFLICT')
-      return owner.compareAndSwap(current, validated)
+      return owner.compareAndSwap(current, validated, authorization)
     } catch (error) { return failure(error) }
   }
   return Object.freeze({
     getSnapshot: () => owner.getSnapshot(),
     subscribe: (listener: () => void) => owner.subscribe(listener),
+    getAuthorization: () => owner.getAuthorization(),
     manifestFor,
     orderedBlocks(snapshot: CustomProject): OrderedBlock[] {
       return snapshot.renderOrder.map(item => {
