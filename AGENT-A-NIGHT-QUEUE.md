@@ -156,3 +156,10 @@
 - 80c32a3：撤销主动授权或能力关闭立即清除已排队settle事件，之后重新授权不复活旧事件；旧2失败，修复相关31/31。真实正式/ai-create桌面1366/移动390验证旧事件零请求、新事件正常；consent-timer报告0页面错误/外部请求，10次离线Provider/12次Fixture预留。
 - 最新较广核心808/808与build-consent-timer退出0，代码80c32a3；之后仅新增408/429测试，已单独47/47。adapter-errors正式页亦通过，浏览器没有注入非标准异常，异常专由单元测试验证。
 - 四项生产/测试提交已推送Draft #40，本地80c32a3对应远端2f53dd9d4d382bc43323415f847b606490afdacb，树一致；最后408/429测试待下一次同步。未合并、部署或执行生成TSX，REAL_MODEL_CALLS=0。
+
+## 第十二轮补充证据（04:51，继续开发）
+
+- 最新自动发现核心回归810/810，退出0；额外重装/Artifact安装UI/Mochi源码和模型计划/v1-v2兼容聚焦集119/119，退出0；默认`npm test`192/192与`npm run build`均退出0。命令、HEAD、时间、日志及REAL_MODEL_CALLS字段已写入commands.jsonl。
+- 状态审计再次核对`createProjectRevisionOwner`、`createProjectSession`、Generated Artifact installer：唯一快照/CAS、revision与授权身份、异步准备退休、确认租约、精确版本替换有测试覆盖；本轮未发现新的可复现生产缺陷。
+- 文档提交`122eb1c`补充至本地提交映射，但尚未核验映射文件已同步远端；不要将其计为已发布。此前80c32a3及相关代码远端映射仍有效。
+- 当前任务：补齐最近回归证据与Draft PR状态；继续v1/v2协议及Artifact/Runtime互操作审计。安全边界不变：REAL_MODEL_CALLS=0，不执行生成TSX，不合并、不部署。

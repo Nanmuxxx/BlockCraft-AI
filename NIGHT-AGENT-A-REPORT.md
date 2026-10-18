@@ -1,6 +1,6 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 04:34（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
+阶段检查点：2026-10-19 04:51（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
@@ -34,9 +34,10 @@
 
 每条命令、cwd、时间、退出码和原始日志见[TEST-COMMANDS.md](docs/agent-a-night/TEST-COMMANDS.md)与[commands.jsonl](docs/agent-a-night/logs/commands.jsonl)。修复前失败、前置产物缺失、一次启动参数错误和修正后重跑均保留。
 
-- 最新`node tests/ai-core-night/regression.mjs`：**786/786，退出码0**（baseline a3c2b0b，涵盖本轮Mochi定位回调所有权修复），自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
+- 最新`node tests/ai-core-night/regression.mjs`：**810/810，退出码0**（baseline 122eb1c，包含本轮建议动作、生成入口和主动授权撤销测试），自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
+- 独立Artifact安装/重装、Mochi源码与模型计划、v1/v2兼容聚焦回归：**119/119，退出码0**。`npm test`：**192/192，退出码0**；`npm run build`：退出码0（2005 modules transformed）。每项都是单独命令，不累加总数。
 - 组合安装/编辑1/1，重装相关26/26，惰性源码/Viewer25/25，鉴权异常HTTP19/19，跨进程存储/安装32/32，退出码均0；这些属于各次运行，不能相加成另一项全量结果。
-- 最近生产构建`build-focus-epoch`退出0，对应代码HEAD `a3c2b0b`。
+- 最近生产构建`production-build-final`退出0，对应代码HEAD `122eb1c`。
 - 存储短读修复前2项失败，修复后相关37/37、精确上限19/19；源码截止首次3项失败，修复后含owner组合50/50；AppSpec截止首次2项失败，第一次修复改变调用时序导致旧取消测试超时，恢复时序后相关73/73及同步异常16/16，全部保留日志。
 - 历史较广核心649/649、622/622、568/568，安全/编译/质量187/187、默认npm test192/192；准确范围及当时提交以日志为准。
 
@@ -116,4 +117,10 @@ status格式/异常关闭旧能力；主动建议的迟到确认、撤销通知�
 - 0845361：适配器throw null/undefined及constructor/toString错误码，旧9失败；修复相关37/37，不再跳过上下文退休或向界面发布函数文案，保留原始拒绝。
 - 80c32a3：撤销主动授权或能力关闭立即清除已排队settle事件，之后重新授权不复活旧事件；旧2失败，修复相关31/31。真实正式/ai-create桌面1366/移动390验证旧事件零请求、新事件正常；consent-timer报告0页面错误/外部请求，10次离线Provider/12次Fixture预留。
 - 最新较广核心808/808与build-consent-timer退出0，代码80c32a3；之后仅新增408/429测试，已单独47/47。adapter-errors正式页亦通过，浏览器没有注入非标准异常，异常专由单元测试验证。
-- 四项生产/测试提交已推送Draft #40，本地80c32a3对应远端2f53dd9d4d382bc43323415f847b606490afdacb，树一致；最后408/429测试待下一次同步。未合并、部署或执行生成TSX，REAL_MODEL_CALLS=0。
+- 四项生产/测试提交已推送Draft #40，本地80c32a3对应远端2f53dd9d4d382bc43323415f847b606490afdacb，树一致。PR #40仍open/draft；04:51远端head对应本地378b178，122eb1c及后续日志尚待发布。未合并、部署或执行生成TSX，REAL_MODEL_CALLS=0。
+
+## 第十二轮补充证据（04:51，持续开发）
+
+- 最新核心回归810/810、安装/重装和协议兼容聚焦集119/119、默认`npm test`192/192及`npm run build`均退出0。命令/参数/时间/HEAD/退出码及原始输出见TEST-COMMANDS.md和commands.jsonl。
+- 复核`createProjectRevisionOwner`、`createProjectSession`、Generated Artifact installer的单一快照/CAS、授权身份、异步prepare退休、确认租约和精确版本替换；对应owner/reinstall/install测试覆盖。本轮没有发现新的可复现生产缺陷。
+- PR #40保持open/draft，未合并；此检查点远端HEAD仍对应本地378b178。122eb1c映射提交与04:51后报告整理仍待发布，不计为远端成果。

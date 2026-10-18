@@ -141,3 +141,13 @@ core-caller-cancel最新649/649；REAL_MODEL_CALLS=0。上述VERIFIED仅指Fixtu
 95d4156新增正式HTTP纯文字安全浏览器：桌面1366/移动390均验证AppSpec应用/积木名、字段、select选项及记录创建/编辑/B-C往返；HTML、URL、事件文字无探针DOM/执行标记/弹窗/外部请求，0页面错误。命令generation-text-safety退出0，baseline a3c2b0b+未提交测试，生产代码未变。没有执行生成TSX。
 
 VERIFIED（04:47）：generation/ingress.test.mjs实socket上传拒绝/408/429和释放47/47；adapter-errors.test.mjs非标准异常安全清理；workshop.mjs撤销授权清除计时器，workshop.test.mjs旧2失败、修复31/31，正式桌面/移动consent-timer验证。最新核心808/808、构建退出0（80c32a3）。真实模型0；正式修改Provider与隔离Viewer状态仍MISSING/BLOCKED。
+
+## 第十二轮核验（04:51）
+
+| 项目 | 状态 | 代码/测试证据 |
+|---|---|---|
+| Runtime单一快照、授权身份、同步persist/CAS | VERIFIED | `src/integrations/custom-block-bc/owner.ts:createProjectRevisionOwner`；`tests/custom-block-bc/owner.test.cjs`覆盖授权撤销、伪造token、foreign snapshot、重入与持久化失败 |
+| B/C同owner安装及替换revision边界 | VERIFIED | `src/model/customProjectSession.ts:createProjectSession/install`；`tests/custom-block-workshop/reinstall.test.cjs`及`tests/generated-artifact/install.test.cjs`覆盖状态保留/清除、冲突与确认租约 |
+| 最近全量与兼容回归 | VERIFIED | `node tests/ai-core-night/regression.mjs` 810/810；安装/重装/Mochi/v1-v2聚焦集119/119；`npm test`192/192；`npm run build`退出0；细节见TEST-COMMANDS.md及日志 |
+
+本轮代码复核没有发现新的可复现生产缺陷。生产Mochi修改Provider、跨刷新持久化、隔离Viewer验收与真实付费模型语义仍分别为MISSING/BLOCKED；REAL_MODEL_CALLS=0。
