@@ -14,13 +14,7 @@ on:
       - tsconfig.json
       - src/**
       - public/**
-      - server/index.mjs
-      - server/package.json
-      - server/tsconfig.json
-      - server/aiGenerationPrompt.mjs
-      - server/aiGenerationQuality.mjs
-      - server/mochi-ai/**
-      - server/project-export/**
+      - server/**
   workflow_dispatch:
 
 permissions:
@@ -50,6 +44,50 @@ jobs:
           : > artifacts/docker-acceptance/container.log
           : > artifacts/docker-acceptance/container-inspect.txt
           : > artifacts/docker-acceptance/docker-version.log
+          : > artifacts/docker-acceptance/zip-isolation.log
+          : > artifacts/docker-acceptance/test-results.log
+
+      - name: Run regressions
+        shell: bash
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          log=artifacts/docker-acceptance/test-results.log
+          {
+            echo "started=$(date -Iseconds)"
+            echo "command=npm ci"
+          } | tee -a "$log"
+          npm ci 2>&1 | tee -a "$log"
+          {
+            echo "command=npm test"
+          } | tee -a "$log"
+          npm test 2>&1 | tee -a "$log"
+          {
+            echo "command=npm run build"
+          } | tee -a "$log"
+          npm run build 2>&1 | tee -a "$log"
+          {
+            echo "command=npm --prefix server test"
+          } | tee -a "$log"
+          npm --prefix server test 2>&1 | tee -a "$log"
+          {
+            echo "command=npm run test:generation"
+          } | tee -a "$log"
+          npm run test:generation 2>&1 | tee -a "$log"
+          {
+            echo "command=npm run test:mochi-host"
+          } | tee -a "$log"
+          npm run test:mochi-host 2>&1 | tee -a "$log"
+          {
+            echo "command=npm run test:workshop-export"
+          } | tee -a "$log"
+          npm run test:workshop-export 2>&1 | tee -a "$log"
+          {
+            echo "NOT RUN test:generation:browser: Playwright is not declared by this repository"
+            echo "NOT RUN test:mochi:browser: Playwright is not declared by this repository"
+            echo "NOT RUN test:workshop-export:browser: Playwright is not declared by this repository"
+            echo "finished=$(date -Iseconds)"
+          } | tee -a "$log"
 
       - name: Build image
         shell: bash
@@ -123,8 +161,13 @@ jobs:
           const base = 'http://127.0.0.1:7860'
           const origin = new URL(base).origin
           const evidence = 'artifacts/docker-acceptance/http-smoke.log'
+          const zipEvidence = 'artifacts/docker-acceptance/zip-isolation.log'
           const log = line => {
             fs.appendFileSync(evidence, `${line}\n`)
+            console.log(line)
+          }
+          const zipLog = line => {
+            fs.appendFileSync(zipEvidence, `${line}\n`)
             console.log(line)
           }
           const localFetch = async (path, options = {}) => {
@@ -225,12 +268,33 @@ jobs:
             log(`GET ${path} -> 404 application/json {error.code:"NOT_FOUND"}`)
           }
 
-          for (const path of ['/../server/index.mjs', '/%2e%2e/server/index.mjs', '/api%2Funknown', '/api//unknown', '/%252e%252e/private']) {
+          const zipInput = JSON.stringify({ project: { revision: 0 }, artifacts: [] })
+          for (const path of ['/api/local-project-export', '/api/local-project-export?probe=1']) {
+            const response = await localFetch(path, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer offline-fixture-not-a-real-token',
+              },
+              body: zipInput,
+            })
+            assert.equal(response.status, 404, path)
+            assert.match(response.headers.get('content-type') || '', /^application\/json/, path)
+            assert.equal((await response.json()).error.code, 'NOT_FOUND', path)
+            assert.notEqual(response.headers.get('content-type'), 'application/zip', path)
+            assert.equal(response.headers.get('content-disposition'), null, path)
+            zipLog(`PASS POST ${path} expected=404 actual=${response.status} content-type=${response.headers.get('content-type')} export=rejected`)
+          }
+
+          for (const path of ['/../server/index.mjs', '/%2e%2e/server/index.mjs', '/api%2Funknown', '/api//unknown', '/%252e%252e/private', '/api%2Flocal-project-export']) {
             const response = await rawGet(path)
             assert.equal(response.status, 400, path)
             assert.match(response.headers['content-type'] || '', /^application\/json/, path)
             assert.equal(JSON.parse(response.body).error.code, 'INVALID_PATH', path)
             log(`GET ${path} -> 400 application/json {error.code:"INVALID_PATH"}`)
+            if (path.includes('local-project-export')) {
+              zipLog(`PASS GET ${path} expected=400 actual=${response.status} content-type=${response.headers['content-type']} export=rejected`)
+            }
           }
 
           const generation = await localFetch('/api/ai/generate', {
@@ -242,6 +306,7 @@ jobs:
           assert.match(generation.headers.get('content-type') || '', /^application\/json/)
           assert.equal((await generation.json()).error.code, 'AI_NOT_CONFIGURED')
           log('POST /api/ai/generate without key -> 503 application/json {error.code:"AI_NOT_CONFIGURED"}')
+          zipLog('PASS production image has no successful local-project-export route')
           log(`PASS ${assets.length} local resources, routes, health, traversal, and no-key degradation`)
           NODE
 
