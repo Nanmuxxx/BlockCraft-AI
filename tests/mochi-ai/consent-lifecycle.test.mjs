@@ -60,3 +60,28 @@ test('late opt-in acknowledgment cannot mark a disabled capability as proactive'
   assert.equal(client.getSnapshot().proactiveEnabled, false)
   client.dispose()
 })
+
+test('explicit opt-out publishes revocation before notifying idle subscribers', async t => {
+  let analyzeCalls = 0, reentered = false
+  const client = createMochiConversation({ readContext: context, focusBlock() {}, api: {
+    status: async () => ({ enabled: true, proactiveEnabled: true, modificationsEnabled: false }),
+    consent: async enabled => ({ proactiveEnabled: enabled }),
+    analyze: () => { analyzeCalls++; return new Promise(() => {}) },
+  } })
+  t.after(() => client.dispose())
+  await client.refreshStatus(); client.syncContext()
+  const pending = client.chat('当前请求')
+  const retired = assert.rejects(pending, { code: 'CONTEXT_CHANGED' })
+  const off = client.subscribe(() => {
+    const state = client.getSnapshot()
+    if (!reentered && !state.busy && state.proactiveEnabled) {
+      reentered = true
+      void client.onEvent({ type: 'structure-changed' }).catch(() => {})
+    }
+  })
+  await client.setProactive(false); await retired
+  off()
+  assert.equal(analyzeCalls, 1, 'opt-out must not trigger another provider request from an idle observer')
+  assert.equal(reentered, false)
+  assert.equal(client.getSnapshot().proactiveEnabled, false)
+})
