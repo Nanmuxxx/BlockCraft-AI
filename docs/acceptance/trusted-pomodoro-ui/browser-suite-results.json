@@ -1,0 +1,26 @@
+[
+  {
+    "name": "entry-and-races",
+    "command": "npm run test:trusted-pomodoro-ui:browser",
+    "exitCode": 0,
+    "seconds": 14.92
+  },
+  {
+    "name": "generated-ui",
+    "command": "node tests/generated-artifact-ui/browser.cjs",
+    "exitCode": 0,
+    "seconds": 4.09
+  },
+  {
+    "name": "generated-production",
+    "command": "node tests/generated-artifact-ui/production-browser.cjs",
+    "exitCode": 0,
+    "seconds": 2.01
+  },
+  {
+    "name": "zip",
+    "command": "npm run test:workshop-export:browser",
+    "exitCode": 0,
+    "seconds": 3.69
+  }
+]

@@ -1,0 +1,155 @@
+{
+  "browser": "Chromium",
+  "generation": "fixed offline HTTP response on real /ai-create; no model calls",
+  "cases": [
+    {
+      "width": 1366,
+      "passed": true,
+      "builtinZip": {
+        "label": "builtin-c",
+        "revision": 4,
+        "bytes": 15288,
+        "sha256": "2424a1d36401aa174ad83962d4c9816b2e9355f078c4417add79122ce3f52221",
+        "files": [
+          "README.md",
+          "index.html",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "mixedZip": {
+        "label": "mixed-b",
+        "revision": 6,
+        "bytes": 16364,
+        "sha256": "f4e8c2d1de7ae47475818f2f9569644679e8f221864f77449c12be39ffd98704",
+        "files": [
+          "README.md",
+          "index.html",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/components/custom/a0/Counter.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "checks": [
+        "creation",
+        "Inspector field edit",
+        "form/list create-update-delete",
+        "metric updates",
+        "B/C retention",
+        "B and C real ZIP downloads + CRC + central directory + required files",
+        "package build scripts and pinned versions",
+        "exact digest, project revision and edited props",
+        "export revision unchanged",
+        "stale snapshot blocks download",
+        "non-empty stateSchema blocks whole ZIP",
+        "Mochi conversation panel remains visible and disabled",
+        "single Mochi mount",
+        "no CustomBlock execution",
+        "no horizontal overflow",
+        "no external requests"
+      ]
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "builtinZip": {
+        "label": "builtin-c",
+        "revision": 4,
+        "bytes": 15288,
+        "sha256": "dc04b0f294b44c9ebacd7344b046cff09d0e98c8c3621b34efd97d2ee7ea4702",
+        "files": [
+          "README.md",
+          "index.html",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "mixedZip": {
+        "label": "mixed-b",
+        "revision": 6,
+        "bytes": 16364,
+        "sha256": "408102f5058b073b3ec88e79a6486581915897c09a3d05914f8c2761ab431ecc",
+        "files": [
+          "README.md",
+          "index.html",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/components/custom/a0/Counter.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "checks": [
+        "creation",
+        "Inspector field edit",
+        "form/list create-update-delete",
+        "metric updates",
+        "B/C retention",
+        "B and C real ZIP downloads + CRC + central directory + required files",
+        "package build scripts and pinned versions",
+        "exact digest, project revision and edited props",
+        "export revision unchanged",
+        "stale snapshot blocks download",
+        "non-empty stateSchema blocks whole ZIP",
+        "Mochi conversation panel remains visible and disabled",
+        "single Mochi mount",
+        "no CustomBlock execution",
+        "no horizontal overflow",
+        "no external requests"
+      ]
+    },
+    {
+      "surface": "ordinary dev",
+      "passed": true,
+      "enabled": false,
+      "endpointStatus": 404
+    },
+    {
+      "surface": "production preview",
+      "passed": true,
+      "enabled": false,
+      "endpointStatus": 404
+    }
+  ],
+  "errors": [],
+  "paidCalls": 0,
+  "version": "151.0.7922.34"
+}

@@ -1,0 +1,67 @@
+
+> blockcraft-ai@0.1.0 test:mochi-host
+> node --test src/integrations/mochi/host.test.cjs
+
+✔ Mock preview is isolated, immutable, complete; confirm updates real B/C renderers exactly once (21.477833ms)
+✔ callback context cannot grant selection or scope; provider sees only host context (0.839542ms)
+✔ no selection cannot be replaced with a component hint (0.38075ms)
+✔ rejects sibling block sharing entity from provider without changing Runtime (0.375958ms)
+✔ rejects other entity from provider without changing Runtime (0.941667ms)
+✔ rejects record command from provider without changing Runtime (0.271ms)
+✔ rejects provider request ID tampering (0.407ms)
+✔ rejects provider revision tampering (0.230917ms)
+✔ rejects provider scope injection tampering (0.246917ms)
+✔ rejects provider unsupported capability tampering (0.315125ms)
+✔ cancel is idempotent; cancelled and invented planIds cannot execute (0.406125ms)
+✔ selection A→B→A and a newer request both revoke old plans (0.807708ms)
+✔ records revision invalidates preview and preserves the external update (0.46375ms)
+✔ layout revision invalidates preview and preserves the external update (0.433042ms)
+✔ schema revision invalidates preview and preserves the external update (0.403875ms)
+✔ same appId/revision in different Runtime cannot use the other host planId (0.504625ms)
+✔ reentrant confirmation during Runtime publish cannot execute twice (0.418833ms)
+✔ ignoring suggestions only updates host state and leaves pending plan intact (0.290084ms)
+✔ B/C mode changes preserve in-flight requests and previews without rebuilding Runtime (0.427125ms)
+✔ obsolete async success cannot clear a newer preview (0.475625ms)
+✔ obsolete async failure cannot clear a newer preview (0.923792ms)
+✔ anchor is host geometry bound to selection, instance, epoch and revision (0.586542ms)
+✔ failed next plan or rejected execution retains the previously confirmed application (0.714167ms)
+✔ disposal aborts requests, cancels pending confirmation and releases Runtime subscription (0.624125ms)
+✔ requestId cancellation ignores late resolve and cannot clear the next busy state (0.427666ms)
+✔ requestId cancellation ignores late reject and cannot clear the next busy state (0.404125ms)
+✔ new request supersedes old success without requiring cancellation (0.329208ms)
+✔ new request supersedes old failure without requiring cancellation (0.29925ms)
+✔ abort reentrancy starts a newer request without resurrecting the cancelled attempt (0.326042ms)
+✔ request replacement abort callbacks cannot overwrite the newest owner (0.356833ms)
+✔ authorization identity invalidates plans but never grants scope (0.404ms)
+✔ confirm locks before Host observers and own Runtime notifications never publish stale (0.414167ms)
+✔ synchronous context change while publishing CONFIRMING prevents any write (0.289083ms)
+✔ explicit failure with identical immutable snapshot is COMMIT_FAILED and terminal (0.285167ms)
+✔ unexpected exception before known receipt is UNKNOWN, never a rollback claim (0.36025ms)
+✔ unexpected exception after Runtime writes is UNKNOWN, never a rollback claim (0.381792ms)
+✔ a failure receipt after a write is UNKNOWN even without a thrown exception (0.363ms)
+✔ new attempts clear current receipt while retaining history across cancel and preview rejection (0.533875ms)
+✔ disposed host cannot publish a late success into its replacement (0.360125ms)
+✔ disposed host cannot publish a late failure into its replacement (0.418833ms)
+✔ invalid initial input reports an attempt without superseding a valid request (0.363417ms)
+✔ context invalidation inside Runtime publication cannot hide an uncertain write (0.400125ms)
+✔ invalid input over 4000 characters reports an error without revoking a valid preview; corrected input retries (0.408667ms)
+✔ missed Runtime notification terminates stale preview before confirm (0.422417ms)
+✔ missed Runtime notification terminates stale preview before confirm without cancelling a reentrant newer request (2.154584ms)
+✔ revision changed by a CONFIRMING observer with missed notification also terminates the preview (0.385458ms)
+✔ missed authorization notification retires in-flight response (0.198583ms)
+✔ missed authorization notification retires in-flight response after regrant (0.177792ms)
+✔ missed authorization generation cannot commit an old preview (0.291041ms)
+✔ missed authorization generation cannot commit from CONFIRMING observer (0.258209ms)
+✔ observed authorization revocation while CONFIRMING prevents writes (0.259375ms)
+✔ production owner isolates throwing observers and preserves a known successful receipt (0.362084ms)
+✔ readonly request never reaches provider or changes the sole owner (0.157667ms)
+✔ missed revision notification rejects the in-flight provider response (0.243666ms)
+✔ a missed context change while publishing REQUESTING never reaches provider (0.17ms)
+ℹ tests 55
+ℹ suites 0
+ℹ pass 55
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 296.218292

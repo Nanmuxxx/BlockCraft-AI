@@ -1,0 +1,40 @@
+
+> blockcraft-ai@0.1.0 test:generation
+> npm --prefix server run build && node --test tests/generation/*.test.mjs
+
+
+> build
+> tsc -p tsconfig.json
+
+✔ existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure (25.212ms)
+✔ route rejects structurally legal but incomplete metric-only app without input, then recovers (2.724625ms)
+✔ route rejects structurally legal but incomplete unbound empty entity, then recovers (1.645458ms)
+✔ route rejects structurally legal but incomplete hidden optional field, then recovers (1.533625ms)
+✔ prompt embeds the exact live protocol boundary and keeps idea in its own user message (0.977417ms)
+✔ club-app: independent requirement mapping and real runtime CRUD/aggregations (2.41075ms)
+✔ fitness-log: independent requirement mapping and real runtime CRUD/aggregations (1.386125ms)
+✔ fitness-library: independent requirement mapping and real runtime CRUD/aggregations (0.742208ms)
+✔ money-app: independent requirement mapping and real runtime CRUD/aggregations (1.009084ms)
+✔ lost-found: independent requirement mapping and real runtime CRUD/aggregations (0.828416ms)
+✔ book-log: independent requirement mapping and real runtime CRUD/aggregations (0.422167ms)
+✔ movie-log: independent requirement mapping and real runtime CRUD/aggregations (0.322292ms)
+✔ same domain, different goals change entities/fields; no mandatory form/list/metric set (0.094584ms)
+✔ record count is supported with empty field evidence and reflects actual rows, not unique objects (0.744375ms)
+✔ base v1 empty specs stay legal; only the independent generation policy rejects them (0.142583ms)
+✔ separate completeness detects empty fields, unbound objects, missing input and inaccessible fields (0.1425ms)
+✔ bad binding, required field omission, cross-entity fields, illegal numeric metric and unknown types fail structure (0.261375ms)
+✔ structure cannot prove semantics: valid unrelated apps need review; independent mappings expose the mismatch (0.219083ms)
+✔ independent reviewer receives original goals, spec and actual operations as data without any API call (0.430584ms)
+✔ review must cover every goal and bind current input/spec/requirements; malformed evidence fails closed (0.56475ms)
+✔ only actual exposed operations count; list required fields are editable, hidden optional fields are not (0.210041ms)
+✔ unsupported operations remain unsupported despite plausible block names, including mixed and unsupported-only goals (0.531959ms)
+✔ legacy demos keep their original protocol and remain usable without requirement reviews (1.819ms)
+✔ legacy protocol projection does not advertise trusted v2 primitives (0.148583ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 186.94375

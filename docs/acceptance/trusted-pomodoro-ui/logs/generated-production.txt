@@ -1,0 +1,47 @@
+12:20:08 AM [vite] (client) Re-optimizing dependencies because vite config has changed
+{
+  "browser": "151.0.7922.34",
+  "scope": "unmodified production /ai-create components; no QA bridge; initial AppSpec HTTP intercepted offline",
+  "cases": [
+    {
+      "width": 1366,
+      "passed": true,
+      "checks": [
+        "production route without QA decoration",
+        "archived export load",
+        "preview with exact version/props/source/pending",
+        "preview/cancel no added card",
+        "explicit confirm adds one",
+        "B selects and inspects parameters",
+        "C unavailable without iframe",
+        "no QA bridge",
+        "no external/API egress",
+        "no horizontal overflow"
+      ],
+      "video": "/Users/nanmuxun/BlockAI/BlockCraft-AI-trusted-pomodoro-ui/docs/acceptance/trusted-pomodoro-ui/generated-production/video/page@b4020adb6d6108b6c1d5264900980ea3.webm",
+      "errors": [],
+      "external": []
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "checks": [
+        "production route without QA decoration",
+        "archived export load",
+        "preview with exact version/props/source/pending",
+        "preview/cancel no added card",
+        "explicit confirm adds one",
+        "B selects and inspects parameters",
+        "C unavailable without iframe",
+        "no QA bridge",
+        "no external/API egress",
+        "no horizontal overflow"
+      ],
+      "video": "/Users/nanmuxun/BlockAI/BlockCraft-AI-trusted-pomodoro-ui/docs/acceptance/trusted-pomodoro-ui/generated-production/video/page@3e0f3a44d22181480d6c5ca54edb1f80.webm",
+      "errors": [],
+      "external": []
+    }
+  ],
+  "errors": [],
+  "paidCalls": 0
+}
