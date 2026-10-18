@@ -74,6 +74,6 @@ Browser evidence uses isolated Playwright Chromium 156.0.8078.4, with no persona
 
 Regression checks: `node --test tests/project-zip-export/export.test.mjs` 63/63; `npm run test:workshop-export` 9/9; the broader repository suites and root TypeScript/Vite build were already passing on this branch before the final QA changes. The v2 rejection policy is unchanged. No DeepSeek, Mochi, trusted-interactive, Docker/CI/deployment, or video files were modified.
 
-Commit: pending local QA commit on `agent-b/react-zip-night-20261019`. No merge or deployment performed. A Draft PR can be opened from this branch after the commit is published; current shell GitHub credentials do not support `git push`, so publication is not claimed here.
+Commits: `4f57471`, `742c8a3`, and QA commit `b905e81` on `agent-b/react-zip-night-20261019`. No merge or deployment performed. The branch is local; current shell GitHub credentials do not support `git push`, so no Draft PR publication is claimed.
 
 Remaining P0/P1: none found in the tested fixed catalogue. Offline installation requires a complete npm cache; this is documented and is not presented as ordinary online installation.
