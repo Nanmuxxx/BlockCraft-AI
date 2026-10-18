@@ -15,6 +15,7 @@ async function run() {
   const { createServer } = await import(pathToFileURL(require.resolve('vite')).href)
   const { localProjectExportPlugin } = await import('../../server/project-export/vite-plugin.mjs')
   const { default: react } = await import(pathToFileURL(require.resolve('@vitejs/plugin-react')).href)
+  const { localProjectExportPlugin } = await import(pathToFileURL(path.join(root, 'server/project-export/vite-plugin.mjs')).href)
   const alias = ['react', 'react-dom', 'lucide-react', '@fontsource/pixelify-sans'].map(name => ({ find: new RegExp(`^${name}(/|$)`), replacement: path.dirname(require.resolve(`${name}/package.json`)).replaceAll('\\', '/') + '$1' }))
   const localNodeModules = path.join(root, 'node_modules')
   const vite = await createServer({ root, configFile: false, cacheDir: path.join(root, '.cache', 'mochi-host-browser'), resolve: { alias }, optimizeDeps: { include: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom/client', 'lucide-react'] }, server: { host: '127.0.0.1', port: 5197, strictPort: true, proxy: {}, fs: { allow: [root, ...(existsSync(localNodeModules) ? [realpathSync(localNodeModules)] : []), path.dirname(require.resolve('@fontsource/pixelify-sans/500.css')), ...alias.map(item => item.replacement.slice(0, -2))] } },
