@@ -1,7 +1,7 @@
 {
   "contractVersion": 1,
-  "verifiedAtUtc": "2026-10-18T13:06:02Z",
-  "baseMain": "85d4d5de016a2f424cbd49efb6312377dcdc4deb",
+  "verifiedAtUtc": "2026-10-18T13:19:56Z",
+  "baseMain": "e67f71fe9b6dd81b210d4cbfbe91216c7552c675",
   "branch": "codex/mochi-source-version-plans-20261018",
   "environment": {
     "platform": "macOS",
@@ -12,47 +12,69 @@
     {
       "command": "node --test tests/mochi-source/*.test.cjs",
       "exitCode": 0,
-      "logSha256": "eccfb6ab45d0f872f57529c00ddfc0347eb1abeecf9e1647c2a88d1459758993",
+      "logSha256": "5ee1dff0362786c07c7729e90830ebe1e264eb36b54a0168aa2d9352a1c6a055",
       "tests": 35,
       "pass": 35,
       "fail": 0,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "duration_ms": 2148.611958
+      "duration_ms": 2505.43975
     },
     {
       "command": "node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs src/integrations/mochi/host.test.cjs tests/mochi-source/*.test.cjs",
       "exitCode": 0,
-      "logSha256": "096c9bcc5531d20e8479a36f580136cde14a73c802d5fa04b4aa518aad494b62",
+      "logSha256": "5b0db5584063a2854896f40bf0343da73aeb3a0919369f9771635be0d7d1b62e",
       "tests": 283,
       "pass": 283,
       "fail": 0,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "duration_ms": 2642.085834
+      "duration_ms": 2984.4535
     },
     {
       "command": "npm test",
       "exitCode": 0,
-      "logSha256": "84f4968b400624c983f48d23584a5ba6100b234994df4270af5bbd5a4acf91c1",
+      "logSha256": "cbb12621e3c9cb0cb47553760c7c42db19a99932eaa735b265e65307d305850b",
       "tests": 158,
       "pass": 158,
       "fail": 0,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "duration_ms": 2292.009625
+      "duration_ms": 2611.797916
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
       "command": "npm run build",
       "exitCode": 0,
-      "logSha256": "b2d3f0b2aaf65a8894d793cf0a193d21ab7ff4d3bec975f3cbb827d8c83cdd72",
+      "logSha256": "4cbb52f34ffd3559e448e4ccb131b19b129605aac969e4ee51cb78ebb1def112",
       "checks": [
         "tsc -b",
         "vite build"
       ]
+    },
+    {
+      "command": "npm --prefix server run build",
+      "exitCode": 0,
+      "logSha256": "34fc8f532e8455212c5eeba2f44af8dd0d5a13e2138025e81ecd8272dd2f48fa"
+    },
+    {
+      "command": "node --test tests/mochi-ai/*.test.mjs",
+      "exitCode": 0,
+      "logSha256": "327c1308fa2b762d7fb4e4a8564e64266ebeabfb97fed686f7ff963a4bd35ed1",
+      "tests": 40,
+      "pass": 40,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 368.185625
     },
     {
       "command": "git diff --check",
@@ -75,9 +97,17 @@
     "Module suite is included in regression total, not additional coverage.",
     "No real model or paid DeepSeek request. Completion callbacks in tests are controlled fixtures.",
     "Candidate TSX is inert source text; no candidate compilation, import, eval or execution.",
-    "Build checks the existing production application; new module has no production UI wiring.",
+    "Builds check trusted repository production modules only; source planner has no production UI wiring. No browser or Viewer acceptance was run in this validation.",
     "Selection/mode changes must synchronously respect CONFIRM_BUSY throughout confirmation.",
     "Version history and old artifacts remain session-local; durable history needs existing persistence integration.",
     "No merge or deployment."
+  ],
+  "synchronization": {
+    "strategy": "merge latest main, preserving original PR commit as ancestor; no force update",
+    "originalPrHead": "545bc4a5fe0042633cbd2cc4acdd7683b5762bda",
+    "productionFilesChangedRelativeToMain": false
+  },
+  "setupNotes": [
+    "Initial additional Mochi AI suite run failed because server/.generated/appSpecValidation.js was absent in the isolated worktree. Existing npm --prefix server run build generated trusted repository modules; rerun passed. No source change was required."
   ]
 }

@@ -1,5 +1,5 @@
 import { LIMITS, MochiError, check, object, projectContext, validateAdvice, binding, fingerprint, redact, validateRequest } from './protocol.mjs'
-const errors = { AI_DISABLED: 'Mochi AI 尚未启用。', AI_NOT_CONFIGURED: 'Mochi AI 尚未配置。', AI_MODIFICATION_DISABLED: '目前只能解释和建议，修改计划尚未接通。',
+const errors = { UNAUTHORIZED: 'Mochi AI 尚未启用：需要可信会话认证和项目访问权限。', ORIGIN_REJECTED: 'Mochi AI 请求来源未获允许。', CONTEXT_MISMATCH: '当前项目与可信访问范围不一致，请重新打开项目。', MODE_UNAVAILABLE: '请回到 B 模式再和 Mochi 聊聊。', ACCESS_UNAVAILABLE: 'Mochi AI 尚未启用：可信会话认证与项目权限尚未配置。', BUDGET_UNAVAILABLE: 'Mochi AI 尚未启用：持久费用预算控制尚未配置或不可用。', CONTEXT_PENDING: '正在读取积木结构…', CONTEXT_UNAVAILABLE: '积木结构暂不可用，请重新载入。', CONTEXT_TOO_LARGE: '当前结构超出分析范围，请减少积木或字段后重试。', INVALID_INPUT: '当前积木结构暂不支持分析。', AI_DISABLED: 'Mochi AI 尚未启用。', AI_NOT_CONFIGURED: 'Mochi AI 尚未配置。', AI_MODIFICATION_DISABLED: '目前只能解释和建议，修改计划尚未接通。',
   AI_TIMEOUT: 'Mochi 想得有点久，请稍后重试。', AI_BUSY: 'Mochi 正在思考。', THROTTLED: '先消化一下刚才的想法吧。', BUDGET_EXHAUSTED: '本次 AI 预算已用完。',
   PROACTIVE_DISABLED: '主动建议尚未开启。', DUPLICATE_EVENT: '这个变化已经分析过了。', CANCELLED: '已取消请求。' }
 export function createMochiApi({ fetchImpl = globalThis.fetch, timeoutMs = 25_000 } = {}) {
@@ -51,7 +51,7 @@ function validateReply(reply, context) {
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value) }; return value }
 /** Trusted adapter owns readContext/focusBlock. This module never receives Runtime/PlanProvider. */
 export function createMochiConversation({ api = createMochiApi(), readContext, focusBlock, now = Date.now }) {
-  let state = freeze({ enabled: false, proactiveEnabled: false, busy: false, modificationsEnabled: false, messages: [], suggestions: [], error: null })
+  let state = freeze({ contextAvailable: true, enabled: false, disabledReason: '正在检查 Mochi AI 状态…', proactiveEnabled: false, busy: false, modificationsEnabled: false, messages: [], suggestions: [], error: null })
   let disposed = false, pending = null, epoch = 0, signature = '', identity = '', prompts = [], lastProactive = -Infinity, consentSequence = 0, statusSequence = 0
   let consentTail = Promise.resolve()
   const listeners = new Set(), seen = new Map(), ignored = new Map(), events = new Map()
@@ -62,7 +62,13 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   function cancel() { epoch++; pending?.abort(); pending = null; emit({ busy: false }) }
   function syncContext() {
     check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
-    const context = projectContext(readContext()), nextIdentity = `${context.appId}:${context.instanceId}`, next = JSON.stringify(context)
+    let context
+    try { context = projectContext(readContext()) }
+    catch (error) {
+      cancel(); signature = ''; emit({ contextAvailable: false, suggestions: [], error: { code: error.code || 'CONTEXT_UNAVAILABLE', message: errors[error.code] || errors.CONTEXT_UNAVAILABLE } }); throw error
+    }
+    if (!state.contextAvailable) emit({ contextAvailable: true, error: null })
+    const nextIdentity = `${context.appId}:${context.instanceId}`, next = JSON.stringify(context)
     if (next !== signature) {
       cancel(); signature = next
       if (identity !== nextIdentity) { prompts = []; seen.clear(); ignored.clear(); events.clear(); lastProactive = -Infinity; emit({ messages: [], suggestions: [], error: null }) }
@@ -75,11 +81,16 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     check(!disposed, 'DISPOSED')
     const sequence = ++statusSequence, consentAtStart = consentSequence
     await consentTail.catch(() => {})
-    const result = await api.status()
+    let result
+    try { result = await api.status() }
+    catch (error) {
+      if (!disposed && sequence === statusSequence) { cancel(); emit({ enabled: false, proactiveEnabled: false, disabledReason: errors[error.code] || 'Mochi 暂时无法连接，请稍后检查连接。' }) }
+      throw error
+    }
     if (disposed || sequence !== statusSequence) return state
     check(typeof result.enabled === 'boolean' && typeof result.proactiveEnabled === 'boolean' && result.modificationsEnabled === false, 'AI_INVALID_RESPONSE')
     if (!result.enabled) cancel()
-    emit({ enabled: result.enabled, proactiveEnabled: result.enabled && (consentAtStart === consentSequence ? result.proactiveEnabled : state.proactiveEnabled), error: result.enabled ? null : { code: result.reason || 'AI_DISABLED', message: errors.AI_DISABLED } })
+    emit({ enabled: result.enabled, disabledReason: result.enabled ? null : errors[result.reason] || errors.AI_DISABLED, proactiveEnabled: result.enabled && (consentAtStart === consentSequence ? result.proactiveEnabled : state.proactiveEnabled) })
     return state
   }
   async function setProactive(enabled) {
@@ -97,6 +108,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   }
   async function run(kind, prompt, event) {
     const context = syncContext(); purge()
+    check(context.mode === 'blocks', 'MODE_UNAVAILABLE', '请回到 B 模式再和 Mochi 聊聊。', 409)
     check(state.enabled, 'AI_DISABLED', errors.AI_DISABLED, 503)
     check(!pending, 'AI_BUSY', errors.AI_BUSY, 429)
     let eventKey

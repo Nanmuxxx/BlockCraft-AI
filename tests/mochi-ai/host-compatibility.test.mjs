@@ -61,7 +61,7 @@ test('current main host supports advice without another host or any Runtime writ
   assert.strictEqual(owner.getSnapshot(), projectBefore)
 })
 
-test('v2 custom context fails closed before advice API and preserves the sole owner', async t => {
+test('mixed v2 context uses the existing owner registry without invented bindings or data egress', async t => {
   const runtime = createAppRuntime(createClubRegistrationExample())
   const owner = runtime.customProject
   const source = artifact(), versionDigest = await customApi.computeVersionDigest(source)
@@ -70,17 +70,28 @@ test('v2 custom context fails closed before advice API and preserves the sole ow
     artifact: { versionDigest, artifact: source }, expectedReference: null,
   })).ok, true)
   const host = createMochiHost(runtime, unavailablePlanProvider)
-  t.after(() => host.dispose())
   const before = owner.getSnapshot(), authorization = owner.getAuthorization()
   let calls = 0
-  const api = { analyze: async () => { calls++; throw new Error('must not reach API') } }
-  // #25 exposes custom IDs for selection/anchors, without inventing entity relations.
+  const api = { status: async () => ({ enabled: true, proactiveEnabled: false, modificationsEnabled: false }), analyze: async input => {
+    calls++
+    const custom = input.context.blocks.find(b => b.id === 'custom-1')
+    assert.deepEqual(custom, { id: 'custom-1', name: source.manifest.name, type: 'custom', fieldIds: [], parameters: [{ name: 'durationSeconds', type: 'integer', required: true }] })
+    assert.equal(input.context.relations.some(r => r.blockId === 'custom-1'), false)
+    const wire = JSON.stringify(input)
+    for (const secret of ['600', 'sources', 'remainingSeconds', 'fixture must never execute', 'dependencies', '小林']) assert.equal(wire.includes(secret), false, secret)
+    return { version: 1, source: 'deepseek', capabilities: { modifications: false }, binding: binding(input.context), message: '可以说明倒计时结束后的提示。', suggestions: [] }
+  } }
+  const bridge = createWorkshopMochiConversation(host, { api, customContext: {
+    readReferences: () => owner.getSnapshot().custom.instances, registry: owner.registry,
+  } })
+  t.after(() => { bridge.dispose(); host.dispose() })
+  await new Promise(resolve => setImmediate(resolve))
+  await bridge.conversation.refreshStatus()
   for (const selected of ['registration-form', 'custom-1']) {
     host.setSelection(selected)
-    assert.equal(host.getSnapshot().context.selectedBlockId, selected)
-    assert.throws(() => createWorkshopMochiConversation(host, { api }), { code: 'INVALID_INPUT' })
+    await bridge.conversation.chat('这块积木如何完善？')
   }
-  assert.equal(calls, 0)
+  assert.equal(calls, 2)
   assert.strictEqual(runtime.customProject, owner)
   assert.strictEqual(owner.getSnapshot(), before)
   assert.strictEqual(owner.getAuthorization(), authorization)

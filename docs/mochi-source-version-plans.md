@@ -4,7 +4,7 @@
 
 ## 基线与范围
 
-2026-10-18 从已连接 GitHub API 核实的 main `2c7c698780d190aedf1cccc0ddcd7006c0f7f8be`（#30）新建独立 worktree 和分支 `codex/mochi-source-version-plans-20261018`。提交前再次核实 main，已快进到 `85d4d5de016a2f424cbd49efb6312377dcdc4deb`（#29）并在该基线上重新验证。使用共享 Git 对象库中的同一精确提交；Git CLI fetch 缺少 HTTPS 凭据，未读取或复制凭据。仓库现有类型实际名为 `CustomProject`，`formatVersion: 2`，并无新增 `CustomProjectV2` 别名。
+2026-10-18 从已连接 GitHub API 核实的 main `2c7c698780d190aedf1cccc0ddcd7006c0f7f8be`（#30）新建独立 worktree 和分支 `codex/mochi-source-version-plans-20261018`。先前同步到 `85d4d5de016a2f424cbd49efb6312377dcdc4deb`（#29），本轮根据已合并 #32 再同步至最新 main `e67f71fe9b6dd81b210d4cbfbe91216c7552c675`，保留原 PR 提交并在新基线上复验。PR 分支相对 main 仍只增加本协议的六个文件。仓库现有类型实际名为 `CustomProject`，`formatVersion: 2`，并无新增 `CustomProjectV2` 别名。
 
 已审阅 `src/custom-block/{types,artifacts,project}.ts`、`src/integrations/mochi/host.ts`、`src/model/appChangePlan.ts`、`docs/mochi-phase-a-host.md`、`src/model/customProjectSession.ts` 及 #24 的三参数同步 CAS/授权代际实现与已合并 PR 说明。
 
@@ -83,6 +83,8 @@ summary/steps 是不可信展示文字，UI 以纯文本显示；可机械验证
 
 UI 必须将适配层作为真实选择/模式变更的同步前置门：只有方法成功才更新真实 UI，确认中应禁用选择/模式切换、取消和销毁入口，或等待确认结算再切换。不能先改 UI 再由 effect 调用适配层，也不能吞掉 CONFIRM_BUSY 后继续切换。若宿主需要“确认等待中随时切选择并取消提交”，必须由 owner 增加等价的最终原子条件或准备/提交接口；当前 install 契约无法安全承诺这一点。本轮没有通过修改 owner 或临时撤销全项目授权掩盖这个限制。
 
+对照 #32 的当前 Workshop：`AppSpecWorkshop` 的 canvas `onSelect={setSelectedId}` 和 B/C 模式按钮 `host.setMode` 是实际状态变更入口。未来接线时这两类同步 UI handler 必须先通过 planner 门禁，再调用真实 setter；若门禁抛 `CONFIRM_BUSY`，保留原选择/模式。Host 的 `subscribe`、React effect、`MochiConversationPanel` effect/`act()`、`createWorkshopMochiConversation` 异步分析取消与 settle timer 都是状态变化后的通知/副作用，不能用于确认竞态保护。门禁必须覆盖所有 `host.setSelection` 调用方，包括 Canvas 点选、聊天建议“定位积木”、键盘/程序化选择及清空选择，不能仅禁用 Canvas。具体拦截边界是选中 block ID 改变、B/C 模式切换、项目/上下文切换及 planner 生命周期销毁；无关 Canvas 几何锚点变化和聊天发送/只读分析不更改 planner selection。当前正式 Host/Workshop 不含本 planner，此项是后续 UI 接线的同步调用契约。
+
 ## 数据保留与追溯
 
 - 仅替换选中实例的精确版本与完整 props；目标 id、位置和 renderOrder 不变。其他实例即使共享同一定义/旧 digest，也继续使用旧版。内置积木、关系、业务记录及其他状态不变。
@@ -124,13 +126,16 @@ macOS，Node `v24.22.0`，复用现有依赖，无 npm install。测试执行官
 | `node --test tests/mochi-source/*.test.cjs` | 35 通过，0 失败/跳过 |
 | `node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs src/integrations/mochi/host.test.cjs tests/mochi-source/*.test.cjs` | 283 通过，0 失败/跳过，包含上述 35 项 |
 | `npm test` | 158 通过，0 失败/跳过 |
+| `npx tsc --noEmit` | 通过 |
 | `npm run build` | TypeScript + Vite 通过 |
+| `npm --prefix server run build` | 通过，生成现有服务端校验模块 |
+| `node --test tests/mochi-ai/*.test.mjs` | 40 通过，0 失败/跳过，离线聊天/Host/服务端默认禁用回归 |
 | `git diff --check` | 通过 |
 
-可复核的命令、退出码、统计与日志摘要见 [mochi-source-test-evidence.json](./mochi-source-test-evidence.json)。计数基于最新 main `85d4d5d` 上的最终运行，模块用例同时包含在组合回归中，不累加为独立覆盖数。
+可复核的命令、退出码、统计与日志摘要见 [mochi-source-test-evidence.json](./mochi-source-test-evidence.json)。通过双亲合并同步最新 main `e67f71fe9b6dd81b210d4cbfbe91216c7552c675`，保留原 PR 提交 `545bc4a`，不改写已有历史。聊天回归首次因独立 worktree 未生成 `server/.generated/appSpecValidation.js` 失败，执行现有服务端构建后重跑通过，无需代码修复。计数基于此基线上的最终运行，模块用例同时包含在组合回归中，不累加为独立覆盖数。
 
 新测试覆盖：预览无写入/无候选登记、成功只改目标、完整项目数据保留、旧状态/版本追溯、重复确认、取消、外来 ID、最小上下文、请求/摘要/manifest/props/差异错误、扩权/Schema 迁移拒绝、仅 props 伪修改拒绝、过期选择/模式/revision/授权、迟到响应、getter 拒绝、提交租约、确认期间业务写入与撤权、两个 planner 的真实 CAS 竞争、并发换版冲突、模型 seam 非 JSON 拒绝、provider 异常与 dispose。
 
 ## 剩余接线与发布边界
 
-独立模块和 Mock 闭环可立即复用。生产自然语言闭环尚需：负责人接线真实 Mochi/选择 UI（含确认租约）、单独授权模型传输与准确摘要生成、模型输出质量验收、受控构建/安全 Viewer 的独立验收、统一持久化中的历史恢复。源码内容变化不代表“45 分钟功能已验证可用”。本任务没有新增付费请求、合并、部署或执行 AI 源码；稳定 Demo 的生产文件零改动。
+本轮在 #32 已正式接入只读聊天面板的最新 main 上复验独立模块兼容性。#32 面板只复用唯一 Workshop Mochi Host/owner，给聊天提供只读混合上下文与 `setSelection` 定位动作；不持有 Runtime、PlanProvider、确认句柄或写权限。#33 继续只消费现有 session/install/CAS 契约，不修改 #32 正式 UI、Host 或 owner。生产自然语言闭环尚需：负责人同步接线真实 Mochi/选择 UI（含确认租约）、单独授权模型传输与准确摘要生成、模型输出质量验收、受控构建/安全 Viewer 的独立验收、统一持久化中的历史恢复。源码内容变化不代表“45 分钟功能已验证可用”。本任务没有新增付费请求、合并、部署或执行 AI 源码；稳定 Demo 的生产文件零改动。

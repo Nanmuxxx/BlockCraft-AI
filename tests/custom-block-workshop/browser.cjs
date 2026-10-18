@@ -1,4 +1,4 @@
-// Real /ai-create entry and production Workshop. Only generation HTTP is mocked.
+// Real /ai-create entry and production Workshop. Generation and disabled AI status are offline fixtures.
 // All custom input is inert protocol metadata; its source must never execute.
 const { chromium } = require('playwright')
 const { expect } = require('playwright/test')
@@ -29,6 +29,7 @@ async function run() {
         const url = new URL(route.request().url())
         if (!['127.0.0.1', 'localhost'].includes(url.hostname)) { outbound.push(url.href); return route.abort() }
         if (url.pathname === '/api/ai/generate') { requests.push(url.pathname); return route.fulfill({ json: createClubRegistrationExample().spec }) }
+        if (url.pathname === '/api/mochi-ai/status') return route.fulfill({ json: { enabled: false, proactiveEnabled: false, modificationsEnabled: false, reason: 'ACCESS_UNAVAILABLE' } })
         if (url.pathname.startsWith('/api/')) { requests.push(url.pathname); return route.abort() }
         return route.continue()
       })
