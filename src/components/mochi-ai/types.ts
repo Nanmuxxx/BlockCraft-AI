@@ -47,8 +47,8 @@ export type MochiUiContext = MochiContext
 
 /** All four actions are implemented by the host, never by this UI. */
 export interface MochiCallbacks {
-  onRequestPlan: (prompt: string, uiContext: MochiUiContext) => Promise<void>
-  onConfirm: (planId: string) => Promise<void>
+  onRequestPlan: (prompt: string, uiContext: MochiUiContext) => void | Promise<void>
+  onConfirm: (planId: string) => void | Promise<void>
   onCancel: (planId: string) => void
   onIgnore: (suggestionId: string) => void
 }
