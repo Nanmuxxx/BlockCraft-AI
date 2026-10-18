@@ -1,0 +1,63 @@
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (1.866583ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.680459ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.322ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.248667ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.143167ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.142166ms)
+✔ cancel retires an ignored analysis promise without altering newer history (1.530916ms)
+✔ abort listener reentry retains ownership of the newer conversation request (0.348125ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.0955ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (21.10375ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.0845ms)
+✔ late status cannot re-enable consent after explicit off (0.062666ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.129958ms)
+✔ subscriber cancellation during message publication prevents analysis egress (0.090333ms)
+✔ subscriber cancellation during busy publication prevents analysis egress (0.055125ms)
+✔ subscriber replacement at request publication keeps only the fresh analysis and history (0.116042ms)
+✔ project transition publishes the new identity before abort reentry (0.144958ms)
+✔ project transition publishes the new identity before subscriber reentry (0.108958ms)
+✔ context synchronization is idempotent inside a state subscriber (0.043792ms)
+✔ a newer project transition during notification cannot be overwritten by the older transition (0.102166ms)
+✖ project changed during context notification blocks stale-context egress (0.196792ms)
+✖ project changed during busy notification blocks stale-context egress (0.17175ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 20
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 58.074708
+
+✖ failing tests:
+
+test at tests/mochi-ai/client.test.mjs:249:44
+✖ project changed during context notification blocks stale-context egress (0.196792ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client.test.mjs:259:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'CONTEXT_CHANGED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/client.test.mjs:249:44
+✖ project changed during busy notification blocks stale-context egress (0.17175ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client.test.mjs:260:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

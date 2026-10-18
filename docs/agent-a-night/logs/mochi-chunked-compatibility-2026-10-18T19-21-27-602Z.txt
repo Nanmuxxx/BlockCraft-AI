@@ -1,0 +1,22 @@
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (15.948541ms)
+✔ HTTP rejects malformed UTF-8 before provider egress (2.954583ms)
+✔ ignored access resolver deadline retires HTTP admission with no model call (15.301042ms)
+✔ HTTP disconnect aborts pending access and consumes a late rejection without egress (1.893208ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (4.349375ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (2.821417ms)
+✔ early HTTP rejection closes incomplete uploads without waiting for the remaining body (1.174125ms)
+✔ chunked uploads exceeding the body bound receive a structured 413 with no model call (1.115542ms)
+✔ chunked JSON accepts a multibyte prompt split across transport chunks (1.473375ms)
+✔ HTTP production disabled remains explicit; no mock fallback (0.781667ms)
+✔ missing deployment resolver fails closed even with client identity headers (0.614209ms)
+✔ client identity cannot authenticate or override trusted project scope (1.592292ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (1.85275ms)
+✔ production server mounts routes but requires trusted access and durable cost control (22.508417ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 91.850791

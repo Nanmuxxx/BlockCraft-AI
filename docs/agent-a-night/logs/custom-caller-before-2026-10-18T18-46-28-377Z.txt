@@ -1,0 +1,83 @@
+✔ experiment is disabled by default before touching provider or store (0.591333ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (30.44625ms)
+✔ invalid output never reaches storage, never evaluates source side effects (5.634583ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (6.8435ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (6.785625ms)
+✔ private store permissions, quotas and references fail closed (5.883208ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (5.3835ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (5.792708ms)
+✔ all JSON files are inert source artifacts, not generated source module files (6.191083ms)
+✖ caller cancellation retires ignored provider work before any pending-store write (1002.93625ms)
+✖ pre-cancelled generator performs no provider or storage calls (1.911083ms)
+✖ cancellation during output admission prevents storage; admitted storage retains an honest outcome (1.838583ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 9
+ℹ fail 2
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1223.887084
+
+✖ failing tests:
+
+test at tests/custom-block-generation/pipeline.test.mjs:143:1
+✖ caller cancellation retires ignored provider work before any pending-store write (1002.93625ms)
+  'test timed out after 1000ms'
+
+test at tests/custom-block-generation/pipeline.test.mjs:162:1
+✖ pre-cancelled generator performs no provider or storage calls (1.911083ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   code: 'INVALID_OUTPUT'
+  -   code: 'CANCELLED'
+    }
+  
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/custom-block-generation/pipeline.test.mjs:165:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: GenerationError: INVALID_OUTPUT
+        at guarded (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/custom-block/protocol.mjs:15:11)
+        at admitOutput (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/custom-block/contract.mjs:22:20)
+        at Object.generate (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/custom-block/generator.mjs:20:27)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/custom-block-generation/pipeline.test.mjs:165:3)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: { code: 'CANCELLED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/custom-block-generation/pipeline.test.mjs:169:1
+✖ cancellation during output admission prevents storage; admitted storage retains an honest outcome (1.838583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + Comparison {}
+  - Comparison {
+  -   code: 'CANCELLED'
+  - }
+  
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/custom-block-generation/pipeline.test.mjs:173:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: must not store
+        at Object.put (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/custom-block-generation/pipeline.test.mjs:172:95)
+        at Object.generate (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/custom-block/generator.mjs:21:34)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/custom-block-generation/pipeline.test.mjs:173:3)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: { code: 'CANCELLED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

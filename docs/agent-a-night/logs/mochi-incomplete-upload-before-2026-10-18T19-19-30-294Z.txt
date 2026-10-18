@@ -1,0 +1,28 @@
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (14.248375ms)
+✔ HTTP rejects malformed UTF-8 before provider egress (3.403875ms)
+✔ ignored access resolver deadline retires HTTP admission with no model call (13.97325ms)
+✔ HTTP disconnect aborts pending access and consumes a late rejection without egress (1.804833ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (4.000667ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (2.788ms)
+✖ early HTTP rejection closes incomplete uploads without waiting for the remaining body (303.602ms)
+✔ HTTP production disabled remains explicit; no mock fallback (3.305667ms)
+✔ missing deployment resolver fails closed even with client identity headers (2.656625ms)
+✔ client identity cannot authenticate or override trusted project scope (4.209542ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (4.787167ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 10
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 403.280875
+
+✖ failing tests:
+
+test at tests/mochi-ai/http.test.mjs:88:1
+✖ early HTTP rejection closes incomplete uploads without waiting for the remaining body (303.602ms)
+  Error: Rejected upload 401 remained open
+      at Timeout.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/http.test.mjs:104:96)
+      at listOnTimeout (node:internal/timers:685:17)
+      at process.processTimers (node:internal/timers:618:7)

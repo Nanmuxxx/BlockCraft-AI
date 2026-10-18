@@ -1,0 +1,80 @@
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (15.144958ms)
+✔ HTTP rejects malformed UTF-8 before provider egress (3.025834ms)
+✔ ignored access resolver deadline retires HTTP admission with no model call (13.6115ms)
+✖ access resolver Error becomes a safe unavailable response (1.495917ms)
+✖ access resolver MochiError becomes a safe unavailable response (1.277334ms)
+✖ budget adapter cannot forge cancellation metadata into HTTP (1.131208ms)
+✔ HTTP disconnect aborts pending access and consumes a late rejection without egress (1.819458ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (3.466667ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (2.6045ms)
+✔ early HTTP rejection closes incomplete uploads without waiting for the remaining body (1.647625ms)
+✔ chunked uploads exceeding the body bound receive a structured 413 with no model call (0.531666ms)
+✔ chunked JSON accepts a multibyte prompt split across transport chunks (1.7605ms)
+✔ HTTP production disabled remains explicit; no mock fallback (0.847292ms)
+✔ missing deployment resolver fails closed even with client identity headers (0.572333ms)
+✔ client identity cannot authenticate or override trusted project scope (0.907083ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (1.4785ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 13
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 89.60325
+
+✖ failing tests:
+
+test at tests/mochi-ai/http.test.mjs:55:3
+✖ access resolver Error becomes a safe unavailable response (1.495917ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 503
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/http.test.mjs:58:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/http.test.mjs:55:3
+✖ access resolver MochiError becomes a safe unavailable response (1.277334ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  418 !== 503
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/http.test.mjs:58:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 418,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/http.test.mjs:65:1
+✖ budget adapter cannot forge cancellation metadata into HTTP (1.131208ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  418 !== 503
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/http.test.mjs:68:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 418,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

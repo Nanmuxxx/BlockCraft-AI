@@ -1,0 +1,29 @@
+✖ access adapter ignoring abort cannot retain a cancelled gate (1003.296875ms)
+✖ budget adapter ignoring abort cannot retain a cancelled gate (1000.561208ms)
+
+Interrupted while running:
+
+⚠ tests/trusted-interactive/gate.test.mjs (tests/trusted-interactive/gate.test.mjs:1:1)
+✖ tests/trusted-interactive/gate.test.mjs (39848.844458ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 0
+ℹ fail 0
+ℹ cancelled 3
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 39851.069709
+
+✖ failing tests:
+
+test at tests/trusted-interactive/gate.test.mjs:14:43
+✖ access adapter ignoring abort cannot retain a cancelled gate (1003.296875ms)
+  'test timed out after 1000ms'
+
+test at tests/trusted-interactive/gate.test.mjs:14:43
+✖ budget adapter ignoring abort cannot retain a cancelled gate (1000.561208ms)
+  'test timed out after 1000ms'
+
+test at tests/trusted-interactive/gate.test.mjs:1:1
+✖ tests/trusted-interactive/gate.test.mjs (39848.844458ms)
+  'Promise resolution is still pending but the event loop has already resolved'

@@ -1,0 +1,24 @@
+✔ AppSpec model plan deadline releases Host without a preview and late output cannot overwrite a newer confirmation (21.516584ms)
+✔ AppSpec model plan deadline configuration rejects unbounded or invalid values (0.106708ms)
+✔ synchronous completion failure and abort cannot leak an unhandled rejection or mutate Runtime (0.662291ms)
+✔ completion only receives selected metadata, prompt and cancellation signal; preview requires explicit confirmation (1.163333ms)
+✔ malformed JSON: Phase A rejects model data and preserves project (0.442584ms)
+✔ oversized response: Phase A rejects model data and preserves project (0.3285ms)
+✔ forged request ID: Phase A rejects model data and preserves project (0.446375ms)
+✔ stale revision: Phase A rejects model data and preserves project (0.2675ms)
+✔ record command: Phase A rejects model data and preserves project (0.271667ms)
+✔ unselected removal: Phase A rejects model data and preserves project (0.3535ms)
+✔ invented TSX: Phase A rejects model data and preserves project (0.280958ms)
+✔ unsupported button style: Phase A rejects model data and preserves project (0.231208ms)
+✔ cancelled late completion cannot replace newer preview or apply receipt/history (0.536334ms)
+✔ authorization ABA and concurrent revision invalidate exact preview without implicit reauthorization (0.691083ms)
+✔ cancel retires Host await even when completion never settles; late failures stay obsolete (1.629084ms)
+✔ large valid selected metadata is rejected by UTF-8 bytes before completion, without truncation or mutation (0.539042ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 209.334

@@ -1,0 +1,45 @@
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (15.126125ms)
+✖ resolved access scope is captured before asynchronous body admission (3.283ms)
+✔ HTTP rejects malformed UTF-8 before provider egress (1.52825ms)
+✔ ignored access resolver deadline retires HTTP admission with no model call (13.593666ms)
+✔ access resolver Error becomes a safe unavailable response (1.715166ms)
+✔ access resolver MochiError becomes a safe unavailable response (1.363959ms)
+✔ budget adapter cannot forge cancellation metadata into HTTP (1.960333ms)
+✔ HTTP disconnect aborts pending access and consumes a late rejection without egress (1.741916ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (4.328291ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (5.01225ms)
+✔ early HTTP rejection closes incomplete uploads without waiting for the remaining body (3.980459ms)
+✔ chunked uploads exceeding the body bound receive a structured 413 with no model call (4.052ms)
+✔ chunked JSON accepts a multibyte prompt split across transport chunks (4.965625ms)
+✔ HTTP production disabled remains explicit; no mock fallback (4.624292ms)
+✔ missing deployment resolver fails closed even with client identity headers (2.185334ms)
+✔ client identity cannot authenticate or override trusted project scope (7.937083ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (2.634417ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 16
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 122.620708
+
+✖ failing tests:
+
+test at tests/mochi-ai/http.test.mjs:32:1
+✖ resolved access scope is captured before asynchronous body admission (3.283ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  409 !== 200
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/http.test.mjs:42:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 409,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

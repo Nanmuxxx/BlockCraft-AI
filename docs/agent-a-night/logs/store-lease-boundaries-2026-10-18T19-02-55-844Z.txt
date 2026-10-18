@@ -1,0 +1,40 @@
+✔ fixture HTTP envelope → pending export → installer → selected source edit shares one owner/CAS and stays non-executable (60.556125ms)
+✔ experiment is disabled by default before touching provider or store (0.633666ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (47.810084ms)
+✔ invalid output never reaches storage, never evaluates source side effects (8.523458ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (10.035958ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (11.149417ms)
+✔ private store permissions, quotas and references fail closed (7.283958ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (5.802083ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (5.838417ms)
+✔ all JSON files are inert source artifacts, not generated source module files (5.911417ms)
+✔ caller cancellation retires ignored provider work before any pending-store write (0.6625ms)
+✔ pre-cancelled generator performs no provider or storage calls (0.08475ms)
+✔ cancellation during output admission prevents storage; admitted storage retains an honest outcome (0.509125ms)
+✔ syntax admission is not sandbox certification: hazardous source stays inert and execution denied (8.91425ms)
+✔ independent store handles cannot race distinct artifacts past the shared directory quota (13.994791ms)
+✔ unknown or stale store lease fails closed, remains intact, and is never followed (11.694ms)
+✔ separate node processes share the same bounded store write lease (121.456333ms)
+✔ stalled prepare registry lookup retires on invalidate (6.407041ms)
+✔ stalled prepare registry lookup retires on dispose (5.609292ms)
+✔ stalled prepare registry lookup retires on supersede (3.105209ms)
+✔ real archived DeepSeek record: private store -> exact export -> preview -> sole session CAS; source stays inert (52.754625ms)
+✔ export rejects missing/wrong reference, corrupt digest, invalid status/props and captures input (1.975042ms)
+✔ cancel is idempotent, foreign tickets cannot commit and no candidate is registered (1.087375ms)
+✔ malformed, stale digest, invalid props, extra execution permission and collisions fail before preview (2.80425ms)
+✔ project switch, revision change and revoke/regrant invalidate previews (2.431584ms)
+✔ confirmation rechecks revision/authorization even if host notifications were missed (2.786958ms)
+✔ context invalidation or disposal during prepare drops the late result without registering artifact (0.776542ms)
+✔ late prepare, superseding prepare, input mutation and dispose cannot revive a ticket (1.264ms)
+✔ confirm lease synchronously blocks cancel/context switch/dispose and duplicate submission (1.074208ms)
+✔ permission changes or concurrent CAS during async install reject atomically and terminally (1.7855ms)
+✔ two installers using one owner commit at most once; no implicit replacement (1.767875ms)
+✔ unexpected install exception is terminal; capability escalation rejected (1.173541ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 413.188083

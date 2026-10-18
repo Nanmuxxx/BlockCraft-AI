@@ -1,0 +1,20 @@
+✔ experiment is disabled by default before touching provider or store (0.553041ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (31.139792ms)
+✔ invalid output never reaches storage, never evaluates source side effects (6.35975ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (6.716625ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (6.855542ms)
+✔ private store permissions, quotas and references fail closed (6.104041ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (5.994834ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (5.907958ms)
+✔ all JSON files are inert source artifacts, not generated source module files (6.170459ms)
+✔ caller cancellation retires ignored provider work before any pending-store write (0.584042ms)
+✔ pre-cancelled generator performs no provider or storage calls (0.081083ms)
+✔ cancellation during output admission prevents storage; admitted storage retains an honest outcome (0.521958ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 196.862708

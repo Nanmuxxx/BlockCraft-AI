@@ -1,0 +1,2 @@
+1:57:09 AM [vite] (client) Re-optimizing dependencies because vite config has changed
+{"passed":2,"paidCalls":0,"evidence":"/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/docs/agent-a-night/browser/trusted"}

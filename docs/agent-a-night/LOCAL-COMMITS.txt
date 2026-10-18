@@ -1,0 +1,82 @@
+4ad8e5844e69bc3ded03266771fa85d75e03d24b docs(ai-core): inventory night baseline and development queue
+fd861f929006bff8461981ee3eb88289b8cad67f fix(generation): bound responses and reject cancelled or wrong-protocol results
+b4c8c422767bef2cfa740600a0bac9919729c2b0 feat(mochi): adapt bounded model plans through existing host validation
+dce2212ee1369e3915c95bf23a82f940a0a5fb22 fix(generation): reject ambiguous completions and invalid UTF-8
+40f9db5d261e056f5bc162bc240dd81ce8c6f1b7 fix(ai): enforce deadlines when transports ignore cancellation
+0544d74906b261ec9253713b35464bc12125c2f3 test(mochi): exercise bounded JSON plans through workshop browser flow
+c73edba5825a2b3bc09c33790b3654bc9e9b140d fix(qa): keep business quality evaluation scoped to AppSpec v1
+98865feccdb121ffe7c6a0827f5ff7ffe0b8c06f fix(ai): cancel unused response bodies on rejection and late arrival
+e7feadcdcec8495149742395a3c69990d23a45a2 fix(mochi): retire model plan waits promptly on cancellation
+ad36214da50928de86c324eeb709afa830edfe41 fix(custom-block): bound pending transport waits and reject mixed envelopes
+9f4296200099a3c9a4ac0b13d8d82d1ad8e613b3 fix(mochi-source): detach cancelled requests before abort reentry
+4c40e940193234c71bf17189d857b29d9fafd983 fix(mochi): bound selected metadata before model transport
+a3eec73c794ca97d20de9de6d1287d1f672cd00f docs(ai-core): record verified gaps and production integration contract
+f7267c2b30da1af73875ec3a54b90da7cfc86ded fix(mochi): release service concurrency on ignored cancellation
+12515887d659d6b0f352ffe337eee6fa428ae6b8 fix(ai): bound interactive admission and retire disconnected gates
+ed51567d6676cc28a850167f7c62bde0225b9974 docs(ai-core): preserve command ledger and browser acceptance evidence
+5ac2d225611f6e8e86204c641b90f043804eca40 fix(mochi-source): retire cancelled registry admission waits
+49627e8117ffdeb62abde9bbaaf786cda83e2c62 fix(mochi-ai): bound client transport and decode strict UTF-8
+baeffb128b657bb1f68f8017f7982d7737d3cbc1 fix(mochi-ai): preserve conversation ownership during abort reentry
+a0c8eecb7111a06a3095ee2178d5ec46c4ce2428 fix(artifact): retire superseded installation preparation
+031eac6b301292bc8379106916eaf715af2a4f80 fix(mochi-ai): bound trusted access admission and reject invalid request bytes
+3c72fdff6a56f81fcf6b022f9141a271d3f1c1f0 docs(ai-core): checkpoint verified core regressions and night report
+e8816ffe52e47042de0dce19d42d36bd597ca0ce fix(artifact-ui): retire cancelled file reads and preserve reentrant drafts
+a073fa2c1f99c2a78a957db94c984d917653762c fix(artifact-ui): validate native file bytes with strict UTF-8 bounds
+b7f47f4c77cf500a2ae8d66a2eaba854b0f86379 fix(ai-server): reject disconnected requests before model dispatch
+47c2fe53f17a3c37acd27bf511ea6c3af52aa160 fix(mochi-source): bound completion egress and guard cancellation
+0bb57e3f43e7935bcf32a13eae8869c1326bd691 fix(mochi-client): retain request ownership across state publication
+dca5903e22ff51e781a165d255b4e6280bfa963c feat(custom-block): propagate caller cancellation before artifact storage
+6ed5c0c23cb2ed27c96b61e17e28af1a39172ce3 docs(ai-core): record 649 regressions and caller cancellation boundaries
+0fd3d19491c720ad925a806af04434db08a67cfd fix(trusted-ai): normalize access and budget adapter failures
+5597ebf4df164628d5b7e4aaf5b63124038cdfd3 test(trusted-ai): verify sanitized adapter failures over HTTP
+9ebce4bc79c73caf7cb77140d7ba6e12e38da0e2 test(ai-core): discover owned regression families and record prerequisites
+1e7205ac16942275d91a4354f166066c12bf0115 test(custom-block): verify same-version reinstall and state migration boundaries
+36025d2de9f7ce3cff140c9baef596df72bad4d3 test(custom-block): keep hazardous admitted source inert and execution denied
+6d700369bfe5c9715df3266e16a631643c49d136 test(ai-core): connect fixture generation installation and source edits
+d3a9c2f9aebf719311e8ee51b9485517687edce3 fix(custom-block): enforce pending store quota across writers
+f2afc73192b767502510160a71d6d02e5200d0a1 docs(ai-core): record 724 checks and pending source edit vertical slice
+84a1255a67077e42fd9323fd33a2d3419f5e5f65 fix(custom-block): consume complete bounded store records before validation
+2f6d630e177b1564280d6691ff791c96492d7f2a fix(mochi): bound source model completion and retire cancelled transports
+9c9bc818e770f2e3befda2dd862e9adc59e72d4b fix(mochi): cap AppSpec model plan waits without changing invocation order
+809f6a76021a58f3c1fb487d66f4fd63169dc841 docs(ai-core): record bounded storage and model deadlines
+7935647596989b3c9ef35038c9642f6f45c91a2b docs(ai-core): archive model deadline browser and command evidence
+ba9fbd6528edc770a58c46a32403531207f58541 fix(mochi): close rejected incomplete HTTP uploads after response
+dac42d0d769693eefe927a3406713f4f91bded29 test(mochi): cover incomplete and split chunked upload boundaries
+f56d2d4a93f956d376a6ccbf469d7909d129cb11 fix(mochi): bind conversation egress to atomically published project context
+66eddef1fe641ee21421b8cc61f584af76e91bf1 fix(mochi): isolate conversation observers from cancellation
+c27a704dbb2b889473b47618519185da4e107343 fix(mochi): sanitize access and ledger exception metadata
+11e952ef1a5982c69e6e89e6658af413e0723881 fix(mochi): capture trusted application scope across async admission
+90f2762ef0cd89878bef1457cb36fdfe91899d82 fix(artifact): keep install receipts independent of render observer errors
+fb4247acd9ba2a60aa960ffcc3774b8dc7f71d83 docs(ai-core): record HTTP admission and project transition evidence
+d14d9cbb4549d14fc9097907f985d9c74b4fda7c fix(mochi): recheck cancellation across synchronous admission callbacks
+9757f484f81f287aff0160a41e25a8cc07ad590d fix(mochi): retire host waits when provider ignores cancellation
+06bcab0b98083539d9bf5deb724021251ea7019f fix(mochi): skip disposed consent opt-ins while preserving explicit revocation
+b70acd7415423b624e881908c08858e6bb17e3fb test(ai-core): bind command evidence to code revision and harness settings
+af2e636f20b0c5cfdd7cde810d756475f6fe0b1d docs(ai-core): archive host retirement and consent lifecycle evidence
+d82b341f27b772fc38645abbde32d8c938fedee5 fix(mochi): retire enabled capability on invalid status replies
+855bd80ee932096529b694304ca52ca2e83de0d4 fix(mochi): keep late consent acknowledgments subordinate to capability status
+064dd38f081115711e0f37a1c982ef1f3b86528e fix(mochi): publish consent revocation before idle notifications
+275c306a6426a215c2f70e3623285c99fe327340 fix(mochi): reserve consent queue order before observer reentry
+f1df14f9c257c1de3502f9b4cf434021dd09b9ad fix(mochi): isolate metadata projection notification failures
+f95d6877e1342ae33fbaa1682b6c50a2f7c5f256 fix(mochi): bind HTTP access scope before reading uploaded bodies
+1b29ceeebfa889cceb5c50d53a78d19decd16517 docs(ai-core): record status consent and metadata boundary evidence
+2e40b76429c0ab85180f204ef6b57c5410c82066 docs(ai-core): specify runtime module handoff without editing deployment files
+2abfb7d30b71a0c124995d328785e9534c41f4c0 test(mochi): verify metadata recovery on a new admitted reference
+383c64f4fa7f311552e0dc1a0dcc6ff49aec83ea fix(mochi): retire suggestion actions with their conversation context
+e572f2d5bb44042c0c3bc2e9ce4fe946171c1883 docs(ai-core): archive metadata recovery and retired suggestion evidence
+aeb97c0d08f7dd5ce6d47d82243c8816d2b9185f test(generation): cover formal HTTP cancellation and late results on desktop and mobile
+bf11cb6c20f6054b2743d6330dd1075a5c739c5b fix(mochi): bind continued suggestion to its project across focus callbacks
+7b3fd01fe105cd16ff681915bcf976718f4f4973 test(generation): report actual HTTP application flows on desktop and mobile
+a3c2b0ba68c0680e6b08843948a793a39fee107c fix(mochi): retire focused actions after cancellation and context round trips
+95d415669ba58c4d9c8f9e0943465d9c66a5aa80 test(generation): verify literal model text across formal B and C modes
+713f176898ca48e67f276a0040f4764f903a9264 docs(ai-core): archive formal HTTP mobile cancellation and text safety evidence
+71d874d5e83b5213219d0362ae5b33d79e3b4ee4 fix(mochi): reject retired ignore actions after synchronous context round trips
+91bbbb3267eabbfff31874906c86a41a9574abb3 test(generation): verify incomplete HTTP uploads release bounded admission
+0845361fb4cda524af4f78ea63ce4832c2165229 fix(mochi): preserve lifecycle cleanup for nonstandard adapter failures
+80c32a3c56c84ac9f0e2ac3ae86b0450da5adb08 fix(mochi): retire scheduled analysis when proactive consent is revoked
+ff61d487719fdacf72ca9c6ea290710680e6967a test(generation): cover input deadline and rate-limited incomplete uploads
+122eb1c1c3a259735045827c63be00c2e37effa0 docs(ai-core): record verified remote commit mapping
+74d4893d84b8b27c8d532f2091faf8744528e7f2 docs(ai-core): record final ingress and runtime regression evidence
+dccde1073b97e29c72b049feaa6cdc0732a57549 docs(ai-core): sync night evidence and remote head
+b646eea904b35497b96326df868531e27e5c4562 docs(ai-core): correct published commit mapping
+ddf9d9b4ba991f2339801470b218e6a67893109b docs(ai-core): archive final browser and interop evidence

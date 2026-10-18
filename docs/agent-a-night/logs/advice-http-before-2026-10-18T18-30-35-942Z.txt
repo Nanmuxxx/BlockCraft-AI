@@ -1,0 +1,55 @@
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (14.235959ms)
+✖ HTTP rejects malformed UTF-8 before provider egress (3.766833ms)
+✖ ignored access resolver deadline retires HTTP admission with no model call (1.985625ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (3.645583ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (3.180458ms)
+✔ HTTP production disabled remains explicit; no mock fallback (0.840625ms)
+✔ missing deployment resolver fails closed even with client identity headers (0.835875ms)
+✔ client identity cannot authenticate or override trusted project scope (1.253125ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (1.35375ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 7
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71.908
+
+✖ failing tests:
+
+test at tests/mochi-ai/http.test.mjs:30:1
+✖ HTTP rejects malformed UTF-8 before provider egress (3.766833ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 400
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/http.test.mjs:36:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/http.test.mjs:41:1
+✖ ignored access resolver deadline retires HTTP admission with no model call (1.985625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 503
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/http.test.mjs:45:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

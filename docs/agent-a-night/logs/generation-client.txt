@@ -1,0 +1,16 @@
+✔ validated generated spec starts empty, isolated, with complete normalized layout and interactive runtime (4.043458ms)
+✔ Mock API uses same-origin POST and validates success; errors never become applications (28.40775ms)
+✔ v1: abort before fetch, while fetch ignores abort, and while body ignores abort (12.953834ms)
+✔ v1: byte bounds apply to declared and chunked bodies; malformed data never installs (1.196ms)
+✔ v2: abort before fetch, while fetch ignores abort, and while body ignores abort (0.854542ms)
+✔ v2: byte bounds apply to declared and chunked bodies; malformed data never installs (0.737083ms)
+✔ v1 cannot accept raw v2 or trusted envelope; v2 cannot accept v1 or oversized provenance (0.684666ms)
+✔ client validates complete v2 envelope and rejects permissions, invalid schemas and fake successful errors (17.149417ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 326.603542

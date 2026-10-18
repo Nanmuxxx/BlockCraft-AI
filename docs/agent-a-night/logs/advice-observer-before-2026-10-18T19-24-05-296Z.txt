@@ -1,0 +1,58 @@
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (2.08675ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.672083ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.271667ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.265791ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.162791ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.168292ms)
+✔ cancel retires an ignored analysis promise without altering newer history (1.555542ms)
+✔ abort listener reentry retains ownership of the newer conversation request (0.268417ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.075833ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (21.941292ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.079333ms)
+✔ late status cannot re-enable consent after explicit off (0.06725ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.138083ms)
+✔ subscriber cancellation during message publication prevents analysis egress (0.09525ms)
+✔ subscriber cancellation during busy publication prevents analysis egress (0.065458ms)
+✔ subscriber replacement at request publication keeps only the fresh analysis and history (0.155208ms)
+✔ project transition publishes the new identity before abort reentry (0.176375ms)
+✔ project transition publishes the new identity before subscriber reentry (0.112292ms)
+✔ context synchronization is idempotent inside a state subscriber (0.043708ms)
+✔ a newer project transition during notification cannot be overwritten by the older transition (0.11125ms)
+✔ project changed during context notification blocks stale-context egress (0.060917ms)
+✔ project changed during busy notification blocks stale-context egress (0.054084ms)
+✖ a failing state observer cannot skip transport cancellation or later observers (0.213125ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 22
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 59.119084
+
+✖ failing tests:
+
+test at tests/mochi-ai/client.test.mjs:265:1
+✖ a failing state observer cannot skip transport cancellation or later observers (0.213125ms)
+  AssertionError [ERR_ASSERTION]: Got unwanted exception.
+  Actual message: "observer rendering failure"
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client.test.mjs:273:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Error: observer rendering failure
+        at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client.test.mjs:270:51
+        at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:84:112
+        at Set.forEach (<anonymous>)
+        at emit (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:84:98)
+        at retire (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:91:5)
+        at Object.cancel (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:96:23)
+        at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client.test.mjs:273:38
+        at getActual (node:assert:611:5)
+        at strict.doesNotThrow (node:assert:779:32)
+        at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client.test.mjs:273:10),
+    expected: undefined,
+    operator: 'doesNotThrow',
+    diff: 'simple'
+  }

@@ -1,0 +1,27 @@
+✔ offline HTTP service -> strict client -> selected Mochi plan -> confirmation -> shared B/C runtime (35.034167ms)
+✔ completion only receives selected metadata, prompt and cancellation signal; preview requires explicit confirmation (4.825958ms)
+✔ malformed JSON: Phase A rejects model data and preserves project (0.479292ms)
+✔ oversized response: Phase A rejects model data and preserves project (0.349ms)
+✔ forged request ID: Phase A rejects model data and preserves project (1.180542ms)
+✔ stale revision: Phase A rejects model data and preserves project (0.641042ms)
+✔ record command: Phase A rejects model data and preserves project (0.358666ms)
+✔ unselected removal: Phase A rejects model data and preserves project (0.325667ms)
+✔ invented TSX: Phase A rejects model data and preserves project (0.267625ms)
+✔ unsupported button style: Phase A rejects model data and preserves project (0.277958ms)
+✔ cancelled late completion cannot replace newer preview or apply receipt/history (0.774041ms)
+✔ authorization ABA and concurrent revision invalidate exact preview without implicit reauthorization (0.81425ms)
+✖ cancel retires Host await even when completion never settles; late failures stay obsolete (1001.866833ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1267.41175
+
+✖ failing tests:
+
+test at tests/mochi-ai/model-plan.test.cjs:85:1
+✖ cancel retires Host await even when completion never settles; late failures stay obsolete (1001.866833ms)
+  'test timed out after 1000ms'

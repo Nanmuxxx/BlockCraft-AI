@@ -54,6 +54,17 @@ test('provider fails closed without key and never retries/falls back on HTTP, JS
   }
 })
 
+test('HTTP and declared-size rejection cancel unused bodies without waiting for cleanup', async () => {
+  for (const init of [{ status: 503 }, { headers: { 'content-length': '999999' } }]) {
+    let cancelled = 0
+    const p = createDeepSeekProvider({ apiKey: 'offline', fetchImpl: async () => new Response(new ReadableStream({
+      cancel() { cancelled++; return new Promise(() => {}) },
+    }), init) })
+    await assert.rejects(p.analyze(request()))
+    assert.equal(cancelled, 1)
+  }
+})
+
 test('provider aborts on deadline and external cancellation, including body reads', async () => {
   const hangingFetch = async (_url, { signal }) => { await new Promise((_, reject) => signal.addEventListener('abort', () => reject(new Error('abort')), { once: true })) }
   await assert.rejects(createDeepSeekProvider({ apiKey: 'offline', timeoutMs: 10, fetchImpl: hangingFetch }).analyze(request()), { code: 'AI_TIMEOUT' })
@@ -61,4 +72,35 @@ test('provider aborts on deadline and external cancellation, including body read
   await assert.rejects(createDeepSeekProvider({ apiKey: 'offline', fetchImpl: hangingFetch }).analyze(request(), { signal: controller.signal }), { code: 'CANCELLED' })
   const abortBody = (_url, { signal }) => Promise.resolve(new Response(new ReadableStream({ start(stream) { signal.addEventListener('abort', () => stream.error(new Error('abort'))) } })))
   await assert.rejects(createDeepSeekProvider({ apiKey: 'offline', timeoutMs: 10, fetchImpl: abortBody }).analyze(request()), { code: 'AI_TIMEOUT' })
+})
+
+test('uncooperative fetch/body and cancellation cleanup cannot hold the provider beyond its deadline', async () => {
+  let late, cancelled = 0
+  const p = createDeepSeekProvider({ apiKey: 'offline', timeoutMs: 10, fetchImpl: () => new Promise(resolve => { late = resolve }) })
+  await assert.rejects(p.analyze(request()), { code: 'AI_TIMEOUT' })
+  late(new Response(new ReadableStream({ cancel() { cancelled++ } })))
+  await new Promise(resolve => setImmediate(resolve)); assert.equal(cancelled, 1)
+  const body = createDeepSeekProvider({ apiKey: 'offline', timeoutMs: 10, fetchImpl: async () => new Response(new ReadableStream({ cancel() { return new Promise(() => {}) } })) })
+  await assert.rejects(body.analyze(request()), { code: 'AI_TIMEOUT' })
+  const controller = new AbortController()
+  const external = createDeepSeekProvider({ apiKey: 'offline', fetchImpl: () => new Promise(() => {}) })
+  const operation = external.analyze(request(), { signal: controller.signal })
+  controller.abort(); await assert.rejects(operation, { code: 'CANCELLED' })
+})
+test('Mochi rejects mixed tool/refusal/error/multiple-choice envelopes and invalid UTF-8', async () => {
+  const message = { content: JSON.stringify(advice()) }, choice = { finish_reason: 'stop', message }
+  const responses = [
+    { choices: [choice, choice] }, { choices: [{ ...choice, message: { ...message, tool_calls: [] } }] },
+    { choices: [{ ...choice, message: { ...message, function_call: {} } }] },
+    { choices: [{ ...choice, message: { ...message, refusal: 'refused' } }] },
+    { choices: [{ ...choice, message: { ...message, role: 'user' } }] }, { choices: [choice], error: {} },
+  ]
+  for (const response of responses) {
+    const p = createDeepSeekProvider({ apiKey: 'offline', fetchImpl: async () => Response.json(response) })
+    await assert.rejects(p.analyze(request()), { code: 'AI_INVALID_RESPONSE' })
+  }
+  const bytes = Buffer.from(JSON.stringify({ choices: [{ ...choice, message: { content: JSON.stringify({ ...advice(), message: 'messaXXge' }) } }] }))
+  const marker = bytes.indexOf('XX'); bytes[marker] = 0xc3; bytes[marker + 1] = 0x28
+  const p = createDeepSeekProvider({ apiKey: 'offline', fetchImpl: async () => new Response(bytes) })
+  await assert.rejects(p.analyze(request()))
 })

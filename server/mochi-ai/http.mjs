@@ -1,8 +1,11 @@
 import { LIMITS, MochiError } from '../../src/integrations/mochi-ai/protocol.mjs'
+import { abortable } from '../ai-abort.mjs'
 const PATHS = new Set(['/api/mochi-ai/analyze', '/api/mochi-ai/consent', '/api/mochi-ai/ignore', '/api/mochi-ai/status'])
 function send(res, status, data) {
   if (res.destroyed || res.writableEnded) return
-  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' })
+  // Admission may reject before consuming the body. Do not retain an unfinished
+  // upload on a keep-alive connection after the bounded JSON response is sent.
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', Connection: 'close' })
   res.end(JSON.stringify(data))
 }
 async function read(req) {
@@ -14,19 +17,22 @@ async function read(req) {
       if (size > LIMITS.requestBytes) throw new MochiError('INPUT_TOO_LARGE', '请求过大。', 413)
       chunks.push(chunk)
     }
-    try { return JSON.parse(Buffer.concat(chunks).toString('utf8')) }
+    try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks))) }
     catch { throw new MochiError('INVALID_INPUT', '请求必须是 JSON。') }
   } finally { clearTimeout(timer) }
 }
 /** Returns false for unrelated routes. No automatic registration or standalone listener.
  * allowedOrigin is deployment-owned (supports HTTPS); never infer it from untrusted Host.
  */
-export function createMochiHandler({ service, resolveAccess, allowedOrigin } = {}) {
+export function createMochiHandler({ service, resolveAccess, allowedOrigin, accessTimeoutMs = 5000 } = {}) {
+  if (!Number.isFinite(accessTimeoutMs) || accessTimeoutMs <= 0 || accessTimeoutMs > 5000) throw new RangeError('Access deadline must be within 1–5000ms')
   const ingress = new Map()
   return async (req, res) => {
     if (!PATHS.has(req.url)) return false
     const controller = new AbortController()
     const close = () => { if (!res.writableEnded) controller.abort() }; res.on('close', close)
+    const aborted = () => controller.abort(); req.on('aborted', aborted)
+    if (req.aborted || res.destroyed) controller.abort()
     try {
       // Public disabled status contains no session/project or authorization data.
       // It lets the real Workshop explain deployment blockers without fake auth.
@@ -45,8 +51,21 @@ export function createMochiHandler({ service, resolveAccess, allowedOrigin } = {
         ingress.set(key, { count: 0, reset: clock + 60_000 })
       }
       if (++ingress.get(key).count > 60) throw new MochiError('THROTTLED', '请求过于频繁。', 429)
-      const access = await resolveAccess(req)
+      controller.signal.throwIfAborted()
+      let accessTimedOut = false
+      const deadline = setTimeout(() => { accessTimedOut = true; controller.abort() }, accessTimeoutMs)
+      let access
+      try { access = await abortable(Promise.resolve(resolveAccess(req, { signal: controller.signal })), controller.signal) }
+      catch {
+        // Resolver exceptions are adapter data, never public HTTP metadata.
+        if (controller.signal.aborted && !accessTimedOut) throw new MochiError('CANCELLED', '已取消请求。', 499)
+        throw new MochiError('ACCESS_UNAVAILABLE', 'Mochi AI 可信访问权限暂不可用。', 503)
+      }
+      finally { clearTimeout(deadline) }
       if (!access) throw new MochiError('UNAUTHORIZED', '请先建立可信应用会话。', 401)
+      // A resolver may reuse its own mutable object. Body upload awaits must
+      // not move this request into another authenticated session/project.
+      access = Object.freeze({ sessionId: access.sessionId, appId: access.appId })
       controller.signal.throwIfAborted()
       if (expectedMethod === 'GET') { send(res, 200, service.status(access)); return true }
       if (!/^application\/json(?:\s*;|$)/i.test(req.headers['content-type'] || '')) throw new MochiError('UNSUPPORTED_MEDIA_TYPE', '请使用 JSON。', 415)
@@ -57,9 +76,9 @@ export function createMochiHandler({ service, resolveAccess, allowedOrigin } = {
         req.url.endsWith('/consent') ? service.consent(access, input) : service.ignore(access, input)
       send(res, 200, data)
     } catch (error) {
-      const safe = error instanceof MochiError ? error : new MochiError('INTERNAL_ERROR', 'Mochi 暂时无法回答。', 500)
+      const safe = error instanceof MochiError ? error : controller.signal.aborted ? new MochiError('CANCELLED', '已取消请求。', 499) : new MochiError('INTERNAL_ERROR', 'Mochi 暂时无法回答。', 500)
       send(res, safe.status, { error: { code: safe.code, message: safe.message } })
-    } finally { res.off('close', close) }
+    } finally { res.off('close', close); req.off('aborted', aborted) }
     return true
   }
 }

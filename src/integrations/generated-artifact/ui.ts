@@ -16,23 +16,31 @@ export function createGeneratedArtifactUI(session: CustomProjectSession) {
   let installer: ReturnType<typeof createGeneratedArtifactInstaller> | undefined
   let unsubscribe: (() => void) | undefined
   let epoch = 0, closed = false
+  let pendingRead: { cancel(): void } | undefined
+  const retireRead = () => { const pending = pendingRead; pendingRead = undefined; pending?.cancel() }
   let captured: { snapshot: ReturnType<typeof session.getSnapshot>; authorization: ReturnType<typeof session.getAuthorization>; input: unknown } | undefined
   let state: InstallUIState = { phase: 'idle', message: '' }
   const listeners = new Set<() => void>()
-  const publish = (next: InstallUIState) => { state = Object.freeze(next); listeners.forEach(fn => fn()) }
+  const publish = (next: InstallUIState) => {
+    state = Object.freeze(next)
+    // A render observer cannot change an already committed install receipt.
+    listeners.forEach(fn => { try { fn() } catch { /* Isolate observer failures. */ } })
+  }
   const fail = (error: unknown) => publish({ phase: 'error', message: error instanceof Error ? error.message : '制品处理失败。' })
   const unlocked = () => check(state.phase !== 'confirming', 'CONFIRM_BUSY：正在确认添加，请稍后再切换或离开。', 'CONFIRM_BUSY')
   const alive = () => check(!closed, '安装界面已关闭，请重新载入。', 'INSTALLER_DISPOSED')
-  function invalidate() {
-    unlocked(); installer?.invalidate(); epoch++; captured = undefined
-    publish({ phase: 'idle', message: '' })
+  function invalidate(message = '') {
+    unlocked(); installer?.invalidate(); epoch++; captured = undefined; retireRead()
+    const generation = epoch
+    publish({ phase: 'idle', message })
+    return generation
   }
   function ensureInstaller() {
     if (!installer) {
       installer = createGeneratedArtifactInstaller(session)
       unsubscribe = session.subscribe(() => {
         if (state.phase === 'confirming') return // install's own CAS notification; confirm decides its result.
-        epoch++; captured = undefined
+        epoch++; captured = undefined; retireRead()
         if (state.phase !== 'idle' && state.phase !== 'installed') publish({ phase: 'error', message: '项目或授权已变化，请重新选择制品并预览。' })
       })
     }
@@ -48,14 +56,31 @@ export function createGeneratedArtifactUI(session: CustomProjectSession) {
     getSnapshot: () => state,
     subscribe(fn: () => void) { listeners.add(fn); return () => { listeners.delete(fn) } },
     /** No source, filename or provenance is an authorization credential. */
-    async readFile(file: { size: number; text(): Promise<string> }) {
-      alive(); invalidate(); ensureInstaller()
-      const generation = epoch
+    async readFile(file: { size: number; text(): Promise<string>; arrayBuffer?(): Promise<ArrayBuffer> }) {
+      alive(); const generation = invalidate(); ensureInstaller()
+      if (generation !== epoch || closed) return
       captured = { snapshot: session.getSnapshot(), authorization: session.getAuthorization(), input: null }
-      publish({ phase: 'reading', message: '正在读取制品文件…' })
+      const cancelled = Symbol('cancelled file read')
+      let release!: () => void
+      const cancellation = new Promise<typeof cancelled>(resolve => { release = () => resolve(cancelled) })
+      const pending = { cancel: release }
+      pendingRead = pending
       try {
-        check(file.size <= 4_000_000, '制品文件过大。', 'LIMIT')
-        const text = await file.text()
+        publish({ phase: 'reading', message: '正在读取制品文件…' })
+        current(generation) // A subscriber may cancel or replace the draft during publication.
+        check(Number.isSafeInteger(file.size) && file.size >= 0 && file.size <= 4_000_000, '制品文件大小无效或过大。', 'LIMIT')
+        // Native File.text replaces malformed UTF-8, potentially altering unsigned props/names.
+        // Read bytes when supported; retain the text seam for existing injected file adapters.
+        const contents = await Promise.race([file.arrayBuffer ? file.arrayBuffer() : file.text(), cancellation])
+        current(generation)
+        check(typeof contents !== 'symbol', '文件读取已取消。', 'CONTEXT_CHANGED')
+        let text: string
+        if (typeof contents === 'string') text = contents
+        else {
+          check(contents.byteLength <= 4_000_000, '制品文件过大。', 'LIMIT')
+          try { text = new TextDecoder('utf-8', { fatal: true }).decode(contents) }
+          catch { throw new Error('制品文件不是有效的 UTF-8 文本。') }
+        }
         check(new TextEncoder().encode(text).byteLength <= 4_000_000, '制品文件过大。', 'LIMIT')
         current(generation)
         const raw: unknown = JSON.parse(text)
@@ -76,6 +101,7 @@ export function createGeneratedArtifactUI(session: CustomProjectSession) {
         captured!.input = cloneJson(input)
         publish({ phase: 'loaded', candidate: { name: manifest.name, definitionId: input.instance.definitionId, versionDigest: input.instance.versionDigest, props: cloneJson(input.instance.props), source }, message: '文件已读取，点击预览添加以校验完整制品。' })
       } catch (error) { if (generation === epoch && !closed) { captured = undefined; fail(error) } }
+      finally { if (pendingRead === pending) pendingRead = undefined }
     },
     async prepare() {
       alive(); unlocked()
@@ -103,12 +129,12 @@ export function createGeneratedArtifactUI(session: CustomProjectSession) {
         publish({ phase: 'installed', candidate, message: '已添加积木；尚未构建，暂不可运行。' })
       } catch (error) { fail(error) }
     },
-    cancel() { alive(); invalidate(); publish({ phase: 'idle', message: '已取消，未添加积木。' }) },
+    cancel() { alive(); invalidate('已取消，未添加积木。') },
     beforeContextChange() { alive(); invalidate() },
     dispose() {
       if (closed) return
       unlocked(); installer?.dispose(); unsubscribe?.(); installer = undefined; unsubscribe = undefined
-      epoch++; captured = undefined; closed = true
+      epoch++; captured = undefined; closed = true; retireRead()
       publish({ phase: 'idle', message: '' })
     },
     /** StrictMode effect replay can reactivate an empty, unsubscribed controller. */

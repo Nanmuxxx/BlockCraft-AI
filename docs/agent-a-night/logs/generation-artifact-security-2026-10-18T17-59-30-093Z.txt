@@ -1,0 +1,257 @@
+✔ 社团报名 / 报名者: form → list records → edit → delete updates real metrics (6.92025ms)
+✔ 社团报名 / 报名者: invalid business input never partly commits (5.638417ms)
+✔ 健身计划 / 动作资料: form → list records → edit → delete updates real metrics (2.074042ms)
+✔ 健身计划 / 动作资料: invalid business input never partly commits (1.079292ms)
+✔ 健身计划 / 训练计划: form → list records → edit → delete updates real metrics (6.562583ms)
+✔ 健身计划 / 训练计划: invalid business input never partly commits (1.423834ms)
+✔ 健身计划 / 训练记录: form → list records → edit → delete updates real metrics (1.692041ms)
+✔ 健身计划 / 训练记录: invalid business input never partly commits (4.947875ms)
+✔ 阅读记录 / 书目: form → list records → edit → delete updates real metrics (1.351334ms)
+✔ 阅读记录 / 书目: invalid business input never partly commits (0.734958ms)
+✔ 阅读记录 / 阅读流水: form → list records → edit → delete updates real metrics (1.0725ms)
+✔ 阅读记录 / 阅读流水: invalid business input never partly commits (0.775708ms)
+✔ 活动报名 / 活动资料: form → list records → edit → delete updates real metrics (1.14525ms)
+✔ 活动报名 / 活动资料: invalid business input never partly commits (1.104209ms)
+✔ 活动报名 / 活动报名: form → list records → edit → delete updates real metrics (1.476666ms)
+✔ 活动报名 / 活动报名: invalid business input never partly commits (2.646167ms)
+✔ 个人任务管理 / 任务: form → list records → edit → delete updates real metrics (0.879375ms)
+✔ 个人任务管理 / 任务: invalid business input never partly commits (0.624334ms)
+✔ v1 risk: club count is rows, duplicate contact is accepted (0.4545ms)
+✔ v1 risk: negative training minutes remain schema-valid without range constraints (0.643125ms)
+✔ v1 risk: reading book-title text is not a foreign key, same-day entries are not unique days (2.655291ms)
+✔ v1 risk: event capacity is reference data, excessive tickets are not prevented (2.731917ms)
+✔ v1 risk: task count does not become remaining tasks when status changes (0.378209ms)
+✔ 社团报名: generation adapter consumes a mocked local response without exact JSON expectations (23.372875ms)
+✔ 社团报名: reference fixture validates, initializes empty and covers business requirements (0.336459ms)
+✔ 社团报名: accepts different IDs, titles, array order, aliases and extra valid fields/modules (0.547209ms)
+✔ 社团报名: missing each necessary entity or module fails quality even if v1 shape is legal (0.435916ms)
+✔ 社团报名: every required business field must carry its domain meaning (0.665208ms)
+✔ 健身计划: generation adapter consumes a mocked local response without exact JSON expectations (3.064583ms)
+✔ 健身计划: reference fixture validates, initializes empty and covers business requirements (1.192375ms)
+✔ 健身计划: accepts different IDs, titles, array order, aliases and extra valid fields/modules (0.74725ms)
+✔ 健身计划: missing each necessary entity or module fails quality even if v1 shape is legal (3.500125ms)
+✔ 健身计划: every required business field must carry its domain meaning (3.933708ms)
+✔ 阅读记录: generation adapter consumes a mocked local response without exact JSON expectations (2.498583ms)
+✔ 阅读记录: reference fixture validates, initializes empty and covers business requirements (0.662292ms)
+✔ 阅读记录: accepts different IDs, titles, array order, aliases and extra valid fields/modules (0.252959ms)
+✔ 阅读记录: missing each necessary entity or module fails quality even if v1 shape is legal (0.854875ms)
+✔ 阅读记录: every required business field must carry its domain meaning (0.552375ms)
+✔ 活动报名: generation adapter consumes a mocked local response without exact JSON expectations (0.432334ms)
+✔ 活动报名: reference fixture validates, initializes empty and covers business requirements (0.204917ms)
+✔ 活动报名: accepts different IDs, titles, array order, aliases and extra valid fields/modules (0.182459ms)
+✔ 活动报名: missing each necessary entity or module fails quality even if v1 shape is legal (0.707667ms)
+✔ 活动报名: every required business field must carry its domain meaning (0.751042ms)
+✔ 个人任务管理: generation adapter consumes a mocked local response without exact JSON expectations (0.332459ms)
+✔ 个人任务管理: reference fixture validates, initializes empty and covers business requirements (0.147041ms)
+✔ 个人任务管理: accepts different IDs, titles, array order, aliases and extra valid fields/modules (0.171542ms)
+✔ 个人任务管理: missing each necessary entity or module fails quality even if v1 shape is legal (0.281917ms)
+✔ 个人任务管理: every required business field must carry its domain meaning (0.392625ms)
+✔ protocol rejection: null (0.102125ms)
+✔ protocol rejection: ProjectState wrapper instead of AppSpec (0.053959ms)
+✖ protocol rejection: wrong version (3.344041ms)
+✔ protocol rejection: executable extra configuration (0.216875ms)
+✔ protocol rejection: duplicate global IDs (0.155958ms)
+✔ protocol rejection: dangling entity reference (0.149375ms)
+✔ protocol rejection: dangling block reference (0.123ms)
+✔ protocol rejection: missing binding (0.153459ms)
+✔ protocol rejection: multiple bindings per block (0.126417ms)
+✔ protocol rejection: unknown field reference (0.082084ms)
+✔ protocol rejection: empty form (0.068ms)
+✔ protocol rejection: empty list (0.049459ms)
+✔ protocol rejection: form hides required field (0.060083ms)
+✔ protocol rejection: empty select choices (1.904708ms)
+✔ protocol rejection: unknown block type (0.08325ms)
+✔ cross-entity fields and nonnumeric/wrong-entity metric references are invalid (0.371167ms)
+✔ legal-but-empty apps, fieldless entities, count-only and orphan entities are incomplete (0.358459ms)
+✔ wrong field types, weakened required flags and missing business select options fail (0.282958ms)
+✔ optional fields must be usable in required modules; schema-only decoration fails (0.194084ms)
+✔ ambiguous business entity or field labels cannot silently bind to the first match (0.1645ms)
+✔ right aggregate must bind the business measure and entity, not any numeric field or count (0.62075ms)
+✔ a renamed v1 block does not implement 训练计时器 (0.135042ms)
+✔ a renamed v1 block does not implement 训练日历 (0.071125ms)
+✔ a renamed v1 block does not implement 自动训练编排 (0.06625ms)
+✔ a renamed v1 block does not implement 阅读连续打卡天数 (0.373708ms)
+✔ a renamed v1 block does not implement 完成率 (0.228375ms)
+✔ a renamed v1 block does not implement 去重人数 (0.107208ms)
+✔ a renamed v1 block does not implement 扫码签到 (0.080792ms)
+✔ a renamed v1 block does not implement 名额限制 (0.07325ms)
+✔ a renamed v1 block does not implement 待办数量 (0.07125ms)
+✔ five domains have different fingerprints, even after ID/order/title changes (1.149792ms)
+✔ one template copied five times with changed IDs and all titles is rejected (0.290916ms)
+✔ changing only modules cannot substitute for entity or field differences (0.11425ms)
+✔ all 20 wrong-domain substitutions fail even with the requested app title (9.9435ms)
+✔ local-output CLI returns structured success/failure and never needs AI configuration (465.307833ms)
+✔ unknown pending source is blocked before the store or compiler can consume it (40.369667ms)
+✔ caller cannot supply trust, a compiler, npm options, scripts or an isolation attestation (11.034291ms)
+✔ same digest cannot be confused with another definition ID (27.340958ms)
+✔ missing pending record and a self-promoted runnable record fail closed (3.334625ms)
+✔ stale source digest is rejected independently of claimed provenance (3.036792ms)
+✔ a well-formed but incorrect dependency SRI is rejected (1.984041ms)
+✔ artifact cannot alter compiler version, package list, build scripts or file types (9.694208ms)
+✔ fixed resolver admission rejects URL, npm, host path, dynamic import, require and config escape (10.374792ms)
+✔ fixed worker has no arbitrary source/path/options entry point (167.753875ms)
+✔ even a forged successful backend inventory cannot grant execution (0.293833ms)
+✖ actual packages and compiler bytes match the pinned archives; tampering is detected (56.277833ms)
+✖ two genuine trusted React builds, deterministic repeat, integrity checks and Viewer refusal (227.283459ms)
+✔ request and prompt keep arbitrary requirement separate, with no production keyword dispatch (7.290791ms)
+✔ request rejects unknown key (0.168167ms)
+✔ request rejects wrong version (0.057583ms)
+✔ request rejects invalid ID (0.050792ms)
+✔ request rejects missing request ID (0.048708ms)
+✔ request rejects empty requirement (0.041416ms)
+✔ request rejects oversize requirement (0.048167ms)
+✔ request rejects non JSON (0.034292ms)
+✔ actual Phase 1A validator, digest and immutable registry revalidation are reused (29.405458ms)
+✔ model output rejects extra output key (0.388708ms)
+✔ model output rejects unknown version (0.147334ms)
+✔ model output rejects wrong definition (0.236417ms)
+✔ model output rejects unknown manifest key (0.166833ms)
+✔ model output rejects schema defaults (0.5925ms)
+✔ model output rejects schema arrays (0.200458ms)
+✔ model output rejects network dependency (0.099125ms)
+✔ model output rejects dependency object chosen by AI (0.061375ms)
+✔ model output rejects dependency duplicate (0.056042ms)
+✔ model output rejects missing React (0.054375ms)
+✔ model output rejects write request (0.104ms)
+✔ model output rejects events (0.089875ms)
+✔ model output rejects missing entry (0.086042ms)
+✔ model output rejects unsafe path (0.082417ms)
+✔ model output rejects case alias (0.089084ms)
+✔ model output rejects oversize file (0.438208ms)
+✔ model output rejects extra unreachable source (1.204084ms)
+✔ model output rejects unsupported asset (0.66625ms)
+✔ model output rejects invalid syntax (0.685333ms)
+✔ model output rejects no default component export (0.498583ms)
+✔ model output rejects nested pathological syntax (0.374333ms)
+✔ model output rejects token count overflow (10.205ms)
+✔ model output rejects source file count overflow (0.181834ms)
+✔ model output rejects total source byte overflow (2.67325ms)
+✔ static admission rejects unknown package (0.355333ms)
+✔ static admission rejects node builtin (0.217875ms)
+✔ static admission rejects absolute URL (0.175292ms)
+✔ static admission rejects escaped URL (0.296291ms)
+✔ static admission rejects undeclared ReactDOM (0.281334ms)
+✔ static admission rejects dynamic import (0.293167ms)
+✔ static admission rejects require (0.168334ms)
+✔ static admission rejects import equals (0.225833ms)
+✔ static admission rejects type import (0.309666ms)
+✔ static admission rejects reexport (0.219791ms)
+✔ static admission rejects path escape (0.1605ms)
+✔ static admission rejects missing relative (0.175709ms)
+✔ static admission rejects encoded path (0.163084ms)
+✔ static admission rejects import attributes (0.22925ms)
+✔ static admission rejects eval (0.183792ms)
+✔ static admission rejects escaped eval identifier (0.227583ms)
+✔ static admission rejects Function (0.223542ms)
+✔ static admission rejects worker (0.190417ms)
+✔ static admission rejects triple slash filesystem reference (0.438459ms)
+✔ static admission rejects triple slash types reference (0.295833ms)
+✔ static admission rejects triple slash library reference (0.170541ms)
+✔ safe multi-file relative imports, reexports and JSX runtime pins are allowed (15.624916ms)
+✔ source byte boundary accepts exact maximum, rejects one byte more; Unicode counts as UTF8 bytes (3.780083ms)
+✔ trusted pinned dependency metadata agrees with baseline lockfile and affects the Phase 1A digest (10.171375ms)
+✔ markdown, malformed JSON, dangerous properties, huge and deeply nested JSON fail closed (1.813459ms)
+✔ three different requirements traverse same generic contract with distinct MOCK source and manifest digests (3.928875ms)
+✔ server modules have no template fixture references or generated-code execution entry (1.896875ms)
+✔ experiment is disabled by default before touching provider or store (0.670875ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (122.43525ms)
+✔ invalid output never reaches storage, never evaluates source side effects (10.326792ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (20.150917ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (12.326125ms)
+✔ private store permissions, quotas and references fail closed (10.421334ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (8.581583ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (9.408792ms)
+✔ all JSON files are inert source artifacts, not generated source module files (9.042416ms)
+✔ paid provider construction and future CLI fail closed without explicit gates (211.194542ms)
+✔ mock transport receives fixed HTTPS endpoint, no redirects, bounded JSON request, server-only key (17.851042ms)
+✔ provider rejects no choices (0.573292ms)
+✔ provider rejects too many choices (0.453959ms)
+✔ provider rejects truncated (0.425333ms)
+✔ provider rejects refusal (0.389625ms)
+✔ provider rejects tool call (0.270916ms)
+✔ provider rejects not text (0.502833ms)
+✔ provider rejects wrong role (2.107459ms)
+✔ HTTP errors and transport failures are redacted and never retried (0.416583ms)
+✔ declared, streamed and content byte limits are independently enforced (1.277583ms)
+✔ invalid UTF8 and malformed envelope JSON fail closed (0.223541ms)
+✔ timeout bounds both connection and response body; aborts transport (31.868875ms)
+✔ real inventory is read-only data and never claims effective isolation (7.955541ms)
+✔ macOS without a Linux boundary remains blocked even with sandbox-exec (0.225667ms)
+✔ a synthetic inventory containing every tool still cannot authorize execution (0.525375ms)
+✔ dependency names without the fixed versions cannot satisfy preflight (0.082958ms)
+✔ missing inventory fields never enable execution (0.165458ms)
+✔ caller supplied attestations, allow flags and source getters are never consumed (0.321917ms)
+✔ preflight exits blocked with structured results; no run argument exists (61.029958ms)
+✔ unknown options and attempted unsafe run options fail closed (237.787292ms)
+✔ trusted macOS probes use paired positive controls; they never authorize execution (55.38975ms)
+ℹ tests 186
+ℹ suites 0
+ℹ pass 183
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 850.580875
+
+✖ failing tests:
+
+test at tests/ai-quality/quality.test.cjs:144:57
+✖ protocol rejection: wrong version (3.344041ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(errorsFor(mutate(loadFixture(cases[0].id))).includes('INVALID_SPEC'))
+  
+      at TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/ai-quality/quality.test.cjs:145:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/custom-block-compiler/compiler.test.mjs:114:1
+✖ actual packages and compiler bytes match the pinned archives; tampering is detected (56.277833ms)
+  Error: Command failed: python3 /Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tools/custom-block-compiler/verify-packages.py
+  
+      at genericNodeError (node:internal/errors:986:15)
+      at wrappedFn (node:internal/errors:540:14)
+      at ChildProcess.exithandler (node:child_process:417:12)
+      at ChildProcess.emit (node:events:514:28)
+      at maybeClose (node:internal/child_process:1172:16)
+      at Socket.<anonymous> (node:internal/child_process:527:11)
+      at Socket.emit (node:events:514:28)
+      at Pipe.<anonymous> (node:net:362:12) {
+    code: 1,
+    killed: false,
+    signal: null,
+    cmd: 'python3 /Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tools/custom-block-compiler/verify-packages.py',
+    stdout: '{"error": "PACKAGE_CACHE_MISSING"}\n',
+    stderr: ''
+  }
+
+test at tests/custom-block-compiler/compiler.test.mjs:126:1
+✖ two genuine trusted React builds, deterministic repeat, integrity checks and Viewer refusal (227.283459ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'failed'
+  - 'compiled'
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/custom-block-compiler/compiler.test.mjs:141:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'failed',
+    expected: 'compiled',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

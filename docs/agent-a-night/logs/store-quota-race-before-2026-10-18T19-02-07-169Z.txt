@@ -1,0 +1,41 @@
+✔ experiment is disabled by default before touching provider or store (0.56125ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (31.027416ms)
+✔ invalid output never reaches storage, never evaluates source side effects (5.81625ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (6.770333ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (6.383583ms)
+✔ private store permissions, quotas and references fail closed (6.247792ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (5.3735ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (5.885708ms)
+✔ all JSON files are inert source artifacts, not generated source module files (6.004709ms)
+✔ caller cancellation retires ignored provider work before any pending-store write (0.550208ms)
+✔ pre-cancelled generator performs no provider or storage calls (0.079125ms)
+✔ cancellation during output admission prevents storage; admitted storage retains an honest outcome (0.499458ms)
+✔ syntax admission is not sandbox certification: hazardous source stays inert and execution denied (5.926125ms)
+✖ independent store handles cannot race distinct artifacts past the shared directory quota (9.250583ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 13
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 206.785875
+
+✖ failing tests:
+
+test at tests/custom-block-generation/pipeline.test.mjs:201:1
+✖ independent store handles cannot race distinct artifacts past the shared directory quota (9.250583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/custom-block-generation/pipeline.test.mjs:208:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

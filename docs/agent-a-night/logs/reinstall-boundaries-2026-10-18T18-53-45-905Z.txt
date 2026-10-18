@@ -1,0 +1,34 @@
+✔ production owner rejects in-flight props after revocation (7.843792ms)
+✔ production owner rejects in-flight props after revocation and regrant (3.605875ms)
+✔ production owner rejects in-flight layout after revocation (1.770416ms)
+✔ production owner rejects in-flight layout after revocation and regrant (1.343875ms)
+✔ in-flight import cannot register artifacts after revocation (0.781042ms)
+✔ in-flight import cannot register artifacts after revocation and regrant (0.693ms)
+✔ concurrent import wins against delayed props exactly once (2.599959ms)
+✔ concurrent import wins against delayed layout exactly once (2.93825ms)
+✔ delayed import cannot overwrite committed props (2.185042ms)
+✔ delayed import cannot overwrite committed layout (1.821542ms)
+✔ readonly builtin CRUD/layout/commands preserve project/history/receipts; regrant permits a fresh request (2.116959ms)
+✔ missing/forged/old credentials and foreign equal-revision snapshots fail at synchronous product CAS (1.221916ms)
+✔ file draft, queued layout gesture and planner confirmation keep their original authorization generation (2.194917ms)
+✔ Mochi invalidates pending provider work and confirmed preview on permission-only notifications (2.273083ms)
+✔ one owner publishes atomic v1 projections, custom edits, mixed drag and builtin CRUD (10.14025ms)
+✔ untrusted invalid imports/digests/props and duplicate creation are atomic and do not admit artifacts (4.684375ms)
+✔ new version and definition require re-admission; old props drafts/reference cannot write; old state is dropped (2.515541ms)
+✔ in-flight admission and CAS cannot overwrite concurrent builtin writes (1.07075ms)
+✔ install captures unknown caller input before await; stale and mismatched replacement intent reject (1.213ms)
+✔ builtin add/remove/undo preserves custom data and render coverage; custom writes clear history but keep receipts (2.032333ms)
+✔ builtin commands cannot collide with custom IDs and failed command leaves history/receipts untouched (1.750542ms)
+✔ custom selection shares Mochi epoch/revision and anchors but grants no builtin planning authority (2.15225ms)
+✔ public CAS validates cached Schema synchronously and freezes the committed candidate (1.194292ms)
+✔ same-version explicit reinstall updates props while preserving selected state, layout and sibling data (15.068709ms)
+✔ new source version resets only selected state; immutable old artifact remains resolvable (2.713333ms)
+✔ invalid replacement is atomic and cannot rewrite props, states, positions or admitted version (8.98275ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 257.3555

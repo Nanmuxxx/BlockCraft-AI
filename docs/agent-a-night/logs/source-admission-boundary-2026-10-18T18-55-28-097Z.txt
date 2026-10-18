@@ -1,0 +1,33 @@
+✔ missing backend and forged runnable observations never mount executable content (8.329209ms)
+✔ exact ref pending-build displays honest status and remains noninteractive (2.235833ms)
+✔ B canvas and C renderer use the identical interleaved order and exact instance identity (5.969708ms)
+✔ Inspector renders schema controls and absent optional groups without writing (3.486291ms)
+✔ no selection displays guidance and source text is never evaluated (1.328834ms)
+✔ shared card/Inspector configuration status valid, readonly=false (4.944166ms)
+✔ shared card/Inspector configuration status valid, readonly=true (4.649875ms)
+✔ shared card/Inspector configuration status missing, readonly=false (4.092583ms)
+✔ shared card/Inspector configuration status missing, readonly=true (4.391167ms)
+✔ shared card/Inspector configuration status unavailable, readonly=false (3.646667ms)
+✔ shared card/Inspector configuration status unavailable, readonly=true (3.064375ms)
+✔ actual adapter admission rejects invalid schemas instead of trusting the UI status projection (1.291709ms)
+✔ experiment is disabled by default before touching provider or store (0.6825ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (34.879292ms)
+✔ invalid output never reaches storage, never evaluates source side effects (6.606542ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (8.063583ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (9.035167ms)
+✔ private store permissions, quotas and references fail closed (7.402ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (6.087958ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (6.803958ms)
+✔ all JSON files are inert source artifacts, not generated source module files (5.833875ms)
+✔ caller cancellation retires ignored provider work before any pending-store write (0.601291ms)
+✔ pre-cancelled generator performs no provider or storage calls (0.083959ms)
+✔ cancellation during output admission prevents storage; admitted storage retains an honest outcome (0.464708ms)
+✔ syntax admission is not sandbox certification: hazardous source stays inert and execution denied (7.474375ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 272.970167

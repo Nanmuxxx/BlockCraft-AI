@@ -1,0 +1,47 @@
+✔ preview is inert; one real install/CAS changes only selected version/props/state; old version and state remain traceable (10.182916ms)
+✔ minimum provider context includes selected source/props and excludes records, other instances, authority and state values (2.318834ms)
+✔ cancel is idempotent and does not install; copied/foreign plan ids do not authorize (3.249292ms)
+✔ reject invalid candidate: request id (1.724ms)
+✔ reject invalid candidate: revision (2.008709ms)
+✔ reject invalid candidate: target (1.483792ms)
+✔ reject invalid candidate: parent version (1.325458ms)
+✔ reject invalid candidate: extra execution permit (1.290541ms)
+✔ reject invalid candidate: empty summary (1.425667ms)
+✔ reject invalid candidate: missing steps (1.855625ms)
+✔ reject invalid candidate: incorrect diff (1.473666ms)
+✔ reject invalid candidate: digest (1.386167ms)
+✔ reject invalid candidate: manifest (1.192625ms)
+✔ reject invalid candidate: definition (1.133708ms)
+✔ reject invalid candidate: unknown props (1.338708ms)
+✔ reject invalid candidate: invalid props (1.812958ms)
+✔ rehash does not authorize unchanged source (1.357125ms)
+✔ rehash does not authorize capability escalation (1.295875ms)
+✔ rehash does not authorize schema migration (1.286167ms)
+✔ rehash does not authorize props only (1.419542ms)
+✔ stale confirmation fails after selection A-B-A (1.928042ms)
+✔ stale confirmation fails after mode/context (1.656958ms)
+✔ stale confirmation fails after project revision (1.718708ms)
+✔ stale confirmation fails after authorization revoke/regrant (1.883416ms)
+✔ late provider response ignoring abort cannot revive old plan or supersede newer request (2.49175ms)
+✔ context cancellation retires a never-settling source provider before it can return (2.234875ms)
+✔ synchronous abort reentry cannot share a source request epoch with its superseder (2.21875ms)
+✔ readonly and explicit stale input reject before provider; no untrusted getters execute (1.047875ms)
+✔ confirm lease blocks selection/cancel/dispose/reentrant confirm while real install is awaiting; competing write wins CAS (2.557541ms)
+✔ revocation during real admission reaches final CAS and refuses stale authorization (2.0315ms)
+✔ two planners compete on one real session; at most one version commit (3.008792ms)
+✔ concurrent explicit replacement invalidates an older preview, keeps both registered versions (2.858875ms)
+✔ model seam forwards structured source task without template/fallback; malformed model text and provider failure leave project untouched (1.450458ms)
+✔ dispose aborts in-flight provider and permanently closes planner without a write (6.495ms)
+✔ caller input and returned provider JSON are captured before asynchronous validation (7.161292ms)
+✔ cancel retires a stalled initial artifact registry lookup without changing history (8.245334ms)
+✔ cancel retires a stalled replacement project registry lookup without changing history (5.997542ms)
+✔ model seam preserves completion-supplied TSX bytes and uses the same validation, without network (3.166833ms)
+✔ install rejection is terminal and cannot be retried as a fresh implicit authorization (3.90375ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 275.697792

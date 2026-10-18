@@ -1,0 +1,39 @@
+{
+  "repositoryHead": "a3c2b0ba68c0680e6b08843948a793a39fee107c",
+  "browser": "151.0.7922.34",
+  "scope": "formal /ai-create -> actual local HTTP -> offline completion -> B/C literal AppSpec labels/options/record values; no TSX",
+  "realModelCalls": 0,
+  "cases": [
+    {
+      "width": 1366,
+      "http": [
+        200
+      ],
+      "literalAppAndBlockNames": true,
+      "literalLabelsAndSelectOptions": true,
+      "recordCreateEditAndBcRoundTrip": true,
+      "probeNodes": 0,
+      "executionMarker": false,
+      "errors": [],
+      "external": [],
+      "dialogs": [],
+      "assetFailures": []
+    },
+    {
+      "width": 390,
+      "http": [
+        200
+      ],
+      "literalAppAndBlockNames": true,
+      "literalLabelsAndSelectOptions": true,
+      "recordCreateEditAndBcRoundTrip": true,
+      "probeNodes": 0,
+      "executionMarker": false,
+      "errors": [],
+      "external": [],
+      "dialogs": [],
+      "assetFailures": []
+    }
+  ],
+  "injectedUpstreamCalls": 2
+}

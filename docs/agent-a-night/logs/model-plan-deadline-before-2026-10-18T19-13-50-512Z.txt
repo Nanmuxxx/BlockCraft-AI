@@ -1,0 +1,57 @@
+✖ AppSpec model plan deadline releases Host without a preview and late output cannot overwrite a newer confirmation (153.375625ms)
+✖ AppSpec model plan deadline configuration rejects unbounded or invalid values (0.208875ms)
+✔ completion only receives selected metadata, prompt and cancellation signal; preview requires explicit confirmation (4.114042ms)
+✔ malformed JSON: Phase A rejects model data and preserves project (0.641875ms)
+✔ oversized response: Phase A rejects model data and preserves project (0.529166ms)
+✔ forged request ID: Phase A rejects model data and preserves project (0.86775ms)
+✔ stale revision: Phase A rejects model data and preserves project (0.529875ms)
+✔ record command: Phase A rejects model data and preserves project (0.414917ms)
+✔ unselected removal: Phase A rejects model data and preserves project (0.745708ms)
+✔ invented TSX: Phase A rejects model data and preserves project (0.746459ms)
+✔ unsupported button style: Phase A rejects model data and preserves project (0.599292ms)
+✔ cancelled late completion cannot replace newer preview or apply receipt/history (1.162667ms)
+✔ authorization ABA and concurrent revision invalidate exact preview without implicit reauthorization (1.11425ms)
+✔ cancel retires Host await even when completion never settles; late failures stay obsolete (2.135041ms)
+✔ large valid selected metadata is rejected by UTF-8 bytes before completion, without truncation or mutation (1.223458ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 13
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 347.603666
+
+✖ failing tests:
+
+test at tests/mochi-ai/model-plan.test.cjs:18:1
+✖ AppSpec model plan deadline releases Host without a preview and late output cannot overwrite a newer confirmation (153.375625ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/model-plan.test.cjs:28:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'MODEL_TIMEOUT' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/model-plan.test.cjs:47:1
+✖ AppSpec model plan deadline configuration rejects unbounded or invalid values (0.208875ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/model-plan.test.cjs:49:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'MODEL_CONFIGURATION' },
+    operator: 'throws',
+    diff: 'simple'
+  }

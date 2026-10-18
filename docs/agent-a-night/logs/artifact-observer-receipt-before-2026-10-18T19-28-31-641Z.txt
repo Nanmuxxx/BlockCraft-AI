@@ -1,0 +1,50 @@
+✔ real pending fixture: read + preview + cancel do not write; confirmed install only appends once (7.551083ms)
+✔ preview component shows exact identity/props/source and status; no source HTML or runtime (5.328042ms)
+✔ corrupt version, malformed envelope/JSON, executable status, props and existing ID all fail closed (2.828167ms)
+✔ late reads, cancellation and superseding requests never revive a preview (0.427ms)
+✔ owner revision and authorization changes invalidate loaded/preview candidates (2.268875ms)
+✔ confirmation locks parent switch/unmount synchronously before setter; double confirm invokes install once (1.418458ms)
+✔ concurrent commit or revoked authorization during install rejects without registry publication (2.289125ms)
+✔ context change while prepare awaits discards result; disposal and StrictMode empty replay clean subscriptions (0.510625ms)
+✔ unexpected session exception remains error; no success receipt or automatic retry (1.202208ms)
+✔ stalled file read settles promptly after cancel; late rejection cannot overwrite new input (0.448833ms)
+✔ stalled file read settles promptly after replace; late rejection cannot overwrite new input (0.41075ms)
+✔ stalled file read settles promptly after dispose; late rejection cannot overwrite new input (0.474375ms)
+✔ stalled file read settles promptly after revision; late rejection cannot overwrite new input (0.487875ms)
+✔ stalled file read settles promptly after permission; late rejection cannot overwrite new input (0.3415ms)
+✔ a superseding file read settles the stalled caller without losing its own draft (0.309458ms)
+✔ subscriber reentry during idle publication keeps the newer read (0.260292ms)
+✔ subscriber reentry during reading publication keeps the newer read (0.198ms)
+✔ native file bytes use strict UTF-8 before accepting names or props; text fallback cannot mask corruption (1.140667ms)
+✔ file byte bounds reject invalid declarations and oversized byte buffers (0.246958ms)
+✔ native byte read cancellation also retires without waiting for the File promise (0.149084ms)
+✖ an observer failure cannot turn a successful confirmed install into an error (1.854208ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 20
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 234.62975
+
+✖ failing tests:
+
+test at tests/generated-artifact-ui/ui.test.cjs:208:1
+✖ an observer failure cannot turn a successful confirmed install into an error (1.854208ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'error'
+  - 'installed'
+  
+      at TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generated-artifact-ui/ui.test.cjs:215:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'error',
+    expected: 'installed',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

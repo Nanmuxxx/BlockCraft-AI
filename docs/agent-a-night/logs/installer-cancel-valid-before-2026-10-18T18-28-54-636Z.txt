@@ -1,0 +1,37 @@
+✖ stalled prepare registry lookup retires on invalidate (1003.876ms)
+✖ stalled prepare registry lookup retires on dispose (1002.520958ms)
+✖ stalled prepare registry lookup retires on supersede (1002.1975ms)
+✔ real archived DeepSeek record: private store -> exact export -> preview -> sole session CAS; source stays inert (47.164708ms)
+✔ export rejects missing/wrong reference, corrupt digest, invalid status/props and captures input (3.24725ms)
+✔ cancel is idempotent, foreign tickets cannot commit and no candidate is registered (1.108458ms)
+✔ malformed, stale digest, invalid props, extra execution permission and collisions fail before preview (2.780541ms)
+✔ project switch, revision change and revoke/regrant invalidate previews (2.287959ms)
+✔ confirmation rechecks revision/authorization even if host notifications were missed (1.430833ms)
+✔ context invalidation or disposal during prepare drops the late result without registering artifact (1.289583ms)
+✔ late prepare, superseding prepare, input mutation and dispose cannot revive a ticket (1.559167ms)
+✔ confirm lease synchronously blocks cancel/context switch/dispose and duplicate submission (1.190041ms)
+✔ permission changes or concurrent CAS during async install reject atomically and terminally (1.768167ms)
+✔ two installers using one owner commit at most once; no implicit replacement (1.826834ms)
+✔ unexpected install exception is terminal; capability escalation rejected (1.167542ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 3
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3241.1375
+
+✖ failing tests:
+
+test at tests/generated-artifact/install.test.cjs:18:62
+✖ stalled prepare registry lookup retires on invalidate (1003.876ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact/install.test.cjs:18:62
+✖ stalled prepare registry lookup retires on dispose (1002.520958ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact/install.test.cjs:18:62
+✖ stalled prepare registry lookup retires on supersede (1002.1975ms)
+  'test timed out after 1000ms'

@@ -1,0 +1,31 @@
+✔ disposing a conversation prevents its queued opt-in and delayed status egress (1.7725ms)
+✔ an explicitly queued opt-out still revokes after disposal and an already sent opt-in (0.3025ms)
+✔ late opt-in acknowledgment cannot mark a disabled capability as proactive (0.582333ms)
+✖ explicit opt-out publishes revocation before notifying idle subscribers (1.602125ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30.47925
+
+✖ failing tests:
+
+test at tests/mochi-ai/consent-lifecycle.test.mjs:64:1
+✖ explicit opt-out publishes revocation before notifying idle subscribers (1.602125ms)
+  AssertionError [ERR_ASSERTION]: opt-out must not trigger another provider request from an idle observer
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/consent-lifecycle.test.mjs:84:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

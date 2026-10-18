@@ -1,0 +1,62 @@
+✔ pre-cancelled source completion never reaches the separately supplied transport (0.465042ms)
+✔ outbound source context bounds actual UTF-8 JSON including instruction and escaped source (3.792916ms)
+✔ cancel during completion rejects its late output before decoding it (0.085083ms)
+✔ source model seam rejects oversized or non-text completion without a fallback (0.578833ms)
+✖ source model completion has a bounded deadline even when transport ignores abort (152.693125ms)
+✖ source model seam itself retires caller cancellation and forwards its reason (151.470334ms)
+✖ source model deadline configuration fails closed (0.269542ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 4
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 480.557416
+
+✖ failing tests:
+
+test at tests/mochi-source/provider.test.cjs:43:1
+✖ source model completion has a bounded deadline even when transport ignores abort (152.693125ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-source/provider.test.cjs:52:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'MODEL_TIMEOUT' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-source/provider.test.cjs:61:1
+✖ source model seam itself retires caller cancellation and forwards its reason (151.470334ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-source/provider.test.cjs:69:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-source/provider.test.cjs:74:1
+✖ source model deadline configuration fails closed (0.269542ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-source/provider.test.cjs:76:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'MODEL_CONFIGURATION' },
+    operator: 'throws',
+    diff: 'simple'
+  }

@@ -1,0 +1,49 @@
+✔ real pending fixture: read + preview + cancel do not write; confirmed install only appends once (8.396ms)
+✔ preview component shows exact identity/props/source and status; no source HTML or runtime (6.025916ms)
+✔ corrupt version, malformed envelope/JSON, executable status, props and existing ID all fail closed (3.409334ms)
+✔ late reads, cancellation and superseding requests never revive a preview (0.562834ms)
+✔ owner revision and authorization changes invalidate loaded/preview candidates (2.395333ms)
+✔ confirmation locks parent switch/unmount synchronously before setter; double confirm invokes install once (1.715083ms)
+✔ concurrent commit or revoked authorization during install rejects without registry publication (2.30425ms)
+✔ context change while prepare awaits discards result; disposal and StrictMode empty replay clean subscriptions (0.594708ms)
+✔ unexpected session exception remains error; no success receipt or automatic retry (1.846ms)
+✖ stalled file read settles promptly after cancel; late rejection cannot overwrite new input (1002.84925ms)
+✖ stalled file read settles promptly after replace; late rejection cannot overwrite new input (1002.660875ms)
+✖ stalled file read settles promptly after dispose; late rejection cannot overwrite new input (1001.795709ms)
+✖ stalled file read settles promptly after revision; late rejection cannot overwrite new input (1000.162625ms)
+✖ stalled file read settles promptly after permission; late rejection cannot overwrite new input (1001.85325ms)
+✖ a superseding file read settles the stalled caller without losing its own draft (1001.59925ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 6
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6321.124958
+
+✖ failing tests:
+
+test at tests/generated-artifact-ui/ui.test.cjs:129:3
+✖ stalled file read settles promptly after cancel; late rejection cannot overwrite new input (1002.84925ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact-ui/ui.test.cjs:129:3
+✖ stalled file read settles promptly after replace; late rejection cannot overwrite new input (1002.660875ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact-ui/ui.test.cjs:129:3
+✖ stalled file read settles promptly after dispose; late rejection cannot overwrite new input (1001.795709ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact-ui/ui.test.cjs:129:3
+✖ stalled file read settles promptly after revision; late rejection cannot overwrite new input (1000.162625ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact-ui/ui.test.cjs:129:3
+✖ stalled file read settles promptly after permission; late rejection cannot overwrite new input (1001.85325ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact-ui/ui.test.cjs:152:1
+✖ a superseding file read settles the stalled caller without losing its own draft (1001.59925ms)
+  'test timed out after 1000ms'

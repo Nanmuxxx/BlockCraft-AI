@@ -1,0 +1,45 @@
+✔ experiment is disabled by default before touching provider or store (0.615709ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (35.303375ms)
+✔ invalid output never reaches storage, never evaluates source side effects (6.529334ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (7.979917ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (10.242208ms)
+✔ private store permissions, quotas and references fail closed (7.118792ms)
+✔ store reads the complete immutable record when the filesystem returns short reads (7.3385ms)
+✔ a valid JSON prefix cannot hide unread trailing bytes in a stored record (7.660083ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (6.16525ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (5.475959ms)
+✔ all JSON files are inert source artifacts, not generated source module files (5.966375ms)
+✔ caller cancellation retires ignored provider work before any pending-store write (0.565208ms)
+✔ pre-cancelled generator performs no provider or storage calls (0.082834ms)
+✔ cancellation during output admission prevents storage; admitted storage retains an honest outcome (0.585625ms)
+✔ syntax admission is not sandbox certification: hazardous source stays inert and execution denied (6.415ms)
+✔ independent store handles cannot race distinct artifacts past the shared directory quota (8.357917ms)
+✔ unknown or stale store lease fails closed, remains intact, and is never followed (14.807584ms)
+✔ separate node processes share the same bounded store write lease (166.685584ms)
+✔ paid provider construction and future CLI fail closed without explicit gates (155.552875ms)
+✔ mock transport receives fixed HTTPS endpoint, no redirects, bounded JSON request, server-only key (16.394ms)
+✔ provider rejects no choices (0.29475ms)
+✔ provider rejects too many choices (0.213292ms)
+✔ provider rejects truncated (0.166958ms)
+✔ provider rejects refusal (0.1625ms)
+✔ provider rejects tool call (0.171875ms)
+✔ provider rejects not text (0.145583ms)
+✔ provider rejects wrong role (0.137458ms)
+✔ provider rejects mixed error and content (0.165917ms)
+✔ provider rejects false refusal (0.543375ms)
+✔ provider rejects null tool call (0.2785ms)
+✔ HTTP errors and transport failures are redacted and never retried (0.458875ms)
+✔ declared, streamed and content byte limits are independently enforced (2.447125ms)
+✔ invalid UTF8 and malformed envelope JSON fail closed (0.499583ms)
+✔ timeout bounds both connection and response body; aborts transport (34.011291ms)
+✔ timeout releases late and hanging response bodies; early HTTP/size rejection also cancels (23.518042ms)
+✔ caller cancellation rejects before fetch and retires ignored transport with late body cleanup (0.943834ms)
+✔ caller cancellation retires a nonsettling upstream body without awaiting its cancel (0.405708ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 445.281709

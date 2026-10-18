@@ -1,0 +1,45 @@
+✔ real pending fixture: read + preview + cancel do not write; confirmed install only appends once (7.848333ms)
+✔ preview component shows exact identity/props/source and status; no source HTML or runtime (5.616583ms)
+✔ corrupt version, malformed envelope/JSON, executable status, props and existing ID all fail closed (2.705959ms)
+✔ late reads, cancellation and superseding requests never revive a preview (0.372541ms)
+✔ owner revision and authorization changes invalidate loaded/preview candidates (2.476208ms)
+✔ confirmation locks parent switch/unmount synchronously before setter; double confirm invokes install once (1.606ms)
+✔ concurrent commit or revoked authorization during install rejects without registry publication (2.528125ms)
+✔ context change while prepare awaits discards result; disposal and StrictMode empty replay clean subscriptions (0.535625ms)
+✔ unexpected session exception remains error; no success receipt or automatic retry (1.165333ms)
+✔ stalled file read settles promptly after cancel; late rejection cannot overwrite new input (0.4405ms)
+✔ stalled file read settles promptly after replace; late rejection cannot overwrite new input (0.358459ms)
+✔ stalled file read settles promptly after dispose; late rejection cannot overwrite new input (0.489542ms)
+✔ stalled file read settles promptly after revision; late rejection cannot overwrite new input (0.511375ms)
+✔ stalled file read settles promptly after permission; late rejection cannot overwrite new input (0.377458ms)
+✔ a superseding file read settles the stalled caller without losing its own draft (0.32375ms)
+✔ subscriber reentry during idle publication keeps the newer read (0.2265ms)
+✔ subscriber reentry during reading publication keeps the newer read (0.182291ms)
+✖ native file bytes use strict UTF-8 before accepting names or props; text fallback cannot mask corruption (0.588042ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 17
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 221.721792
+
+✖ failing tests:
+
+test at tests/generated-artifact-ui/ui.test.cjs:175:1
+✖ native file bytes use strict UTF-8 before accepting names or props; text fallback cannot mask corruption (0.588042ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'loaded' !== 'error'
+  
+      at TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/generated-artifact-ui/ui.test.cjs:181:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'loaded',
+    expected: 'error',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

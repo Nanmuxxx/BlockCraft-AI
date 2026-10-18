@@ -1,0 +1,71 @@
+✔ health works without a key and never calls upstream (15.293083ms)
+✔ missing key produces safe 503 without upstream call (7.6095ms)
+✔ invalid idea, unexpected fields, and malformed JSON never reach upstream (11.7005ms)
+✔ body byte limit and content type are enforced before upstream (2.33825ms)
+✔ chunked body cannot bypass byte limit (1.499791ms)
+✔ mock valid result uses official endpoint, default model, JSON mode, and actual AppSpec source (4.469042ms)
+✔ DEEPSEEK_MODEL overrides the default server-side (2.400459ms)
+✔ rejects non-JSON model content with the existing validator and safe errors (1.2435ms)
+✔ rejects wrong protocol with the existing validator and safe errors (1.692833ms)
+✔ rejects extra executable property with the existing validator and safe errors (1.158667ms)
+✔ rejects missing binding with the existing validator and safe errors (1.176125ms)
+✔ rejects cross-entity field with the existing validator and safe errors (0.906375ms)
+✔ handles malformed upstream JSON (0.82225ms)
+✔ handles truncated output (0.8965ms)
+✔ handles empty choices (1.618333ms)
+✔ handles upstream HTTP failure (1.683084ms)
+✔ handles oversized envelope (0.804458ms)
+✔ handles oversized generated content (1.034084ms)
+✔ rejects ambiguous completion: multiple choices (0.871ms)
+✔ rejects ambiguous completion: tool calls (0.7395ms)
+✔ rejects ambiguous completion: legacy function call (0.710584ms)
+✔ rejects ambiguous completion: refusal with content (0.786708ms)
+✔ rejects ambiguous completion: wrong message role (0.950333ms)
+✔ rejects ambiguous completion: error with choices (0.968458ms)
+✔ invalid UTF-8 input is rejected before upstream, even inside valid JSON strings (0.682125ms)
+✔ invalid UTF-8 upstream cannot silently replace bytes inside an otherwise valid AppSpec (1.465542ms)
+✔ timeout aborts an upstream call and returns safe 504 (26.93825ms)
+✔ timeout also covers upstream body consumption (28.772042ms)
+✔ rate limit ignores forged forwarding headers and leaves health available (5.081125ms)
+✔ concurrency cap rejects excess calls without starting another upstream request (6.177416ms)
+✔ cross-origin requests and wrong methods/paths never call upstream (1.753208ms)
+✔ deadline releases ignored-abort transport and cancels its late response body (12.629ms)
+✔ deadline releases ignored-abort body, including nonsettling cancel (12.029875ms)
+✖ timed-out requests do not retain concurrency slots (26.443833ms)
+✔ offline HTTP service -> strict client -> selected Mochi plan -> confirmation -> shared B/C runtime (29.701458ms)
+✔ real provider request shape uses existing configuration, bounded context and no records (13.09275ms)
+✔ server rejects snapshots/records/extra metadata instead of forwarding them (0.262875ms)
+✔ schema and referential validation reject unknown fields/blocks, capabilities and silent modifications (1.787166ms)
+✔ provider fails closed without key and never retries/falls back on HTTP, JSON or truncation errors (0.616458ms)
+✔ provider aborts on deadline and external cancellation, including body reads (23.2165ms)
+✔ uncooperative fetch/body and cancellation cleanup cannot hold the provider beyond its deadline (22.5455ms)
+✔ Mochi rejects mixed tool/refusal/error/multiple-choice envelopes and invalid UTF-8 (0.990666ms)
+✔ production server mounts routes but requires trusted access and durable cost control (29.577ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 42
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 239.729916
+
+✖ failing tests:
+
+test at server/server.test.mjs:231:1
+✖ timed-out requests do not retain concurrency slots (26.443833ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 5
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/server.test.mjs:236:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

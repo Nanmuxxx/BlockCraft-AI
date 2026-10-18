@@ -1,0 +1,26 @@
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (1.941917ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.392708ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.5795ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.250875ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.151083ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.139542ms)
+✔ cancel retires an ignored analysis promise without altering newer history (1.547625ms)
+✔ abort listener reentry retains ownership of the newer conversation request (0.339208ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.109166ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (21.033333ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.104417ms)
+✔ late status cannot re-enable consent after explicit off (0.0705ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.163166ms)
+✔ subscriber cancellation during message publication prevents analysis egress (0.100958ms)
+✔ subscriber cancellation during busy publication prevents analysis egress (0.056708ms)
+✔ subscriber replacement at request publication keeps only the fresh analysis and history (0.130792ms)
+✔ project transition publishes the new identity before abort reentry (0.158375ms)
+✔ project transition publishes the new identity before subscriber reentry (0.109125ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 59.005792

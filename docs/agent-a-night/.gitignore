@@ -1,0 +1,4 @@
+# Large local browser recordings remain available in this worktree.
+browser/**/*.png
+browser/**/*.webm
+browser/**/*.zip

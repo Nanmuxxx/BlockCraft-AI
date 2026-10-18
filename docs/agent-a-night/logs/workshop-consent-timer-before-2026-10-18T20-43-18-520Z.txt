@@ -1,0 +1,47 @@
+✔ host bridge listens to settled structural events, ignores records/anchors/mode, and cleans up (51.844ms)
+✖ settled event cannot revive after consent-off-on (1.021084ms)
+✖ settled event cannot revive after capability-off-on (0.303875ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 1
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 84.464292
+
+✖ failing tests:
+
+test at tests/mochi-ai/workshop.test.mjs:26:67
+✖ settled event cannot revive after consent-off-on (1.021084ms)
+  AssertionError [ERR_ASSERTION]: a retired scheduled event must not acquire a later consent grant
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/workshop.test.mjs:43:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/workshop.test.mjs:26:67
+✖ settled event cannot revive after capability-off-on (0.303875ms)
+  AssertionError [ERR_ASSERTION]: a retired scheduled event must not acquire a later consent grant
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/workshop.test.mjs:43:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

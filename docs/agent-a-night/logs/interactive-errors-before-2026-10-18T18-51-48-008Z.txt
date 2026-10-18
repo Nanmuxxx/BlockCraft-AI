@@ -1,0 +1,195 @@
+✔ access adapter ignoring abort cannot retain a cancelled gate (1.620209ms)
+✔ budget adapter ignoring abort cannot retain a cancelled gate (0.665375ms)
+✔ access adapter is bounded by admission deadline (0.401208ms)
+✔ budget adapter is bounded by admission deadline (0.277125ms)
+✔ already disconnected requests do not invoke access or budget adapters (0.113667ms)
+✖ access adapter failures are normalized without exposing arbitrary codes/status (0.5125ms)
+✖ access adapter failures are normalized without exposing arbitrary codes/status (0.14625ms)
+✖ access adapter failures are normalized without exposing arbitrary codes/status (0.098917ms)
+✖ budget adapter failures are normalized without exposing arbitrary codes/status (0.119ms)
+✖ budget adapter failures are normalized without exposing arbitrary codes/status (0.144084ms)
+✖ budget adapter failures are normalized without exposing arbitrary codes/status (0.084542ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 5
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41.76625
+
+✖ failing tests:
+
+test at tests/trusted-interactive/gate.test.mjs:43:3
+✖ access adapter failures are normalized without exposing arbitrary codes/status (0.5125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   message: "Cannot read properties of null (reading 'code')"
+  -   code: 'BUDGET_UNAVAILABLE',
+  -   message: 'BUDGET_UNAVAILABLE',
+  -   status: 503
+    }
+  
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:46:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of null (reading 'code')
+        at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/trusted-interactive.mjs:46:33
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:46:5)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: { code: 'BUDGET_UNAVAILABLE', status: 503, message: 'BUDGET_UNAVAILABLE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/trusted-interactive/gate.test.mjs:43:3
+✖ access adapter failures are normalized without exposing arbitrary codes/status (0.14625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   message: "Cannot read properties of undefined (reading 'code')"
+  -   code: 'BUDGET_UNAVAILABLE',
+  -   message: 'BUDGET_UNAVAILABLE',
+  -   status: 503
+    }
+  
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:46:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of undefined (reading 'code')
+        at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/trusted-interactive.mjs:46:33
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:46:5)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: { code: 'BUDGET_UNAVAILABLE', status: 503, message: 'BUDGET_UNAVAILABLE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/trusted-interactive/gate.test.mjs:43:3
+✖ access adapter failures are normalized without exposing arbitrary codes/status (0.098917ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   code: 'ADAPTER_PRIVATE_SECRET',
+  +   message: 'adapter-private-data',
+  +   status: 9999
+  -   code: 'BUDGET_UNAVAILABLE',
+  -   message: 'BUDGET_UNAVAILABLE',
+  -   status: 503
+    }
+  
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:46:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: adapter-private-data
+        at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:42:96
+        at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+        at async node:internal/modules/esm/loader:647:26
+        at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5),
+    expected: { code: 'BUDGET_UNAVAILABLE', status: 503, message: 'BUDGET_UNAVAILABLE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/trusted-interactive/gate.test.mjs:43:3
+✖ budget adapter failures are normalized without exposing arbitrary codes/status (0.119ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   message: "Cannot read properties of null (reading 'code')"
+  -   code: 'BUDGET_UNAVAILABLE',
+  -   message: 'BUDGET_UNAVAILABLE',
+  -   status: 503
+    }
+  
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:46:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of null (reading 'code')
+        at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/trusted-interactive.mjs:46:33
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:46:5)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: { code: 'BUDGET_UNAVAILABLE', status: 503, message: 'BUDGET_UNAVAILABLE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/trusted-interactive/gate.test.mjs:43:3
+✖ budget adapter failures are normalized without exposing arbitrary codes/status (0.144084ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   message: "Cannot read properties of undefined (reading 'code')"
+  -   code: 'BUDGET_UNAVAILABLE',
+  -   message: 'BUDGET_UNAVAILABLE',
+  -   status: 503
+    }
+  
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:46:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of undefined (reading 'code')
+        at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/trusted-interactive.mjs:46:33
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:46:5)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: { code: 'BUDGET_UNAVAILABLE', status: 503, message: 'BUDGET_UNAVAILABLE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/trusted-interactive/gate.test.mjs:43:3
+✖ budget adapter failures are normalized without exposing arbitrary codes/status (0.084542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   code: 'ADAPTER_PRIVATE_SECRET',
+  +   message: 'adapter-private-data',
+  +   status: 9999
+  -   code: 'BUDGET_UNAVAILABLE',
+  -   message: 'BUDGET_UNAVAILABLE',
+  -   status: 503
+    }
+  
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:46:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: adapter-private-data
+        at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/trusted-interactive/gate.test.mjs:42:96
+        at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+        at async node:internal/modules/esm/loader:647:26
+        at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5),
+    expected: { code: 'BUDGET_UNAVAILABLE', status: 503, message: 'BUDGET_UNAVAILABLE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

@@ -1,0 +1,43 @@
+✔ real pending fixture: read + preview + cancel do not write; confirmed install only appends once (8.116042ms)
+✔ preview component shows exact identity/props/source and status; no source HTML or runtime (5.944875ms)
+✔ corrupt version, malformed envelope/JSON, executable status, props and existing ID all fail closed (2.777667ms)
+✔ late reads, cancellation and superseding requests never revive a preview (0.398083ms)
+✔ owner revision and authorization changes invalidate loaded/preview candidates (2.579542ms)
+✔ confirmation locks parent switch/unmount synchronously before setter; double confirm invokes install once (1.543334ms)
+✔ concurrent commit or revoked authorization during install rejects without registry publication (2.404833ms)
+✔ context change while prepare awaits discards result; disposal and StrictMode empty replay clean subscriptions (0.5855ms)
+✔ unexpected session exception remains error; no success receipt or automatic retry (1.181833ms)
+✔ stalled file read settles promptly after cancel; late rejection cannot overwrite new input (0.473166ms)
+✔ stalled file read settles promptly after replace; late rejection cannot overwrite new input (0.427792ms)
+✔ stalled file read settles promptly after dispose; late rejection cannot overwrite new input (0.406708ms)
+✔ stalled file read settles promptly after revision; late rejection cannot overwrite new input (0.4375ms)
+✔ stalled file read settles promptly after permission; late rejection cannot overwrite new input (0.424084ms)
+✔ a superseding file read settles the stalled caller without losing its own draft (0.3385ms)
+✔ subscriber reentry during idle publication keeps the newer read (0.235208ms)
+✔ subscriber reentry during reading publication keeps the newer read (0.186583ms)
+✔ native file bytes use strict UTF-8 before accepting names or props; text fallback cannot mask corruption (1.135875ms)
+✔ file byte bounds reject invalid declarations and oversized byte buffers (0.2175ms)
+✔ native byte read cancellation also retires without waiting for the File promise (0.177584ms)
+✔ stalled prepare registry lookup retires on invalidate (7.03325ms)
+✔ stalled prepare registry lookup retires on dispose (4.521792ms)
+✔ stalled prepare registry lookup retires on supersede (3.293208ms)
+✔ real archived DeepSeek record: private store -> exact export -> preview -> sole session CAS; source stays inert (47.760417ms)
+✔ export rejects missing/wrong reference, corrupt digest, invalid status/props and captures input (1.762708ms)
+✔ cancel is idempotent, foreign tickets cannot commit and no candidate is registered (0.887709ms)
+✔ malformed, stale digest, invalid props, extra execution permission and collisions fail before preview (2.580333ms)
+✔ project switch, revision change and revoke/regrant invalidate previews (2.142917ms)
+✔ confirmation rechecks revision/authorization even if host notifications were missed (1.840083ms)
+✔ context invalidation or disposal during prepare drops the late result without registering artifact (0.663708ms)
+✔ late prepare, superseding prepare, input mutation and dispose cannot revive a ticket (1.254125ms)
+✔ confirm lease synchronously blocks cancel/context switch/dispose and duplicate submission (1.221208ms)
+✔ permission changes or concurrent CAS during async install reject atomically and terminally (1.540375ms)
+✔ two installers using one owner commit at most once; no implicit replacement (1.766417ms)
+✔ unexpected install exception is terminal; capability escalation rejected (1.366334ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 280.270875

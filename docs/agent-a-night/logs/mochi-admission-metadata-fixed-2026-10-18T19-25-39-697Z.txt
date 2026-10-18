@@ -1,0 +1,45 @@
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (16.7055ms)
+✔ HTTP rejects malformed UTF-8 before provider egress (4.059167ms)
+✔ ignored access resolver deadline retires HTTP admission with no model call (13.955667ms)
+✔ access resolver Error becomes a safe unavailable response (1.233292ms)
+✔ access resolver MochiError becomes a safe unavailable response (0.965916ms)
+✔ budget adapter cannot forge cancellation metadata into HTTP (1.103834ms)
+✔ HTTP disconnect aborts pending access and consumes a late rejection without egress (1.813334ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (3.48425ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (2.471833ms)
+✔ early HTTP rejection closes incomplete uploads without waiting for the remaining body (1.214667ms)
+✔ chunked uploads exceeding the body bound receive a structured 413 with no model call (0.512875ms)
+✔ chunked JSON accepts a multibyte prompt split across transport chunks (2.259166ms)
+✔ HTTP production disabled remains explicit; no mock fallback (1.160917ms)
+✔ missing deployment resolver fails closed even with client identity headers (1.070417ms)
+✔ client identity cannot authenticate or override trusted project scope (1.320209ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (1.823125ms)
+✔ real provider request shape uses existing configuration, bounded context and no records (13.241541ms)
+✔ server rejects snapshots/records/extra metadata instead of forwarding them (0.224208ms)
+✔ schema and referential validation reject unknown fields/blocks, capabilities and silent modifications (1.724125ms)
+✔ provider fails closed without key and never retries/falls back on HTTP, JSON or truncation errors (0.662666ms)
+✔ HTTP and declared-size rejection cancel unused bodies without waiting for cleanup (0.376ms)
+✔ provider aborts on deadline and external cancellation, including body reads (23.040833ms)
+✔ uncooperative fetch/body and cancellation cleanup cannot hold the provider beyond its deadline (23.358583ms)
+✔ Mochi rejects mixed tool/refusal/error/multiple-choice envelopes and invalid UTF-8 (0.872708ms)
+✔ production server mounts routes but requires trusted access and durable cost control (22.884209ms)
+✔ default disabled, missing/expired/unverified grants make zero upstream calls (1.250666ms)
+✔ proactive requires explicit consent; events and suggestions deduplicate until cooldown (1.621708ms)
+✔ chat and proactive throttle on the server and enforce trusted application binding (0.242917ms)
+✔ global call/token budgets reserve before requests and failures are charged without retries (0.487417ms)
+✔ session budget shared across projects; per-session/global concurrency bounded (0.794458ms)
+✔ revoking proactive consent aborts and discards an outstanding response (1.930625ms)
+✔ approval is snapshotted so caller mutation cannot increase the grant (0.154833ms)
+✔ durable monetary adapter required, deny/error/abort never reach provider (0.63975ms)
+✔ C-mode requests are rejected before budget reservation or provider (0.100167ms)
+✔ durable ledger timeout is unavailable and releases concurrency without provider egress (0.316459ms)
+✔ caller cancellation releases service despite provider ignoring abort (0.463583ms)
+✔ consent revocation releases service despite provider ignoring abort (0.25575ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 96.557875

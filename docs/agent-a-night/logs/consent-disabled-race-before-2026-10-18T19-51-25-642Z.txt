@@ -1,0 +1,30 @@
+✔ disposing a conversation prevents its queued opt-in and delayed status egress (1.715875ms)
+✔ an explicitly queued opt-out still revokes after disposal and an already sent opt-in (0.302041ms)
+✖ late opt-in acknowledgment cannot mark a disabled capability as proactive (0.672917ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29.881875
+
+✖ failing tests:
+
+test at tests/mochi-ai/consent-lifecycle.test.mjs:44:1
+✖ late opt-in acknowledgment cannot mark a disabled capability as proactive (0.672917ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/consent-lifecycle.test.mjs:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

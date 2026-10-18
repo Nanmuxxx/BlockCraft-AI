@@ -1,0 +1,37 @@
+✖ stalled prepare registry lookup retires on invalidate (1003.073333ms)
+✖ stalled prepare registry lookup retires on dispose (1002.413875ms)
+✖ stalled prepare registry lookup retires on supersede (1001.3005ms)
+✔ real archived DeepSeek record: private store -> exact export -> preview -> sole session CAS; source stays inert (82.978917ms)
+✔ export rejects missing/wrong reference, corrupt digest, invalid status/props and captures input (3.77775ms)
+✔ cancel is idempotent, foreign tickets cannot commit and no candidate is registered (1.258708ms)
+✔ malformed, stale digest, invalid props, extra execution permission and collisions fail before preview (14.629208ms)
+✔ project switch, revision change and revoke/regrant invalidate previews (13.002041ms)
+✔ confirmation rechecks revision/authorization even if host notifications were missed (6.123666ms)
+✔ context invalidation or disposal during prepare drops the late result without registering artifact (5.309625ms)
+✔ late prepare, superseding prepare, input mutation and dispose cannot revive a ticket (5.238333ms)
+✔ confirm lease synchronously blocks cancel/context switch/dispose and duplicate submission (2.041167ms)
+✔ permission changes or concurrent CAS during async install reject atomically and terminally (5.466875ms)
+✔ two installers using one owner commit at most once; no implicit replacement (9.237417ms)
+✔ unexpected install exception is terminal; capability escalation rejected (1.707875ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 3
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3326.225667
+
+✖ failing tests:
+
+test at tests/generated-artifact/install.test.cjs:18:62
+✖ stalled prepare registry lookup retires on invalidate (1003.073333ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact/install.test.cjs:18:62
+✖ stalled prepare registry lookup retires on dispose (1002.413875ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact/install.test.cjs:18:62
+✖ stalled prepare registry lookup retires on supersede (1001.3005ms)
+  'test timed out after 1000ms'

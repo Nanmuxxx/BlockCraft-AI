@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+import { abortable } from './ai-abort.mjs'
 import { buildInteractiveMessages, assertInteractiveSpec, createInteractiveGate } from './trusted-interactive.mjs'
 import { createMochiIntegration } from './mochi-ai/index.mjs'
 import { createServer } from 'node:http'
@@ -55,7 +56,7 @@ function readInput(req) {
     }
     const onEnd = () => {
       cleanup()
-      try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8'))) }
+      try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))) }
       catch { reject(fail(400, 'INVALID_INPUT', '请求必须为有效 JSON。')) }
     }
     const timer = setTimeout(() => stop(fail(408, 'INPUT_TIMEOUT', '读取请求超时。')), LIMITS.inputTimeoutMs)
@@ -73,7 +74,7 @@ async function readUpstream(response, controller) {
   let size = 0
   try {
     while (true) {
-      const { done, value } = await reader.read()
+      const { done, value } = await abortable(reader.read(), controller.signal)
       if (done) break
       size += value.byteLength
       if (size > LIMITS.upstreamBytes) {
@@ -82,8 +83,8 @@ async function readUpstream(response, controller) {
       }
       chunks.push(Buffer.from(value))
     }
-    return JSON.parse(Buffer.concat(chunks).toString('utf8'))
-  } finally { reader.releaseLock() }
+    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))
+  } finally { void reader.cancel().catch(() => {}); reader.releaseLock() }
 }
 
 async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interactive = false }, res) {
@@ -92,8 +93,11 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
   const timer = setTimeout(() => { timedOut = true; controller.abort() }, aiTimeoutMs)
   const onClose = () => { if (!res.writableEnded) controller.abort() }
   res.on('close', onClose)
+  if (res.destroyed) controller.abort()
+  let received
   try {
-    const response = await fetchImpl(ENDPOINT, {
+    controller.signal.throwIfAborted()
+    const fetching = Promise.resolve(fetchImpl(ENDPOINT, {
       method: 'POST',
       redirect: 'error',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -105,12 +109,22 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
         stream: false,
         max_tokens: 8192,
       }),
-    })
+    }))
+    // A late response after timeout/disconnect must release its unused body.
+    void fetching.then(response => { if (controller.signal.aborted) void response.body?.cancel().catch(() => {}) }).catch(() => {})
+    const response = received = await abortable(fetching, controller.signal)
     if (!response.ok) throw fail(502, 'AI_UNAVAILABLE', 'AI 服务暂时不可用，请稍后重试。')
     const envelope = await readUpstream(response, controller)
     const choice = envelope?.choices?.[0]
     const content = choice?.message?.content
-    if (choice?.finish_reason !== 'stop' || typeof content !== 'string') {
+    // A successful JSON completion must be unambiguous. Never accept tool or
+    // refusal envelopes merely because they also contain plausible AppSpec text.
+    if (!Array.isArray(envelope?.choices) || envelope.choices.length !== 1
+      || choice?.finish_reason !== 'stop' || typeof content !== 'string'
+      || (choice.message.role !== undefined && choice.message.role !== 'assistant')
+      || (choice.message.refusal !== undefined && choice.message.refusal !== null)
+      || choice.message.tool_calls !== undefined || choice.message.function_call !== undefined
+      || envelope.error !== undefined) {
       throw fail(502, 'AI_INVALID_RESPONSE', 'AI 未返回完整的 JSON 结果。')
     }
     if (Buffer.byteLength(content) > LIMITS.outputBytes) throw fail(502, 'AI_OUTPUT_TOO_LARGE', 'AI 结果超过大小限制。')
@@ -132,6 +146,7 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
   } finally {
     clearTimeout(timer)
     controller.abort()
+    if (received?.body && !received.body.locked) void received.body.cancel().catch(() => {})
     res.off('close', onClose)
   }
 }
@@ -184,6 +199,9 @@ export function createAppServer({
       inFlight++
       try {
         const input = await readInput(req)
+        // Close can occur at the end-of-input boundary, before generate has
+        // attached its own listener. Never start a new paid call for that peer.
+        if (res.destroyed) return
         if (!input || Array.isArray(input) || typeof input !== 'object' ||
             !Object.keys(input).every(key => key === 'idea' || key === 'protocol') ||
             (Object.hasOwn(input, 'protocol') && input.protocol !== 'trusted-interactive/1') || typeof input.idea !== 'string' ||
@@ -192,8 +210,13 @@ export function createAppServer({
         }
         const isInteractive = input.protocol === 'trusted-interactive/1'
         if (isInteractive) {
-          try { await admitInteractive(req, { model, requestId: randomUUID(), maxTokens: Buffer.byteLength(JSON.stringify(buildInteractiveMessages(input.idea.trim()))) + 8192 }) }
+          const admission = new AbortController()
+          const cancelAdmission = () => { if (!res.writableEnded) admission.abort() }
+          res.once('close', cancelAdmission)
+          if (res.destroyed) admission.abort()
+          try { await admitInteractive(req, { model, requestId: randomUUID(), maxTokens: Buffer.byteLength(JSON.stringify(buildInteractiveMessages(input.idea.trim()))) + 8192, signal: admission.signal }) }
           catch (error) { throw fail(error.status ?? 503, error.code ?? 'AI_DISABLED', '可信交互生成未获授权或预算不可用。') }
+          finally { res.off('close', cancelAdmission) }
           if (res.destroyed) return
         }
         if (!apiKey) throw fail(503, 'AI_NOT_CONFIGURED', 'AI 服务尚未配置。')

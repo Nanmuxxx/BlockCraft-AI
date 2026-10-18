@@ -1,0 +1,56 @@
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (1.90675ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.3645ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.59175ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.23325ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.152209ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.137ms)
+✔ cancel retires an ignored analysis promise without altering newer history (1.433292ms)
+✔ abort listener reentry retains ownership of the newer conversation request (0.231625ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.083541ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (21.300875ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.08ms)
+✔ late status cannot re-enable consent after explicit off (0.062416ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.133917ms)
+✖ subscriber cancellation during message publication prevents analysis egress (0.225708ms)
+✖ subscriber cancellation during busy publication prevents analysis egress (0.1795ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 13
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 59.439875
+
+✖ failing tests:
+
+test at tests/mochi-ai/client.test.mjs:162:44
+✖ subscriber cancellation during message publication prevents analysis egress (0.225708ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client.test.mjs:170:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'CONTEXT_CHANGED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/client.test.mjs:162:44
+✖ subscriber cancellation during busy publication prevents analysis egress (0.1795ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client.test.mjs:171:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

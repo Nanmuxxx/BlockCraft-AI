@@ -1,0 +1,30 @@
+{
+  "scope": "Node module linking only, not container acceptance",
+  "pr35Head": "f6e7b9cba54a4aae575fbf26de91dc00c4b2c7c0",
+  "inventory": [
+    "server/index.mjs",
+    "server/trusted-interactive.mjs",
+    "server/aiGenerationPrompt.mjs",
+    "server/aiGenerationQuality.mjs",
+    "server/mochi-ai",
+    "server/.generated",
+    "src/model/appSpec.ts",
+    "src/model/trustedInteractive.schema.json",
+    "src/integrations/mochi-ai/protocol.mjs"
+  ],
+  "results": [
+    {
+      "includesAbort": false,
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "node:internal/modules/esm/resolve:272\n    throw new ERR_MODULE_NOT_FOUND(\n          ^\n\nError [ERR_MODULE_NOT_FOUND]: Cannot find module '/private/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/blockcraft-agent-a-inventory-qJOf0b/server/ai-abort.mjs' imported from /private/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/blockcraft-agent-a-inventory-qJOf0b/server/index.mjs\n    at finalizeResolution (node:internal/modules/esm/resolve:272:11)\n    at moduleResolve (node:internal/modules/esm/resolve:879:10)\n    at defaultResolve (node:internal/modules/esm/resolve:1006:11)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:705:20)\n    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:725:38)\n    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:763:56)\n    at #resolve (node:internal/modules/esm/loader:687:17)\n    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:607:35)\n    at ModuleJob.syncLink (node:internal/modules/esm/module_job:276:33)\n    at ModuleJob.link (node:internal/modules/esm/module_job:381:17) {\n  code: 'ERR_MODULE_NOT_FOUND',\n  url: 'file:///private/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/blockcraft-agent-a-inventory-qJOf0b/server/ai-abort.mjs'\n}\n\nNode.js v24.22.0\n"
+    },
+    {
+      "includesAbort": true,
+      "exitCode": 0,
+      "stdout": "Trusted server modules linked without starting a listener\n",
+      "stderr": ""
+    }
+  ],
+  "realModelCalls": 0
+}

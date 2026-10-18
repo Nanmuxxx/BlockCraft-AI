@@ -1,0 +1,5 @@
+
+> blockcraft-ai@0.1.0 build
+> tsc -b && vite build
+
+src/components/ai-create/generateApp.ts(91,59): error TS2550: Property 'hasOwn' does not exist on type 'ObjectConstructor'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2022' or later.

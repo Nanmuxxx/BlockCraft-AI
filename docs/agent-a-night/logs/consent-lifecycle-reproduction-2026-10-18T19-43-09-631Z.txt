@@ -1,0 +1,26 @@
+✖ disposing a conversation prevents its queued opt-in and delayed status egress (1.621875ms)
+✔ an explicitly queued opt-out still revokes after disposal and an already sent opt-in (0.782708ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 42.400042
+
+✖ failing tests:
+
+test at tests/mochi-ai/consent-lifecycle.test.mjs:6:1
+✖ disposing a conversation prevents its queued opt-in and delayed status egress (1.621875ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/consent-lifecycle.test.mjs:20:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'DISPOSED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
