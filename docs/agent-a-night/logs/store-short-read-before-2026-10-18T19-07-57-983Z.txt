@@ -1,0 +1,52 @@
+✔ experiment is disabled by default before touching provider or store (1.132709ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (34.49575ms)
+✔ invalid output never reaches storage, never evaluates source side effects (7.740083ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (8.175333ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (9.316667ms)
+✔ private store permissions, quotas and references fail closed (7.036834ms)
+✖ store reads the complete immutable record when the filesystem returns short reads (6.079792ms)
+✖ a valid JSON prefix cannot hide unread trailing bytes in a stored record (7.428ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (6.375166ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (5.809542ms)
+✔ all JSON files are inert source artifacts, not generated source module files (6.02775ms)
+✔ caller cancellation retires ignored provider work before any pending-store write (0.577834ms)
+✔ pre-cancelled generator performs no provider or storage calls (0.079875ms)
+✔ cancellation during output admission prevents storage; admitted storage retains an honest outcome (0.509792ms)
+✔ syntax admission is not sandbox certification: hazardous source stays inert and execution denied (7.62975ms)
+✔ independent store handles cannot race distinct artifacts past the shared directory quota (8.468708ms)
+✔ unknown or stale store lease fails closed, remains intact, and is never followed (10.489166ms)
+✔ separate node processes share the same bounded store write lease (175.034041ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 16
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 449.047291
+
+✖ failing tests:
+
+test at tests/custom-block-generation/pipeline.test.mjs:113:1
+✖ store reads the complete immutable record when the filesystem returns short reads (6.079792ms)
+  Error [GenerationError]: STORE_INVALID
+      at Object.inspect (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/custom-block/store.mjs:91:15)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/custom-block-generation/pipeline.test.mjs:123:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'STORE_INVALID'
+  }
+
+test at tests/custom-block-generation/pipeline.test.mjs:126:1
+✖ a valid JSON prefix cannot hide unread trailing bytes in a stored record (7.428ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/custom-block-generation/pipeline.test.mjs:137:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'STORE_INVALID' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

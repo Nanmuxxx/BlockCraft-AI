@@ -1,6 +1,6 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 03:08（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
+阶段检查点：2026-10-19 03:15（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
@@ -13,6 +13,8 @@
 - CustomBlock调用方取消在不可逆store.put之前阻止写入；进入存储后报告实际结果。存储配额新增跨handle/进程目录租约，避免maxArtifacts=1并发保存两份。
 - 组合Fixture案例：DeepSeek HTTP envelope→pending store→exportPendingInstall→正式UI控制器→选中源码模型seam→确认CAS。按钮文字props与蓝色源码版本被验证、旧Artifact/历史保留，C只显示pending-build/unavailable，未运行生成按钮。
 - 同版本重装保留状态/布局，新版本仅重置选中状态，无效替换原子失败；危险源码Fixture始终惰性且execution denied。
+- 私有存储读到EOF后再校验，修复短读接受合法JSON前缀、遗漏尾部内容；精确字节上限和stat后增长均有回归。
+- 两个Mochi模型修改适配器均有最长45秒截止时间；取消/超时退休忽略abort的completion，消费迟到拒绝，清理信号。保留AppSpec适配器原有同步调用时序；超时后零写入，新请求可确认且旧结果不能覆盖。
 
 ## 2. Diff 与 Commit
 
@@ -20,19 +22,20 @@
 - 分支`agent-a/ai-core-night-20261019`；worktree `/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a`。
 - 精确提交：[LOCAL-COMMITS.txt](docs/agent-a-night/LOCAL-COMMITS.txt)；本地/远端SHA及逐一校验的同一文件树：[COMMIT-MAPPING.json](docs/agent-a-night/COMMIT-MAPPING.json)。Git-data API提交时间不同，不能将本地SHA当作远端SHA。
 - 审查命令：`git diff --stat 4044fb1...HEAD`和`git diff 4044fb1...HEAD`。
-- 本轮代码提交：`0fd3d19`可信适配器错误净化、`5597ebf`HTTP回归、`9ebce4b`测试发现、`1e7205a`重装边界、`36025d2`惰性危险源码、`6d70036`组合安装/编辑、`d3a9c2f`跨writer配额。最后一项及文档正在同步，未把本地HEAD冒充远端已发布。
+- 最近代码提交：`d3a9c2f`跨writer配额、`84a1255`完整有界文件读取、`2f6d630`源码模型截止、`9c9bc81`AppSpec模型截止；均已同步Draft PR，树摘要逐一验证。
 
 ## 3. Draft PR
 
-[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署。当前已发布代码至本地`6d70036`对应远端`63d58fa503598c92636afa0f6f7942be683f069f`，树一致；后续同步见映射。
+[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署。当前已发布代码至本地`9c9bc818e770f2e3befda2dd862e9adc59e72d4b`对应远端`8fb63c539b0b2ab08b695ebfb52479b60f1329d8`，树一致；后续文档同步见映射。
 
 ## 4. 测试命令及退出码
 
 每条命令、cwd、时间、退出码和原始日志见[TEST-COMMANDS.md](docs/agent-a-night/TEST-COMMANDS.md)与[commands.jsonl](docs/agent-a-night/logs/commands.jsonl)。修复前失败、前置产物缺失、一次启动参数错误和修正后重跑均保留。
 
-- 最新`node tests/ai-core-night/regression.mjs`：**724/724，退出码0**，自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
+- 最新`node tests/ai-core-night/regression.mjs`：**736/736，退出码0**，自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
 - 组合安装/编辑1/1，重装相关26/26，惰性源码/Viewer25/25，鉴权异常HTTP19/19，跨进程存储/安装32/32，退出码均0；这些属于各次运行，不能相加成另一项全量结果。
-- 最近生产构建`build-source-publication`退出0；之后修改为服务mjs和测试，不将旧构建说成最新HEAD重新构建。
+- 最近生产构建`build-model-deadline`退出0，对应代码HEAD `9c9bc81`；此前`build-source-deadline`亦退出0。
+- 存储短读修复前2项失败，修复后相关37/37、精确上限19/19；源码截止首次3项失败，修复后含owner组合50/50；AppSpec截止首次2项失败，第一次修复改变调用时序导致旧取消测试超时，恢复时序后相关73/73及同步异常16/16，全部保留日志。
 - 历史较广核心649/649、622/622、568/568，安全/编译/质量187/187、默认npm test192/192；准确范围及当时提交以日志为准。
 
 ## 5. 真实模型调用
@@ -43,7 +46,7 @@
 
 [浏览器报告](docs/agent-a-night/browser)与[文件大小/SHA-256清单](docs/agent-a-night/browser-inventory.json)保留正式`/ai-create`、可信离线入口、生成Fixture、安装/替换竞态、CustomBlock参数/重装、Mochi计划/只读建议。桌面1366与移动390；移动为Chromium视口/触摸模拟，不冒充真机。
 
-最新`artifact-utf8`和`advice-publication`桌面/移动均通过，0外部请求、0真实模型调用。前者包含原生File损坏UTF-8拒绝后正常预览/安装，后者覆盖正式只读Mochi。一次并发运行初始输入框超时，串行重跑通过；缓存竞争尚非已确认根因。旧脚本报告中的固定baseline不能证明最新HEAD。新增组合源码案例为Node协议回归，未声称浏览器执行了生成TSX。
+正式页面`artifact-utf8`和`advice-publication`桌面/移动均通过，0外部请求、0真实模型调用。前者包含原生File损坏UTF-8拒绝后正常预览/安装，后者覆盖正式只读Mochi。最新`model-deadline`桌面/移动模型计划fixture浏览器通过，baseline为`9c9bc81`；它是Mochi集成测试页，不冒充正式修改服务。一次并发运行初始输入框超时，串行重跑通过；缓存竞争尚非已确认根因。旧脚本报告中的固定baseline不能证明最新HEAD。新增组合源码案例为Node协议回归，未声称浏览器执行了生成TSX。
 
 ## 7. 新发现的问题
 
@@ -52,6 +55,7 @@
 - UTF-8替换解码会静默改变JSON字符串；字节入口已严格解码。
 - 共享v1/v2 schema曾令v1质量评估误收v2，现明确分离。
 - 私有store的先读目录后写入配额有并发竞态，已用跨进程非等待目录租约修复。崩溃残留`.write-lock`需可信宿主检查后恢复；不自动删除未知锁。
+- 单次文件read不保证读完，旧实现可漏检尾部；现读到EOF且限制实际累计字节。两个可注入模型completion原先没有独立截止时间，现最长45秒并保留取消/迟到结果门禁。
 - 源码语法准入不是沙箱认证：危险DOM/网络/无限循环源码可作为数据保存，但不得执行；Viewer仍拒绝。
 - 会话历史长期保留可能增长，需持久化/保留策略，不随意删除回滚证据。
 

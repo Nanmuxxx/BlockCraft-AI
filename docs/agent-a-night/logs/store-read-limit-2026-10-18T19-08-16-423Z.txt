@@ -1,0 +1,27 @@
+✔ experiment is disabled by default before touching provider or store (0.675625ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (38.45575ms)
+✔ invalid output never reaches storage, never evaluates source side effects (5.777375ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (6.498209ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (7.565584ms)
+✔ private store permissions, quotas and references fail closed (16.232709ms)
+✔ store reads the complete immutable record when the filesystem returns short reads (15.066541ms)
+✔ a valid JSON prefix cannot hide unread trailing bytes in a stored record (9.118083ms)
+✔ store accepts the exact byte limit but rejects growth after its initial file stat (8.443542ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (9.401542ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (6.264208ms)
+✔ all JSON files are inert source artifacts, not generated source module files (5.598666ms)
+✔ caller cancellation retires ignored provider work before any pending-store write (0.48925ms)
+✔ pre-cancelled generator performs no provider or storage calls (0.094416ms)
+✔ cancellation during output admission prevents storage; admitted storage retains an honest outcome (0.526334ms)
+✔ syntax admission is not sandbox certification: hazardous source stays inert and execution denied (5.985375ms)
+✔ independent store handles cannot race distinct artifacts past the shared directory quota (6.675125ms)
+✔ unknown or stale store lease fails closed, remains intact, and is never followed (6.690542ms)
+✔ separate node processes share the same bounded store write lease (189.372708ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 455.377667

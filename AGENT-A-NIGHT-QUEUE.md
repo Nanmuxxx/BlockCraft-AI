@@ -83,3 +83,13 @@
 - 当前：归档证据并同步Draft #40；下一任务：审计当前生成协议/源码编辑/Artifact的剩余安全独立盲区。
 - 已修改文件按git diff --name-status和LOCAL-COMMITS.txt核对；未修改Agent B导出器、Docker、冻结视频或PR #36 Host测试。
 - 阻塞仍为真实付费语义验收、正式Mochi修改服务、实测Viewer隔离后端和跨刷新存储设计；REAL_MODEL_CALLS=0。
+
+## 第五轮进展（03:15，继续开发）
+
+- 84a1255：存储readBounded读到EOF，短读/尾部隐藏复现旧实现2失败；修复及精确上限/stat后增长19/19。
+- 2f6d630：源码模型completion最长45秒、忽略abort也退休；同步异常/信号清理、超时后新请求唯一确认50/50。
+- 9c9bc81：AppSpec模型completion相同截止，保留同步调用时序；首次改成microtask导致旧取消测试超时，修正后相关73/73、同步异常16/16。
+- 最新自动发现核心736/736，build-model-deadline退出0；Mochi模型计划集成页桌面/移动浏览器通过，baseline9c9bc81，非正式修改服务。
+- 三项代码已同步Draft #40，远端8fb63c539b0b2ab08b695ebfb52479b60f1329d8，树一致；没有合并或部署。
+- 当前：归档短读与deadline证据。下一任务：服务错误/请求资源释放及协议兼容剩余盲区；六小时窗口仍在进行。
+- 已修改store、两个模型适配器及其测试；详细清单见LOCAL-COMMITS。REAL_MODEL_CALLS=0。

@@ -71,3 +71,14 @@ core-caller-cancel最新649/649；REAL_MODEL_CALLS=0。上述VERIFIED仅指Fixtu
 | 独立测试发现 | IMPLEMENTED | tests/ai-core-night/regression.mjs | 自动发现Agent A测试族；构建可信协议而不构建生成源码。ZIP兼容测试需预备可信依赖，由Agent B负责准备 |
 
 组合案例只证明源码/props修改和共同项目元数据；C模式仍pending-build或unavailable，不声称按钮已运行。存储若崩溃留下.write-lock，需可信宿主人工检查恢复；没有隐式清锁逻辑。
+
+## 第五轮边界证据（03:15，持续开发）
+
+| 项目 | 状态 | 函数/文件 | 验证 |
+|---|---|---|---|
+| 存储完整有界读取 | VERIFIED | server/custom-block/store.mjs:readBounded | pipeline.test.mjs：31字节短读、合法JSON前缀后隐藏内容、精确512KiB及stat后增长；修复前2失败，修复后19/19 |
+| 源码模型completion截止 | VERIFIED | mochi-source/providers.ts:createModelSourcePlanProvider | provider/planning/installation50/50：忽略abort、迟到拒绝、同步abort+throw、超时零写入和新请求唯一CAS；最长45秒 |
+| AppSpec模型completion截止 | VERIFIED | mochi/modelPlanProvider.ts:createModelPlanProvider | model-plan/generation/planning73/73；同步异常16/16；恢复原有同步调用时序，未改Host协议或正式Provider配置 |
+| 当前构建与回归 | VERIFIED | tests/ai-core-night/regression.mjs；npm run build | 736/736退出0；build-model-deadline退出0；模型计划集成浏览器桌面/移动通过，baseline9c9bc81 |
+
+所有completion均为fixture注入；不授予付费调用、修改或TSX运行权限。正式页面修改服务仍MISSING，源码隔离执行仍BLOCKED。
