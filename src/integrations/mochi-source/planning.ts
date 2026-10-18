@@ -156,25 +156,29 @@ export function createSourceEditPlanner(session: CustomProjectSession, provider:
       current(snapshot, authorization, ownEpoch, blockId, base)
       const target = snapshot.custom.instances.find(item => item.id === blockId)!
       const controller = new AbortController(); pending = controller
-      try {
-        const artifact = await resolveArtifact(session.registry, base)
-        current(snapshot, authorization, ownEpoch, blockId, base)
-        const request = freeze({ contractVersion: 1 as const, requestId: `source-${globalThis.crypto.randomUUID()}`, projectId: snapshot.base.spec.id, baseRevision: snapshot.revision, intent, target: cloneJson(target), current: artifact })
-        let raw: unknown
-        try { raw = await cancellable(Promise.resolve(provider.generate(request, controller.signal)), controller.signal) }
-        catch (error) {
+      async function waitFor<T>(start: () => T | Promise<T>): Promise<T> {
+        try {
+          controller.signal.throwIfAborted()
+          return await cancellable(Promise.resolve(start()), controller.signal)
+        } catch (error) {
           alive()
           if (controller.signal.aborted) check(false, 'Request cancelled', 'CONTEXT_CHANGED')
           throw error
         }
+      }
+      try {
+        const artifact = await waitFor(() => resolveArtifact(session.registry, base))
         current(snapshot, authorization, ownEpoch, blockId, base)
-        const proposal = await validateSourcePlan(raw, request)
+        const request = freeze({ contractVersion: 1 as const, requestId: `source-${globalThis.crypto.randomUUID()}`, projectId: snapshot.base.spec.id, baseRevision: snapshot.revision, intent, target: cloneJson(target), current: artifact })
+        const raw = await waitFor(() => provider.generate(request, controller.signal))
+        current(snapshot, authorization, ownEpoch, blockId, base)
+        const proposal = await waitFor(() => validateSourcePlan(raw, request))
         // Validate the entire replacement with the same official project parser.
         const next = cloneJson(snapshot)
         next.custom.instances[next.custom.instances.findIndex(item => item.id === blockId)] = { id: blockId, ...reference({ definitionId: base.definitionId, versionDigest: proposal.candidate.versionDigest }), props: cloneJson(proposal.props) }
         delete next.custom.states[blockId]
         next.revision++
-        await parseCustomProject(next, { async resolve(ref) { return same(ref, { definitionId: base.definitionId, versionDigest: proposal.candidate.versionDigest }) ? proposal.candidate : session.registry.resolve(ref) } })
+        await waitFor(() => parseCustomProject(next, { async resolve(ref) { return same(ref, { definitionId: base.definitionId, versionDigest: proposal.candidate.versionDigest }) ? proposal.candidate : session.registry.resolve(ref) } }))
         current(snapshot, authorization, ownEpoch, blockId, base)
         check(!controller.signal.aborted, 'Request cancelled', 'CONTEXT_CHANGED')
         const planId = request.requestId

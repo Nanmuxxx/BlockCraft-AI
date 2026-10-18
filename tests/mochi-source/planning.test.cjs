@@ -248,6 +248,29 @@ test('caller input and returned provider JSON are captured before asynchronous v
   assert.equal((await f.planner.confirm(plan.planId)).ok, true)
   assert.notEqual((await f.owner.registry.resolve({ definitionId: f.input.definitionId, versionDigest: plan.proposal.candidate.versionDigest })).artifact.sources[raw.candidate.artifact.manifest.entry], 'late replacement')
 })
+
+for (const stage of ['initial artifact', 'replacement project']) test(`cancel retires a stalled ${stage} registry lookup without changing history`, { timeout: 1000 }, async () => {
+  const started = deferred(); let rejectLate, lookups = 0
+  const f = await setup(candidate, owner => ({ ...owner, registry: { resolve(reference) {
+    if (++lookups === (stage === 'initial artifact' ? 1 : 2)) {
+      started.resolve()
+      return new Promise((_, reject) => { rejectLate = reject })
+    }
+    return owner.registry.resolve(reference)
+  } } }))
+  const before = f.owner.getSnapshot(), pending = f.request()
+  const rejected = assert.rejects(pending, { code: 'CONTEXT_CHANGED' })
+  await started.promise; f.planner.invalidate(); await rejected
+  assert.equal(f.owner.getSnapshot(), before)
+  assert.equal(f.planner.getHistory().length, 0)
+  const fresh = await f.request()
+  rejectLate(new Error('obsolete registry failure'))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(f.planner.getStatus(fresh.planId), 'pending')
+  assert.equal((await f.planner.confirm(fresh.planId)).ok, true)
+  assert.equal(f.planner.getHistory().length, 1)
+  f.planner.dispose()
+})
 test('model seam preserves completion-supplied TSX bytes and uses the same validation, without network', async () => {
   const f = await setup(), sourceText = 'export default function DifferentFixture() { throw new Error("do not execute this completion fixture"); return <aside data-test="separate-source">distinct fixture</aside> }'
   const provider = createModelSourcePlanProvider(async ({ request }) => {
