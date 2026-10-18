@@ -93,6 +93,7 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
   const timer = setTimeout(() => { timedOut = true; controller.abort() }, aiTimeoutMs)
   const onClose = () => { if (!res.writableEnded) controller.abort() }
   res.on('close', onClose)
+  if (res.destroyed) controller.abort()
   let received
   try {
     controller.signal.throwIfAborted()
@@ -198,6 +199,9 @@ export function createAppServer({
       inFlight++
       try {
         const input = await readInput(req)
+        // Close can occur at the end-of-input boundary, before generate has
+        // attached its own listener. Never start a new paid call for that peer.
+        if (res.destroyed) return
         if (!input || Array.isArray(input) || typeof input !== 'object' ||
             !Object.keys(input).every(key => key === 'idea' || key === 'protocol') ||
             (Object.hasOwn(input, 'protocol') && input.protocol !== 'trusted-interactive/1') || typeof input.idea !== 'string' ||

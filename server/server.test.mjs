@@ -264,3 +264,18 @@ test('HTTP disconnect aborts upstream and releases admission even when transport
   assert.equal((await s.post()).status, 200)
   late(completion())
 })
+
+test('disconnect at input completion prevents a generation call before upstream dispatch', async t => {
+  let calls = 0
+  const server = createAppServer({ apiKey: 'mock-key-never-real', fetchImpl: async () => { calls++; return completion() } })
+  server.once('request', (req, res) => { req.once('end', () => res.destroy()) })
+  server.listen(0, '127.0.0.1'); await once(server, 'listening')
+  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve) }))
+  const url = `http://127.0.0.1:${server.address().port}/api/ai/generate`
+  const options = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: '任务工具' }) }
+  await assert.rejects(fetch(url, options))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(calls, 0, 'closed response must not incur a new upstream call')
+  const next = await fetch(url, options)
+  assert.equal(next.status, 200); assert.equal(calls, 1)
+})
