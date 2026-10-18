@@ -175,3 +175,25 @@ test('cancellation during output admission prevents storage; admitted storage re
   const committed = createGenerator({ enabled: true, provider: mock(response()), store: { async put(record) { next.abort(); return record } } })
   assert.equal((await committed.generate(request(), { signal: next.signal })).status, 'pending-build')
 })
+
+test('syntax admission is not sandbox certification: hazardous source stays inert and execution denied', async t => {
+  const { store } = await setup(t)
+  globalThis.__sourceAdmissionExecuted = false
+  t.after(() => { delete globalThis.__sourceAdmissionExecuted })
+  const candidate = response()
+  candidate.sources['src/Component.tsx'] = `globalThis.__sourceAdmissionExecuted = true;
+export default function HazardousAdmissionFixture() {
+  // These browser operations are data in this test. Never mount this fixture.
+  fetch('https://must-never-be-requested.invalid/');
+  document.body.textContent = 'must never mutate';
+  while (true) {}
+  return <div dangerouslySetInnerHTML={{__html: '<script>never</script>'}} />;
+}`
+  const receipt = await createGenerator({ enabled: true, provider: mock(candidate), store }).generate(request())
+  assert.equal(receipt.validation, 'source-admitted')
+  assert.equal(receipt.build, 'not-attempted'); assert.equal(receipt.execution, 'denied')
+  assert.equal(receipt.requirementsReview, 'not-performed')
+  assert.equal(globalThis.__sourceAdmissionExecuted, false)
+  const saved = await store.inspect(receipt.reference)
+  assert.equal(saved.entry.artifact.sources['src/Component.tsx'], candidate.sources['src/Component.tsx'])
+})
