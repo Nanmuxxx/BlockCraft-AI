@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { createServer } from 'node:http'
+import { createServer, request as httpRequest } from 'node:http'
 import { once } from 'node:events'
 import { createConnection } from 'node:net'
 import { createMochiHandler } from '../../server/mochi-ai/http.mjs'
@@ -107,6 +107,42 @@ test('early HTTP rejection closes incomplete uploads without waiting for the rem
     assert.match(response, /\r\nconnection: close\r\n/i)
   }
   assert.equal(f.count(), 0)
+})
+test('chunked uploads exceeding the body bound receive a structured 413 with no model call', { timeout: 1500 }, async t => {
+  const f = await fixture(t)
+  const socket = createConnection({ host: '127.0.0.1', port: Number(new URL(f.origin).port) })
+  t.after(() => socket.destroy())
+  await once(socket, 'connect')
+  let response = ''
+  socket.setEncoding('utf8'); socket.on('data', chunk => { response += chunk })
+  const closed = once(socket, 'close')
+  const chunk = 'x'.repeat(17_000)
+  socket.write(`POST /api/mochi-ai/analyze HTTP/1.1\r\nHost: localhost\r\nTransfer-Encoding: chunked\r\nContent-Type: application/json\r\nCookie: test=trusted\r\n\r\n${chunk.length.toString(16)}\r\n${chunk}\r\n`)
+  await closed
+  assert.match(response, /^HTTP\/1.1 413 /)
+  assert.match(response, /"code":"INPUT_TOO_LARGE"/)
+  assert.equal(f.count(), 0)
+})
+test('chunked JSON accepts a multibyte prompt split across transport chunks', async t => {
+  const f = await fixture(t)
+  const input = request(); input.prompt = '请解释这个积木🙂'
+  const body = Buffer.from(JSON.stringify(input))
+  const at = body.indexOf(Buffer.from('🙂')) + 1
+  const response = await new Promise((resolve, reject) => {
+    const req = httpRequest(`${f.origin}/api/mochi-ai/analyze`, { method: 'POST', headers: {
+      'Content-Type': 'application/json', cookie: 'test=trusted', origin: f.origin,
+    } }, res => {
+      let text = ''; res.setEncoding('utf8')
+      res.on('data', chunk => { text += chunk }); res.on('error', reject)
+      res.on('end', () => resolve({ status: res.statusCode, body: JSON.parse(text) }))
+    })
+    req.on('error', reject)
+    req.write(body.subarray(0, at))
+    setImmediate(() => req.end(body.subarray(at)))
+  })
+  assert.equal(response.status, 200)
+  assert.equal(response.body.capabilities.modifications, false)
+  assert.equal(f.count(), 1)
 })
 test('HTTP production disabled remains explicit; no mock fallback', async t => {
   const f = await fixture(t, { enabled: false })
