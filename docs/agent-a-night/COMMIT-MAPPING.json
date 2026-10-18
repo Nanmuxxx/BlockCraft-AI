@@ -478,5 +478,11 @@
     "remote": "b59b5414594a92791e336ad4d0b56fb780e75357",
     "tree": "ab73e50298ed7444f62b5aff7dcb54d01a6889be",
     "message": "docs(ai-core): record final ingress and runtime regression evidence"
+  },
+  {
+    "local": "dccde1073b97e29c72b049feaa6cdc0732a57549",
+    "remote": "2aca6a4cbaee00c162b6cdf90baa80fc5f68d44d",
+    "tree": "ff25e1f352134369d31e10604c94b0f904199d10",
+    "message": "docs(ai-core): sync night evidence and remote head"
   }
 ]

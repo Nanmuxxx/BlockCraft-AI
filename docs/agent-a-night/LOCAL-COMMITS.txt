@@ -77,3 +77,4 @@ a3c2b0ba68c0680e6b08843948a793a39fee107c fix(mochi): retire focused actions afte
 ff61d487719fdacf72ca9c6ea290710680e6967a test(generation): cover input deadline and rate-limited incomplete uploads
 122eb1c1c3a259735045827c63be00c2e37effa0 docs(ai-core): record verified remote commit mapping
 74d4893d84b8b27c8d532f2091faf8744528e7f2 docs(ai-core): record final ingress and runtime regression evidence
+dccde1073b97e29c72b049feaa6cdc0732a57549 docs(ai-core): sync night evidence and remote head

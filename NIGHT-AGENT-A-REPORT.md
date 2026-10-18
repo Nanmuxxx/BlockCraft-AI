@@ -24,11 +24,11 @@
 - 分支`agent-a/ai-core-night-20261019`；worktree `/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a`。
 - 精确提交：[LOCAL-COMMITS.txt](docs/agent-a-night/LOCAL-COMMITS.txt)；本地/远端SHA及逐一校验的同一文件树：[COMMIT-MAPPING.json](docs/agent-a-night/COMMIT-MAPPING.json)。Git-data API提交时间不同，不能将本地SHA当作远端SHA。
 - 审查命令：`git diff --stat 4044fb1...HEAD`和`git diff 4044fb1...HEAD`。
-- 最新本地提交：`122eb1c1c3a259735045827c63be00c2e37effa0`、`74d4893d84b8b27c8d532f2091faf8744528e7f2`；远端对应`17c41f240feaf1b82b219e9a44a7928d97ef2155`、`b59b5414594a92791e336ad4d0b56fb780e75357`，两个提交tree逐一校验。最后一个远端提交是分支HEAD。
+- 最新本地提交：`dccde1073b97e29c72b049feaa6cdc0732a57549`；远端对应`2aca6a4cbaee00c162b6cdf90baa80fc5f68d44d`，tree逐一校验。之前发布的远端提交metadata trailer误填了本地SHA（tree一致）；本报告及映射已用实际`git rev-parse`结果校正。最后一个远端提交是分支HEAD。
 
 ## 3. Draft PR
 
-[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署；远端核验状态open/draft，HEAD=`b59b5414594a92791e336ad4d0b56fb780e75357`。后续同步见映射。
+[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署；远端核验状态open/draft，HEAD=`2aca6a4cbaee00c162b6cdf90baa80fc5f68d44d`。后续同步见映射。
 
 ## 4. 测试命令及退出码
 
