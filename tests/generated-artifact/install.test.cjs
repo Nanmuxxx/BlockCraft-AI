@@ -26,10 +26,14 @@ test('real archived DeepSeek record: private store -> exact export -> preview ->
   assert.equal(result.provenance.kind, 'deepseek') // archived provenance, no new model call
   assert.equal(result.status, 'pending-build'); assert.equal(result.execution, 'denied')
   const f = setup(), before = f.owner.getSnapshot()
-  // Existing sibling with host state must survive unchanged.
-  assert.equal((await f.owner.install({ ...file('sibling'), baseRevision: before.revision, expectedReference: null })).ok, true)
+  // Retain a distinct older version and its host state across the new install.
+  const older = file('sibling')
+  older.artifact.artifact.manifest.name = 'Archived sibling version fixture'
+  older.artifact.versionDigest = await api.computeVersionDigest(older.artifact.artifact)
+  older.instance.versionDigest = older.artifact.versionDigest
+  assert.equal((await f.owner.install({ ...older, baseRevision: before.revision, expectedReference: null })).ok, true)
   const expected = f.owner.getSnapshot(), next = copy(expected)
-  next.custom.states.sibling = { versionDigest: reference.versionDigest, stateRevision: 1, value: { remainingSeconds: 123, status: 'paused' } }; next.revision++
+  next.custom.states.sibling = { versionDigest: older.instance.versionDigest, stateRevision: 1, value: { remainingSeconds: 123, status: 'paused' } }; next.revision++
   assert.equal(f.owner.compareAndSwap(expected, next, f.owner.getAuthorization()).ok, true)
   const captured = f.owner.getSnapshot(), plan = await f.installer.prepare(result.importFile)
   assert.equal(f.owner.getSnapshot(), captured); assert.equal(plan.status, 'pending-build')
@@ -40,6 +44,7 @@ test('real archived DeepSeek record: private store -> exact export -> preview ->
   wanted.custom.positions['ai-pomodoro'] = { x: .1, y: .7 }; wanted.renderOrder.push({ kind: 'custom', id: 'ai-pomodoro' })
   assert.deepEqual(after, wanted)
   assert.deepEqual(await api.resolveArtifact(f.owner.registry, reference), record.entry)
+  assert.deepEqual(await api.resolveArtifact(f.owner.registry, { definitionId: older.instance.definitionId, versionDigest: older.instance.versionDigest }), older.artifact)
   const { createCustomBlockBCAdapter } = require('../../src/integrations/custom-block-bc/adapter.ts')
   const { viewerState } = require('../../src/integrations/custom-block-bc/viewer.ts')
   const adapter = await createCustomBlockBCAdapter(f.owner, f.owner.registry)
@@ -124,8 +129,15 @@ test('confirm lease synchronously blocks cancel/context switch/dispose and dupli
   const gate = deferred(), f = setup(owner => ({ ...owner, async install(...args) { await gate.promise; return owner.install(...args) } }))
   const p = await f.installer.prepare(file()), pending = f.installer.confirm(p.ticketId)
   for (const action of [() => f.installer.cancel(p.ticketId), () => f.installer.invalidate(), () => f.installer.dispose()]) assert.throws(action, { code: 'CONFIRM_BUSY' })
+  let hostProject = 'original', mounted = true
+  const switchProject = () => { f.installer.invalidate(); hostProject = 'next' }
+  const unmount = () => { f.installer.dispose(); mounted = false }
+  assert.throws(switchProject, { code: 'CONFIRM_BUSY' }); assert.equal(hostProject, 'original')
+  assert.throws(unmount, { code: 'CONFIRM_BUSY' }); assert.equal(mounted, true)
   await assert.rejects(f.installer.confirm(p.ticketId), { code: 'CONFIRM_BUSY' })
   gate.resolve(); assert.equal((await pending).ok, true)
+  switchProject(); assert.equal(hostProject, 'next')
+  unmount(); assert.equal(mounted, false)
 })
 test('permission changes or concurrent CAS during async install reject atomically and terminally', async () => {
   for (const kind of ['permission', 'revision']) {

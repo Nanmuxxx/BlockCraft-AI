@@ -1,65 +1,102 @@
 {
   "contractVersion": 1,
-  "verifiedAtUtc": "2026-10-18T14:15:14Z",
-  "baseMain": "f0ddd21cb44749adf34fa473f3ae52115e273d3f",
+  "verifiedAtUtc": "2026-10-18T14:28:56Z",
+  "baseMain": "13259a22d95d33ca32bcd9935aea7b602166b428",
   "environment": {
     "node": "v24.22.0",
     "platform": "macOS",
-    "dependencies": "existing repository node_modules symlink; no install"
+    "dependencies": "existing repository node_modules symlink; no install",
+    "browser": "existing bundled Playwright, Chromium 151.0.7922.34; no dependency or browser download"
   },
   "checks": [
     {
-      "command": "node server/custom-block/build-protocol.mjs",
-      "exitCode": 0,
-      "logSha256": "1887d4076df0c0a2bb7bd33b49edea45618715736d05a830e82b99522df51ff3"
-    },
-    {
-      "command": "node --test tests/generated-artifact/*.test.cjs",
-      "exitCode": 0,
-      "logSha256": "7e556abf8d2068bf984480b8848634989e6f15987b329db3c005c7a8c373bd2e",
-      "tests": 12,
-      "pass": 12,
-      "fail": 0,
-      "cancelled": 0,
-      "skipped": 0,
-      "todo": 0,
-      "duration_ms": 977.108792
-    },
-    {
-      "command": "node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs src/integrations/mochi/host.test.cjs tests/mochi-source/*.test.cjs tests/generated-artifact/*.test.cjs",
-      "exitCode": 0,
-      "logSha256": "e96dde44735aada765b8843c6747b855ac3ea79dabbd5aabf93d660340c85aff",
-      "tests": 326,
-      "pass": 326,
-      "fail": 0,
-      "cancelled": 0,
-      "skipped": 0,
-      "todo": 0,
-      "duration_ms": 1265.709
-    },
-    {
-      "command": "node --test tests/custom-block-generation/*.test.mjs",
-      "exitCode": 0,
-      "logSha256": "c89fc5a314c2b08f739f36a586cda7e46fb65619e3aa2c82131af8bbcc39c027",
-      "tests": 82,
-      "pass": 82,
-      "fail": 0,
-      "cancelled": 0,
-      "skipped": 0,
-      "todo": 0,
-      "duration_ms": 752.456833
-    },
-    {
       "command": "npm test",
       "exitCode": 0,
-      "logSha256": "6a5932586d98df479594856eb5eb1bc770995869a5c4f7702aeabd1e1ea00234",
+      "logSha256": "2dcbfc68c18760517db52e5ba041fe33db1d504b66af79a22c9915a54fc53374",
       "tests": 192,
       "pass": 192,
       "fail": 0,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "duration_ms": 1104.247834
+      "duration_ms": 756.498958
+    },
+    {
+      "command": "node --test tests/generated-artifact/*.test.cjs",
+      "exitCode": 0,
+      "logSha256": "9d2452253665fa0a8967d08998ec4fab964e3c8038f3f9aa5f226f2436bcfa75",
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 237.673666
+    },
+    {
+      "command": "node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs src/integrations/mochi/host.test.cjs tests/mochi-source/*.test.cjs tests/generated-artifact/*.test.cjs",
+      "exitCode": 0,
+      "logSha256": "dd1541e2145ddedfa8387d210d173e96d45a74321f80bae23b3677614000723d",
+      "tests": 326,
+      "pass": 326,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 893.294042
+    },
+    {
+      "command": "node --test tests/custom-block-generation/*.test.mjs",
+      "exitCode": 0,
+      "logSha256": "dda037cd6ad11d1d65f810de12764dd7b8c10ca684e6b28f251b3746b0cf7a80",
+      "tests": 82,
+      "pass": 82,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 293.93975
+    },
+    {
+      "command": "node --test tests/mochi-ai/*.test.mjs",
+      "exitCode": 0,
+      "logSha256": "6b351abb07ceda3e66d3f1b1be263b01ca636b30baff07adc32162f7ce8532f2",
+      "tests": 40,
+      "pass": 40,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 291.29125
+    },
+    {
+      "command": "npm --prefix server test",
+      "exitCode": 0,
+      "logSha256": "c70693ce6a8e1c86dcbce818548617a7d4d5a09a24ad3dd908469b4135dd1eb0",
+      "tests": 23,
+      "pass": 23,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 143.248417
+    },
+    {
+      "command": "npm run test",
+      "exitCode": 0,
+      "logSha256": "a9e6997c59493c70ba3dcfa19f3a193d1b31eceff611fb387dbe0ee5f7796b51",
+      "tests": 192,
+      "pass": 192,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 739.584792
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "logSha256": "37dbe705a83184bbc3bb795abc3531d81efc1d58152caaa51dc1b4c5a0ceae5b"
     },
     {
       "command": "npx tsc --noEmit",
@@ -67,26 +104,33 @@
       "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "command": "npm run build",
+      "command": "node server/custom-block/build-protocol.mjs",
       "exitCode": 0,
-      "logSha256": "9361c22996e4238d1a4e3ff54c616273137b07d1f228517996c78c579fdff7b4"
+      "logSha256": "1887d4076df0c0a2bb7bd33b49edea45618715736d05a830e82b99522df51ff3"
     },
     {
-      "command": "npm --prefix server run build",
+      "command": "node --test tests/workshop-export/*.test.mjs tests/workshop-export/*.test.cjs tests/project-zip-export/*.test.mjs",
       "exitCode": 0,
-      "logSha256": "34fc8f532e8455212c5eeba2f44af8dd0d5a13e2138025e81ecd8272dd2f48fa"
-    },
-    {
-      "command": "node --test tests/mochi-ai/*.test.mjs",
-      "exitCode": 0,
-      "logSha256": "2b77238d88294f66abf22d9e68937279c144988b7128e679662ee0df7a4131ef",
-      "tests": 40,
-      "pass": 40,
+      "logSha256": "b395dc0f4a465836565d3ef03b8acde6d78902242562a5bfaed4552f084f3eff",
+      "tests": 70,
+      "pass": 70,
       "fail": 0,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "duration_ms": 315.622208
+      "duration_ms": 437.992166
+    },
+    {
+      "command": "git diff --check 13259a2 HEAD",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
     }
   ],
   "offlineArtifact": {
@@ -102,7 +146,7 @@
     "source": "unchanged archived pending record from prior real DeepSeek acceptance; no new online provenance verification",
     "result": "private store put/inspect -> export -> prepare -> confirm -> existing session.install/CAS -> B metadata adapter",
     "beforeConfirmation": "no project/registry write",
-    "afterConfirmation": "one instance appended; siblings/state/business records/positions/renderOrder preserved",
+    "afterConfirmation": "one original-model instance appended; distinct older digest and registry entry, sibling state, nonempty business records, positions/renderOrder preserved",
     "status": "pending-build",
     "build": "not-attempted",
     "execution": "denied"
@@ -114,7 +158,7 @@
     "ownerChanged": false,
     "compilerOrViewerChanged": false,
     "candidateSourceCompiledOrExecuted": false,
-    "browserAcceptance": false,
+    "browserAcceptance": "Existing #31 export and B/C regressions PASS; new generated confirmation UI remains unwired and untested.",
     "mergedOrDeployed": false
   },
   "limitations": [
@@ -124,5 +168,367 @@
     "Viewer interface is a proposed handoff contract, not joint integration acceptance.",
     "Host must synchronously gate project switch/dispose during confirmation.",
     "No new HTTP route, project persistence or execution permission."
+  ],
+  "originalPrHead": "50504de70a8fcd6cfc31c13db8450ce601e14586",
+  "testedCodeCommit": "aa652a5d9d459fbd2bcb22ea644a34e2e6186b80",
+  "publishedPrHeadLocation": "Final PR #34 description and /Users/nanmuxun/BlockAI/reports/pr34-final-acceptance/report.md; final evidence commit changes documentation only.",
+  "synchronization": "Two-parent merge of verified current main into original PR head; no force update or production changes relative to main.",
+  "browserChecks": [
+    {
+      "command": "node tests/workshop-export/browser.cjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "environment": {
+        "NODE_PATH": "/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+        "outputDirectory": "/tmp/pr34-final-browser-export"
+      },
+      "logSha256": "8b2455cb235ad5159cf1ef223edbdee35b3075a7bfa6679030be96c1c5cd2e89",
+      "reportPath": "/tmp/pr34-final-browser-export/browser-report.json",
+      "reportSha256": "36167c171990e047b416966ab2e38d3c33fd162be94a791c800ca98881e36a0e",
+      "cases": [
+        {
+          "width": 1366,
+          "passed": true,
+          "builtinZip": {
+            "label": "builtin-c",
+            "revision": 4,
+            "bytes": 15288,
+            "sha256": "c7d20bd1adadf014d2d271841fffdf11f59e5d6dec0b3b9118192035a40efc27",
+            "files": [
+              "README.md",
+              "index.html",
+              "package.json",
+              "provenance.json",
+              "src/App.tsx",
+              "src/components/FormBlock.tsx",
+              "src/components/ListBlock.tsx",
+              "src/components/MetricBlock.tsx",
+              "src/data.ts",
+              "src/main.tsx",
+              "src/model.ts",
+              "src/styles.css",
+              "tsconfig.json",
+              "vite.config.ts"
+            ]
+          },
+          "mixedZip": {
+            "label": "mixed-b",
+            "revision": 6,
+            "bytes": 16364,
+            "sha256": "ff2137cbc1e167927d9b81f21c0ca67d3adc851ae1c7db20a2f598dd1aed9c0c",
+            "files": [
+              "README.md",
+              "index.html",
+              "package.json",
+              "provenance.json",
+              "src/App.tsx",
+              "src/components/FormBlock.tsx",
+              "src/components/ListBlock.tsx",
+              "src/components/MetricBlock.tsx",
+              "src/components/custom/a0/Counter.tsx",
+              "src/data.ts",
+              "src/main.tsx",
+              "src/model.ts",
+              "src/styles.css",
+              "tsconfig.json",
+              "vite.config.ts"
+            ]
+          },
+          "checks": [
+            "creation",
+            "Inspector field edit",
+            "form/list create-update-delete",
+            "metric updates",
+            "B/C retention",
+            "B and C real ZIP downloads + CRC + central directory + required files",
+            "package build scripts and pinned versions",
+            "exact digest, project revision and edited props",
+            "export revision unchanged",
+            "stale snapshot blocks download",
+            "non-empty stateSchema blocks whole ZIP",
+            "Mochi conversation panel remains visible and disabled",
+            "single Mochi mount",
+            "no CustomBlock execution",
+            "no horizontal overflow",
+            "no external requests"
+          ]
+        },
+        {
+          "width": 390,
+          "passed": true,
+          "builtinZip": {
+            "label": "builtin-c",
+            "revision": 4,
+            "bytes": 15288,
+            "sha256": "b891970dfdd302b37dd70ac0eeb271bd7b340c92c5f2c9a9cc24ad37c04ec145",
+            "files": [
+              "README.md",
+              "index.html",
+              "package.json",
+              "provenance.json",
+              "src/App.tsx",
+              "src/components/FormBlock.tsx",
+              "src/components/ListBlock.tsx",
+              "src/components/MetricBlock.tsx",
+              "src/data.ts",
+              "src/main.tsx",
+              "src/model.ts",
+              "src/styles.css",
+              "tsconfig.json",
+              "vite.config.ts"
+            ]
+          },
+          "mixedZip": {
+            "label": "mixed-b",
+            "revision": 6,
+            "bytes": 16364,
+            "sha256": "754e73444b817c5c97992a3e8aa71879a57228438164f6d4562f8ad655c7ce34",
+            "files": [
+              "README.md",
+              "index.html",
+              "package.json",
+              "provenance.json",
+              "src/App.tsx",
+              "src/components/FormBlock.tsx",
+              "src/components/ListBlock.tsx",
+              "src/components/MetricBlock.tsx",
+              "src/components/custom/a0/Counter.tsx",
+              "src/data.ts",
+              "src/main.tsx",
+              "src/model.ts",
+              "src/styles.css",
+              "tsconfig.json",
+              "vite.config.ts"
+            ]
+          },
+          "checks": [
+            "creation",
+            "Inspector field edit",
+            "form/list create-update-delete",
+            "metric updates",
+            "B/C retention",
+            "B and C real ZIP downloads + CRC + central directory + required files",
+            "package build scripts and pinned versions",
+            "exact digest, project revision and edited props",
+            "export revision unchanged",
+            "stale snapshot blocks download",
+            "non-empty stateSchema blocks whole ZIP",
+            "Mochi conversation panel remains visible and disabled",
+            "single Mochi mount",
+            "no CustomBlock execution",
+            "no horizontal overflow",
+            "no external requests"
+          ]
+        },
+        {
+          "surface": "ordinary dev",
+          "passed": true,
+          "enabled": false,
+          "endpointStatus": 404
+        },
+        {
+          "surface": "production preview",
+          "passed": true,
+          "enabled": false,
+          "endpointStatus": 404
+        }
+      ],
+      "errors": [],
+      "paidCalls": 0,
+      "scope": "Existing product export/Workshop/B-C regression only; no generated confirmation UI or isolated Viewer acceptance."
+    },
+    {
+      "command": "node tests/custom-block-workshop/browser.cjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "environment": {
+        "NODE_PATH": "/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+        "outputDirectory": "/tmp/pr34-final-browser-workshop"
+      },
+      "logSha256": "ff9387e68daa97c8ce0b1def5a6f82b5f469de0df85151d4a0dc9d0b01ddd8d2",
+      "reportPath": "/tmp/pr34-final-browser-workshop/report.json",
+      "reportSha256": "91298fb8bdce0d3373246221a61cae77e0a373d31e6c2075b89fa72e85a9a894",
+      "cases": [
+        {
+          "width": 1366,
+          "passed": true,
+          "customInstances": 2,
+          "builtinRenders": 3,
+          "dragInput": "mouse",
+          "reference": {
+            "id": "custom-1",
+            "definitionId": "test-countdown",
+            "versionDigest": "sha256:5a00391acc66078473fce840a79288e2e60ce1690883194e889512f4109dcbd7",
+            "props": {
+              "label": "新版参数"
+            }
+          },
+          "checks": [
+            "real product route",
+            "mixed selection/drag/layout persistence",
+            "trusted props save/Schema rejection",
+            "stale custom draft",
+            "invalid digest atomic rejection",
+            "concurrent import rejects",
+            "new definition admission",
+            "same-definition version/Schema re-admission",
+            "builtin Inspector field editing",
+            "builtin form/list CRUD and live metric",
+            "B/C state retention",
+            "exact unavailable viewer",
+            "no iframe or generated module execution",
+            "Logo/Pixelify/Mochi",
+            "no horizontal overflow",
+            "legacy Home/clarification/Demo task roundtrip"
+          ],
+          "paidCalls": 0
+        },
+        {
+          "width": 390,
+          "passed": true,
+          "customInstances": 2,
+          "builtinRenders": 3,
+          "dragInput": "Chromium touch events",
+          "reference": {
+            "id": "custom-1",
+            "definitionId": "test-countdown",
+            "versionDigest": "sha256:5a00391acc66078473fce840a79288e2e60ce1690883194e889512f4109dcbd7",
+            "props": {
+              "label": "新版参数"
+            }
+          },
+          "checks": [
+            "real product route",
+            "mixed selection/drag/layout persistence",
+            "trusted props save/Schema rejection",
+            "stale custom draft",
+            "invalid digest atomic rejection",
+            "concurrent import rejects",
+            "new definition admission",
+            "same-definition version/Schema re-admission",
+            "builtin Inspector field editing",
+            "builtin form/list CRUD and live metric",
+            "B/C state retention",
+            "exact unavailable viewer",
+            "no iframe or generated module execution",
+            "Logo/Pixelify/Mochi",
+            "no horizontal overflow",
+            "legacy Home/clarification/Demo task roundtrip"
+          ],
+          "paidCalls": 0
+        }
+      ],
+      "errors": [],
+      "paidCalls": 0,
+      "scope": "Existing product export/Workshop/B-C regression only; no generated confirmation UI or isolated Viewer acceptance."
+    },
+    {
+      "command": "node tests/custom-block-bc/browser.check.cjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "environment": {
+        "NODE_PATH": "/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+        "outputDirectory": "/tmp/pr34-final-browser-bc"
+      },
+      "logSha256": "4ba4217412042fba6da5e42f7d6d78c99d1d3fd3f329eb2caaa24b4277d1b0fc",
+      "reportPath": "/tmp/pr34-final-browser-bc/browser-report.json",
+      "reportSha256": "bc3c598adaf5e8e2bb34bc17c3b5fda7a9bbe32379a9f16dff6d91c11bfcbbe2",
+      "cases": [
+        {
+          "viewport": {
+            "width": 1366,
+            "height": 900
+          },
+          "checks": [
+            "selection",
+            "draft-no-write",
+            "typed-enums",
+            "nested-optional-props",
+            "trusted-schema-rejection",
+            "stale-draft",
+            "pointer-drag",
+            "pointer-cancel",
+            "isolated-instance-props",
+            "mixed-render-order",
+            "exact-version-viewer",
+            "pending-build",
+            "unavailable",
+            "forged-runnable-denied",
+            "reload-persistence",
+            "no-horizontal-overflow",
+            "collision-no-write",
+            "mixed-snap",
+            "whole-stack-single-revision",
+            "detach-single-revision",
+            "arrange-single-revision",
+            "stale-drag-denied",
+            "dirty-instance-switch",
+            "dirty-version-switch",
+            "new-version-valid-save",
+            "pending-readonly-owner-rejection",
+            "readonly-controls",
+            "readonly-pointer-no-write",
+            "shared-metadata-states"
+          ],
+          "revision": 7,
+          "geometryRevision": 5
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 900
+          },
+          "checks": [
+            "selection",
+            "draft-no-write",
+            "typed-enums",
+            "nested-optional-props",
+            "trusted-schema-rejection",
+            "stale-draft",
+            "pointer-drag",
+            "pointer-cancel",
+            "isolated-instance-props",
+            "mixed-render-order",
+            "exact-version-viewer",
+            "pending-build",
+            "unavailable",
+            "forged-runnable-denied",
+            "reload-persistence",
+            "no-horizontal-overflow",
+            "collision-no-write",
+            "mixed-snap",
+            "whole-stack-single-revision",
+            "detach-single-revision",
+            "arrange-single-revision",
+            "stale-drag-denied",
+            "dirty-instance-switch",
+            "dirty-version-switch",
+            "new-version-valid-save",
+            "pending-readonly-owner-rejection",
+            "readonly-controls",
+            "readonly-pointer-no-write",
+            "shared-metadata-states"
+          ],
+          "revision": 7,
+          "geometryRevision": 5
+        }
+      ],
+      "errors": [],
+      "paidCalls": 0,
+      "scope": "Existing product export/Workshop/B-C regression only; no generated confirmation UI or isolated Viewer acceptance."
+    }
+  ],
+  "sourceHashes": {
+    "server/custom-block/install-export.mjs": "2fa9597841c29b7c95bff99b5faab17b93fc4c6e5d40de5e314cdb2cd187b316",
+    "src/integrations/generated-artifact/install.ts": "158c20628c1662becc99a53d400c282e6b1965feef649c8b0977599a1e4ebcb1",
+    "tests/generated-artifact/install.test.cjs": "a3f40bc4f033ed720b58bc9eb49f06513bba59fe1be3a123ace49425a4dc7e82",
+    "tests/generated-artifact/fixtures/pomodoro.pending.json": "c20f74f0ef3c92824f817cce10f1a24c9266174502129d4b705f0f2185f386c1"
+  },
+  "reviewFindings": [
+    "No production diff versus main in #31 export wiring, WorkshopMochi, CustomBlockImport, session/owner, generator/provider/store, compiler or Viewer.",
+    "No new network entrypoint or paid call. Existing #31 loopback export route remains baseline code.",
+    "Before install await, confirmation locks lifecycle methods synchronously. Host simulation proves project setter/unmount is skipped on CONFIRM_BUSY; React effect cleanup cannot enforce this.",
+    "Initial external Playwright resolution was absent from repository node_modules; existing bundled runtime and Chromium were used successfully without installation.",
+    "During test strengthening, full instance was mistakenly passed to reference-only resolveArtifact in a new assertion. Test was corrected to exact reference; final module/combined suites passed. No production fix was needed."
   ]
 }

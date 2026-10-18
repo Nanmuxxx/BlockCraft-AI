@@ -1,6 +1,6 @@
 # 已生成源码制品 → B 模式确认安装
 
-基线：`main@f0ddd21cb44749adf34fa473f3ae52115e273d3f`。本 PR 仅添加接线模块、测试、存档制品和说明；不修改正式 Workshop、CustomBlockImport、生成器/Provider/store、唯一 owner、构建器或 Viewer。它是可接线的离线安装链路，不是正式 UI/模型/运行闭环。
+最终验收基线：`main@13259a22d95d33ca32bcd9935aea7b602166b428`（含 #31）。通过双亲合并同步，保留原 PR HEAD `50504de70a8fcd6cfc31c13db8450ce601e14586`，未改写历史。本 PR 相对 main 仍仅添加原定 6 个接线模块、测试、存档制品和说明文件；不修改正式 Workshop、CustomBlockImport、生成器/Provider/store、唯一 owner、构建器或 Viewer。它是可接线的离线安装链路，不是正式 UI/模型/运行闭环。
 
 ## A. 最小接口与信任边界
 
@@ -77,3 +77,13 @@ const receipt = await installs.confirm(preview.ticketId)
 - HTTP 制品传输/ACL、跨刷新项目持久化/历史恢复不在本 PR 内。
 
 本轮测试使用既有依赖，无 npm install；可信仓库协议的 TypeScript 转译与生产应用构建不包含 JSON 内的 AI TSX。无自动合并、部署或付费 API。
+
+## 最终合并前复验
+
+#31 的 AppSpecWorkshop 导出按钮、WorkshopMochi 标签接线、原 CustomBlockImport 和现有本机导出入口相对 main 均零差异。本模块没有进入这些生产组件的 import 图；没有新增网络入口，既有 #31 本机导出入口不由本 PR 扩权。`npm test` 与 `npm run test` 各 192/192，安装模块 12/12，CustomBlock/owner/Host/source-plan 组合 326/326（含上述 12 项），生成器回归 82/82，聊天回归 40/40，`npm --prefix server test` 23/23，导出协议/HTTP/ZIP 回归 70/70；TypeScript、生产构建和 diff 检查通过。
+
+使用已有 bundled Playwright 和 Chromium 151.0.7922.34，实际运行 #31 Workshop 导出浏览器、CustomBlock Workshop 浏览器与独立 B/C adapter 浏览器。前两者覆盖 1366/390 视口，导出还覆盖 dev/production 默认禁用场景；B/C 每个视口 29 项检查通过。仅为 Chromium 移动视口模拟，不是实体手机。输出保存在 `/tmp/pr34-final-browser-*`，不覆盖 #31 证据；报告哈希见机器证据。没有运行下载 ZIP 中的源码，也没有开启隔离 Viewer。测试生成使用固定离线响应，没有模型外网请求。
+
+真实 DeepSeek 原始 fixture 的字节和 digest 未变；加强验收使旧 sibling 使用不同 digest，确认安装新原始制品后旧版本 registry、state、非空业务记录、位置和 renderOrder 均保留。同步宿主模拟 handler 验证：确认中 `invalidate` / `dispose` 抛 `CONFIRM_BUSY`，后续项目 setter / 卸载动作不执行；结算后才允许切换/释放。此结果证明模块门禁契约，不代表未接线的 React UI 已遵守契约；不得把卸载 effect 作为替代。
+
+仓库证据记录受测代码提交、基线及源码哈希；最终发布 HEAD 在 PR 说明/交付报告中记录，避免证据文件自引用自身提交 SHA。本轮不要求正式生成确认 UI、真实模型新调用或 Viewer 联合验收；这些剩余项仍如上。

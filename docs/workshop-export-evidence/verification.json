@@ -1,0 +1,161 @@
+{
+  "baseline": "f0ddd21cb44749adf34fa473f3ae52115e273d3f",
+  "branch": "codex/workshop-react-export-20261018",
+  "prHeadBeforeUpdate": "89d0afae4f68ca86f308d9b1389f8833a998bcbe",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "date": "2026-10-18",
+  "checks": [
+    {
+      "command": "npm test",
+      "passed": 192,
+      "failed": 0
+    },
+    {
+      "command": "npm run test:workshop-export",
+      "passed": 9,
+      "failed": 0
+    },
+    {
+      "command": "node --test tests/project-zip-export/export.test.mjs tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs tests/mochi-ai/*.test.mjs tests/mochi-source/*.test.cjs src/integrations/mochi/host.test.cjs",
+      "passed": 415,
+      "failed": 0
+    },
+    {
+      "command": "npm --prefix server test",
+      "passed": 23,
+      "failed": 0
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc -b --force",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:workshop-export:browser",
+      "exitCode": 0,
+      "viewports": [
+        1366,
+        390
+      ]
+    },
+    {
+      "command": "node tests/mochi-ai/workshop-browser.cjs (Playwright executablePath points to system Edge)",
+      "exitCode": 0,
+      "viewports": [
+        1366,
+        390
+      ],
+      "offlineProviderCalls": 10,
+      "paidCalls": 0
+    },
+    {
+      "command": "node tests/custom-block-workshop/browser.cjs (Playwright executablePath points to system Edge)",
+      "exitCode": 0,
+      "viewports": [
+        1366,
+        390
+      ]
+    },
+    {
+      "command": "Python zipfile.testzip + package/tsconfig/provenance/revision verification",
+      "passed": 6,
+      "failed": 0
+    }
+  ],
+  "browser": "Microsoft Edge 155.0.4283.45 (Chromium)",
+  "generation": "Fixed offline generation HTTP response on real /ai-create; no paid model calls. Real Node packaging and actual browser downloads.",
+  "sourceExecution": false,
+  "realDeepSeekArtifact": {
+    "verified": false,
+    "reason": "The byte-exact DeepSeek Pomodoro artifact was not present in the checkout or supplied evidence. The regression exercises the same non-empty stateSchema UNSUPPORTED_PROTOCOL path with a protocol-shaped fixture and does not claim it is the original artifact."
+  },
+  "windowScan": {
+    "tool": "typescript@5.9.3 ts.createScanner with JSX/ES2020",
+    "knownGap": "The identifier scanner does not see a Window obtained through event.view, ownerDocument.defaultView, or iframe.contentWindow.",
+    "regression": "AST property-access checks reject view, defaultView, contentWindow, ownerDocument, and parentWindow.",
+    "minimumReproduction": "onClick={event => event.view.open('https://example.com')}"
+  },
+  "deployment": "Blocked: trusted cloud identity, project ownership/read ACL, authoritative owner/registry and resource isolation are not implemented. Explicit single-user loopback dev only.",
+  "evidence": [
+    {
+      "path": "docs/workshop-export-evidence/browser-report.json",
+      "sha256": "5344e3bafdc2cb5cd04705ff3e6c46549441ec2e47d43a139d6a718e298e43c8"
+    },
+    {
+      "path": "docs/workshop-export-evidence/legacy-demo-1366.png",
+      "sha256": "b73443b76c77ab069007716616cad250313db4cba471364a5a0c5785fdc3c6d7"
+    },
+    {
+      "path": "docs/workshop-export-evidence/legacy-demo-390.png",
+      "sha256": "7dc4ee70791dc32c89cef7de44d2aa9d2b204a4b368eaf8babb696cbe442920d"
+    },
+    {
+      "path": "docs/workshop-export-evidence/mochi-workshop-report.json",
+      "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
+    },
+    {
+      "path": "docs/workshop-export-evidence/refused-1366.png",
+      "sha256": "e0da2e4147e41f78b20d09e52f1236395ee13acc059782230a3824f2abb2d70c"
+    },
+    {
+      "path": "docs/workshop-export-evidence/refused-390.png",
+      "sha256": "118f40dcbf2c7ead91d0c19b094d51cc613a4c26f8bceb03103dc3fa0b56116d"
+    },
+    {
+      "path": "docs/workshop-export-evidence/regression-report.json",
+      "sha256": "91298fb8bdce0d3373246221a61cae77e0a373d31e6c2075b89fa72e85a9a894"
+    },
+    {
+      "path": "docs/workshop-export-evidence/workshop-b-1366.png",
+      "sha256": "871b23da05c35f6057ed898a27df763dcf59b50f748d83946711c3ca4d3bf80b"
+    },
+    {
+      "path": "docs/workshop-export-evidence/workshop-b-390.png",
+      "sha256": "d117485dd7bb48762ebc409fb186448527c884b34fd2b4ca1f8b9e76deeb2417"
+    },
+    {
+      "path": "docs/workshop-export-evidence/workshop-c-1366.png",
+      "sha256": "6d8471071282a437e7fcb180056a045744f2551e6c5ca66f03193889f4614395"
+    },
+    {
+      "path": "docs/workshop-export-evidence/workshop-c-390.png",
+      "sha256": "f2a710a0f36980f86d296539bc85001cd7c23d2e07663feb037f03ec55e162d6"
+    }
+  ],
+  "downloads": [
+    {
+      "path": ".cache/workshop-export-downloads/1366-builtin-c.zip",
+      "bytes": 15288,
+      "sha256": "2b8166f0adb82907b35e988c894006ce0fa24e7a84b6613ccd5dcd14cacff593"
+    },
+    {
+      "path": ".cache/workshop-export-downloads/1366-mixed-b.zip",
+      "bytes": 16364,
+      "sha256": "f3ddb2395cf76eccdfc781f0dba7a3352939d1746f112c17b1d951a3f425dac8"
+    },
+    {
+      "path": ".cache/workshop-export-downloads/1366-mixed-repeat.zip",
+      "bytes": 16364,
+      "sha256": "f3ddb2395cf76eccdfc781f0dba7a3352939d1746f112c17b1d951a3f425dac8"
+    },
+    {
+      "path": ".cache/workshop-export-downloads/390-builtin-c.zip",
+      "bytes": 15288,
+      "sha256": "f2ac2c9fff68363f6c2f440a6cf3f5b740730e7bb6b84e3bb78fcf0f2498b065"
+    },
+    {
+      "path": ".cache/workshop-export-downloads/390-mixed-b.zip",
+      "bytes": 16364,
+      "sha256": "71a2eea914e8e2cb75eb3fb455462f8cb98541c231e023ee296b4e2a5bb126db"
+    },
+    {
+      "path": ".cache/workshop-export-downloads/390-mixed-repeat.zip",
+      "bytes": 16364,
+      "sha256": "71a2eea914e8e2cb75eb3fb455462f8cb98541c231e023ee296b4e2a5bb126db"
+    }
+  ]
+}
