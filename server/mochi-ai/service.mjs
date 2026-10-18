@@ -60,6 +60,9 @@ export function createMochiService({ provider, enabled = false, approval, reserv
     async analyze(access, raw, { signal } = {}) {
       gate()
       const state = session(access), input = validateRequest(raw)
+      // Resolver-owned session objects may be reused or mutated while the
+      // durable budget/provider awaits. Keep this request's trusted scope fixed.
+      access = Object.freeze({ sessionId: access.sessionId, appId: access.appId })
       check(input.context.mode === 'blocks', 'MODE_UNAVAILABLE', '请回到 B 模式再提问。', 409)
       check(input.context.appId === access.appId, 'CONTEXT_MISMATCH', '应用上下文已变化。', 409)
       if (input.kind === 'proactive' && !state.consent) denied('PROACTIVE_DISABLED', '主动建议尚未开启。', 403)

@@ -85,6 +85,22 @@ test('approval is snapshotted so caller mutation cannot increase the grant', asy
   assert.equal(f.count(), 1)
 })
 
+test('trusted access is captured before budget await so later mutation cannot change dedup scope', async () => {
+  let finish, calls = 0
+  const trusted = { ...access }
+  const f = fixture({ reserveBudget: () => ++calls === 1 ? new Promise(resolve => { finish = resolve }) : true })
+  const first = f.service.analyze(trusted, request())
+  trusted.appId = 'foreign-app'; trusted.sessionId = 'foreign-session'
+  finish(true)
+  const reply = await first
+  assert.equal(reply.binding.appId, access.appId)
+  assert.equal(reply.suggestions.length, 1)
+  f.tick()
+  const next = await f.service.analyze(access, request())
+  assert.equal(next.suggestions.length, 0)
+  assert.equal(f.count(), 2)
+})
+
 
 test('durable monetary adapter required, deny/error/abort never reach provider', async () => {
   for (const [reserveBudget, code] of [[undefined, 'BUDGET_UNAVAILABLE'], [() => false, 'BUDGET_EXHAUSTED'], [() => { throw new Error('ledger down') }, 'BUDGET_UNAVAILABLE']]) {
