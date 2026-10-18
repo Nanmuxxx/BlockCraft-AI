@@ -26,6 +26,45 @@ test('full offline HTTP user chat -> provider -> schema -> structured suggestion
   assert.match(body.suggestions[0].id, /^ai-/); assert.equal(body.capabilities.modifications, false); assert.equal(f.count(), 1)
   assert.equal(response.headers.get('cache-control'), 'no-store')
 })
+
+test('HTTP rejects malformed UTF-8 before provider egress', async t => {
+  const f = await fixture(t)
+  const input = { ...request(), prompt: 'MARKER' }
+  const raw = Buffer.from(JSON.stringify(input)), at = raw.indexOf('MARKER')
+  const body = Buffer.concat([raw.subarray(0, at), Buffer.from([0xc3, 0x28]), raw.subarray(at + 6)])
+  const response = await fetch(`${f.origin}/api/mochi-ai/analyze`, { method: 'POST', headers: { origin: f.origin, cookie: 'test=trusted', 'Content-Type': 'application/json' }, body })
+  assert.equal(response.status, 400)
+  assert.equal((await response.json()).error.code, 'INVALID_INPUT')
+  assert.equal(f.count(), 0)
+})
+
+test('ignored access resolver deadline retires HTTP admission with no model call', { timeout: 1000 }, async t => {
+  let rejectOld, observed
+  const f = await fixture(t, {}, { accessTimeoutMs: 10, resolveAccess: (_req, { signal } = {}) => { observed = signal; return new Promise((_, reject) => { rejectOld = reject }) } })
+  const response = await f.post('analyze', request())
+  assert.equal(response.status, 503)
+  assert.equal((await response.json()).error.code, 'ACCESS_UNAVAILABLE')
+  assert.equal(observed.aborted, true); assert.equal(f.count(), 0)
+  rejectOld(new Error('late private access error'))
+  await new Promise(resolve => setImmediate(resolve))
+})
+
+test('HTTP disconnect aborts pending access and consumes a late rejection without egress', { timeout: 1000 }, async t => {
+  let started, rejectOld
+  const ready = new Promise(resolve => { started = resolve })
+  const f = await fixture(t, {}, { resolveAccess: (_req, { signal }) => {
+    started(signal)
+    return new Promise((_, reject) => { rejectOld = reject })
+  } })
+  const controller = new AbortController()
+  const pending = fetch(`${f.origin}/api/mochi-ai/analyze`, { method: 'POST', headers: { origin: f.origin, cookie: 'test=trusted', 'Content-Type': 'application/json' }, body: JSON.stringify(request()), signal: controller.signal })
+  const signal = await ready, aborted = once(signal, 'abort')
+  controller.abort(); await assert.rejects(pending)
+  await aborted
+  rejectOld(new Error('late private access failure'))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(signal.aborted, true); assert.equal(f.count(), 0)
+})
 test('full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event', async t => {
   const f = await fixture(t)
   assert.equal((await f.post('analyze', request('proactive'))).status, 403)
