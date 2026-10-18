@@ -1,5 +1,5 @@
 import { constants } from 'node:fs'
-import { open, mkdir, lstat, readdir, link, unlink } from 'node:fs/promises'
+import { open, mkdir, lstat, readdir, link, unlink, rmdir } from 'node:fs/promises'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { protocol, json, ensure, GenerationError, LIMITS } from './protocol.mjs'
@@ -57,14 +57,24 @@ export function createPendingStore(directory, { maxArtifacts = 256 } = {}) {
         return old
       }
       try { return await existing() } catch (error) { if (error.code !== 'ENOENT') throw error }
-      ensure((await readdir(root)).length < maxArtifacts, 'STORE_QUOTA')
-      const temp = path.join(root, `.pending-${randomUUID()}.tmp`)
-      const handle = await open(temp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600)
+      // Atomic mkdir coordinates independent handles/processes sharing this root.
+      // Never wait on or remove an unknown lease: after a crash the trusted host
+      // must inspect the directory before recovering its stale .write-lock.
+      const lease = path.join(root, '.write-lock')
+      try { await mkdir(lease, { mode: 0o700 }) }
+      catch (error) { if (error.code === 'EEXIST') throw new GenerationError('STORE_BUSY'); throw error }
       try {
-        await handle.writeFile(text); await handle.sync(); await handle.close()
-        try { await link(temp, target) } catch (error) { if (error.code !== 'EEXIST') throw error }
-        return await existing()
-      } finally { await handle.close().catch(() => {}); await unlink(temp).catch(() => {}) }
+        // Another writer may have completed between the initial lookup and lease.
+        try { return await existing() } catch (error) { if (error.code !== 'ENOENT') throw error }
+        ensure((await readdir(root)).filter(name => name !== '.write-lock').length < maxArtifacts, 'STORE_QUOTA')
+        const temp = path.join(root, `.pending-${randomUUID()}.tmp`)
+        const handle = await open(temp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600)
+        try {
+          await handle.writeFile(text); await handle.sync(); await handle.close()
+          try { await link(temp, target) } catch (error) { if (error.code !== 'EEXIST') throw error }
+          return await existing()
+        } finally { await handle.close().catch(() => {}); await unlink(temp).catch(() => {}) }
+      } finally { await rmdir(lease).catch(() => {}) }
     },
     async inspect(reference) {
       protocol.assertArtifactReference(reference)

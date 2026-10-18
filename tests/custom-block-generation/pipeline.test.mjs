@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, rm, readdir, readFile, writeFile, stat, chmod, symlink } from 'node:fs/promises'
+import { mkdtemp, mkdir, rm, readdir, readFile, writeFile, stat, chmod, symlink, lstat } from 'node:fs/promises'
+import { spawn } from 'node:child_process'
 import path from 'node:path'
 import os from 'node:os'
 import { createGenerator } from '../../server/custom-block/generator.mjs'
@@ -196,4 +197,66 @@ export default function HazardousAdmissionFixture() {
   assert.equal(globalThis.__sourceAdmissionExecuted, false)
   const saved = await store.inspect(receipt.reference)
   assert.equal(saved.entry.artifact.sources['src/Component.tsx'], candidate.sources['src/Component.tsx'])
+})
+
+test('independent store handles cannot race distinct artifacts past the shared directory quota', async t => {
+  const { store, directory } = await setup(t, { maxArtifacts: 1 })
+  const secondStore = createPendingStore(directory, { maxArtifacts: 1 })
+  const first = await record(), second = await record(), output = response()
+  output.manifest.name = '另一个独立版本'
+  second.entry = await admitOutput(request(), JSON.stringify(output))
+  const outcomes = await Promise.allSettled([store.put(first), secondStore.put(second)])
+  assert.equal(outcomes.filter(result => result.status === 'fulfilled').length, 1)
+  const rejection = outcomes.find(result => result.status === 'rejected')
+  assert.ok(['STORE_BUSY', 'STORE_QUOTA'].includes(rejection.reason.code))
+  const files = await readdir(directory)
+  assert.equal(files.length, 1); assert.match(files[0], /^[a-f0-9]{64}\.json$/)
+  const winner = outcomes.find(result => result.status === 'fulfilled').value
+  assert.deepEqual(await store.inspect(ref(winner.entry)), winner)
+  // An immutable existing version remains reusable even when the quota is full.
+  assert.deepEqual(await secondStore.put(winner), winner)
+})
+
+test('unknown or stale store lease fails closed, remains intact, and is never followed', async t => {
+  const { store, directory } = await setup(t, { maxArtifacts: 1 }), input = await record()
+  const lease = path.join(directory, '.write-lock')
+  await mkdir(lease, { mode: 0o700 }); await writeFile(path.join(lease, 'owner-evidence'), 'do not delete')
+  await assert.rejects(store.put(input), { code: 'STORE_BUSY' })
+  assert.equal(await readFile(path.join(lease, 'owner-evidence'), 'utf8'), 'do not delete')
+  assert.equal(await store.inspect(ref(input.entry)), undefined)
+  // Only this test owns/removes its fixture lease. Production does no recovery.
+  await rm(lease, { recursive: true }); await symlink('/dev/null', lease)
+  await assert.rejects(store.put(input), { code: 'STORE_BUSY' })
+  assert.equal((await lstat(lease)).isSymbolicLink(), true)
+  await rm(lease); await store.put(input)
+  assert.deepEqual(await readdir(directory), [`${input.entry.versionDigest.slice(7)}.json`])
+  const other = await record(), output = response(); output.manifest.name = 'quota rejected'
+  other.entry = await admitOutput(request(), JSON.stringify(output))
+  await assert.rejects(store.put(other), { code: 'STORE_QUOTA' })
+  assert.deepEqual(await readdir(directory), [`${input.entry.versionDigest.slice(7)}.json`])
+})
+
+test('separate node processes share the same bounded store write lease', { timeout: 5000 }, async t => {
+  const { store, directory } = await setup(t, { maxArtifacts: 1 })
+  const inputs = [await record(), await record()], output = response(); output.manifest.name = 'cross-process second version'
+  inputs[1].entry = await admitOutput(request(), JSON.stringify(output))
+  // Execute trusted store code only; candidate TSX remains JSON data on stdin/IPC.
+  const script = `import { createPendingStore } from ${JSON.stringify(new URL('../../server/custom-block/store.mjs', import.meta.url).href)};
+process.send({ready:true}); process.once('message',async ({directory,record})=>{
+ try { await createPendingStore(directory,{maxArtifacts:1}).put(record); process.send({ok:true}); }
+ catch(error) { process.send({ok:false,code:error.code}); }
+ process.disconnect();
+});`
+  const children = inputs.map(() => spawn(process.execPath, ['--input-type=module', '-e', script], { stdio: ['ignore', 'ignore', 'pipe', 'ipc'] }))
+  t.after(() => children.forEach(child => { if (child.exitCode === null) child.kill() }))
+  const ready = children.map(child => new Promise((resolve, reject) => { child.once('message', resolve); child.once('error', reject) }))
+  await Promise.all(ready)
+  const outcomes = children.map(child => new Promise((resolve, reject) => { child.once('message', resolve); child.once('error', reject) }))
+  children.forEach((child, index) => child.send({ directory, record: inputs[index] }))
+  const results = await Promise.all(outcomes)
+  assert.equal(results.filter(result => result.ok).length, 1)
+  assert.ok(['STORE_BUSY', 'STORE_QUOTA'].includes(results.find(result => !result.ok).code))
+  assert.equal((await readdir(directory)).length, 1)
+  const saved = await Promise.all(inputs.map(input => store.inspect(ref(input.entry))))
+  assert.equal(saved.filter(Boolean).length, 1)
 })
