@@ -2,10 +2,15 @@
 
 每次运行独立记录，失败保留，不把分次通过数相加。REAL_MODEL_CALLS=0。新记录包含repositoryHead、codeChanges及测试环境白名单；旧记录代码基线见提交和报告。
 
+最终桌面/移动浏览器报告在`browser/final-generation`、`browser/final-cancel`、`browser/final-text-safety`；日志HEAD为`b646eea904b35497b96326df868531e27e5c4562`，本轮代码未变，随后由`ddf9d9b4ba991f2339801470b218e6a67893109b`归档并同步Draft。
+
 浏览器需NODE_PATH=/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules。Mochi输出MOCHI_WORKSHOP_QA_OUTPUT、Artifact输出GENERATED_UI_PRODUCTION_EVIDENCE，对应browser下报告名。移动为Chromium模拟，非真机。
 
 | 名称 | 命令 | 开始 UTC | 退出码 | 日志 |
 |---|---|---|---|---|
+| generation-artifact-retry-boundaries | `node --test tests/generation/compatibility.test.mjs tests/generation/service-runtime.test.cjs server/server.test.mjs tests/generated-artifact/install.test.cjs tests/custom-block-workshop/reinstall.test.cjs` | 2026-10-18T21:12:13.137Z | 0 | [generation-artifact-retry-boundaries-2026-10-18T21-12-13-137Z.txt](logs/generation-artifact-retry-boundaries-2026-10-18T21-12-13-137Z.txt) |
+| generation-artifact-retry-default | `npm test` | 2026-10-18T21:12:21.856Z | 0 | [generation-artifact-retry-default-2026-10-18T21-12-21-856Z.txt](logs/generation-artifact-retry-default-2026-10-18T21-12-21-856Z.txt) |
+| generation-artifact-retry-build | `npm run build` | 2026-10-18T21:12:31.136Z | 0 | [generation-artifact-retry-build-2026-10-18T21-12-31-136Z.txt](logs/generation-artifact-retry-build-2026-10-18T21-12-31-136Z.txt) |
 | interop-audit | `node --test tests/generation/compatibility.test.mjs tests/custom-block/project.test.cjs tests/custom-block/schema-json.test.cjs tests/custom-block-bc/adapter.test.cjs tests/custom-block-bc/owner.test.cjs tests/custom-block-bc/viewer.test.cjs tests/generated-artifact/install.test.cjs tests/custom-block-workshop/reinstall.test.cjs tests/custom-block-generation/installation.test.cjs tests/mochi-source/planning.test.cjs tests/mochi-ai/model-plan.test.cjs` | 2026-10-18T21:03:52.644Z | 0 | [interop-audit-2026-10-18T21-03-52-644Z.txt](logs/interop-audit-2026-10-18T21-03-52-644Z.txt) |
 | browser-final-generation | `env NODE_PATH=... GENERATION_QA_OUTPUT=docs/agent-a-night/browser/final-generation node tests/generation/browser.cjs` | 2026-10-18T21:04:08.521Z | 0 | [browser-final-generation-2026-10-18T21-04-08-521Z.txt](logs/browser-final-generation-2026-10-18T21-04-08-521Z.txt) |
 | browser-final-cancel | `env NODE_PATH=... GENERATION_QA_OUTPUT=docs/agent-a-night/browser/final-cancel node tests/generation/cancellation.browser.cjs` | 2026-10-18T21:04:27.385Z | 0 | [browser-final-cancel-2026-10-18T21-04-27-385Z.txt](logs/browser-final-cancel-2026-10-18T21-04-27-385Z.txt) |

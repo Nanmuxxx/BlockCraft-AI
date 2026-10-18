@@ -1,6 +1,6 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 05:06（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
+阶段检查点：2026-10-19 05:13（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
@@ -25,10 +25,11 @@
 - 精确提交：[LOCAL-COMMITS.txt](docs/agent-a-night/LOCAL-COMMITS.txt)；本地/远端SHA及逐一校验的同一文件树：[COMMIT-MAPPING.json](docs/agent-a-night/COMMIT-MAPPING.json)。Git-data API提交时间不同，不能将本地SHA当作远端SHA。
 - 审查命令：`git diff --stat 4044fb1...HEAD`和`git diff 4044fb1...HEAD`。
 - 交付文档校正提交：本地`dccde1073b97e29c72b049feaa6cdc0732a57549`→远端`2aca6a4cbaee00c162b6cdf90baa80fc5f68d44d`；随后本地`b646eea904b35497b96326df868531e27e5c4562`→远端`3bf225f400756da4c51bc74ad45dfe3669d103d5`，两组tree逐一校验。dccde发布时metadata trailer误填本地SHA（文件tree一致），b646完成账本校正；细节见映射和queue。
+- 最新证据提交：本地`ddf9d9b4ba991f2339801470b218e6a67893109b`→远端`947079c26ac467a6d41f83f375965bde0bb56ac3`，tree均为`2cbba5f82b62807c37b595ade6814c64a8829d1e`；包含桌面/移动HTTP生成、取消、恶意文字安全及互操作日志/报告。
 
 ## 3. Draft PR
 
-[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署；最近核验状态open/draft，HEAD=`3bf225f400756da4c51bc74ad45dfe3669d103d5`。后续同步见映射。
+[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署；2026-10-19 05:12核验状态open/draft，HEAD=`947079c26ac467a6d41f83f375965bde0bb56ac3`。描述已更新至最近回归结果。
 
 ## 4. 测试命令及退出码
 
@@ -132,3 +133,15 @@ status格式/异常关闭旧能力；主动建议的迟到确认、撤销通知�
 - 当前工作树取消/迟到响应桌面/移动：每视口6次本机HTTP；取消保留记录、响应体释放、迟到成功/拒绝不污染状态、导航取消，退出0。`reloadPersistence=false`明确表示未验收刷新存储。
 - 当前工作树恶意HTML/URL纯文字安全桌面/移动：脚本/iframe/event文字显示无探针节点、执行标志、弹窗、外部请求，B/C记录编辑往返通过，退出0。
 - 三份报告、截图/trace及命令原文/退出码写入`docs/agent-a-night/browser/final-*`与`logs/commands.jsonl`；Chrome 151.0.7922.34。移动仅模拟视口/触摸，不是真机。测试代码未改，REAL_MODEL_CALLS=0。
+
+## 第十四轮检查（05:13）
+
+- 归档的最终证据提交已发布，tree精确核对；PR #40仍open/draft，远端HEAD更新为`947079c26ac467a6d41f83f375965bde0bb56ac3`。
+- PR描述反映810/810、119/119、210/210、`npm test`192/192、`npm run build`退出0及离线浏览器边界；没有称fixture为真实模型生成。
+- 继续审核每请求上游调用次数与Artifact confirmation重复提交、Host CAS失败语义；本报告会在新回归运行后追加结果。
+
+## 第十五轮生成与安装重试审计（05:13）
+
+- `generation-artifact-retry-boundaries`：60/60退出0，覆盖无密钥/非法输入不触发上游、错误/模糊/超限响应拒绝、单次调用上限、超时/断连/迟到body释放，以及安装确认租约、重复提交、并发CAS冲突后票据终态、同版本重装与新版本状态隔离。
+- 审计未发现可复现的新缺陷。生成服务每个用户请求最多发出一次模型transport；没有自动修复或语义复核的隐藏重试。需要重新生成时由用户提交新请求。Artifact安装不是可重试的远端副作用：CAS失败后当前ticket终止，用户须重新prepare以获取新revision/授权并再次确认；重复确认不重复写入。
+- `npm test`192/192退出0；`npm run build`退出0（2005 modules transformed）。运行记录基线为ddf9d9b，codeChanges为空；REAL_MODEL_CALLS=0。

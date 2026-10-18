@@ -13,6 +13,13 @@
 
 当前：协议/Artifact/Runtime/Mochi审计210/210；正式生成、取消与文字安全浏览器回归在桌面/移动均退出0。dccde文档发布trailer误填本地SHA，已用b646映射校正（两者树相同）。下一任务：继续生成服务准入及安装失效/重试边界审计，并更新交付证据。生产修改Provider、Viewer隔离、付费语义与跨刷新存储仍受阻；REAL_MODEL_CALLS=0。
 
+## 第十四轮发布与边界审计（05:13）
+
+- 本地`ddf9d9b4ba991f2339801470b218e6a67893109b`浏览器/互操作证据已经GitHub Git-data API发布为远端`947079c26ac467a6d41f83f375965bde0bb56ac3`；tree均为`2cbba5f82b62807c37b595ade6814c64a8829d1e`。更新PR描述；PR #40核验仍open/draft、未合并，head匹配。
+- Git HTTPS push仍无凭据；通过API先核验期望head `3bf225f400756da4c51bc74ad45dfe3669d103d5`，再fast-forward更新，未强推。
+- 当前继续审计：生成错误与恢复每请求至多一次上游调用、Artifact确认回执及重复确认语义；review现有测试后运行聚焦回归。下一项：发现新的失败边界则加窄测试/修复；否则刷新总回归和交付报告。
+- REAL_MODEL_CALLS=0，不执行生成TSX；未触碰禁止文件。`node_modules`为既存未跟踪依赖链接，不纳入版本控制。
+
 ## 已完成与 Commit
 
 - `fd861f9`：生成客户端 128 KiB/fatal UTF-8、45 秒截止、取消、v1/v2 分离。
