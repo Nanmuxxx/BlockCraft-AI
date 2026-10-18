@@ -38,3 +38,12 @@ test('already disconnected requests do not invoke access or budget adapters', as
   await assert.rejects(f.run(), { code: 'CANCELLED' })
   assert.equal(calls, 0); assert.equal(f.reserves(), 0)
 })
+
+for (const stage of ['access', 'budget']) for (const thrown of [null, undefined, Object.assign(Error('adapter-private-data'), { code: 'ADAPTER_PRIVATE_SECRET', status: 9999 })]) {
+  test(`${stage} adapter failures are normalized without exposing arbitrary codes/status`, async () => {
+    const broken = async () => { throw thrown }
+    const f = setup(stage === 'access' ? { resolveAccess: broken } : { reserveBudget: broken })
+    await assert.rejects(f.run(), { code: 'BUDGET_UNAVAILABLE', status: 503, message: 'BUDGET_UNAVAILABLE' })
+    assert.equal(f.req.listenerCount('aborted'), 0)
+  })
+}

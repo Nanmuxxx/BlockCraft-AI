@@ -9,7 +9,10 @@ export function assertInteractiveSpec(spec) {
   assertAppSpec(spec)
   if (spec.version !== 2 || spec.entities.length || spec.relations.length || spec.blocks.length !== 1 || spec.blocks[0].type !== 'pomodoro') throw new Error('Unsupported interactive application')
 }
-const denied = (code, status = 503) => { throw Object.assign(new Error(code), { code, status }) }
+class AdmissionError extends Error {
+  constructor(code, status = 503) { super(code); this.code = code; this.status = status }
+}
+const denied = (code, status = 503) => { throw new AdmissionError(code, status) }
 /** Same trusted access / approval / durable budget boundary as Mochi AI.
  * No env flag, request body or browser header can grant approval. Disabled by default.
  * Reuses /api/ai/generate provider, official endpoint, size/rate/timeout protections.
@@ -26,12 +29,12 @@ export function createInteractiveGate({ enabled = false, approval, resolveAccess
     gate()
     if (req.headers.origin && req.headers.origin !== allowedOrigin) denied('ORIGIN_REJECTED', 403)
     const controller = new AbortController()
-    const close = () => controller.abort(Object.assign(new Error('Cancelled'), { code: 'CANCELLED', status: 499 }))
+    const close = () => controller.abort(new AdmissionError('CANCELLED', 499))
     req.once('aborted', close); signal?.addEventListener('abort', close, { once: true })
     if (req.aborted || signal?.aborted) close()
     // Both trusted adapters are asynchronous external boundaries. Bound the
     // entire admission, including identity lookup, before any model egress.
-    const timer = setTimeout(() => controller.abort(Object.assign(new Error('Admission timeout'), { code: 'BUDGET_UNAVAILABLE', status: 503 })), 5000)
+    const timer = setTimeout(() => controller.abort(new AdmissionError('BUDGET_UNAVAILABLE')), 5000)
     try {
       controller.signal.throwIfAborted()
       const access = await abortable(resolveAccess(req, { signal: controller.signal }), controller.signal)
@@ -43,7 +46,14 @@ export function createInteractiveGate({ enabled = false, approval, resolveAccess
       if (admitted !== true) denied('BUDGET_EXHAUSTED', 429)
       if (controller.signal.aborted) denied('CANCELLED', 499)
       gate()
-    } catch (error) { if (error.code) throw error; denied('BUDGET_UNAVAILABLE') }
+    } catch (error) {
+      // Adapter failures are not public HTTP metadata. Only errors created by
+      // this gate may carry a response code/status; null and arbitrary throws
+      // must neither leak private codes nor produce invalid HTTP status values.
+      if (controller.signal.aborted) throw controller.signal.reason
+      if (error instanceof AdmissionError) throw error
+      denied('BUDGET_UNAVAILABLE')
+    }
     finally { clearTimeout(timer); req.off('aborted', close); signal?.removeEventListener('abort', close); controller.abort() }
   }
 }
