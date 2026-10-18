@@ -80,6 +80,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   let disposed = false, pending = null, epoch = 0, actionEpoch = 0, signature = '', identity = '', prompts = [], lastProactive = -Infinity, consentSequence = 0, statusSequence = 0
   let consentTail = Promise.resolve()
   const messageFor = (code, fallback) => typeof code === 'string' && Object.hasOwn(errors, code) ? errors[code] : fallback
+  const codeFor = (error, fallback) => typeof error?.code === 'string' && Object.hasOwn(errors, error.code) ? error.code : fallback
   const listeners = new Set(), seen = new Map(), ignored = new Map(), events = new Map()
   const COOLDOWN = 600_000
   function emit(patch) {
@@ -108,7 +109,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     catch (error) {
       const changed = signature !== '' || state.contextAvailable
       signature = ''
-      if (changed) retire({ contextAvailable: false, suggestions: [], error: { code: error.code || 'CONTEXT_UNAVAILABLE', message: errors[error.code] || errors.CONTEXT_UNAVAILABLE } })
+      if (changed) retire({ contextAvailable: false, suggestions: [], error: { code: codeFor(error, 'CONTEXT_UNAVAILABLE'), message: messageFor(error?.code, errors.CONTEXT_UNAVAILABLE) } })
       throw error
     }
     const nextIdentity = `${context.appId}:${context.instanceId}`, next = JSON.stringify(context)
@@ -161,7 +162,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       const result = await write
       check(result.proactiveEnabled === enabled, 'AI_INVALID_RESPONSE')
       if (sequence === consentSequence) emit({ proactiveEnabled: enabled && state.enabled })
-    } catch (error) { if (sequence === consentSequence) emit({ proactiveEnabled: false, error: { code: error.code || 'AI_UNAVAILABLE', message: '主动建议设置失败，请重试。' } }); throw error }
+    } catch (error) { if (sequence === consentSequence) emit({ proactiveEnabled: false, error: { code: codeFor(error, 'AI_UNAVAILABLE'), message: '主动建议设置失败，请重试。' } }); throw error }
   }
   async function run(kind, prompt, event) {
     const context = syncContext(); purge()
@@ -203,7 +204,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       return { ...reply, suggestions }
     } catch (error) {
       if (controller.signal.aborted || disposed || owned !== epoch) throw new MochiError('CONTEXT_CHANGED', '已丢弃过期回复。', 409)
-      if (owned === epoch && !disposed) emit({ error: { code: error.code || 'AI_UNAVAILABLE', message: errors[error.code] || 'Mochi 暂时无法回答，请稍后重试。' } })
+      if (owned === epoch && !disposed) emit({ error: { code: codeFor(error, 'AI_UNAVAILABLE'), message: messageFor(error?.code, 'Mochi 暂时无法回答，请稍后重试。') } })
       throw error
     } finally { if (pending === controller) { pending = null; emit({ busy: false }) } }
   }
