@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
 import { once } from 'node:events'
+import { createConnection } from 'node:net'
 import { createMochiHandler } from '../../server/mochi-ai/http.mjs'
 import { createMochiService } from '../../server/mochi-ai/service.mjs'
 import { createDeepSeekProvider } from '../../server/mochi-ai/provider.mjs'
@@ -83,6 +84,29 @@ test('HTTP denies cross-origin, unauthenticated, invalid media/body/size/method 
   assert.equal((await f.post('analyze', { data: 'x'.repeat(17_000) })).status, 413)
   assert.equal((await fetch(`${f.origin}/api/mochi-ai/analyze`)).status, 405)
   assert.equal((await fetch(`${f.origin}/unrelated`)).status, 404); assert.equal(f.count(), 0)
+})
+test('early HTTP rejection closes incomplete uploads without waiting for the remaining body', { timeout: 3000 }, async t => {
+  const f = await fixture(t)
+  for (const [headers, status] of [
+    ['Cookie: spoof\r\nContent-Type: application/json', 401],
+    ['Cookie: test=trusted\r\nContent-Type: text/plain', 415],
+    ['Cookie: test=trusted\r\nContent-Type: application/json\r\nOrigin: https://evil.test', 403],
+  ]) {
+    const socket = createConnection({ host: '127.0.0.1', port: Number(new URL(f.origin).port) })
+    t.after(() => socket.destroy())
+    await once(socket, 'connect')
+    let response = ''
+    socket.setEncoding('utf8'); socket.on('data', chunk => { response += chunk })
+    const closed = once(socket, 'close')
+    socket.write(`POST /api/mochi-ai/analyze HTTP/1.1\r\nHost: localhost\r\nConnection: keep-alive\r\nContent-Length: 1000\r\n${headers}\r\n\r\n{`)
+    let timer
+    try {
+      await Promise.race([closed, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`Rejected upload ${status} remained open`)), 300) })])
+    } finally { clearTimeout(timer); socket.destroy() }
+    assert.match(response, new RegExp(`^HTTP/1.1 ${status} `))
+    assert.match(response, /\r\nconnection: close\r\n/i)
+  }
+  assert.equal(f.count(), 0)
 })
 test('HTTP production disabled remains explicit; no mock fallback', async t => {
   const f = await fixture(t, { enabled: false })

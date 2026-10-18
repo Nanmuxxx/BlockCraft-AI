@@ -3,7 +3,9 @@ import { abortable } from '../ai-abort.mjs'
 const PATHS = new Set(['/api/mochi-ai/analyze', '/api/mochi-ai/consent', '/api/mochi-ai/ignore', '/api/mochi-ai/status'])
 function send(res, status, data) {
   if (res.destroyed || res.writableEnded) return
-  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' })
+  // Admission may reject before consuming the body. Do not retain an unfinished
+  // upload on a keep-alive connection after the bounded JSON response is sent.
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', Connection: 'close' })
   res.end(JSON.stringify(data))
 }
 async function read(req) {
