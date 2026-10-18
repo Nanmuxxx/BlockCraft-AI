@@ -110,7 +110,7 @@ async function run() {
         return { label, revision: provenance.projectRevision, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex'), files: [...files.keys()] }
       }
       const builtinZip = await saveZip('builtin-c')
-      assert.equal(builtinZip.files.length, 14)
+      assert.equal(builtinZip.files.length, 15)
       await page.screenshot({ path: path.join(output, `workshop-c-${width}.png`), fullPage: true })
       await b.click()
       const entry = await trustedSample('counter')
@@ -130,7 +130,7 @@ async function run() {
       await customInspector.getByLabel('initial', { exact: true }).fill('11')
       await customInspector.getByRole('button', { name: '保存参数', exact: true }).click()
       const mixedZip = await saveZip('mixed-b')
-      assert.equal(mixedZip.files.length, 15)
+      assert.equal(mixedZip.files.length, 16)
       assert(mixedZip.files.some(p => p.endsWith('/Counter.tsx')))
       const mixedInput = sent.at(-1)
       assert.equal(mixedInput.artifacts.length, 1)

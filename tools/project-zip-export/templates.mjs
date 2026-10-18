@@ -30,7 +30,7 @@ import type { Field, Row, Value } from '../model';
 export default function FormBlock({ fields, initial, onSave, onCancel }: { fields: Field[]; initial?: Row; onSave: (values: Record<string, Value>) => void; onCancel?: () => void }) {
   const [error, setError] = useState('');
   const [values, setValues] = useState<Record<string, string | boolean>>(() => Object.fromEntries(fields.map(field => {
-    const value = initial?.values[field.id];
+    const value = initial && Object.prototype.hasOwnProperty.call(initial.values, field.id) ? initial.values[field.id] : undefined;
     return [field.id, field.type === 'boolean' ? value === true : value === undefined ? '' : String(value)];
   })));
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -44,6 +44,7 @@ export default function FormBlock({ fields, initial, onSave, onCancel }: { field
       else { next[field.id] = raw; }
     }
     onSave(next); setError('');
+    if (!initial) setValues(Object.fromEntries(fields.map(field => [field.id, field.type === 'boolean' ? false : ''])));
   }
   return <form onSubmit={submit}>{fields.map(field => <label key={field.id}>{field.name}{field.required ? ' *' : ''}
     {field.type === 'select' ? <select name={field.id} required={field.required} value={String(values[field.id] ?? '')} onChange={event => setValues(current => ({ ...current, [field.id]: event.target.value }))}><option value="">请选择</option>{field.options.map(value => <option key={value}>{value}</option>)}</select>
@@ -55,7 +56,7 @@ export const list = `import FormBlock from './FormBlock';
 import type { Field, Row, Value } from '../model';
 export default function ListBlock({ fields, rows, editing, onEdit, onDelete, onUpdate, onCancel }: { fields: Field[]; rows: Row[]; editing?: Row; onEdit: (id: string) => void; onDelete: (id: string) => void; onUpdate: (id: string, values: Record<string, Value>) => void; onCancel: () => void }) {
   return <div className="table-scroll"><table><thead><tr>{fields.map(field => <th key={field.id}>{field.name}</th>)}<th>操作</th></tr></thead>
-    <tbody>{rows.map(row => <tr key={row.id}>{fields.map(field => { const value = Object.prototype.hasOwnProperty.call(row.values, field.id) ? row.values[field.id] : undefined; return <td key={field.id}>{typeof value === 'boolean' ? (value ? '是' : '否') : String(value ?? '')}</td>; })}<td><button type="button" onClick={() => onEdit(row.id)}>编辑</button><button type="button" onClick={() => onDelete(row.id)}>删除</button></td></tr>)}</tbody>
+    <tbody>{rows.map(row => <tr key={row.id} data-record-id={row.id}>{fields.map(field => { const value = Object.prototype.hasOwnProperty.call(row.values, field.id) ? row.values[field.id] : undefined; return <td key={field.id}>{typeof value === 'boolean' ? (value ? '是' : '否') : String(value ?? '')}</td>; })}<td><button type="button" onClick={() => onEdit(row.id)}>编辑</button><button type="button" onClick={() => onDelete(row.id)}>删除</button></td></tr>)}</tbody>
   </table>{rows.length === 0 && <p>暂无记录</p>}{editing && <FormBlock key={editing.id} fields={fields} initial={editing} onSave={values => onUpdate(editing.id, values)} onCancel={onCancel} />}</div>;
 }
 `
@@ -72,6 +73,18 @@ import App from './App';
 import './styles.css';
 createRoot(document.getElementById('root')!).render(<App />);
 `
+export const recordOperations = `export function updateRows(rows: Row[], id: string, values: Record<string, Value>): Row[] {
+  return rows.map(row => {
+    if (row.id !== id) return row;
+    const next = { ...row.values };
+    for (const [field, value] of Object.entries(values)) {
+      if (value === '') delete next[field];
+      else Object.defineProperty(next, field, { value, enumerable: true, configurable: true, writable: true });
+    }
+    return { ...row, id: row.id, values: next };
+  });
+}
+`
 export function app(customImports, customCases) {
   return `import { useState } from 'react';
 import type { ComponentType, CSSProperties } from 'react';
@@ -81,17 +94,19 @@ import FormBlock from './components/FormBlock';
 import ListBlock from './components/ListBlock';
 import MetricBlock from './components/MetricBlock';
 ${customImports}
+${recordOperations}
 // Records live only in this standalone app's memory. Reload restores exported data.
 const customComponents: Record<string, ComponentType<any>> = { ${customCases} };
 function own<T>(values: Record<string, T>, key: string): T | undefined { return Object.prototype.hasOwnProperty.call(values, key) ? values[key] : undefined; }
 export default function App() {
   const [records, setRecords] = useState<Records>(project.base.records);
+  const [error, setError] = useState('');
   const [editing, setEditing] = useState<{ entity: string; id: string } | null>(null);
   const positionedHeight = Math.max(0, ...[...Object.values(project.base.blockPositions), ...Object.values(project.custom.positions)].map(position => position.y * 800 + 620));
   function add(entity: string, row: Row) { setRecords(current => ({ ...current, [entity]: [...(own(current, entity) ?? []), row] })); }
   function remove(entity: string, id: string) { setRecords(current => ({ ...current, [entity]: (own(current, entity) ?? []).filter(row => row.id !== id) })); setEditing(current => current?.entity === entity && current.id === id ? null : current); }
-  function update(entity: string, id: string, values: Record<string, Value>) { setRecords(current => ({ ...current, [entity]: (own(current, entity) ?? []).map(row => { if (row.id !== id) return row; const next = { ...row.values }; for (const [field, value] of Object.entries(values)) value === '' ? delete next[field] : next[field] = value; return { ...row, id, values: next }; }) })); setEditing(null); }
-  return <main><h1>{project.base.spec.name}</h1><div className="board" style={{ '--positioned-height': positionedHeight + 'px' } as CSSProperties}>{project.renderOrder.map((item, index) => {
+  function update(entity: string, id: string, values: Record<string, Value>) { if (!(own(records, entity) ?? []).some(row => row.id === id)) { setError('记录不存在，请重新选择'); setEditing(null); return; } setRecords(current => ({ ...current, [entity]: updateRows(own(current, entity) ?? [], id, values) })); setError(''); setEditing(null); }
+  return <main><h1>{project.base.spec.name}</h1>{error && <p role="alert">{error}</p>}<div className="board" style={{ '--positioned-height': positionedHeight + 'px' } as CSSProperties}>{project.renderOrder.map((item, index) => {
     const position = item.kind === 'builtin' ? own(project.base.blockPositions, item.id) : own(project.custom.positions, item.id);
     // Normalized saved coordinates determine the desktop board; DOM/tab order stays renderOrder.
     const style = position ? { '--x': position.x, '--y': position.y, zIndex: index + 1 } as CSSProperties : undefined;
@@ -106,7 +121,7 @@ export default function App() {
     const rows = own(records, entity.id) ?? [];
     const fields = block.type === 'metric' ? [] : block.fieldIds.map(id => entity.fields.find(field => field.id === id)!);
     return <section key={'builtin:' + item.id} data-block-id={item.id} data-positioned={!!position} className="block" style={style}><h2>{block.name}</h2>
-      {block.type === 'form' ? <FormBlock fields={fields} onSave={values => add(entity.id, { id: crypto.randomUUID(), values })} /> : block.type === 'list' ? <ListBlock fields={fields} rows={rows} editing={editing?.entity === entity.id ? rows.find(row => row.id === editing.id) : undefined} onEdit={id => setEditing({ entity: entity.id, id })} onDelete={id => remove(entity.id, id)} onUpdate={(id, values) => update(entity.id, id, values)} onCancel={() => setEditing(null)} /> : <MetricBlock block={block} rows={rows} />}
+      {block.type === 'form' ? <FormBlock fields={fields} onSave={values => add(entity.id, { id: crypto.randomUUID(), values })} /> : block.type === 'list' ? <ListBlock fields={fields} rows={rows} editing={editing?.entity === entity.id ? rows.find(row => row.id === editing.id) : undefined} onEdit={id => { if (!rows.some(row => row.id === id)) { setError('记录不存在，请重新选择'); setEditing(null); return; } setError(''); setEditing({ entity: entity.id, id }); }} onDelete={id => remove(entity.id, id)} onUpdate={(id, values) => update(entity.id, id, values)} onCancel={() => setEditing(null)} /> : <MetricBlock block={block} rows={rows} />}
     </section>;
   })}</div></main>;
 }
@@ -127,7 +142,7 @@ export const readme = `# 独立 React + TypeScript + Vite 工程
 要求 Node.js >= 22.16。审查源码后，在本目录运行：
 
 \`\`\`sh
-npm install
+npm ci
 npm run dev
 npm run build
 npm run preview
@@ -135,7 +150,7 @@ npm run preview
 
 dev 的回环地址由 Vite 显示；build 产物位于 dist/。可编辑 src/App.tsx、src/components/ 和 src/data.ts。
 无需 BlockCraft 网站、账号、API 或远程 Runtime。React/Vite 依赖来自 npm，需要用户自行联网安装。
-package.json 固定版本且不接受制品提供的脚本。首次安装后保留生成的 package-lock.json。
+package.json 固定直接依赖版本，随包附带 package-lock.json 锁定传递依赖，使用 npm ci 按锁文件安装。离线安装仅在完整缓存已具备时可运行 npm ci --offline；ZIP 本身不包含依赖。
 制品 SRI 作为版本准入核对声明，不代表本导出器已下载并认证 npm 包或其传递依赖。
 
 内置 form 保存记录，list 展示/编辑/删除记录，metric count/sum/average 自动更新；编辑保存会保留原记录 ID，取消编辑或删除正在编辑的记录不会留下编辑状态；业务数据保存在内存，刷新恢复导出的初始记录。
