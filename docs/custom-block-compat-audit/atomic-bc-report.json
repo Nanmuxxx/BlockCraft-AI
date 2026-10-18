@@ -1,0 +1,87 @@
+{
+  "scope": "Offline static metadata only; real React lifecycle and owner; unavailable metadata uses explicit test projections; no generated component compilation or execution; no production wiring",
+  "evidence": "/tmp/blockcraft-bc-compat",
+  "results": [
+    {
+      "viewport": {
+        "width": 1366,
+        "height": 900
+      },
+      "checks": [
+        "selection",
+        "draft-no-write",
+        "typed-enums",
+        "nested-optional-props",
+        "trusted-schema-rejection",
+        "stale-draft",
+        "pointer-drag",
+        "pointer-cancel",
+        "isolated-instance-props",
+        "mixed-render-order",
+        "exact-version-viewer",
+        "pending-build",
+        "unavailable",
+        "forged-runnable-denied",
+        "reload-persistence",
+        "no-horizontal-overflow",
+        "collision-no-write",
+        "mixed-snap",
+        "whole-stack-single-revision",
+        "detach-single-revision",
+        "arrange-single-revision",
+        "stale-drag-denied",
+        "dirty-instance-switch",
+        "dirty-version-switch",
+        "new-version-valid-save",
+        "pending-readonly-owner-rejection",
+        "readonly-controls",
+        "readonly-pointer-no-write",
+        "shared-metadata-states"
+      ],
+      "revision": 7,
+      "geometryRevision": 5
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "checks": [
+        "selection",
+        "draft-no-write",
+        "typed-enums",
+        "nested-optional-props",
+        "trusted-schema-rejection",
+        "stale-draft",
+        "pointer-drag",
+        "pointer-cancel",
+        "isolated-instance-props",
+        "mixed-render-order",
+        "exact-version-viewer",
+        "pending-build",
+        "unavailable",
+        "forged-runnable-denied",
+        "reload-persistence",
+        "no-horizontal-overflow",
+        "collision-no-write",
+        "mixed-snap",
+        "whole-stack-single-revision",
+        "detach-single-revision",
+        "arrange-single-revision",
+        "stale-drag-denied",
+        "dirty-instance-switch",
+        "dirty-version-switch",
+        "new-version-valid-save",
+        "pending-readonly-owner-rejection",
+        "readonly-controls",
+        "readonly-pointer-no-write",
+        "shared-metadata-states"
+      ],
+      "revision": 7,
+      "geometryRevision": 5
+    }
+  ],
+  "errors": [],
+  "assetErrors": [],
+  "externalRequests": []
+}

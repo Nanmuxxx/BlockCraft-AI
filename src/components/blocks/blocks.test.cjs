@@ -296,3 +296,16 @@ test('B module projection follows command add/remove/undo while C records stay i
   assert.match(render(toAppCanvasModules(runtime.getSnapshot()), { appBuilder }), /data-block-key="module:bookshelf"/)
   assert.deepEqual(runtime.getSnapshot().records, records)
 })
+
+// Regression found on the real 390px Workshop after a new custom card import.
+test('narrow fragmented saved positions reflow every card without losing stacks', () => {
+  const ids = ['a', 'b', 'c', 'new']
+  const board = boardSize(338, ids.length)
+  const desired = { a: { x: 130, y: 526 }, b: { x: 170, y: 745 }, c: { x: 190, y: 305 }, new: { x: 34, y: 736 } }
+  const scene = settleScene(ids, desired, [], board)
+  assertSceneLayout(scene, ids, board)
+  assert.deepEqual(Object.keys(scene).sort(), ids.slice().sort())
+  const stacked = settleScene(ids, desired, [['a', 'b']], board)
+  assertSceneLayout(stacked, ids, board)
+  assert.equal(stacked.b.y - stacked.a.y, STACK_STEP)
+})

@@ -13,6 +13,8 @@ const { viewerState } = require('../../src/integrations/custom-block-bc/viewer.t
 const { CustomBlockViewer, CustomBlockRunSurface } = require('../../src/integrations/custom-block-bc/CustomBlockViewer.tsx')
 const { CustomBlockInspector } = require('../../src/integrations/custom-block-bc/CustomBlockInspector.tsx')
 const { CustomBlockCanvas } = require('../../src/integrations/custom-block-bc/CustomBlockCanvas.tsx')
+const { configurationState } = require('../../src/integrations/custom-block-bc/metadata.ts')
+const { createCustomBlockBCAdapter } = require('../../src/integrations/custom-block-bc/adapter.ts')
 
 test('missing backend and forged runnable observations never mount executable content', async () => {
   const f = await fixture(), instance = f.owner.getSnapshot().custom.instances[0]
@@ -58,4 +60,37 @@ test('no selection displays guidance and source text is never evaluated', async 
   const f = await fixture()
   const html = renderToStaticMarkup(React.createElement(CustomBlockInspector, { adapter: f.adapter, instanceId: null }))
   assert.match(html, /请选择一块自定义积木/); assert.doesNotMatch(html, /<form/)
+})
+
+for (const status of ['valid', 'missing', 'unavailable']) for (const readOnly of [false, true]) {
+  test(`shared card/Inspector configuration status ${status}, readonly=${readOnly}`, async () => {
+    const f = await fixture()
+    f.owner.setReadOnly(readOnly)
+    const manifest = f.adapter.manifestFor(f.reference)
+    const schema = status === 'valid' ? manifest.propsSchema : status === 'missing' ? undefined : { type: 'array' }
+    const state = configurationState(schema, readOnly)
+    assert.equal(state.status, status); assert.equal(state.editable, status === 'valid' && !readOnly)
+    assert.equal(state.executionLabel, '当前不可执行')
+    // Controlled metadata projection exercises defensive UI only; it is not admission.
+    const projection = { ...f.adapter, manifestFor: () => schema === undefined ? undefined : { ...manifest, propsSchema: schema } }
+    projection.orderedBlocks = snapshot => f.adapter.orderedBlocks(snapshot).map(item => item.kind === 'custom' ? { ...item, manifest: projection.manifestFor(item.instance) } : item)
+    const b = renderToStaticMarkup(React.createElement(CustomBlockCanvas, { adapter: projection, selectedId: 'countdown-1', onSelect() {} }))
+    const i = renderToStaticMarkup(React.createElement(CustomBlockInspector, { adapter: projection, instanceId: 'countdown-1' }))
+    for (const html of [b, i]) {
+      assert.ok(html.includes(state.label)); assert.ok(html.includes(state.writeLabel)); assert.ok(html.includes(state.executionLabel))
+      assert.doesNotMatch(html, /待运行接线/)
+    }
+    assert.ok(i.includes(`data-configuration-state="${status}"`))
+    assert.equal(i.includes('<form'), status === 'valid')
+    if (status === 'valid') assert.equal(/<fieldset disabled=""/.test(i), readOnly)
+  })
+}
+
+test('actual adapter admission rejects invalid schemas instead of trusting the UI status projection', async () => {
+  const f = await fixture(), before = f.owner.getSnapshot()
+  for (const schema of [{ type: 'array' }, { ...f.source.manifest.propsSchema, defaults: {} }, { type: 'object', properties: { value: { type: 'number', maximum: NaN } }, required: [], additionalProperties: false }]) {
+    f.source.manifest.propsSchema = schema
+    await assert.rejects(createCustomBlockBCAdapter(f.owner, f.registry))
+    assert.strictEqual(f.owner.getSnapshot(), before); assert.equal(f.owner.commits(), 0)
+  }
 })

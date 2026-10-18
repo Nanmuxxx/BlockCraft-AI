@@ -98,7 +98,7 @@ test('parallel edits share CAS, stale drafts do not retry or overwrite later rec
   const v1 = applyRecordChange({ revision: before.revision, ...before.base }, { type: 'create', entityId: 'books', record: { id: 'later-book', values: { 'book-title': '并发记录' } } })
   const { revision, ...base } = v1
   const external = { ...copy(before), revision, base }
-  assert.equal(f.owner.compareAndSwap(before, external).ok, true)
+  assert.equal(f.owner.compareAndSwap(before, external, f.owner.getAuthorization()).ok, true)
   assert.equal((await pending).error.code, 'REVISION_CONFLICT')
   assert.strictEqual(f.adapter.getSnapshot(), external)
   assert.equal((await f.adapter.editProps(request)).error.code, 'REVISION_CONFLICT')

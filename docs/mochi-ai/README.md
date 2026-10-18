@@ -17,6 +17,7 @@ git apply --check docs/mochi-ai/patches/server.patch
 - 旧 `workshop.patch` 已移除，禁止沿用覆盖生产页面。动画与 v2 接线的兼容检查、唯一 host 接口及待办见 [COMPATIBILITY.md](COMPATIBILITY.md)。可选面板仍未挂载，由主集成负责人在获批后确定产品呈现位置。
 - 未修改 `WorkshopMochi.tsx`、`MochiEmotion.tsx`、`MochiOverlay.tsx`、Canvas、Inspector、CustomBlock 或 Runtime。
 - `createWorkshopMochiConversation` 只需要 `getSnapshot / subscribe / setSelection`，不接受 Runtime、PlanProvider、confirm handle 或完整快照。
+- 已同步 #24/#25 后的 main；接口仍匹配，但含 custom 实例的混合上下文因缺少实体 relation 在请求前拒绝（`INVALID_INPUT`）。当前可选面板不能直接接入该上下文；详见兼容报告，不能据此宣称正式 v2 AI 已可用。
 
 将来经批准完成接线后，需在正式 Workshop 补充浏览器验收。本 PR 的浏览器证据来自独立离线验收页，不能证明正式产品已经接通。
 

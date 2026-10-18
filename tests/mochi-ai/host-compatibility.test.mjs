@@ -13,10 +13,12 @@ const { createMochiHost } = require('../../src/integrations/mochi/host.ts')
 const { unavailablePlanProvider } = require('../../src/integrations/mochi/planning.ts')
 const { createAppRuntime } = require('../../src/model/appRuntime.ts')
 const { createClubRegistrationExample } = require('../../src/model/appSpecExamples.ts')
+const { api: customApi, artifact } = require('../custom-block/fixtures.cjs')
 
 test('current main host supports advice without another host or any Runtime write', async t => {
   const runtime = createAppRuntime(createClubRegistrationExample())
   const before = runtime.getSnapshot()
+  const owner = runtime.customProject, projectBefore = owner.getSnapshot()
   const host = createMochiHost(runtime, unavailablePlanProvider)
   let calls = 0, writes = 0, clock = 0
   const unsubscribe = runtime.subscribe(() => writes++)
@@ -55,4 +57,31 @@ test('current main host supports advice without another host or any Runtime writ
   await new Promise(resolve => setTimeout(resolve, 15))
   assert.equal(calls, 2); assert.equal(writes, 0)
   assert.strictEqual(runtime.getSnapshot(), before)
+  assert.strictEqual(runtime.customProject, owner)
+  assert.strictEqual(owner.getSnapshot(), projectBefore)
+})
+
+test('v2 custom context fails closed before advice API and preserves the sole owner', async t => {
+  const runtime = createAppRuntime(createClubRegistrationExample())
+  const owner = runtime.customProject
+  const source = artifact(), versionDigest = await customApi.computeVersionDigest(source)
+  assert.equal((await owner.install({ baseRevision: 0,
+    instance: { id: 'custom-1', definitionId: source.manifest.definitionId, versionDigest, props: { durationSeconds: 600 } },
+    artifact: { versionDigest, artifact: source }, expectedReference: null,
+  })).ok, true)
+  const host = createMochiHost(runtime, unavailablePlanProvider)
+  t.after(() => host.dispose())
+  const before = owner.getSnapshot(), authorization = owner.getAuthorization()
+  let calls = 0
+  const api = { analyze: async () => { calls++; throw new Error('must not reach API') } }
+  // #25 exposes custom IDs for selection/anchors, without inventing entity relations.
+  for (const selected of ['registration-form', 'custom-1']) {
+    host.setSelection(selected)
+    assert.equal(host.getSnapshot().context.selectedBlockId, selected)
+    assert.throws(() => createWorkshopMochiConversation(host, { api }), { code: 'INVALID_INPUT' })
+  }
+  assert.equal(calls, 0)
+  assert.strictEqual(runtime.customProject, owner)
+  assert.strictEqual(owner.getSnapshot(), before)
+  assert.strictEqual(owner.getAuthorization(), authorization)
 })

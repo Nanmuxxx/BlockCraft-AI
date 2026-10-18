@@ -1,5 +1,26 @@
 # 验证记录
 
+## #24/#25 合并后的 Ready 复核
+
+2026-10-18：安全合入 `origin/main@94262b3307274b2bae0ad5f7782cd7088228574f`（包含 #24/#25/#27），保留原 PR 提交历史，自动合并无文本冲突。生产 Workshop、Mochi Host、动画、Runtime、CustomProjectV2 owner 与服务端入口相对该 main 均零改动。只新增回归与说明。
+
+| 检查（本轮重跑） | 结果 |
+| --- | --- |
+| `node --test tests/mochi-ai/*.test.mjs` | 32/32，全部离线 |
+| `npm test` | 158/158 |
+| `node --test tests/custom-block-workshop/*.test.cjs tests/custom-block-bc/*.test.cjs` | 87/87 |
+| `npm run test:mochi-host` | 24/24 |
+| `npm --prefix server test` | 23/23，注入 fetch |
+| `node --test tests/mochi-motion/geometry.test.cjs` | 3/3 |
+| `./node_modules/.bin/tsc -b --force` | 通过 |
+| `npm run build` | 通过（TypeScript + Vite） |
+| `git apply --check docs/mochi-ai/patches/server.patch` | 通过；未应用 |
+| `git diff --check`（含暂存合并结果） | 通过 |
+
+真实 #25 Host 回归在 builtin-only 项目中完成聊天、定位、主动选择事件与清理，断言同一 `runtime.customProject` 的身份和快照不变。新增混合上下文测试通过同一 owner 安装惰性 fixture artifact，分别选择内置与 custom：桥接均在请求前拒绝 `INVALID_INPUT`，API 调用为 0，owner/快照/授权不变；不伪造 relation 或宣称混合 v2 AI 可用。新增实际 integration 装配 + localhost HTTP 测试：有测试 grant/key 仍默认 disabled，即便显式 enabled 但没有可信 resolver 仍返回 503，真实模型 fetch 为 0。所有测试均未读取生产密钥或调用真实 DeepSeek。
+
+权限部署和持久人民币预算尚不具备生产支持；`modificationsEnabled=false`，无代码修改接线。本轮不修改生产 UI，因此未重跑正式 Workshop 浏览器验收；下方独立离线浏览器证据是历史记录。当前没有正式 AI Workshop 端到端证据。完成本轮检查后按用户授权转 Ready for review，等待 Tech Lead；不合并、部署或启用付费 API。
+
 ## Tech Lead 反馈后的兼容复核
 
 2026-10-18：通过 GitHub 读取最新 `main@2678c5e9c8dca05b79a45f37f0c4104b9cfc5cdc`（已包含 #27），校验签名提交 SHA 后导入既有 worktree 并合入 PR 分支，无文本冲突。未合并 PR 至 main。具体语义冲突与权限阻塞见 [COMPATIBILITY.md](COMPATIBILITY.md)。

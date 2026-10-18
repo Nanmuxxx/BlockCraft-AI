@@ -6,24 +6,26 @@ import { APP_BLOCK_CATALOG } from '../../components/blocks/app-canvas'
 import { createLayoutBatch, type CustomBlockBCAdapter } from './adapter'
 import '../../components/block-canvas.css'
 import './custom-block-bc.css'
+import { configurationState } from './metadata'
 
 /** A standalone replacement slot for the v2 canvas; existing v1/Demo is untouched. */
 export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
   adapter: CustomBlockBCAdapter; selectedId: string | null; onSelect: (id: string) => void
 }) {
   const snapshot = useSyncExternalStore(adapter.subscribe, adapter.getSnapshot, adapter.getSnapshot)
-  const gesture = useRef(snapshot)
+  const authorization = useSyncExternalStore(adapter.subscribe, adapter.getAuthorization, adapter.getAuthorization)
+  const gesture = useRef({ snapshot, authorization })
   const [error, setError] = useState('')
   const helpId = useId()
   const items = adapter.orderedBlocks(snapshot)
   const queueMove = useMemo(() => createLayoutBatch(adapter, result => setError(result.ok ? '' : `${result.error.code}: ${result.error.message}`)), [adapter])
   const snap = useSnapCanvas({
     ids: items.map(item => item.id),
-    saved: { ...snapshot.base.blockPositions, ...snapshot.custom.positions }, localIds: [], disabled: false,
-    onSelect: id => { gesture.current = adapter.getSnapshot(); onSelect(id); setError('') },
+    saved: { ...snapshot.base.blockPositions, ...snapshot.custom.positions }, localIds: [], disabled: authorization.readOnly,
+    onSelect: id => { gesture.current = { snapshot: adapter.getSnapshot(), authorization: adapter.getAuthorization() }; onSelect(id); setError('') },
     onMove: (id, position) => {
       const item = items.find(item => item.id === id)
-      if (item) queueMove(gesture.current, item.kind, id, position)
+      if (item) queueMove(gesture.current.snapshot, item.kind, id, position, gesture.current.authorization)
     },
   })
   const selected = items.some(item => item.id === selectedId) ? selectedId : null
@@ -31,8 +33,8 @@ export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
   return <section className="block-canvas-stage custom-block-bc" aria-label="自定义与内置积木画布">
     <div className="block-canvas-toolbar"><span><Blocks size={16} aria-hidden="true" />我的功能 · {items.length} 块积木</span>
       <div className="block-canvas-actions">
-        <button type="button" disabled={selectedStack.length < 2 || snap.dragging.length > 0} onClick={() => { gesture.current = adapter.getSnapshot(); if (selected) snap.detach(selected) }}><Unlink size={14} aria-hidden="true" />拆开这组</button>
-        <button type="button" disabled={!items.length || snap.dragging.length > 0} onClick={() => { gesture.current = adapter.getSnapshot(); snap.arrange() }}><LayoutGrid size={14} aria-hidden="true" />一键整理</button>
+        <button type="button" disabled={authorization.readOnly || selectedStack.length < 2 || snap.dragging.length > 0} onClick={() => { gesture.current = { snapshot: adapter.getSnapshot(), authorization: adapter.getAuthorization() }; if (selected) snap.detach(selected) }}><Unlink size={14} aria-hidden="true" />拆开这组</button>
+        <button type="button" disabled={authorization.readOnly || !items.length || snap.dragging.length > 0} onClick={() => { gesture.current = { snapshot: adapter.getSnapshot(), authorization: adapter.getAuthorization() }; snap.arrange() }}><LayoutGrid size={14} aria-hidden="true" />一键整理</button>
       </div>
     </div>
     <div className="block-canvas-play-note"><span>上下靠近，轻轻拼上</span><small>自定义积木可编辑参数；运行取决于隔离服务是否可用。</small></div>
@@ -51,6 +53,7 @@ export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
         if (!point) return null
         const builtin = item.kind === 'builtin' ? APP_BLOCK_CATALOG[item.block.type] : undefined
         const name = item.kind === 'builtin' ? item.block.name : item.manifest?.name ?? '自定义积木（版本元数据不可用）'
+        const state = item.kind === 'custom' ? configurationState(item.manifest?.propsSchema, authorization.readOnly) : undefined
         const group = stackFor(item.id, snap.stacks)
         return <button key={`${item.kind}:${item.id}`} type="button" data-block-key={`${item.kind}:${item.id}`}
           className={`block-canvas__block block-canvas__block--${builtin?.tone ?? 'apricot'}${selected === item.id ? ' is-selected' : ''}${snap.dragging.includes(item.id) ? ' is-dragging' : ''}${snap.celebrating.includes(item.id) ? ' is-snapped' : ''}`}
@@ -62,8 +65,8 @@ export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
           <span className="block-canvas__studs" aria-hidden="true"><i /><i /></span>
           <span className="block-canvas__top"><span className="block-canvas__icon"><Blocks size={20} aria-hidden="true" /></span><span className="block-canvas__number">{String(index + 1).padStart(2, '0')}</span></span>
           <span className="block-canvas__title">{name}</span>
-          <span className="block-canvas__description">{builtin?.description ?? '自定义源码积木 · 参数由宿主校验'}</span>
-          <span className="block-canvas__detail">{group.length > 1 ? `${group.length} 块拼在一起 · 可整组移动` : builtin?.detail ?? '自定义 · 运行状态见 C 模式'}</span>
+          <span className="block-canvas__description">{builtin?.description ?? `${state!.label} · ${state!.writeLabel}`}</span>
+          <span className="block-canvas__detail">{group.length > 1 ? `${group.length} 块拼在一起 · 可整组移动` : builtin?.detail ?? state!.executionLabel}</span>
         </button>
       })}
     </div>

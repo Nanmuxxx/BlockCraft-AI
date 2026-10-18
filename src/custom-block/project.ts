@@ -10,7 +10,7 @@ function position(value: unknown) {
   for (const axis of ['x', 'y']) check(typeof value[axis] === 'number' && Number.isFinite(value[axis]) && value[axis] >= 0 && value[axis] <= 1, 'Position outside [0,1]')
 }
 /** Internal structural pass; custom props/state still require an exact registry resolution. */
-function assertStructure(input: unknown): asserts input is CustomProject {
+export function assertCustomProjectStructure(input: unknown): asserts input is CustomProject {
   assertJson(input); object(input); keys(input, ['formatVersion', 'revision', 'base', 'custom', 'renderOrder'])
   check(input.formatVersion === 2, 'Unknown project format version'); revision(input.revision)
   object(input.base); keys(input.base, ['spec', 'records', 'blockPositions'])
@@ -54,12 +54,12 @@ export function migrateProjectState(input: unknown): CustomProject {
     custom: { instances: [], positions: {}, states: {} },
     renderOrder: base.spec.blocks.map(block => ({ kind: 'builtin', id: block.id })),
   }
-  assertStructure(result)
+  assertCustomProjectStructure(result)
   return result
 }
 /** Async only for reading/verifying artifacts. Validates a snapshot captured before await. */
 export async function parseCustomProject(input: unknown, registry: ArtifactRegistry): Promise<CustomProject> {
-  assertStructure(input)
+  assertCustomProjectStructure(input)
   const project = cloneJson(input)
   for (const instance of project.custom.instances) {
     const { artifact } = await resolveArtifact(registry, { definitionId: instance.definitionId, versionDigest: instance.versionDigest })
@@ -74,7 +74,7 @@ export async function parseCustomProject(input: unknown, registry: ArtifactRegis
 }
 /** Fail closed on any custom data or ordering loss. No "best effort" v1 export. */
 export function exportProjectState(input: unknown) {
-  assertStructure(input)
+  assertCustomProjectStructure(input)
   check(input.custom.instances.length === 0 && Object.keys(input.custom.positions).length === 0 && Object.keys(input.custom.states).length === 0, 'Custom project cannot be exported as v1', 'LOSSY_EXPORT')
   check(input.renderOrder.every((item, index) => item.kind === 'builtin' && item.id === input.base.spec.blocks[index].id), 'v1 export would lose render order', 'LOSSY_EXPORT')
   const result = cloneJson({ revision: input.revision, ...input.base })

@@ -5,6 +5,7 @@ import { once } from 'node:events'
 import { createMochiHandler } from '../../server/mochi-ai/http.mjs'
 import { createMochiService } from '../../server/mochi-ai/service.mjs'
 import { createDeepSeekProvider } from '../../server/mochi-ai/provider.mjs'
+import { createMochiIntegration } from '../../server/mochi-ai/index.mjs'
 import { request, envelope, access, grant } from './fixtures.mjs'
 async function fixture(t, options = {}, handlerOptions = {}) {
   let calls = 0
@@ -63,4 +64,22 @@ test('client identity cannot authenticate or override trusted project scope', as
   const response = await f.post('analyze', foreign, { 'x-app-id': 'other-project' })
   assert.equal(response.status, 409)
   assert.equal((await response.json()).error.code, 'CONTEXT_MISMATCH'); assert.equal(f.count(), 0)
+})
+test('assembled integration stays disabled by default and cannot bypass a missing resolver', async t => {
+  let integration, calls = 0
+  const server = createServer((req, res) => integration.handle(req, res))
+  server.listen(0, '127.0.0.1'); await once(server, 'listening')
+  t.after(() => new Promise(resolve => { server.close(resolve); server.closeAllConnections() }))
+  const origin = `http://127.0.0.1:${server.address().port}`
+  const config = { apiKey: 'OFFLINE FIXTURE ONLY', allowedOrigin: origin, approval: grant(Date.now()),
+    fetchImpl: async () => { calls++; throw new Error('unexpected upstream request') } }
+  integration = createMochiIntegration({ ...config, resolveAccess: () => access })
+  const status = await (await fetch(`${origin}/api/mochi-ai/status`)).json()
+  assert.equal(status.enabled, false); assert.equal(status.modificationsEnabled, false)
+  const post = () => fetch(`${origin}/api/mochi-ai/analyze`, { method: 'POST', headers: { origin, 'Content-Type': 'application/json' }, body: JSON.stringify(request()) })
+  assert.equal((await post()).status, 503)
+  integration = createMochiIntegration({ ...config, enabled: true })
+  const missing = await post()
+  assert.equal(missing.status, 503); assert.equal((await missing.json()).error.code, 'AI_DISABLED')
+  assert.equal(calls, 0)
 })

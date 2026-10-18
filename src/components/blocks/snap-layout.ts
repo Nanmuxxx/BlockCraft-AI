@@ -91,7 +91,15 @@ export function settleScene(ids: readonly string[], desired: Scene, stacks: read
       }
     }
   }
-  // The board reserves one full column per possible stack; supported scenes always fit.
+  // Saved positions can fragment a narrow board: greedy placement may leave no
+  // continuous gap for a newly imported card. Reflow only in that case; retain
+  // stack order and leave the saved business positions untouched on resize.
+  if (Object.keys(placed).length !== ids.length) {
+    let row = 0
+    return Object.fromEntries(bodies.flatMap(body => body.map(id => [id, {
+      x: board.width / 2, y: PADDING + CARD_HEIGHT / 2 + row++ * STACK_STEP,
+    }])))
+  }
   return placed
 }
 

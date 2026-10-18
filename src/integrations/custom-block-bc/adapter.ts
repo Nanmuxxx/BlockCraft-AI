@@ -3,27 +3,21 @@ import type { RuntimeResult } from '../../model/appRuntime'
 import type { ArtifactReference, ArtifactRegistry, CustomBlockInstance, CustomBlockManifest, CustomProject } from '../../custom-block'
 import { assertArtifactReference, parseCustomProject, resolveArtifact } from '../../custom-block'
 import { assertJson, check, cloneJson, CustomBlockError, id, keys, object, revision } from '../../custom-block/json'
+import type { ProjectRevisionOwner, WriteAuthorization } from './owner'
+export type { ProjectRevisionOwner } from './owner'
 
-/** Implemented by the ONE project owner, never by a second adapter store.
- * Both checks and publication must be atomic. Freeze nextProject and publish once.
- * Builtin commands/records/undo, custom edits and persistence share this owner.
- */
-export interface ProjectRevisionOwner {
-  getSnapshot: () => CustomProject
-  subscribe: (listener: () => void) => () => void
-  compareAndSwap: (expectedSnapshot: CustomProject, nextProject: CustomProject) => RuntimeResult
-}
 export type OrderedBlock =
   | { kind: 'builtin'; id: string; block: BlockSpec }
   | { kind: 'custom'; id: string; instance: CustomBlockInstance; manifest?: CustomBlockManifest }
 export interface CustomBlockBCAdapter {
   getSnapshot: ProjectRevisionOwner['getSnapshot']
   subscribe: ProjectRevisionOwner['subscribe']
+  getAuthorization: ProjectRevisionOwner['getAuthorization']
   manifestFor: (reference: ArtifactReference) => CustomBlockManifest | undefined
   orderedBlocks: (snapshot: CustomProject) => OrderedBlock[]
   /** Unknown at the trusted boundary, even when called by a typed React control. */
-  editProps: (request: unknown) => Promise<RuntimeResult>
-  moveBlocks: (request: unknown) => Promise<RuntimeResult>
+  editProps: (request: unknown, authorization?: WriteAuthorization) => Promise<RuntimeResult>
+  moveBlocks: (request: unknown, authorization?: WriteAuthorization) => Promise<RuntimeResult>
 }
 
 export function referenceOf(instance: CustomBlockInstance): ArtifactReference {
@@ -59,7 +53,7 @@ export async function createCustomBlockBCAdapter(owner: ProjectRevisionOwner, re
   }
   check(owner.getSnapshot() === initial, 'Project changed during adapter admission', 'REVISION_CONFLICT')
   const manifestFor = (ref: ArtifactReference) => manifests.get(key(ref))
-  const transact = async (request: unknown, apply: (next: CustomProject, input: Record<string, unknown>) => void): Promise<RuntimeResult> => {
+  const transact = async (request: unknown, apply: (next: CustomProject, input: Record<string, unknown>) => void, authorization = owner.getAuthorization()): Promise<RuntimeResult> => {
     try {
       assertJson(request); object(request); revision(request.baseRevision)
       const current = owner.getSnapshot()
@@ -71,12 +65,13 @@ export async function createCustomBlockBCAdapter(owner: ProjectRevisionOwner, re
       // Copies synchronously before await; no caller-owned draft aliases survive.
       const validated = freeze(await parseCustomProject(next, registry))
       check(owner.getSnapshot() === current, '校验期间项目已变化，请重新操作。', 'REVISION_CONFLICT')
-      return owner.compareAndSwap(current, validated)
+      return owner.compareAndSwap(current, validated, authorization)
     } catch (error) { return failure(error) }
   }
   return Object.freeze({
     getSnapshot: () => owner.getSnapshot(),
     subscribe: (listener: () => void) => owner.subscribe(listener),
+    getAuthorization: () => owner.getAuthorization(),
     manifestFor,
     orderedBlocks(snapshot: CustomProject): OrderedBlock[] {
       return snapshot.renderOrder.map(item => {
@@ -90,7 +85,7 @@ export async function createCustomBlockBCAdapter(owner: ProjectRevisionOwner, re
         return { ...item, kind: 'custom', instance, manifest: manifestFor(instance) }
       })
     },
-    editProps: (request: unknown) => transact(request, (next, input) => {
+    editProps: (request: unknown, authorization?: WriteAuthorization) => transact(request, (next, input) => {
       keys(input, ['baseRevision', 'instanceId', 'reference', 'props'])
       id(input.instanceId); assertArtifactReference(input.reference); object(input.props)
       const instance = next.custom.instances.find(instance => instance.id === input.instanceId)
@@ -98,8 +93,8 @@ export async function createCustomBlockBCAdapter(owner: ProjectRevisionOwner, re
       check(sameReference(instance, input.reference), '积木版本已变化，请重新选择。', 'VERSION_CONFLICT')
       check(manifestFor(instance), '此版本的元数据尚未准入。', 'VERSION_MISSING')
       instance.props = cloneJson(input.props) as CustomBlockInstance['props']
-    }),
-    moveBlocks: (request: unknown) => transact(request, (next, input) => {
+    }, authorization),
+    moveBlocks: (request: unknown, authorization?: WriteAuthorization) => transact(request, (next, input) => {
       keys(input, ['baseRevision', 'moves'])
       check(Array.isArray(input.moves) && input.moves.length > 0 && input.moves.length <= next.renderOrder.length, 'Invalid move batch')
       const seen = new Set<string>()
@@ -113,7 +108,7 @@ export async function createCustomBlockBCAdapter(owner: ProjectRevisionOwner, re
         const positions = move.kind === 'custom' ? next.custom.positions : next.base.blockPositions
         positions[move.id] = cloneJson(move.position) as { x: number; y: number }
       }
-    }),
+    }, authorization),
   })
 }
 
@@ -121,14 +116,14 @@ export async function createCustomBlockBCAdapter(owner: ProjectRevisionOwner, re
  * member synchronously; collect them into ONE atomic host layout transaction.
  */
 export function createLayoutBatch(adapter: CustomBlockBCAdapter, onResult: (result: RuntimeResult) => void) {
-  let batch: { snapshot: CustomProject; moves: Map<string, { kind: 'builtin' | 'custom'; id: string; position: { x: number; y: number } }> } | undefined
-  return (snapshot: CustomProject, kind: 'builtin' | 'custom', blockId: string, position: { x: number; y: number }) => {
+  let batch: { snapshot: CustomProject; authorization: WriteAuthorization; moves: Map<string, { kind: 'builtin' | 'custom'; id: string; position: { x: number; y: number } }> } | undefined
+  return (snapshot: CustomProject, kind: 'builtin' | 'custom', blockId: string, position: { x: number; y: number }, authorization = adapter.getAuthorization()) => {
     if (!batch) {
-      batch = { snapshot, moves: new Map() }
+      batch = { snapshot, authorization, moves: new Map() }
       queueMicrotask(() => {
         const pending = batch!
         batch = undefined
-        void adapter.moveBlocks({ baseRevision: pending.snapshot.revision, moves: [...pending.moves.values()] }).then(onResult)
+        void adapter.moveBlocks({ baseRevision: pending.snapshot.revision, moves: [...pending.moves.values()] }, pending.authorization).then(onResult)
       })
     }
     check(batch.snapshot === snapshot, 'Mixed layout gesture snapshots', 'REVISION_CONFLICT')
