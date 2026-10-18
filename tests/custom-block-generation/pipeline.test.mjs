@@ -1,13 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, mkdir, rm, readdir, readFile, writeFile, stat, chmod, symlink, lstat } from 'node:fs/promises'
+import { mkdtemp, mkdir, rm, readdir, readFile, writeFile, stat, chmod, symlink, lstat, open } from 'node:fs/promises'
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 import os from 'node:os'
 import { createGenerator } from '../../server/custom-block/generator.mjs'
 import { createPendingStore } from '../../server/custom-block/store.mjs'
 import { admitOutput } from '../../server/custom-block/contract.mjs'
-import { protocol } from '../../server/custom-block/protocol.mjs'
+import { protocol, LIMITS } from '../../server/custom-block/protocol.mjs'
 import { request, response, scenarios } from './fixtures.mjs'
 
 globalThis.fetch = () => { throw new Error('TEST_NETWORK_FORBIDDEN') }
@@ -108,6 +108,50 @@ test('private store permissions, quotas and references fail closed', async t => 
   assert.equal(read, false)
   await chmod(directory, 0o755)
   await assert.rejects(store.put(input), { code: 'STORE_PRIVATE_DIRECTORY_REQUIRED' })
+})
+
+test('store reads the complete immutable record when the filesystem returns short reads', async t => {
+  const { store, directory } = await setup(t), input = await record()
+  await store.put(input)
+  const handle = await open(path.join(directory, (await readdir(directory))[0]), 'r')
+  const prototype = Object.getPrototypeOf(handle), original = prototype.read
+  await handle.close()
+  // Short successful reads are allowed by the filesystem API, even before EOF.
+  t.mock.method(prototype, 'read', function(buffer, offset, length, position) {
+    return original.call(this, buffer, offset, Math.min(length, 31), position)
+  })
+  assert.deepEqual(await store.inspect(ref(input.entry)), input)
+})
+
+test('a valid JSON prefix cannot hide unread trailing bytes in a stored record', async t => {
+  const { store, directory } = await setup(t), input = await record()
+  await store.put(input)
+  const filename = path.join(directory, (await readdir(directory))[0])
+  const prefix = JSON.stringify(input)
+  await writeFile(filename, prefix + '\nUNTRUSTED TRAILING BYTES')
+  const handle = await open(filename, 'r'), prototype = Object.getPrototypeOf(handle), original = prototype.read
+  await handle.close()
+  t.mock.method(prototype, 'read', function(buffer, offset, length, position) {
+    return original.call(this, buffer, offset, Math.min(length, Buffer.byteLength(prefix)), position)
+  })
+  await assert.rejects(store.inspect(ref(input.entry)), { code: 'STORE_INVALID' })
+})
+
+test('store accepts the exact byte limit but rejects growth after its initial file stat', async t => {
+  const { store, directory } = await setup(t), input = await record()
+  await store.put(input)
+  const filename = path.join(directory, (await readdir(directory))[0]), prefix = JSON.stringify(input)
+  const bounded = prefix + ' '.repeat(LIMITS.storeBytes - Buffer.byteLength(prefix))
+  await writeFile(filename, bounded)
+  assert.deepEqual(await store.inspect(ref(input.entry)), input)
+  const handle = await open(filename, 'r'), prototype = Object.getPrototypeOf(handle), original = prototype.stat
+  await handle.close()
+  t.mock.method(prototype, 'stat', async function(...args) {
+    const snapshot = await original.apply(this, args)
+    await writeFile(filename, bounded + ' ')
+    return snapshot
+  })
+  await assert.rejects(store.inspect(ref(input.entry)), { code: 'STORE_LIMIT' })
 })
 test('caller mutation cannot change the artifact snapshot during asynchronous hashing', async t => {
   const { store } = await setup(t)

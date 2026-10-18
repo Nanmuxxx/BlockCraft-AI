@@ -11,9 +11,16 @@ async function readBounded(filename) {
     const stat = await handle.stat()
     ensure(stat.isFile() && stat.size <= LIMITS.storeBytes, 'STORE_LIMIT')
     const buffer = Buffer.alloc(LIMITS.storeBytes + 1)
-    const { bytesRead } = await handle.read(buffer, 0, buffer.length, 0)
-    ensure(bytesRead <= LIMITS.storeBytes, 'STORE_LIMIT')
-    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, bytesRead)))
+    let length = 0
+    // A successful read may be short without reaching EOF. Consume the full
+    // bounded file so a JSON prefix cannot conceal unread trailing content.
+    while (length < buffer.length) {
+      const { bytesRead } = await handle.read(buffer, length, buffer.length - length, length)
+      if (bytesRead === 0) break
+      length += bytesRead
+      ensure(length <= LIMITS.storeBytes, 'STORE_LIMIT')
+    }
+    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, length)))
   } finally { await handle.close() }
 }
 
