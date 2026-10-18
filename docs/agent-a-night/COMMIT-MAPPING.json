@@ -454,5 +454,17 @@
     "remote": "2f53dd9d4d382bc43323415f847b606490afdacb",
     "tree": "2671c2ba34546fcc070b1a0bf3c5d2dfaee4ad32",
     "message": "fix(mochi): retire scheduled analysis when proactive consent is revoked"
+  },
+  {
+    "local": "ff61d487719fdacf72ca9c6ea290710680e6967a",
+    "remote": "1f751e0f294b37c0ca89252fc7ac5fbef63ac439",
+    "tree": "6884d7b0e6157fcccfbafdae09ecb759166a9ed6",
+    "message": "test(generation): cover input deadline and rate-limited incomplete uploads"
+  },
+  {
+    "local": "378b178cd6f1aaa003de10980ef0d244ead9f849",
+    "remote": "0a1e7c98f05aba5bf21118a7a3cf1cb01c1957f8",
+    "tree": "b99cccf80ef18a80d8b8d53f4a1449a2e4b15c2d",
+    "message": "docs(ai-core): archive consent timer and ingress evidence"
   }
 ]
