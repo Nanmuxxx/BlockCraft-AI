@@ -52,7 +52,7 @@ export function createGeneratedArtifactUI(session: CustomProjectSession) {
     getSnapshot: () => state,
     subscribe(fn: () => void) { listeners.add(fn); return () => { listeners.delete(fn) } },
     /** No source, filename or provenance is an authorization credential. */
-    async readFile(file: { size: number; text(): Promise<string> }) {
+    async readFile(file: { size: number; text(): Promise<string>; arrayBuffer?(): Promise<ArrayBuffer> }) {
       alive(); const generation = invalidate(); ensureInstaller()
       if (generation !== epoch || closed) return
       captured = { snapshot: session.getSnapshot(), authorization: session.getAuthorization(), input: null }
@@ -64,10 +64,19 @@ export function createGeneratedArtifactUI(session: CustomProjectSession) {
       try {
         publish({ phase: 'reading', message: '正在读取制品文件…' })
         current(generation) // A subscriber may cancel or replace the draft during publication.
-        check(file.size <= 4_000_000, '制品文件过大。', 'LIMIT')
-        const text = await Promise.race([file.text(), cancellation])
+        check(Number.isSafeInteger(file.size) && file.size >= 0 && file.size <= 4_000_000, '制品文件大小无效或过大。', 'LIMIT')
+        // Native File.text replaces malformed UTF-8, potentially altering unsigned props/names.
+        // Read bytes when supported; retain the text seam for existing injected file adapters.
+        const contents = await Promise.race([file.arrayBuffer ? file.arrayBuffer() : file.text(), cancellation])
         current(generation)
-        check(typeof text === 'string', '文件读取已取消。', 'CONTEXT_CHANGED')
+        check(typeof contents !== 'symbol', '文件读取已取消。', 'CONTEXT_CHANGED')
+        let text: string
+        if (typeof contents === 'string') text = contents
+        else {
+          check(contents.byteLength <= 4_000_000, '制品文件过大。', 'LIMIT')
+          try { text = new TextDecoder('utf-8', { fatal: true }).decode(contents) }
+          catch { throw new Error('制品文件不是有效的 UTF-8 文本。') }
+        }
         check(new TextEncoder().encode(text).byteLength <= 4_000_000, '制品文件过大。', 'LIMIT')
         current(generation)
         const raw: unknown = JSON.parse(text)
