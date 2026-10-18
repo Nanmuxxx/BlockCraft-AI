@@ -7,9 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "node --test src/model/appSpec.test.cjs src/model/appRuntime.test.cjs src/model/appChangePlan.test.cjs src/components/blocks/blocks.test.cjs src/components/ai-create/generateApp.test.cjs src/components/app-builder/AppSpecCanvas.test.cjs",
+    "test": "node --test src/model/appSpec.test.cjs src/model/appRuntime.test.cjs src/model/appChangePlan.test.cjs src/components/blocks/blocks.test.cjs src/components/ai-create/generateApp.test.cjs src/components/app-builder/AppSpecCanvas.test.cjs src/integrations/mochi/host.test.cjs",
     "test:generation": "npm --prefix server run build && node --test tests/generation/*.test.mjs",
-    "test:generation:browser": "node tests/generation/browser.cjs"
+    "test:generation:browser": "node tests/generation/browser.cjs",
+    "test:mochi-host": "node --test src/integrations/mochi/host.test.cjs"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "5.3.0",
