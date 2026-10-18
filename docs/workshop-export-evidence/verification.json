@@ -1,0 +1,144 @@
+{
+  "baseline": "2c7c698780d190aedf1cccc0ddcd7006c0f7f8be",
+  "branch": "codex/workshop-react-export-20261018",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "date": "2026-10-18",
+  "checks": [
+    {
+      "command": "npm test",
+      "passed": 158,
+      "failed": 0
+    },
+    {
+      "command": "npm run test:workshop-export",
+      "passed": 9,
+      "failed": 0
+    },
+    {
+      "command": "node --test tests/project-zip-export/export.test.mjs tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs tests/mochi-ai/*.test.mjs src/integrations/mochi/host.test.cjs",
+      "passed": 336,
+      "failed": 0
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc -b --force",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:workshop-export:browser",
+      "exitCode": 0,
+      "viewports": [
+        1366,
+        390
+      ]
+    },
+    {
+      "command": "node tests/custom-block-workshop/browser.cjs (existing Chromium executablePath override)",
+      "exitCode": 0,
+      "viewports": [
+        1366,
+        390
+      ]
+    }
+  ],
+  "browser": "Chromium 153.0.8010.12",
+  "generation": "Fixed offline generation HTTP response on real /ai-create; no paid model calls. Real Node packaging and actual browser downloads.",
+  "sourceExecution": false,
+  "deployment": "Blocked: trusted cloud identity, project ownership/read ACL, authoritative owner/registry and resource isolation are not implemented. Explicit single-user loopback dev only.",
+  "evidence": [
+    {
+      "path": "docs/workshop-export-evidence/browser-report.json",
+      "sha256": "32f5b1fd6c8b9315906ba6ec27b864554e22e5289ea4f99126cde6b414254b00"
+    },
+    {
+      "path": "docs/workshop-export-evidence/refused-1366.png",
+      "sha256": "c97529017fb31660dff9be38cd0ef98b0edc7f47a43e5a412a82ab854d191040"
+    },
+    {
+      "path": "docs/workshop-export-evidence/refused-390.png",
+      "sha256": "f3dd3e4d8fd0201454194ecf89c79f1bc42718ecb11a1063c3a939b544f1d7cf"
+    },
+    {
+      "path": "docs/workshop-export-evidence/regression-report.json",
+      "sha256": "91298fb8bdce0d3373246221a61cae77e0a373d31e6c2075b89fa72e85a9a894"
+    },
+    {
+      "path": "docs/workshop-export-evidence/workshop-b-1366.png",
+      "sha256": "cbe419c5104f68b3e8c51005a43bac21579493b96f21ddd0aee33d3fd9a1efb6"
+    },
+    {
+      "path": "docs/workshop-export-evidence/workshop-b-390.png",
+      "sha256": "46b1f6d156d646a95b5a103fc265067ba410347fecd403bc492c8186ddb51326"
+    },
+    {
+      "path": "docs/workshop-export-evidence/workshop-c-1366.png",
+      "sha256": "accec786e7fc4048ced4b53921866c79d72f68189ec364622dbc3a3a0d6cc1f4"
+    },
+    {
+      "path": "docs/workshop-export-evidence/workshop-c-390.png",
+      "sha256": "92842c890a038b6811d1abd3ef11ceb11848faf0d981d95b9d593d235c83220b"
+    }
+  ],
+  "downloads": [
+    {
+      "path": ".cache/workshop-export-downloads/1366-builtin-c.zip",
+      "bytes": 15288,
+      "sha256": "18420e7f4d15491f914517b6cbf57becd473cc9ed8d46db72e6c6f5a7eefea07"
+    },
+    {
+      "path": ".cache/workshop-export-downloads/1366-mixed-b.zip",
+      "bytes": 16364,
+      "sha256": "5e966a5fb68d2949dec1f6a446e87c1a4297543a91e05675cda43f922bd4f407"
+    },
+    {
+      "path": ".cache/workshop-export-downloads/1366-mixed-repeat.zip",
+      "bytes": 16364,
+      "sha256": "5e966a5fb68d2949dec1f6a446e87c1a4297543a91e05675cda43f922bd4f407"
+    },
+    {
+      "path": ".cache/workshop-export-downloads/390-builtin-c.zip",
+      "bytes": 15288,
+      "sha256": "9901513e9adfacad31c43764e417bde52d649f671c7cab917ab41c77d2872359"
+    },
+    {
+      "path": ".cache/workshop-export-downloads/390-mixed-b.zip",
+      "bytes": 16364,
+      "sha256": "991e40a55caffe9b572dafb921f6bb6d4b9467f76a8303d8604a502e60f2dd9e"
+    },
+    {
+      "path": ".cache/workshop-export-downloads/390-mixed-repeat.zip",
+      "bytes": 16364,
+      "sha256": "991e40a55caffe9b572dafb921f6bb6d4b9467f76a8303d8604a502e60f2dd9e"
+    }
+  ],
+  "logs": [
+    {
+      "path": ".cache/verification/browser.txt",
+      "sha256": "51de52c6cdd56adbc40ba472bd0b47dafec8900d15d474154cddbec6117ce39d"
+    },
+    {
+      "path": ".cache/verification/build.txt",
+      "sha256": "5e804568a904050da138fef2e437e74027af3ee9f7ae12f35177f0504063ee9d"
+    },
+    {
+      "path": ".cache/verification/integration-tests.txt",
+      "sha256": "a61983930c44b4e49d1e78ea82a9f4c145203b3c68d95222d484f2d4d7851b55"
+    },
+    {
+      "path": ".cache/verification/npm-test.txt",
+      "sha256": "8da488ded3efaec5824b76ea06428d732965f20b02bf2bae9a73758a322aa081"
+    },
+    {
+      "path": ".cache/verification/regression-browser.txt",
+      "sha256": "f7d0b07581fda2bdc3f3e32936e3b0b931209993382c6a825c0e9af9928e6104"
+    },
+    {
+      "path": ".cache/verification/workshop-export.txt",
+      "sha256": "e485e87dd1a86d7cc4311dbeea2fcf24404b80b78b4fbb768e0c27cd8bf5fe79"
+    }
+  ]
+}

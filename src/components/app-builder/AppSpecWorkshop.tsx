@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { ArrowLeft, Blocks, Monitor } from 'lucide-react'
 import type { AppRuntime } from '../../model/appRuntime'
 import { Logo } from '../Logo'
@@ -9,14 +9,20 @@ import { CustomBlockRunSurface } from '../../integrations/custom-block-bc/Custom
 import { CustomBlockImport } from '../../integrations/custom-block-bc/CustomBlockImport'
 import { useWorkshopAdapter } from '../../integrations/custom-block-bc/useWorkshopAdapter'
 import { AppSpecInspector } from './AppSpecInspector'
+import { ExportProjectButton } from '../../integrations/project-export/ExportProjectButton'
 import { createMochiHost } from '../../integrations/mochi/host'
 import { AI_MODIFICATION_DISABLED, unavailablePlanProvider } from '../../integrations/mochi/planning'
-import { WorkshopMochi, type MochiHost } from '../../integrations/mochi/WorkshopMochi'
+import { WorkshopMochi, type MochiHost, type WorkshopMochiProps } from '../../integrations/mochi/WorkshopMochi'
 import '../workshop.css'
 import './app-spec-workshop.css'
 
 /** The caller owns one runtime per generated application, never per mode. */
-export function AppSpecWorkshop({ runtime }: { runtime: AppRuntime }) {
+export interface WorkshopPanelMount {
+  /** One panel in the existing sidebar; host lifetime and owner stay in Workshop. */
+  renderMochi?: (props: WorkshopMochiProps) => ReactNode
+}
+
+export function AppSpecWorkshop({ runtime, renderMochi }: { runtime: AppRuntime } & WorkshopPanelMount) {
   const [owner, setOwner] = useState<{ runtime: AppRuntime; host: MochiHost } | null>(null)
   useEffect(() => {
     // Acquire only after commit. StrictMode cleanup disposes this instance; replay
@@ -26,13 +32,13 @@ export function AppSpecWorkshop({ runtime }: { runtime: AppRuntime }) {
     return () => host.dispose()
   }, [runtime])
   if (!owner || owner.runtime !== runtime) return null
-  return <MochiWorkshop runtime={runtime} host={owner.host} planningDisabledReason={AI_MODIFICATION_DISABLED} />
+  return <MochiWorkshop runtime={runtime} host={owner.host} renderMochi={renderMochi} planningDisabledReason={AI_MODIFICATION_DISABLED} />
 }
 
 /** Internal composition seam for offline integration tests; production uses the wrapper above. */
-export function MochiWorkshop({ runtime, host, planningDisabledReason }: {
+export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMochi }: {
   runtime: AppRuntime; host: MochiHost; planningDisabledReason?: string
-}) {
+} & WorkshopPanelMount) {
   const root = useRef<HTMLElement>(null)
   const view = useSyncExternalStore(host.subscribe, host.getSnapshot, host.getSnapshot)
   const mode = view.mode
@@ -44,6 +50,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason }: {
   const selected = project.renderOrder.some(item => item.id === selectedId) ? selectedId : null
   const customSelected = project.custom.instances.some(instance => instance.id === selected)
   const admission = <p role={error ? 'alert' : 'status'}>{error || '正在校验积木版本元数据…'}</p>
+  const mochiProps: WorkshopMochiProps = { host, view, root, canvasReady: !!adapter, planningDisabledReason }
   return <section ref={root} className="workshop app-spec-workshop" aria-label="生成的应用">
     <header className="workshop__topbar"><Logo />
       <div className="workshop__project"><span className="workshop__project-icon"><Blocks size={20} aria-hidden="true" /></span><div><h1>{snapshot.spec.name}</h1><span>Workshop · 创作工坊</span></div></div>
@@ -51,6 +58,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason }: {
         <button type="button" aria-label="B 模式 · 编辑积木" aria-pressed={mode === 'blocks'} aria-controls="generated-blocks" onClick={() => setMode('blocks')}><span>B</span> 功能积木</button>
         <button type="button" aria-label="C 模式 · 运行应用" aria-pressed={mode === 'run'} aria-controls="generated-preview" onClick={() => setMode('run')}><span>C</span> 应用预览</button>
       </div>
+      <ExportProjectButton owner={runtime.customProject} />
     </header>
     <div className="workshop__body">
       <nav className="workshop__nav" aria-label="工坊导航">
@@ -64,7 +72,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason }: {
         <div className="workshop__preview-stage" id="generated-preview" hidden={mode !== 'run'}><div className="study-app"><header className="study-app__topbar"><div className="study-app__brand"><span><Blocks size={18} aria-hidden="true" /></span><strong>{snapshot.spec.name}</strong><small>YOUR APP</small></div></header><div className="app-spec-preview-content">{adapter ? <CustomBlockRunSurface adapter={adapter} renderBuiltin={block => <BuiltinBlockRenderer runtime={runtime} blockId={block.id} />} /> : admission}</div></div></div>
         <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
       </div>
-      <aside className="app-spec-workshop__sidebar" aria-label="创作助手与积木属性"><WorkshopMochi host={host} view={view} root={root} canvasReady={!!adapter} planningDisabledReason={planningDisabledReason} /><div hidden={mode !== 'blocks'}>{customSelected ? adapter ? <CustomBlockInspector adapter={adapter} instanceId={selected} /> : admission : <AppSpecInspector key={selected ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selected} />}</div></aside>
+      <aside className="app-spec-workshop__sidebar" aria-label="创作助手与积木属性"><div data-workshop-panel="mochi">{renderMochi ? renderMochi(mochiProps) : <WorkshopMochi {...mochiProps} />}</div><div hidden={mode !== 'blocks'}>{customSelected ? adapter ? <CustomBlockInspector adapter={adapter} instanceId={selected} /> : admission : <AppSpecInspector key={selected ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selected} />}</div></aside>
     </div>
   </section>
 }

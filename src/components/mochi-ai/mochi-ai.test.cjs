@@ -94,7 +94,7 @@ test('TypeScript callback contract accepts synchronous and asynchronous hosts th
   const options = { strict: true, noEmit: true, skipLibCheck: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.Bundler }
   const host = ts.createCompilerHost(options)
   const getSourceFile = host.getSourceFile.bind(host)
-  host.getSourceFile = (file, languageVersion, ...rest) => file === filename
+  host.getSourceFile = (file, languageVersion, ...rest) => path.resolve(file) === path.resolve(filename)
     ? ts.createSourceFile(file, source, languageVersion, true)
     : getSourceFile(file, languageVersion, ...rest)
   const diagnostics = ts.getPreEmitDiagnostics(ts.createProgram([filename], options, host))

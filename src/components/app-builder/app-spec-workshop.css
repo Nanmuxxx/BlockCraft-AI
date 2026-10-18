@@ -43,3 +43,17 @@
 .custom-block-import button { padding: 8px 12px; border: 1px solid var(--line); border-radius: 9px; background: #ffe1c9; color: var(--brand-deep); font: inherit; }
 
 .app-spec-workshop .workshop__blocks-layer { flex-direction: column; }
+
+.app-spec-workshop__sidebar > [data-workshop-panel="mochi"] { padding: 0; }
+.workshop-export { max-width: 265px; flex-shrink: 0; }
+.workshop-export button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 14px; border: 1px solid #d77d4a; border-radius: 10px; color: #fff; background: var(--brand-deep); font: inherit; font-size: 13px; cursor: pointer; box-shadow: 0 3px 0 #d9a37f; }
+.workshop-export button:hover { filter: brightness(1.08); }
+.workshop-export button:disabled { opacity: .65; cursor: wait; }
+.workshop-export button:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+.workshop-export p { margin: 8px 0 0; font-size: 11px; line-height: 1.5; color: var(--ink-soft); overflow-wrap: anywhere; }
+.workshop-export [role="alert"] { color: #943c29; }
+@media (max-width: 1000px) {
+  .app-spec-workshop .workshop__topbar { flex-wrap: wrap; gap: 14px; }
+  .workshop-export { max-width: none; flex: 1 1 100%; }
+  .workshop-export button { width: auto; min-width: 180px; }
+}

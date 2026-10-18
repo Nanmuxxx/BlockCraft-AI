@@ -51,9 +51,11 @@ function useBlockAnchor(host: MochiHost, view: HostView, root: RefObject<HTMLEle
   }, [host, root, instanceId, revision, selectedBlockId, epoch, view.mode, canvasReady])
 }
 
-export function WorkshopMochi({ host, view, root, planningDisabledReason, canvasReady = true }: {
+export interface WorkshopMochiProps {
   host: MochiHost; view: HostView; root: RefObject<HTMLElement | null>; planningDisabledReason?: string; canvasReady?: boolean
-}) {
+}
+
+export function WorkshopMochi({ host, view, root, planningDisabledReason, canvasReady = true }: WorkshopMochiProps) {
   useBlockAnchor(host, view, root, canvasReady)
   const [messages, setMessages] = useState<MochiChatMessage[]>([])
   const lastEvent = useRef({ receipt: '', error: '' })
