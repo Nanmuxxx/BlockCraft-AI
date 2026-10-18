@@ -57,7 +57,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason }: {
         <div className="workshop__preview-stage" id="generated-preview" hidden={mode !== 'run'}><div className="study-app"><header className="study-app__topbar"><div className="study-app__brand"><span><Blocks size={18} aria-hidden="true" /></span><strong>{snapshot.spec.name}</strong><small>YOUR APP</small></div></header><div className="app-spec-preview-content"><AppRenderer runtime={runtime} /></div></div></div>
         <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
       </div>
-      <aside className="app-spec-workshop__sidebar" aria-label="创作助手与积木属性"><WorkshopMochi host={host} view={view} root={root} planningDisabledReason={planningDisabledReason} /><div hidden={mode !== 'blocks'}><AppSpecInspector key={selected ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selected} /></div></aside>
+      <aside className="app-spec-workshop__sidebar" aria-label="创作助手与积木属性"><WorkshopMochi key={view.context.instanceId} host={host} view={view} root={root} planningDisabledReason={planningDisabledReason} /><div hidden={mode !== 'blocks'}><AppSpecInspector key={selected ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selected} /></div></aside>
     </div>
   </section>
 }

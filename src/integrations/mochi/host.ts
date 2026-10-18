@@ -39,7 +39,11 @@ export interface HostPreview {
   summary: string
   changes: Array<{ operation: string; target: string; description: string; before?: string; after?: string }>
 }
+export type HostPhase = 'IDLE' | 'REQUESTING' | 'PREVIEW' | 'CONFIRMING' | 'APPLIED' | 'CANCELLED' | 'STALE' | 'REQUEST_FAILED' | 'PREVIEW_REJECTED' | 'COMMIT_FAILED' | 'COMMIT_OUTCOME_UNKNOWN'
 export interface HostView {
+  phase: HostPhase
+  requestId: string | null
+  lastApplied: { requestId: string; planId: string; receipt: Extract<RuntimeResult, { ok: true }> } | null
   context: MochiHostContext
   epoch: number
   mode: 'blocks' | 'run'
@@ -48,7 +52,7 @@ export interface HostView {
   busy: boolean
   ignoredSuggestionIds: string[]
   error: { code: string; message: string } | null
-  receipt: Extract<RuntimeResult, { ok: true }> | null
+  receipt: RuntimeResult | null
 }
 function freeze<T>(value: T): T {
   if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value) }
@@ -72,14 +76,16 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   const instanceId = `mochi-${globalThis.crypto.randomUUID()}`
   const planner = createAppChangePlanner(runtime)
   const listeners = new Set<() => void>()
-  type Entry = { plan: DeepReadonly<AppChangePlan>; epoch: number; status: 'pending' | 'confirming' | 'committed' | 'cancelled' | 'rejected'; receipt?: Extract<RuntimeResult, { ok: true }> }
+  type Entry = { plan: DeepReadonly<AppChangePlan>; epoch: number; authorizationKey: string; status: 'pending' | 'confirming' | 'committed' | 'cancelled' | 'rejected' | 'unknown' }
   const entries = new Map<string, Entry>()
   let selectedBlockId: string | null = null
+  let authorizationKey = '' // Invalidation identity only; never a source of authority.
   let mode: HostView['mode'] = 'blocks'
   let epoch = 0
   let sequence = 0
   let activeId: string | null = null
-  let pending: AbortController | null = null
+  let pending: { requestId: string; epoch: number; controller: AbortController } | null = null
+  let committing: Entry | null = null
   let disposed = false
   let observedRevision = runtime.getSnapshot().revision
   let view: HostView
@@ -93,23 +99,35 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
     }
   }
   function publish(patch: Partial<HostView> = {}) {
-    view = freeze({ ...view, ...patch, context: context(), mode, epoch })
-    listeners.forEach(listener => listener())
+    if (disposed) return
+    const next = { ...view, ...patch, context: context(), mode, epoch }
+    view = freeze({ ...next, busy: next.phase === 'REQUESTING' || next.phase === 'CONFIRMING' })
+    // UI observers must not turn a successful Runtime commit into an exception.
+    for (const listener of [...listeners]) {
+      if (disposed) break
+      try { listener() } catch { /* An observer has no authority over the transaction. */ }
+    }
   }
   function alive() { ensure(!disposed, 'Mochi host has been disposed', 'HOST_DISPOSED') }
-  function invalidate() {
+  // Detach ownership before abort: abort handlers may synchronously reenter the host.
+  function detach() {
     epoch++
-    pending?.abort(); pending = null
+    const controller = pending?.controller
+    pending = null
     if (activeId) {
       const entry = entries.get(activeId)!
       if (entry.status === 'pending') { planner.cancel(entry.plan); entry.status = 'cancelled' }
     }
     activeId = null
+    return controller
   }
-  function report(error: unknown): never {
-    const failure = error instanceof AppSpecError ? error : new AppSpecError('PLAN_PROVIDER_FAILED', '计划请求失败；已确认的应用保持不变。')
-    if (!disposed) publish({ error: { code: failure.code, message: failure.message } })
-    throw failure
+  function invalidate(error: HostView['error'] = null) {
+    const controller = detach()
+    publish({ phase: view.requestId ? 'STALE' : 'IDLE', anchor: null, preview: null, receipt: null, error })
+    controller?.abort()
+  }
+  function failure(error: unknown, fallback: string, message: string) {
+    return error instanceof AppSpecError ? error : new AppSpecError(fallback, message)
   }
   function entryFor(planId: string) {
     alive()
@@ -117,93 +135,143 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
     ensure(entry, 'Unknown or foreign planId', 'PLAN_NOT_OWNED')
     return entry
   }
+  function sameContext(entry: Entry) {
+    const snapshot = runtime.getSnapshot()
+    return entry.epoch === epoch && entry.authorizationKey === authorizationKey && entry.plan.scope.selectedBlockId === selectedBlockId && entry.plan.appId === snapshot.spec.id && entry.plan.request.baseRevision === snapshot.revision
+  }
   function current(entry: Entry, planId: string) {
     ensure(entry.status === 'pending' && activeId === planId, 'Plan is no longer pending', 'PLAN_NOT_PENDING')
-    const snapshot = runtime.getSnapshot()
-    ensure(entry.epoch === epoch && entry.plan.scope.selectedBlockId === selectedBlockId && entry.plan.appId === snapshot.spec.id && entry.plan.request.baseRevision === snapshot.revision, 'Context changed; request a new preview', 'CONTEXT_CHANGED')
+    if (!sameContext(entry)) {
+      const problem = new AppSpecError('CONTEXT_CHANGED', 'Context changed; request a new preview')
+      // Runtime observers may throw before this Host receives a revision. Retire
+      // the owned handle before notifying UI; a listener may start a newer request.
+      invalidate({ code: problem.code, message: problem.message })
+      throw problem
+    }
   }
 
-  view = freeze({ context: context(), epoch, mode, anchor: null, preview: null, busy: false, ignoredSuggestionIds: [], error: null, receipt: null })
+  view = freeze({ context: context(), epoch, mode, phase: 'IDLE', requestId: null, lastApplied: null, anchor: null, preview: null, busy: false, ignoredSuggestionIds: [], error: null, receipt: null })
   const unsubscribe = runtime.subscribe(() => {
     const snapshot = runtime.getSnapshot()
     if (snapshot.revision === observedRevision) return
     observedRevision = snapshot.revision
-    invalidate()
+    // The synchronous confirm owns this notification. Its receipt decides the outcome.
+    if (committing) return
     if (!snapshot.spec.blocks.some(block => block.id === selectedBlockId)) selectedBlockId = null
-    publish({ anchor: null, preview: null, busy: false })
+    invalidate()
   })
 
   const callbacks = {
-    // Phase B's second argument is a chat projection. Deliberately ignore it.
+    // The optional UI context is a display projection, never trusted scope.
     async onRequestPlan(prompt: string, _untrustedContext?: unknown): Promise<void> {
-      let ownedEpoch = epoch
-      try {
-        alive()
+      alive()
+      const prepare = () => {
+        ensure(!committing, 'A confirmation is in progress', 'PLAN_NOT_PENDING')
         ensure(typeof prompt === 'string' && prompt.trim().length > 0 && prompt.length <= 4000, 'Expected a short nonempty instruction', 'INVALID_PROMPT')
-        ensure(!pending, 'A plan request is already in progress', 'REQUEST_BUSY')
         const snapshot = runtime.getSnapshot()
         ensure(selectedBlockId !== null, 'Select a block before requesting a plan', 'SELECTION_REQUIRED')
         const entityId = resolveBlockEntityId(snapshot, selectedBlockId)
-        const scope = { selectedBlockId, allowedBlockIds: [selectedBlockId], allowedEntityIds: [entityId] }
-        invalidate()
-        const requestEpoch = epoch
-        ownedEpoch = requestEpoch
-        const requestId = `${instanceId}-${++sequence}`
-        const controller = new AbortController()
-        pending = controller
-        publish({ busy: true, preview: null, anchor: null, error: null })
-        try {
-          const input = await provider(Object.freeze({ prompt: prompt.trim(), requestId, context: freeze(context()), snapshot: freeze(structuredClone(snapshot)), signal: controller.signal }))
-          ensure(!disposed && requestEpoch === epoch && !controller.signal.aborted, 'Discarded obsolete plan response', 'CONTEXT_CHANGED')
-          const result = planner.preview(input, scope)
-          if (!result.ok) throw new AppSpecError(result.error.code, result.error.message)
-          // Phase A validates unknown JSON first; only then read its sanitized request.
-          if (result.plan.request.requestId !== requestId || result.plan.request.baseRevision !== snapshot.revision) {
-            planner.cancel(result.plan)
-            throw new AppSpecError('PLAN_BINDING_MISMATCH', 'Provider changed the host requestId or revision')
-          }
-          const planId = `${requestId}-plan`
-          entries.set(planId, { plan: result.plan, epoch, status: 'pending' })
-          activeId = planId
-          publish({ preview: projection(planId, result.plan), error: null })
-        } finally {
-          if (pending === controller) { pending = null; publish({ busy: false }) }
+        return { snapshot, scope: { selectedBlockId, allowedBlockIds: [selectedBlockId], allowedEntityIds: [entityId] } }
+      }
+      let prepared: ReturnType<typeof prepare>
+      try { prepared = prepare() } catch (error) {
+        // An invalid new input cannot take ownership from a valid in-flight plan.
+        // A rejected input alongside a preview is feedback, not a new attempt:
+        // preserve its handle, phase and identity while notifying the composer.
+        if (!pending && !committing) {
+          const problem = failure(error, 'INVALID_PROMPT', '请求无效，尚未提交。')
+          publish({ ...(!activeId ? { phase: 'REQUEST_FAILED' as const, requestId: `${instanceId}-${++sequence}`, receipt: null } : {}), error: { code: problem.code, message: problem.message } })
         }
+        throw error
+      }
+      const { snapshot, scope } = prepared
+      const previous = detach()
+      const attempt = { requestId: `${instanceId}-${++sequence}`, epoch, controller: new AbortController() }
+      const requestContext = freeze(context())
+      pending = attempt
+      const ownsRequest = () => !disposed && pending === attempt && epoch === attempt.epoch && !attempt.controller.signal.aborted
+      publish({ phase: 'REQUESTING', requestId: attempt.requestId, preview: null, anchor: null, error: null, receipt: null })
+      previous?.abort()
+      let stage: HostPhase = 'REQUEST_FAILED'
+      try {
+        ensure(ownsRequest(), 'Discarded obsolete plan request', 'CONTEXT_CHANGED')
+        const input = await provider(Object.freeze({ prompt: prompt.trim(), requestId: attempt.requestId, context: requestContext, snapshot: freeze(structuredClone(snapshot)), signal: attempt.controller.signal }))
+        ensure(ownsRequest(), 'Discarded obsolete plan response', 'CONTEXT_CHANGED')
+        stage = 'PREVIEW_REJECTED'
+        const result = planner.preview(input, scope)
+        if (!result.ok) throw new AppSpecError(result.error.code, result.error.message)
+        if (result.plan.request.requestId !== attempt.requestId || result.plan.request.baseRevision !== snapshot.revision) {
+          planner.cancel(result.plan)
+          throw new AppSpecError('PLAN_BINDING_MISMATCH', 'Provider changed the host requestId or revision')
+        }
+        const planId = `${attempt.requestId}-plan`
+        entries.set(planId, { plan: result.plan, epoch, authorizationKey, status: 'pending' })
+        activeId = planId
+        pending = null
+        publish({ phase: 'PREVIEW', preview: projection(planId, result.plan), error: null })
       } catch (error) {
-        // Obsolete responses are rejected to their caller, but never published.
-        if (ownedEpoch !== epoch || disposed) throw error
-        report(error)
+        // Obsolete resolve/reject/catch never publish, including busy cleanup.
+        if (!ownsRequest()) throw error
+        pending = null
+        const problem = failure(error, 'PLAN_PROVIDER_FAILED', '计划请求失败；尚未提交此请求。')
+        publish({ phase: stage, preview: null, error: { code: problem.code, message: problem.message } })
+        throw problem
       }
     },
     async onConfirm(planId: string): Promise<void> {
+      const entry = entryFor(planId)
+      if (entry.status === 'committed') return
+      current(entry, planId)
+      ensure(!committing, 'A confirmation is in progress', 'PLAN_NOT_PENDING')
+      entry.status = 'confirming'
+      committing = entry
+      publish({ phase: 'CONFIRMING', receipt: null, error: null })
+      // A synchronous observer can change selection/authorization or dispose here.
+      if (disposed || activeId !== planId || !sameContext(entry)) {
+        committing = null
+        planner.cancel(entry.plan)
+        entry.status = 'cancelled'
+        if (!disposed && activeId === planId) invalidate({ code: 'CONTEXT_CHANGED', message: 'Context changed before confirmation' })
+        throw new AppSpecError('CONTEXT_CHANGED', 'Context changed before confirmation')
+      }
+      const before = runtime.getSnapshot()
+      let result: RuntimeResult
       try {
-        const entry = entryFor(planId)
-        if (entry.status === 'committed') return
-        current(entry, planId)
-        // Lock BEFORE Runtime notifications, which may synchronously reenter callbacks.
-        entry.status = 'confirming'
-        const result = planner.confirm(entry.plan)
-        if (!result.ok) {
-          entry.status = 'rejected'; activeId = null
-          publish({ preview: null })
-          throw new AppSpecError(result.error.code, result.error.message)
-        }
-        entry.status = 'committed'; entry.receipt = result; activeId = null
-        publish({ preview: null, receipt: result, error: null })
-      } catch (error) { report(error) }
+        result = planner.confirm(entry.plan) // Original handle, no reconstruction or await.
+      } catch {
+        entry.status = 'unknown'
+        committing = null
+        if (activeId === planId) activeId = null
+        const problem = new AppSpecError('COMMIT_OUTCOME_UNKNOWN', '提交结果未确认。应用可能已改变；请核对当前状态，勿重试旧计划。')
+        if (view.requestId === entry.plan.request.requestId) publish({ phase: 'COMMIT_OUTCOME_UNKNOWN', preview: null, receipt: null, error: { code: problem.code, message: problem.message } })
+        throw problem
+      }
+      committing = null
+      if (activeId === planId) activeId = null
+      if (result.ok) {
+        entry.status = 'committed'
+        const lastApplied = { requestId: entry.plan.request.requestId, planId, receipt: result }
+        if (entry.epoch === epoch) publish({ phase: 'APPLIED', preview: null, receipt: result, lastApplied, error: null })
+        else publish({ lastApplied }) // A changed context receives history only.
+        return
+      }
+      const unchanged = before === runtime.getSnapshot()
+      entry.status = unchanged ? 'rejected' : 'unknown'
+      const problem = unchanged ? new AppSpecError(result.error.code, result.error.message)
+        : new AppSpecError('COMMIT_OUTCOME_UNKNOWN', '失败回执与应用状态不一致。请核对当前状态，勿重试旧计划。')
+      if (view.requestId === entry.plan.request.requestId) publish({ phase: unchanged ? 'COMMIT_FAILED' : 'COMMIT_OUTCOME_UNKNOWN', preview: null, receipt: unchanged ? result : null, error: { code: problem.code, message: problem.message } })
+      throw problem
     },
     onCancel(planId: string): void {
-      try {
-        const entry = entryFor(planId)
-        if (entry.status === 'cancelled') return
-        current(entry, planId)
-        invalidate()
-        publish({ preview: null, busy: false, anchor: null, error: null })
-      } catch (error) { report(error) }
+      const entry = entryFor(planId)
+      if (entry.status === 'cancelled') return
+      current(entry, planId)
+      const controller = detach()
+      publish({ phase: 'CANCELLED', preview: null, anchor: null, error: null, receipt: null })
+      controller?.abort()
     },
     onIgnore(suggestionId: string): void {
       alive()
-      // Ignoring a suggestion never confirms/cancels a different plan or changes Runtime.
       if (!view.ignoredSuggestionIds.includes(suggestionId)) publish({ ignoredSuggestionIds: [...view.ignoredSuggestionIds, suggestionId] })
     },
   }
@@ -211,19 +279,32 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
     getSnapshot: () => view,
     subscribe(listener: () => void) { alive(); listeners.add(listener); return () => { listeners.delete(listener) } },
     callbacks,
+    cancelRequest(requestId: string) {
+      alive()
+      if (!pending || pending.requestId !== requestId) return
+      const controller = detach()
+      publish({ phase: 'CANCELLED', preview: null, anchor: null, error: null, receipt: null })
+      controller?.abort()
+    },
+    setAuthorizationContextKey(key: string) {
+      alive()
+      if (key === authorizationKey) return
+      authorizationKey = key
+      invalidate()
+    },
     setSelection(blockId: string | null) {
       alive()
       if (blockId !== null) resolveBlockEntityId(runtime.getSnapshot(), blockId)
       if (blockId === selectedBlockId) return
-      invalidate(); selectedBlockId = blockId
-      publish({ anchor: null, preview: null, busy: false, error: null })
+      selectedBlockId = blockId
+      invalidate()
     },
     setMode(next: HostView['mode']) {
       alive()
       ensure(next === 'blocks' || next === 'run', 'Unknown workshop mode')
       if (next === mode) return
-      invalidate(); mode = next
-      publish({ anchor: null, preview: null, busy: false, error: null })
+      mode = next
+      publish({ anchor: null }) // View-only changes preserve the request/plan and epoch.
     },
     setAnchor(anchor: BoundAnchor | null) {
       alive()
@@ -235,8 +316,11 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
     },
     dispose() {
       if (disposed) return
-      invalidate(); unsubscribe(); disposed = true; listeners.clear()
-      view = freeze({ ...view, anchor: null, preview: null, busy: false })
+      disposed = true
+      const controller = detach()
+      unsubscribe(); listeners.clear()
+      view = freeze({ ...view, epoch, phase: 'CANCELLED', anchor: null, preview: null, busy: false, receipt: null })
+      controller?.abort()
     },
   }
 }
