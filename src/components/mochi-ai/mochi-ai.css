@@ -1,0 +1,120 @@
+.mochi-ai {
+  --mochi-line: var(--line, #eadbc9);
+  --mochi-ink: var(--ink, #302b29);
+  --mochi-muted: var(--ink-soft, #82756d);
+  --mochi-brand: var(--brand, #f28c52);
+  --mochi-card: var(--card, #fff);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  color: var(--mochi-ink);
+  background: var(--bg, #fffbf6);
+  border-left: 1px solid var(--mochi-line);
+  overflow: auto;
+}
+
+.mochi-ai__header,
+.mochi-ai__heading,
+.mochi-ai__section-title,
+.mochi-ai__suggestion,
+.mochi-ai__composer-footer,
+.mochi-ai__plan-actions,
+.mochi-ai__thinking,
+.mochi-ai__preview-heading {
+  display: flex;
+  align-items: center;
+}
+
+.mochi-ai__header { gap: 10px; }
+.mochi-ai__avatar { display: grid; place-items: center; width: 42px; height: 42px; flex: none; overflow: hidden; border: 1px solid #f0d8c1; border-radius: 8px; background: #fff1e2; }
+.mochi-ai__avatar-image { width: 100%; height: auto; image-rendering: pixelated; animation: mochi-ai-float 3s ease-in-out infinite; }
+.mochi-ai__heading { flex: 1; justify-content: space-between; gap: 8px; }
+.mochi-ai__heading h2, .mochi-ai__heading p { margin: 0; }
+.mochi-ai__heading h2 { font-size: 15px; }
+.mochi-ai__heading p { color: var(--mochi-muted); font-size: 11px; }
+.mochi-ai__mood-mark { display: grid; place-items: center; width: 29px; height: 29px; color: #c76b39; border-radius: 7px; background: #fff0e4; }
+.mochi-ai[data-mood="thinking"] .mochi-ai__avatar-image { animation: mochi-ai-sway 2.1s ease-in-out infinite; filter: saturate(.85); }
+.mochi-ai[data-mood="curious"] .mochi-ai__avatar-image { animation: mochi-ai-sway 1.8s ease-in-out infinite; }
+.mochi-ai[data-mood="happy"] .mochi-ai__avatar-image { animation: mochi-ai-hop 0.8s ease-in-out 1; }
+.mochi-ai[data-mood="celebrating"] .mochi-ai__avatar-image { animation: mochi-ai-hop 0.7s ease-in-out 2; }
+.mochi-ai[data-mood="error"] .mochi-ai__avatar-image { animation: mochi-ai-wiggle 0.5s ease-in-out 2; }
+.mochi-ai__context, .mochi-ai__suggestions { display: grid; gap: 8px; }
+.mochi-ai__section-title { gap: 6px; color: #8a6045; font-size: 11px; font-weight: 600; }
+.mochi-ai__context-summary, .mochi-ai__muted { margin: 0; color: var(--mochi-muted); font-size: 11px; line-height: 1.5; }
+.mochi-ai__blocks { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.mochi-ai__blocks li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; padding: 7px 9px; border: 1px solid var(--mochi-line); border-radius: 6px; background: var(--mochi-card); }
+.mochi-ai__blocks strong { min-width: 0; overflow-wrap: anywhere; font-size: 11px; }
+.mochi-ai__blocks span, .mochi-ai__blocks small { color: var(--mochi-muted); font-size: 10px; }
+.mochi-ai__blocks small { grid-column: 1 / -1; line-height: 1.4; }
+.mochi-ai__suggestion { justify-content: space-between; gap: 6px; padding: 5px 6px 5px 9px; border: 1px solid #efcfb7; border-radius: 6px; background: #fff4eb; }
+.mochi-ai__suggestion-prompt { flex: 1; min-width: 0; padding: 3px 0; border: 0; color: #76472d; background: transparent; text-align: left; font-size: 11px; }
+.mochi-ai__suggestion-prompt strong, .mochi-ai__suggestion-prompt small { display: block; }
+.mochi-ai__suggestion-prompt small { margin-top: 2px; color: #9a633e; font-size: 9px; }
+.mochi-ai__icon-button, .mochi-ai__send { display: grid; place-items: center; flex: none; width: 30px; height: 30px; padding: 0; border: 1px solid var(--mochi-line); border-radius: 6px; color: var(--mochi-muted); background: var(--mochi-card); }
+.mochi-ai__icon-button:hover, .mochi-ai__send:hover:not(:disabled) { border-color: var(--mochi-brand); color: #8d4b24; }
+.mochi-ai__history { display: flex; flex: 1 1 140px; flex-direction: column; align-items: stretch; gap: 8px; min-height: 130px; overflow: auto; }
+.mochi-ai__empty { margin: auto 0; color: var(--mochi-muted); text-align: center; font-size: 11px; }
+.mochi-ai__message { align-self: flex-start; max-width: 94%; padding: 7px 9px; border: 1px solid var(--mochi-line); border-radius: 8px; background: var(--mochi-card); }
+.mochi-ai__message--user { align-self: flex-end; border-color: #f3c5a6; background: #fff0e4; }
+.mochi-ai__message > span { color: #8a6045; font-size: 10px; font-weight: 600; }
+.mochi-ai__message p { margin: 3px 0 0; overflow-wrap: anywhere; white-space: pre-wrap; font-size: 11px; line-height: 1.55; }
+.mochi-ai__thinking { align-self: flex-start; gap: 6px; margin: 0; color: var(--mochi-muted); font-size: 11px; }
+.mochi-ai__preview { display: grid; gap: 9px; padding: 10px; border: 1px solid #e9b98f; border-radius: 7px; background: #fff8f1; }
+.mochi-ai__preview-heading { justify-content: space-between; }
+.mochi-ai__preview-heading span { color: #9a633e; font-size: 10px; }
+.mochi-ai__preview-heading h3 { margin: 2px 0 0; font-size: 13px; line-height: 1.35; }
+.mochi-ai__preview-summary { margin: 0; color: var(--mochi-muted); font-size: 10px; line-height: 1.5; }
+.mochi-ai__changes { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; counter-reset: change; }
+.mochi-ai__changes li { display: grid; gap: 6px; padding: 7px; border: 1px solid #f0dfd0; border-radius: 5px; background: #fff; }
+.mochi-ai__changes li > div:first-child > span { color: #8a6045; font-size: 10px; }
+.mochi-ai__changes p { margin: 3px 0 0; font-size: 11px; line-height: 1.45; }
+.mochi-ai__diff { display: grid; grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr); align-items: start; gap: 5px; font-size: 10px; overflow-wrap: anywhere; }
+.mochi-ai__diff span:first-child { color: #8c7770; text-decoration: line-through; }
+.mochi-ai__diff strong { color: #44745d; font-weight: 600; }
+.mochi-ai__plan-actions { gap: 7px; }
+.mochi-ai__button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; flex: 1; min-height: 32px; padding: 5px 8px; border: 1px solid var(--mochi-line); border-radius: 6px; color: var(--mochi-muted); background: #fff; font-size: 11px; }
+.mochi-ai__button--primary { border-color: #cf713e; color: #fff; background: #cf713e; }
+.mochi-ai__button:disabled, .mochi-ai__send:disabled, .mochi-ai__suggestion-prompt:disabled { cursor: not-allowed; opacity: 0.55; }
+.mochi-ai__error { margin: 0; color: #a53e38; font-size: 11px; }
+.mochi-ai__composer { display: grid; gap: 7px; padding: 8px; border: 1px solid var(--mochi-line); border-radius: 7px; background: #fff; }
+.mochi-ai__composer:focus-within { border-color: var(--mochi-brand); }
+.mochi-ai__composer textarea { display: block; width: 100%; min-height: 46px; resize: vertical; border: 0; outline: 0; color: var(--mochi-ink); background: transparent; font: inherit; font-size: 12px; line-height: 1.5; }
+.mochi-ai__composer textarea::placeholder { color: #a39891; }
+.mochi-ai__composer-footer { justify-content: space-between; gap: 8px; color: #9a8e84; font-size: 9px; }
+.mochi-ai__send { color: #fff; border-color: #cf713e; background: #cf713e; }
+.mochi-ai__spinner { animation: mochi-ai-spin 0.9s linear infinite; }
+.mochi-ai__sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+.mochi-emotion { position: relative; display: inline-grid; place-items: center; width: 52px; height: 48px; }
+.mochi-emotion__image { width: 100%; height: auto; transform-origin: 50% 80%; }
+.mochi-emotion__spark { position: absolute; right: 0; top: 0; color: #c76b39; opacity: 0; }
+.mochi-emotion--idle .mochi-emotion__image { animation: mochi-ai-float 3s ease-in-out infinite; }
+.mochi-emotion--thinking .mochi-emotion__image { animation: mochi-ai-sway 2.1s ease-in-out infinite; filter: saturate(.85); }
+.mochi-emotion--curious .mochi-emotion__image { animation: mochi-ai-sway 1.8s ease-in-out infinite; }
+.mochi-emotion--happy .mochi-emotion__image { animation: mochi-ai-hop .8s ease-in-out 1; }
+.mochi-emotion--celebrating .mochi-emotion__image { animation: mochi-ai-hop .7s ease-in-out 2; }
+.mochi-emotion--celebrating .mochi-emotion__spark { opacity: 1; }
+.mochi-emotion--error .mochi-emotion__image { animation: mochi-ai-wiggle .5s ease-in-out 2; }
+
+.mochi-overlay { position: absolute; left: var(--mochi-anchor-x); top: var(--mochi-anchor-y); z-index: 4; display: block; width: 58px; height: 52px; pointer-events: none; transform: translate(calc(var(--mochi-anchor-width) + 10px), -6px); }
+.mochi-overlay[data-placement="left"] { transform: translate(-68px, -6px); }
+.mochi-overlay[data-placement="top"] { transform: translate(0, -62px); }
+.mochi-overlay[data-placement="bottom"] { transform: translate(0, calc(var(--mochi-anchor-height) + 8px)); }
+.mochi-overlay[data-placement="corner"] { position: fixed; right: 12px; bottom: 12px; left: auto; top: auto; transform: none; }
+
+@keyframes mochi-ai-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes mochi-ai-hop { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-6px); } }
+@keyframes mochi-ai-sway { 0%, 100% { transform: rotate(0); } 35% { transform: rotate(-3deg); } 70% { transform: rotate(3deg); } }
+@keyframes mochi-ai-wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+@keyframes mochi-ai-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mochi-ai *, .mochi-ai *::before, .mochi-ai *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .mochi-emotion *, .mochi-emotion::before, .mochi-emotion::after, .mochi-overlay *, .mochi-overlay::before, .mochi-overlay::after { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 390px) {
+  .mochi-overlay { position: fixed; right: 12px; bottom: 12px; left: auto; top: auto; transform: none; }
+}
