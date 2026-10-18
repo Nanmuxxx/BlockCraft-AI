@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { MochiError, check, validateRequest, validateAdvice, binding, fingerprint, object } from '../../src/integrations/mochi-ai/protocol.mjs'
 import { tokenReservation } from './provider.mjs'
+import { abortable } from '../ai-abort.mjs'
 export const POLICY = Object.freeze({ sessionMs: 3_600_000, sessionCalls: 8, sessionTokens: 100_000,
   chatIntervalMs: 2000, proactiveIntervalMs: 30_000, cooldownMs: 600_000, concurrency: 2, sessions: 1000, seen: 200 })
 const denied = (code, message, status = 429) => { throw new MochiError(code, message, status) }
@@ -102,7 +103,13 @@ export function createMochiService({ provider, enabled = false, approval, reserv
         if (admitted !== true) denied('BUDGET_EXHAUSTED', '费用额度不足，未调用模型。')
         if (controller.signal.aborted) denied('CANCELLED', '已取消本次请求。', 499)
         gate()
-        const advice = validateAdvice(await provider.analyze(input, { signal: controller.signal }), input.context)
+        let output
+        try { output = await abortable(provider.analyze(input, { signal: controller.signal }), controller.signal) }
+        catch (error) {
+          if (controller.signal.aborted) denied('CANCELLED', '已取消本次请求。', 499)
+          throw error
+        }
+        const advice = validateAdvice(output, input.context)
         if (controller.signal.aborted || (proactive && (!state.consent || epoch !== state.consentEpoch))) denied('CANCELLED', '已取消本次请求。', 499)
         const suggestions = []
         for (const s of advice.suggestions) {
