@@ -23,7 +23,7 @@ export function validateContext(c) {
   object(c, ['appId', 'instanceId', 'revision', 'selectedBlockId', 'mode', 'blocks', 'entities', 'relations'])
   check(id(c.appId) && id(c.instanceId) && Number.isSafeInteger(c.revision) && c.revision >= 0)
   check(['blocks', 'run'].includes(c.mode))
-  check(Array.isArray(c.blocks) && c.blocks.length <= LIMITS.blocks && Array.isArray(c.entities) && c.entities.length <= LIMITS.entities && Array.isArray(c.relations) && c.relations.length === c.blocks.length)
+  check(Array.isArray(c.blocks) && c.blocks.length <= LIMITS.blocks && Array.isArray(c.entities) && c.entities.length <= LIMITS.entities && Array.isArray(c.relations) && c.relations.length <= c.blocks.length)
   const blockIds = new Set(), entityIds = new Set()
   for (const e of c.entities) {
     object(e, ['id', 'name', 'fields']); check(id(e.id) && short(e.name) && !entityIds.has(e.id)); entityIds.add(e.id)
@@ -34,16 +34,25 @@ export function validateContext(c) {
     }
   }
   for (const b of c.blocks) {
-    object(b, ['id', 'name', 'type', 'fieldIds']); check(id(b.id) && short(b.name) && short(b.type, 40) && !blockIds.has(b.id)); blockIds.add(b.id)
+    object(b, ['id', 'name', 'type', 'fieldIds', 'parameters']); check(id(b.id) && short(b.name) && short(b.type, 40) && !blockIds.has(b.id)); blockIds.add(b.id)
     check(Array.isArray(b.fieldIds) && b.fieldIds.length <= LIMITS.fields && b.fieldIds.every(id) && new Set(b.fieldIds).size === b.fieldIds.length)
+    if (b.type === 'custom') {
+      check(b.fieldIds.length === 0 && Array.isArray(b.parameters) && b.parameters.length <= LIMITS.fields)
+      const names = new Set()
+      for (const p of b.parameters) {
+        object(p, ['name', 'type', 'required'])
+        check(short(p.name) && !names.has(p.name) && ['string', 'number', 'integer', 'boolean', 'object'].includes(p.type) && typeof p.required === 'boolean'); names.add(p.name)
+      }
+    } else check(b.parameters === undefined)
   }
   check(c.selectedBlockId === null || blockIds.has(c.selectedBlockId))
   const bound = new Set()
   for (const r of c.relations) {
-    object(r, ['blockId', 'entityId']); check(blockIds.has(r.blockId) && entityIds.has(r.entityId) && !bound.has(r.blockId)); bound.add(r.blockId)
+    object(r, ['blockId', 'entityId']); check(blockIds.has(r.blockId) && c.blocks.find(b => b.id === r.blockId).type !== 'custom' && entityIds.has(r.entityId) && !bound.has(r.blockId)); bound.add(r.blockId)
     const entity = c.entities.find(e => e.id === r.entityId)
     check(c.blocks.find(b => b.id === r.blockId).fieldIds.every(fid => entity.fields.some(f => f.id === fid)))
   }
+  check(c.blocks.every(b => b.type === 'custom' || bound.has(b.id)))
   check(bytes(c) <= LIMITS.contextBytes, 'CONTEXT_TOO_LARGE', '当前结构较大，请缩小分析范围。')
   return c
 }
@@ -51,7 +60,7 @@ export function validateContext(c) {
 export function projectContext(source) {
   const c = { appId: source.appId, instanceId: source.instanceId, revision: source.revision,
     selectedBlockId: source.selectedBlockId ?? null, mode: source.mode,
-    blocks: source.blocks.map(b => ({ id: b.id, name: redact(b.name), type: b.type, fieldIds: [...(b.fieldIds ?? [])] })),
+    blocks: source.blocks.map(b => ({ id: b.id, name: redact(b.name), type: b.type, fieldIds: [...(b.fieldIds ?? [])], ...(b.type === 'custom' ? { parameters: (b.parameters ?? []).map(p => ({ name: redact(p.name), type: p.type, required: p.required })) } : {}) })),
     entities: source.entities.map(e => ({ id: e.id, name: redact(e.name), fields: e.fields.map(f => ({ id: f.id, name: redact(f.name), type: f.type })) })),
     relations: source.relations.map(r => ({ blockId: r.blockId, entityId: r.entityId })) }
   return validateContext(c)

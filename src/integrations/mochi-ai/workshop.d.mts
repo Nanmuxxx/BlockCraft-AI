@@ -1,3 +1,4 @@
+import type { CustomContextSource } from './context.mjs'
 import type { ContextSource, createMochiConversation } from './client.mjs'
 export interface ConversationHost {
   getSnapshot(): { context: Omit<ContextSource, 'mode'>; mode: 'blocks' | 'run' }
@@ -5,5 +6,5 @@ export interface ConversationHost {
   setSelection(blockId: string | null): void
 }
 export function createWorkshopMochiConversation(host: ConversationHost, options?: {
-  settleMs?: number; api?: Parameters<typeof createMochiConversation>[0]['api']; now?: () => number
+  customContext?: CustomContextSource; settleMs?: number; api?: Parameters<typeof createMochiConversation>[0]['api']; now?: () => number
 }): { conversation: ReturnType<typeof createMochiConversation>; dispose(): void }

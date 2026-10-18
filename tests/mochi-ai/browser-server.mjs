@@ -14,7 +14,7 @@ export async function startBrowserHarness() {
     if (failure) return new Response('offline failure', { status: 503 })
     return envelope(input.kind === 'proactive' ? { message: '新增了日期字段。可以再明确一下活动地点，让参与者更好安排。', suggestions: [{ ...advice().suggestions[0], text: '要不要补充活动地点？', reason: '时间和地点一起展示，更方便参与者安排出行。', priority: 'high' }] } : advice())
   } })
-  const service = createMochiService({ provider, enabled: true, approval: grant(Date.now()) })
+  const service = createMochiService({ provider, reserveBudget: () => true, enabled: true, approval: grant(Date.now()) })
   const disabledService = createMochiService({ provider })
   let handler
   const files = new Map([
