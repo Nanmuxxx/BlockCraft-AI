@@ -24,6 +24,31 @@ async function setup(generate = candidate, wrapSession = value => value) {
   const input = { blockId: 'target', definitionId: source.manifest.definitionId, versionDigest, intent: '按意图修改现有功能源代码' }
   return { runtime, owner, planner, input, registered, request: () => planner.request(input) }
 }
+test('model deadline leaves no preview/history/write; a later request owns the only confirmation', async () => {
+  const f = await setup(), waiting = deferred()
+  let calls = 0, expiredRequest, expiredSignal
+  const provider = createModelSourcePlanProvider(async ({ request, signal }) => {
+    if (++calls === 1) { expiredRequest = request; expiredSignal = signal; return waiting.promise }
+    return JSON.stringify(await candidate(request))
+  }, { timeoutMs: 30 })
+  const planner = createSourceEditPlanner(f.owner, provider)
+  planner.setSelection('target')
+  const before = f.owner.getSnapshot()
+  try {
+    await assert.rejects(planner.request(f.input), { code: 'MODEL_TIMEOUT' })
+    assert.equal(expiredSignal.aborted, true)
+    assert.equal(f.owner.getSnapshot(), before); assert.deepEqual(planner.getHistory(), [])
+    const latest = await planner.request(f.input)
+    waiting.resolve(JSON.stringify(await candidate(expiredRequest)))
+    await new Promise(resolve => setImmediate(resolve))
+    assert.equal(planner.getStatus(latest.planId), 'pending')
+    assert.equal(f.owner.getSnapshot(), before)
+    assert.equal((await planner.confirm(latest.planId)).ok, true)
+    assert.equal(f.owner.getSnapshot().revision, before.revision + 1)
+    assert.deepEqual(planner.getHistory().map(item => item.planId), [latest.planId])
+    assert.equal(calls, 2)
+  } finally { planner.dispose(); f.planner.dispose() }
+})
 test('preview is inert; one real install/CAS changes only selected version/props/state; old version and state remain traceable', async () => {
   const f = await setup(), before = f.owner.getSnapshot()
   let notifications = 0; f.owner.subscribe(() => notifications++)

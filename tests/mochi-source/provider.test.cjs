@@ -39,3 +39,60 @@ test('source model seam rejects oversized or non-text completion without a fallb
     assert.equal(calls, 1)
   }
 })
+
+test('source model completion has a bounded deadline even when transport ignores abort', async () => {
+  let captured, calls = 0, rejectLate
+  const provider = createModelSourcePlanProvider(async ({ signal }) => {
+    calls++; captured = signal
+    return new Promise((_, reject) => { rejectLate = reject })
+  }, { timeoutMs: 15 })
+  const controller = new AbortController()
+  let guard
+  try {
+    await assert.rejects(Promise.race([
+      provider.generate(request(), controller.signal),
+      new Promise(resolve => { guard = setTimeout(resolve, 150) }),
+    ]), { code: 'MODEL_TIMEOUT' })
+    assert.equal(calls, 1); assert.equal(captured.aborted, true)
+  } finally { clearTimeout(guard); controller.abort(); rejectLate?.(Error('late completion private detail')) }
+  await new Promise(resolve => setImmediate(resolve))
+})
+
+test('source model seam itself retires caller cancellation and forwards its reason', async () => {
+  let captured
+  const provider = createModelSourcePlanProvider(async ({ signal }) => { captured = signal; return new Promise(() => {}) })
+  const controller = new AbortController(), reason = Error('caller cancelled')
+  const output = provider.generate(request(), controller.signal)
+  await Promise.resolve()
+  controller.abort(reason)
+  let guard
+  try {
+    await assert.rejects(Promise.race([output, new Promise(resolve => { guard = setTimeout(resolve, 150) })]), error => error === reason)
+    assert.equal(captured.aborted, true)
+  } finally { clearTimeout(guard) }
+})
+
+test('source model deadline configuration fails closed', () => {
+  for (const timeoutMs of [0, -1, 45001, Infinity, 0.5, '15', null]) {
+    assert.throws(() => createModelSourcePlanProvider(async () => '{}', { timeoutMs }), { code: 'MODEL_CONFIGURATION' })
+  }
+})
+
+test('synchronous completion abort plus throw is consumed and cannot replace cancellation', async () => {
+  const controller = new AbortController(), reason = Error('cancel during synchronous transport')
+  const provider = createModelSourcePlanProvider(() => {
+    controller.abort(reason)
+    throw Error('private synchronous transport failure')
+  })
+  await assert.rejects(provider.generate(request(), controller.signal), error => error === reason)
+  await new Promise(resolve => setImmediate(resolve))
+})
+
+test('success releases its completion signal and caller listener without aborting caller', async () => {
+  let captured
+  const controller = new AbortController()
+  const provider = createModelSourcePlanProvider(async ({ signal }) => { captured = signal; return '{}' }, { timeoutMs: 15 })
+  assert.deepEqual(await provider.generate(request(), controller.signal), {})
+  assert.equal(captured.aborted, true); assert.equal(controller.signal.aborted, false)
+  controller.abort()
+})
