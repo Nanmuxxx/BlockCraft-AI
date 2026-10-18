@@ -124,5 +124,47 @@
     "remote": "a638a31df15ccde8562807682244959380843ed9",
     "tree": "dea84c657f92973c2acfdd6db7455f9898362290",
     "message": "fix(mochi-ai): bound trusted access admission and reject invalid request bytes"
+  },
+  {
+    "local": "3c72fdff6a56f81fcf6b022f9141a271d3f1c1f0",
+    "tree": "0170a58b457a694b013493a28dc9ccefbf2ae68d",
+    "message": "docs(ai-core): checkpoint verified core regressions and night report",
+    "remote": "2d5f235074ff4e9934f25f487b8ea197229453f0"
+  },
+  {
+    "local": "e8816ffe52e47042de0dce19d42d36bd597ca0ce",
+    "remote": "f47cfb6ec2e9622d7fe18587e410e69d69a79224",
+    "tree": "6b44eb2d33d3f6d991fb06fbcf0fc9b26ce004e4",
+    "message": "fix(artifact-ui): retire cancelled file reads and preserve reentrant drafts"
+  },
+  {
+    "local": "a073fa2c1f99c2a78a957db94c984d917653762c",
+    "remote": "9ae77114cc73754bd7a9cee1d8959a9c0561a51a",
+    "tree": "e72532b4b63ac9bb06aaa6ce35c653cea3540ef7",
+    "message": "fix(artifact-ui): validate native file bytes with strict UTF-8 bounds"
+  },
+  {
+    "local": "b7f47f4c77cf500a2ae8d66a2eaba854b0f86379",
+    "remote": "a5c9359a4dc7ecc84634ee770e0b8137f598a058",
+    "tree": "0eb283c428d57a8dcfe2aacd7681f6a9ef8aa242",
+    "message": "fix(ai-server): reject disconnected requests before model dispatch"
+  },
+  {
+    "local": "47c2fe53f17a3c37acd27bf511ea6c3af52aa160",
+    "remote": "63df9114b304cb1b334ad995c72ce87727c5b4ae",
+    "tree": "3a92dc7958c659de24be316edeeb2cea7028d211",
+    "message": "fix(mochi-source): bound completion egress and guard cancellation"
+  },
+  {
+    "local": "0bb57e3f43e7935bcf32a13eae8869c1326bd691",
+    "remote": "833b99c805c5a6d17294989ec4a8eb29323deff3",
+    "tree": "a22ca7c7f8c21dc6381d1bfb6b32022dc74418a3",
+    "message": "fix(mochi-client): retain request ownership across state publication"
+  },
+  {
+    "local": "dca5903e22ff51e781a165d255b4e6280bfa963c",
+    "remote": "755480c7e5c2bc9aa29055be1083c6febb1f1b4f",
+    "tree": "5bb8a738e9395b00e834fc7b41024adaf12560f4",
+    "message": "feat(custom-block): propagate caller cancellation before artifact storage"
   }
 ]

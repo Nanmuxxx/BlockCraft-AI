@@ -1,21 +1,28 @@
-031eac6b301292bc8379106916eaf715af2a4f80 fix(mochi-ai): bound trusted access admission and reject invalid request bytes
-a0c8eecb7111a06a3095ee2178d5ec46c4ce2428 fix(artifact): retire superseded installation preparation
-baeffb128b657bb1f68f8017f7982d7737d3cbc1 fix(mochi-ai): preserve conversation ownership during abort reentry
-49627e8117ffdeb62abde9bbaaf786cda83e2c62 fix(mochi-ai): bound client transport and decode strict UTF-8
-5ac2d225611f6e8e86204c641b90f043804eca40 fix(mochi-source): retire cancelled registry admission waits
-ed51567d6676cc28a850167f7c62bde0225b9974 docs(ai-core): preserve command ledger and browser acceptance evidence
-12515887d659d6b0f352ffe337eee6fa428ae6b8 fix(ai): bound interactive admission and retire disconnected gates
-f7267c2b30da1af73875ec3a54b90da7cfc86ded fix(mochi): release service concurrency on ignored cancellation
-a3eec73c794ca97d20de9de6d1287d1f672cd00f docs(ai-core): record verified gaps and production integration contract
-4c40e940193234c71bf17189d857b29d9fafd983 fix(mochi): bound selected metadata before model transport
-9f4296200099a3c9a4ac0b13d8d82d1ad8e613b3 fix(mochi-source): detach cancelled requests before abort reentry
-ad36214da50928de86c324eeb709afa830edfe41 fix(custom-block): bound pending transport waits and reject mixed envelopes
-e7feadcdcec8495149742395a3c69990d23a45a2 fix(mochi): retire model plan waits promptly on cancellation
-98865feccdb121ffe7c6a0827f5ff7ffe0b8c06f fix(ai): cancel unused response bodies on rejection and late arrival
-c73edba5825a2b3bc09c33790b3654bc9e9b140d fix(qa): keep business quality evaluation scoped to AppSpec v1
-0544d74906b261ec9253713b35464bc12125c2f3 test(mochi): exercise bounded JSON plans through workshop browser flow
-40f9db5d261e056f5bc162bc240dd81ce8c6f1b7 fix(ai): enforce deadlines when transports ignore cancellation
-dce2212ee1369e3915c95bf23a82f940a0a5fb22 fix(generation): reject ambiguous completions and invalid UTF-8
-b4c8c422767bef2cfa740600a0bac9919729c2b0 feat(mochi): adapt bounded model plans through existing host validation
-fd861f929006bff8461981ee3eb88289b8cad67f fix(generation): bound responses and reject cancelled or wrong-protocol results
 4ad8e5844e69bc3ded03266771fa85d75e03d24b docs(ai-core): inventory night baseline and development queue
+fd861f929006bff8461981ee3eb88289b8cad67f fix(generation): bound responses and reject cancelled or wrong-protocol results
+b4c8c422767bef2cfa740600a0bac9919729c2b0 feat(mochi): adapt bounded model plans through existing host validation
+dce2212ee1369e3915c95bf23a82f940a0a5fb22 fix(generation): reject ambiguous completions and invalid UTF-8
+40f9db5d261e056f5bc162bc240dd81ce8c6f1b7 fix(ai): enforce deadlines when transports ignore cancellation
+0544d74906b261ec9253713b35464bc12125c2f3 test(mochi): exercise bounded JSON plans through workshop browser flow
+c73edba5825a2b3bc09c33790b3654bc9e9b140d fix(qa): keep business quality evaluation scoped to AppSpec v1
+98865feccdb121ffe7c6a0827f5ff7ffe0b8c06f fix(ai): cancel unused response bodies on rejection and late arrival
+e7feadcdcec8495149742395a3c69990d23a45a2 fix(mochi): retire model plan waits promptly on cancellation
+ad36214da50928de86c324eeb709afa830edfe41 fix(custom-block): bound pending transport waits and reject mixed envelopes
+9f4296200099a3c9a4ac0b13d8d82d1ad8e613b3 fix(mochi-source): detach cancelled requests before abort reentry
+4c40e940193234c71bf17189d857b29d9fafd983 fix(mochi): bound selected metadata before model transport
+a3eec73c794ca97d20de9de6d1287d1f672cd00f docs(ai-core): record verified gaps and production integration contract
+f7267c2b30da1af73875ec3a54b90da7cfc86ded fix(mochi): release service concurrency on ignored cancellation
+12515887d659d6b0f352ffe337eee6fa428ae6b8 fix(ai): bound interactive admission and retire disconnected gates
+ed51567d6676cc28a850167f7c62bde0225b9974 docs(ai-core): preserve command ledger and browser acceptance evidence
+5ac2d225611f6e8e86204c641b90f043804eca40 fix(mochi-source): retire cancelled registry admission waits
+49627e8117ffdeb62abde9bbaaf786cda83e2c62 fix(mochi-ai): bound client transport and decode strict UTF-8
+baeffb128b657bb1f68f8017f7982d7737d3cbc1 fix(mochi-ai): preserve conversation ownership during abort reentry
+a0c8eecb7111a06a3095ee2178d5ec46c4ce2428 fix(artifact): retire superseded installation preparation
+031eac6b301292bc8379106916eaf715af2a4f80 fix(mochi-ai): bound trusted access admission and reject invalid request bytes
+3c72fdff6a56f81fcf6b022f9141a271d3f1c1f0 docs(ai-core): checkpoint verified core regressions and night report
+e8816ffe52e47042de0dce19d42d36bd597ca0ce fix(artifact-ui): retire cancelled file reads and preserve reentrant drafts
+a073fa2c1f99c2a78a957db94c984d917653762c fix(artifact-ui): validate native file bytes with strict UTF-8 bounds
+b7f47f4c77cf500a2ae8d66a2eaba854b0f86379 fix(ai-server): reject disconnected requests before model dispatch
+47c2fe53f17a3c37acd27bf511ea6c3af52aa160 fix(mochi-source): bound completion egress and guard cancellation
+0bb57e3f43e7935bcf32a13eae8869c1326bd691 fix(mochi-client): retain request ownership across state publication
+dca5903e22ff51e781a165d255b4e6280bfa963c feat(custom-block): propagate caller cancellation before artifact storage

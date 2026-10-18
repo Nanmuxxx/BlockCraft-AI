@@ -23,6 +23,9 @@
 
 ## CustomBlock / Viewer / 源码修改
 
+- `createGenerator.generate(input, {signal})` 与 `createDeepSeekProvider.generate(request, {signal})` 现支持调用方取消。存储前取消及时结束并禁止写入；`store.put`开始后等待实际结果，不把已提交的存储伪装成回滚。未来HTTP适配器必须区分取消阶段，不能自动重试。
+- 源码模型seam请求的实际UTF-8序列化上限512KiB，包括instruction、转义源码、manifest和props；响应同为512KiB。超限拒绝、不截断；模型seam仍无生产endpoint或费用授权。
+
 - 继续使用 manifest、versionDigest、现有 Artifact Installer 和唯一 project session；不能只凭 definitionId 匹配版本，也不能在导入时把旧 state 套给不兼容 Schema。
 - B 参数更新、布局、重新安装及 C 投影都通过同一个 owner/CAS。session 内保留不等于跨刷新存储；未来持久化必须验证完整项目、artifact 精确版本、Schema 和所有权，不接受旧写句柄。
 - `createSourceEditPlanner` 的 candidate 是待审版本；源码摘要/props/版本校验和确认不是执行许可。不能 import、eval 或挂载生成 TSX 来“测试成功”。

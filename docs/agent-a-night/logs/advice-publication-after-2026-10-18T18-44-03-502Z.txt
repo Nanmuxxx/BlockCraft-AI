@@ -1,0 +1,35 @@
+✔ deadline retires ignored fetch abort (10.859583ms)
+✔ deadline retires ignored body abort (11.352209ms)
+✔ caller cancellation retires transport and cancels a late response body (0.342625ms)
+✔ reader cleanup cannot retain a completed response (0.4155ms)
+✔ reject malformed UTF-8 195-40 inside JSON (0.45825ms)
+✔ reject malformed UTF-8 228-184 inside JSON (0.118125ms)
+✔ declared oversized response is cancelled before acquiring a reader (0.227125ms)
+✔ valid split multibyte UTF-8 remains accepted (0.377084ms)
+✔ inherited error code constructor remains sanitized (0.150417ms)
+✔ inherited error code __proto__ remains sanitized (0.120959ms)
+✔ inherited error code toString remains sanitized (0.126416ms)
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (2.242583ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.358959ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.59075ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.23975ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.157208ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.147792ms)
+✔ cancel retires an ignored analysis promise without altering newer history (1.526125ms)
+✔ abort listener reentry retains ownership of the newer conversation request (0.256958ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.078333ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (19.904625ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.09825ms)
+✔ late status cannot re-enable consent after explicit off (0.0915ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.157292ms)
+✔ subscriber cancellation during message publication prevents analysis egress (0.0995ms)
+✔ subscriber cancellation during busy publication prevents analysis egress (0.053ms)
+✔ host bridge listens to settled structural events, ignores records/anchors/mode, and cleans up (51.576083ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82.847708

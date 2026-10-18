@@ -1,0 +1,65 @@
+✖ pre-cancelled source completion never reaches the separately supplied transport (0.546167ms)
+✖ outbound source context bounds actual UTF-8 JSON including instruction and escaped source (0.668958ms)
+✖ cancel during completion rejects its late output before decoding it (0.162917ms)
+✔ source model seam rejects oversized or non-text completion without a fallback (0.574458ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 1
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 168.489958
+
+✖ failing tests:
+
+test at tests/mochi-source/provider.test.cjs:7:1
+✖ pre-cancelled source completion never reaches the separately supplied transport (0.546167ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-source/provider.test.cjs:11:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-source/provider.test.cjs:15:1
+✖ outbound source context bounds actual UTF-8 JSON including instruction and escaped source (0.668958ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-source/provider.test.cjs:21:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'MODEL_REQUEST_TOO_LARGE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-source/provider.test.cjs:28:1
+✖ cancel during completion rejects its late output before decoding it (0.162917ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  SyntaxError: Unexpected token 'i', "invalid JSON" is not valid JSON
+      at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-source/provider.test.cjs:31:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: SyntaxError: Unexpected token 'i', "invalid JSON" is not valid JSON
+        at JSON.parse (<anonymous>)
+        at Object.generate (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-source/providers.ts:26:25)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-source/provider.test.cjs:31:3)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    operator: 'rejects',
+    diff: 'simple'
+  }

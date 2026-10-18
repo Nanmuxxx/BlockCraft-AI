@@ -1,0 +1,52 @@
+✔ paid provider construction and future CLI fail closed without explicit gates (107.686958ms)
+✔ mock transport receives fixed HTTPS endpoint, no redirects, bounded JSON request, server-only key (10.178042ms)
+✔ provider rejects no choices (0.229417ms)
+✔ provider rejects too many choices (0.206708ms)
+✔ provider rejects truncated (0.158459ms)
+✔ provider rejects refusal (0.171708ms)
+✔ provider rejects tool call (0.131625ms)
+✔ provider rejects not text (0.137125ms)
+✔ provider rejects wrong role (0.110541ms)
+✔ provider rejects mixed error and content (0.187834ms)
+✔ provider rejects false refusal (0.228708ms)
+✔ provider rejects null tool call (0.124834ms)
+✔ HTTP errors and transport failures are redacted and never retried (0.207542ms)
+✔ declared, streamed and content byte limits are independently enforced (1.007583ms)
+✔ invalid UTF8 and malformed envelope JSON fail closed (0.177709ms)
+✔ timeout bounds both connection and response body; aborts transport (34.284958ms)
+✔ timeout releases late and hanging response bodies; early HTTP/size rejection also cancels (23.854917ms)
+✖ caller cancellation rejects before fetch and retires ignored transport with late body cleanup (30004.095375ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 17
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30308.52125
+
+✖ failing tests:
+
+test at tests/custom-block-generation/provider.test.mjs:105:1
+✖ caller cancellation rejects before fetch and retires ignored transport with late body cleanup (30004.095375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   code: 'UPSTREAM_TIMEOUT'
+  -   code: 'CANCELLED'
+    }
+  
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/custom-block-generation/provider.test.mjs:112:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: GenerationError: UPSTREAM_TIMEOUT
+        at Timeout.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/custom-block/provider.mjs:48:53)
+        at listOnTimeout (node:internal/timers:685:17)
+        at process.processTimers (node:internal/timers:618:7),
+    expected: { code: 'CANCELLED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

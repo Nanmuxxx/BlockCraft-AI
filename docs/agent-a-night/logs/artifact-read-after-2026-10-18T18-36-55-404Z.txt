@@ -1,0 +1,38 @@
+✔ real pending fixture: read + preview + cancel do not write; confirmed install only appends once (9.935708ms)
+✔ preview component shows exact identity/props/source and status; no source HTML or runtime (4.36825ms)
+✔ corrupt version, malformed envelope/JSON, executable status, props and existing ID all fail closed (3.193459ms)
+✔ late reads, cancellation and superseding requests never revive a preview (0.467583ms)
+✔ owner revision and authorization changes invalidate loaded/preview candidates (2.521209ms)
+✔ confirmation locks parent switch/unmount synchronously before setter; double confirm invokes install once (1.810833ms)
+✔ concurrent commit or revoked authorization during install rejects without registry publication (2.406708ms)
+✔ context change while prepare awaits discards result; disposal and StrictMode empty replay clean subscriptions (0.57775ms)
+✔ unexpected session exception remains error; no success receipt or automatic retry (1.363708ms)
+✔ stalled file read settles promptly after cancel; late rejection cannot overwrite new input (0.502375ms)
+✔ stalled file read settles promptly after replace; late rejection cannot overwrite new input (0.489084ms)
+✔ stalled file read settles promptly after dispose; late rejection cannot overwrite new input (0.82075ms)
+✔ stalled file read settles promptly after revision; late rejection cannot overwrite new input (0.666458ms)
+✔ stalled file read settles promptly after permission; late rejection cannot overwrite new input (0.525666ms)
+✔ a superseding file read settles the stalled caller without losing its own draft (0.59525ms)
+✔ stalled prepare registry lookup retires on invalidate (6.010542ms)
+✔ stalled prepare registry lookup retires on dispose (5.031375ms)
+✔ stalled prepare registry lookup retires on supersede (2.917917ms)
+✔ real archived DeepSeek record: private store -> exact export -> preview -> sole session CAS; source stays inert (53.9215ms)
+✔ export rejects missing/wrong reference, corrupt digest, invalid status/props and captures input (1.680917ms)
+✔ cancel is idempotent, foreign tickets cannot commit and no candidate is registered (1.02525ms)
+✔ malformed, stale digest, invalid props, extra execution permission and collisions fail before preview (2.689291ms)
+✔ project switch, revision change and revoke/regrant invalidate previews (2.376417ms)
+✔ confirmation rechecks revision/authorization even if host notifications were missed (1.769417ms)
+✔ context invalidation or disposal during prepare drops the late result without registering artifact (0.644083ms)
+✔ late prepare, superseding prepare, input mutation and dispose cannot revive a ticket (1.270875ms)
+✔ confirm lease synchronously blocks cancel/context switch/dispose and duplicate submission (1.355125ms)
+✔ permission changes or concurrent CAS during async install reject atomically and terminally (1.793167ms)
+✔ two installers using one owner commit at most once; no implicit replacement (1.74175ms)
+✔ unexpected install exception is terminal; capability escalation rejected (1.126666ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 265.478625

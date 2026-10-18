@@ -44,3 +44,17 @@
 - `server/mochi-ai/http.mjs:createMochiHandler/read`：严格UTF-8、access默认五秒上限、请求/连接中止信号传给可信适配器；`advice-http-disconnect`23/23。
 - 最新较广核心回归`core-checkpoint`622/622，时间早于HTTP入口最后三项新增测试；不得把这些结果混为一次625项运行。
 - 正式Artifact桌面/移动通过；Mochi正式页面串行重跑通过，0外部请求/0真实模型调用。最新变更继续遵循PARTIAL/BLOCKED，未启用生产修改/Viewer。
+
+## 第三轮边界证据（02:48）
+
+| 项目 | 状态 | 函数/文件 | 验证 |
+|---|---|---|---|
+| 文件取消及重入 | VERIFIED | generated-artifact/ui.ts:readFile/invalidate | ui.test.cjs：cancel/replace/dispose/revision/permission/supersede、订阅重入；旧实现6项超时 |
+| 原生文件UTF-8与大小 | VERIFIED | ui.ts:readFile的arrayBuffer/fatal解码 | artifact-byte-final35/35；正式production-browser.cjs桌面1366/移动390拒绝损坏文件后正常预览安装 |
+| 生成发出前断连 | VERIFIED | server/index.mjs:createAppServer/generate | generation-predispatch-before复现错误调用；after44/44，断连零调用且释放并发 |
+| 源码模型出站边界 | VERIFIED | mochi-source/providers.ts:createModelSourcePlanProvider | provider.test.cjs：实际UTF-8/转义512KiB、调用前后取消、超大响应；源码43/43 |
+| 会话状态发布取消 | VERIFIED | mochi-ai/client.mjs:createMochiConversation/run | client.test.mjs：message/busy同步取消与替换，旧分析零发出；相关28/28；正式浏览器通过 |
+| CustomBlock调用方取消 | VERIFIED | server/custom-block/generator.mjs:createGenerator；provider.mjs:createDeepSeekProvider | pipeline/provider31/31：预取消零调用、忽略abort及时退休、迟到拒绝/响应体清理、存储前零写入 |
+| 存储开始后取消 | IMPLEMENTED | generator.mjs:store.put边界 | 已进入不可逆存储则等待实际结果；不虚构回滚，无新增执行权限 |
+
+core-caller-cancel最新649/649；REAL_MODEL_CALLS=0。上述VERIFIED仅指Fixture协议/取消行为，不是实际模型语义或任意TSX运行验收。

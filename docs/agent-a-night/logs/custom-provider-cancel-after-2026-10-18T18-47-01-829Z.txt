@@ -1,0 +1,38 @@
+✔ experiment is disabled by default before touching provider or store (0.668833ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (31.896167ms)
+✔ invalid output never reaches storage, never evaluates source side effects (6.302667ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (8.417834ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (11.466041ms)
+✔ private store permissions, quotas and references fail closed (7.032125ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (5.821583ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (6.106916ms)
+✔ all JSON files are inert source artifacts, not generated source module files (5.8745ms)
+✔ caller cancellation retires ignored provider work before any pending-store write (0.694666ms)
+✔ pre-cancelled generator performs no provider or storage calls (0.094209ms)
+✔ cancellation during output admission prevents storage; admitted storage retains an honest outcome (0.509375ms)
+✔ paid provider construction and future CLI fail closed without explicit gates (130.546667ms)
+✔ mock transport receives fixed HTTPS endpoint, no redirects, bounded JSON request, server-only key (10.480708ms)
+✔ provider rejects no choices (0.232292ms)
+✔ provider rejects too many choices (0.20275ms)
+✔ provider rejects truncated (0.1725ms)
+✔ provider rejects refusal (0.165334ms)
+✔ provider rejects tool call (0.234292ms)
+✔ provider rejects not text (0.300917ms)
+✔ provider rejects wrong role (0.169333ms)
+✔ provider rejects mixed error and content (0.195041ms)
+✔ provider rejects false refusal (0.206125ms)
+✔ provider rejects null tool call (0.111375ms)
+✔ HTTP errors and transport failures are redacted and never retried (0.20775ms)
+✔ declared, streamed and content byte limits are independently enforced (1.094458ms)
+✔ invalid UTF8 and malformed envelope JSON fail closed (0.215333ms)
+✔ timeout bounds both connection and response body; aborts transport (34.533542ms)
+✔ timeout releases late and hanging response bodies; early HTTP/size rejection also cancels (23.163541ms)
+✔ caller cancellation rejects before fetch and retires ignored transport with late body cleanup (0.484416ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 340.271875

@@ -1,0 +1,64 @@
+✔ health works without a key and never calls upstream (13.0005ms)
+✔ missing key produces safe 503 without upstream call (3.304417ms)
+✔ invalid idea, unexpected fields, and malformed JSON never reach upstream (6.869667ms)
+✔ body byte limit and content type are enforced before upstream (1.22275ms)
+✔ chunked body cannot bypass byte limit (1.294542ms)
+✔ mock valid result uses official endpoint, default model, JSON mode, and actual AppSpec source (2.849875ms)
+✔ DEEPSEEK_MODEL overrides the default server-side (1.176125ms)
+✔ rejects non-JSON model content with the existing validator and safe errors (0.845542ms)
+✔ rejects wrong protocol with the existing validator and safe errors (0.723792ms)
+✔ rejects extra executable property with the existing validator and safe errors (0.77425ms)
+✔ rejects missing binding with the existing validator and safe errors (0.657083ms)
+✔ rejects cross-entity field with the existing validator and safe errors (0.66325ms)
+✔ handles malformed upstream JSON (0.632416ms)
+✔ handles truncated output (0.67975ms)
+✔ handles empty choices (2.208125ms)
+✔ handles upstream HTTP failure (1.5285ms)
+✔ handles oversized envelope (1.042084ms)
+✔ handles oversized generated content (0.921416ms)
+✔ rejects ambiguous completion: multiple choices (0.787125ms)
+✔ rejects ambiguous completion: tool calls (0.725208ms)
+✔ rejects ambiguous completion: legacy function call (0.728375ms)
+✔ rejects ambiguous completion: refusal with content (0.768209ms)
+✔ rejects ambiguous completion: wrong message role (0.814792ms)
+✔ rejects ambiguous completion: error with choices (1.745458ms)
+✔ invalid UTF-8 input is rejected before upstream, even inside valid JSON strings (1.510209ms)
+✔ invalid UTF-8 upstream cannot silently replace bytes inside an otherwise valid AppSpec (0.907375ms)
+✔ timeout aborts an upstream call and returns safe 504 (28.124084ms)
+✔ timeout also covers upstream body consumption (26.729541ms)
+✔ rate limit ignores forged forwarding headers and leaves health available (4.841125ms)
+✔ concurrency cap rejects excess calls without starting another upstream request (6.291083ms)
+✔ cross-origin requests and wrong methods/paths never call upstream (1.294625ms)
+✔ deadline releases ignored-abort transport and cancels its late response body (12.880334ms)
+✔ HTTP and declared-size rejection cancel unused upstream bodies without blocking admission (1.459958ms)
+✔ deadline releases ignored-abort body, including nonsettling cancel (12.932083ms)
+✔ timed-out requests do not retain concurrency slots (25.9825ms)
+✔ HTTP disconnect aborts upstream and releases admission even when transport ignores cancellation (2.273ms)
+✖ disconnect at input completion prevents a generation call before upstream dispatch (1.390792ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 36
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 221.11325
+
+✖ failing tests:
+
+test at server/server.test.mjs:268:1
+✖ disconnect at input completion prevents a generation call before upstream dispatch (1.390792ms)
+  AssertionError [ERR_ASSERTION]: closed response must not incur a new upstream call
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/server/server.test.mjs:278:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

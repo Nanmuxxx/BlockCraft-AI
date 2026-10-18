@@ -1,0 +1,49 @@
+2:38:04 AM [vite] (client) Re-optimizing dependencies because vite config has changed
+{
+  "browser": "151.0.7922.34",
+  "scope": "unmodified production /ai-create components; no QA bridge; initial AppSpec HTTP intercepted offline",
+  "cases": [
+    {
+      "width": 1366,
+      "passed": true,
+      "checks": [
+        "production route without QA decoration",
+        "invalid UTF-8 rejected before preview without adding a card",
+        "archived export load",
+        "preview with exact version/props/source/pending",
+        "preview/cancel no added card",
+        "explicit confirm adds one",
+        "B selects and inspects parameters",
+        "C unavailable without iframe",
+        "no QA bridge",
+        "no external/API egress",
+        "no horizontal overflow"
+      ],
+      "video": "/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/docs/agent-a-night/browser/artifact-utf8/video/page@0113a142631f291015073a2de8d1dde5.webm",
+      "errors": [],
+      "external": []
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "checks": [
+        "production route without QA decoration",
+        "invalid UTF-8 rejected before preview without adding a card",
+        "archived export load",
+        "preview with exact version/props/source/pending",
+        "preview/cancel no added card",
+        "explicit confirm adds one",
+        "B selects and inspects parameters",
+        "C unavailable without iframe",
+        "no QA bridge",
+        "no external/API egress",
+        "no horizontal overflow"
+      ],
+      "video": "/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/docs/agent-a-night/browser/artifact-utf8/video/page@27e38017b671eb79c8792b82a0b2677f.webm",
+      "errors": [],
+      "external": []
+    }
+  ],
+  "errors": [],
+  "paidCalls": 0
+}
