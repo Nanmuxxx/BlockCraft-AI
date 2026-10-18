@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { once } from 'node:events'
-import { createAppServer } from '../../server/index.mjs'
+import { createAppServer, LIMITS } from '../../server/index.mjs'
 import { buildInteractiveMessages } from '../../server/trusted-interactive.mjs'
 const fixture = JSON.parse(readFileSync(new URL('./pomodoro.json', import.meta.url)))
 const idea = '做一个 25 分钟的数学专注番茄钟'
@@ -86,4 +86,31 @@ test('provider errors, truncated completion and invalid JSON never become succes
       assert.equal((await request(body)).status, 400); assert.equal(calls, 1)
     }
   }
+})
+
+for (const stage of ['access', 'budget']) test(`HTTP disconnect during ${stage} retires admission before model egress`, { timeout: 2000 }, async t => {
+  let begin, lastSignal, attempts = 0, calls = 0
+  const adapter = (_input, options) => {
+    if (++attempts > LIMITS.concurrentRequests) return stage === 'access' ? { sessionId: 'offline', appId: 'offline', readOnly: false } : true
+    lastSignal = stage === 'access' ? options.signal : _input.signal
+    begin()
+    return new Promise(() => {})
+  }
+  const interactive = offlineOptions('http://offline.test', stage === 'access' ? { resolveAccess: adapter } : { reserveBudget: adapter })
+  const server = createAppServer({ apiKey: 'offline-test-key', fetchImpl: async () => { calls++; return output(fixture) }, interactive })
+  server.listen(0, '127.0.0.1'); await once(server, 'listening')
+  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve) }))
+  const post = signal => fetch(`http://127.0.0.1:${server.address().port}/api/ai/generate`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea, protocol: 'trusted-interactive/1' }), signal,
+  })
+  for (let i = 0; i < LIMITS.concurrentRequests; i++) {
+    const started = new Promise(resolve => { begin = resolve }), controller = new AbortController()
+    const pending = post(controller.signal), rejected = assert.rejects(pending)
+    await started; controller.abort(); await rejected
+    if (!lastSignal.aborted) await once(lastSignal, 'abort')
+    assert.equal(lastSignal.aborted, true)
+  }
+  assert.equal(calls, 0)
+  assert.equal((await post()).status, 200)
+  assert.equal(calls, 1)
 })

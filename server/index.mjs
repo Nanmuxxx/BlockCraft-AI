@@ -206,8 +206,13 @@ export function createAppServer({
         }
         const isInteractive = input.protocol === 'trusted-interactive/1'
         if (isInteractive) {
-          try { await admitInteractive(req, { model, requestId: randomUUID(), maxTokens: Buffer.byteLength(JSON.stringify(buildInteractiveMessages(input.idea.trim()))) + 8192 }) }
+          const admission = new AbortController()
+          const cancelAdmission = () => { if (!res.writableEnded) admission.abort() }
+          res.once('close', cancelAdmission)
+          if (res.destroyed) admission.abort()
+          try { await admitInteractive(req, { model, requestId: randomUUID(), maxTokens: Buffer.byteLength(JSON.stringify(buildInteractiveMessages(input.idea.trim()))) + 8192, signal: admission.signal }) }
           catch (error) { throw fail(error.status ?? 503, error.code ?? 'AI_DISABLED', '可信交互生成未获授权或预算不可用。') }
+          finally { res.off('close', cancelAdmission) }
           if (res.destroyed) return
         }
         if (!apiKey) throw fail(503, 'AI_NOT_CONFIGURED', 'AI 服务尚未配置。')
