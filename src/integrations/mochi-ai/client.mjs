@@ -234,13 +234,13 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       return run('chat', question || `请解释这条建议：${item.text}`)
     },
     async ignore(id) {
-      const item = suggestion(id), owned = signature
+      const item = suggestion(id), owned = signature, ownedEpoch = epoch
       remember(ignored, fingerprint(item))
       emit({ suggestions: state.suggestions.filter(s => s.id !== id) })
       // Publication can synchronously close the panel or replace its project.
       // Do not dispatch the retired action into the host's new access scope.
       check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
-      check(signature === owned && JSON.stringify(projectContext(readContext())) === owned, 'CONTEXT_CHANGED', '项目已变化，请重新提问。', 409)
+      check(epoch === ownedEpoch && signature === owned && JSON.stringify(projectContext(readContext())) === owned, 'CONTEXT_CHANGED', '项目已变化，请重新提问。', 409)
       await api.ignore(id)
     },
     requestModification(id) { suggestion(id); throw new MochiError('AI_MODIFICATION_DISABLED', errors.AI_MODIFICATION_DISABLED, 503) },

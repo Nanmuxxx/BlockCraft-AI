@@ -18,6 +18,7 @@ async function fixture(onFocus = () => {}, initial = context()) {
   } })
   await client.refreshStatus(); await client.chat('分析当前报名应用')
   return { client, id: client.getSnapshot().suggestions[0].id, counts: () => ({ focused, ignored, analyzed }),
+    setContext(next) { current = next; client.syncContext() },
     replace() { current = { ...context(), appId: 'replacement', instanceId: 'replacement-instance' }; client.syncContext() } }
 }
 
@@ -28,6 +29,26 @@ test('queued suggestion actions from a disposed conversation cannot focus or sen
   await assert.rejects(f.client.continueSuggestion(f.id), { code: 'DISPOSED' })
   await assert.rejects(f.client.ignore(f.id), { code: 'DISPOSED' })
   assert.deepEqual(f.counts(), { focused: 0, ignored: 0, analyzed: 1 })
+})
+
+for (const transition of ['cancel', 'project-round-trip', 'selection-round-trip']) test(`ignore publication cannot survive ${transition}`, async () => {
+  const original = context()
+  const f = await fixture(() => {}, original)
+  let once = true
+  const off = f.client.subscribe(() => {
+    if (!once) return
+    once = false
+    if (transition === 'cancel') f.client.cancel()
+    else {
+      f.setContext(transition === 'project-round-trip'
+        ? { ...original, appId: 'replacement', instanceId: 'replacement-instance' }
+        : { ...original, selectedBlockId: null })
+      f.setContext(original)
+    }
+  })
+  await assert.rejects(f.client.ignore(f.id), { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.counts().ignored, 0, 'retired ignore never reaches the server')
+  off(); f.client.dispose()
 })
 
 for (const transition of ['dispose', 'replace']) test(`ignore publication followed by ${transition} cannot dispatch a retired action`, async () => {
