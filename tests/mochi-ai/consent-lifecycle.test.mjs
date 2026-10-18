@@ -85,3 +85,26 @@ test('explicit opt-out publishes revocation before notifying idle subscribers', 
   assert.equal(reentered, false)
   assert.equal(client.getSnapshot().proactiveEnabled, false)
 })
+
+test('a subscriber opt-in after revocation preserves user order in the serialized queue', async () => {
+  const writes = []
+  let server = true, next
+  const client = createMochiConversation({ readContext: context, focusBlock() {}, api: {
+    status: async () => ({ enabled: true, proactiveEnabled: true, modificationsEnabled: false }),
+    consent: async enabled => { writes.push(enabled); server = enabled; return { proactiveEnabled: enabled } },
+  } })
+  await client.refreshStatus()
+  let once = false
+  const off = client.subscribe(() => {
+    if (!once && !client.getSnapshot().proactiveEnabled) {
+      once = true
+      next = client.setProactive(true)
+    }
+  })
+  await client.setProactive(false); await next
+  off()
+  assert.deepEqual(writes, [false, true])
+  assert.equal(server, true)
+  assert.equal(client.getSnapshot().proactiveEnabled, true)
+  client.dispose()
+})

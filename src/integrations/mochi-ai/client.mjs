@@ -146,7 +146,6 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     check(typeof enabled === 'boolean' && !disposed, 'INVALID_INPUT')
     const sequence = ++consentSequence
     // Serialize consent writes so rapid on/off cannot leave the server enabled.
-    if (!enabled) retire({ proactiveEnabled: false })
     const write = consentTail.catch(() => {}).then(() => {
       // Never send a queued opt-in from a closed conversation. An explicit
       // opt-out must still follow an already sent opt-in to preserve revocation.
@@ -154,6 +153,8 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       return api.consent(enabled)
     })
     consentTail = write
+    // Reserve queue order before observers can synchronously change consent.
+    if (!enabled) retire({ proactiveEnabled: false })
     try {
       const result = await write
       check(result.proactiveEnabled === enabled, 'AI_INVALID_RESPONSE')
