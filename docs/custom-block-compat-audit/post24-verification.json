@@ -1,0 +1,371 @@
+{
+  "date": "2026-10-18",
+  "main": "5eca85e710cb1c5513961abfb7e45510ba339019",
+  "previousPrHead": "c87889046a80f09758cea51eb629d1058bfb9336",
+  "testedSourceTree": "771b414cb79e3bca974ef7b71d8f8f8b9679bd52",
+  "actualMergeConflicts": [],
+  "sourceAndTestChangesFromPreviousHead": [],
+  "publication": "Non-forced fast-forward of original PR25 branch; no PR merge or deployment",
+  "checks": {
+    "project": 158,
+    "server": 23,
+    "mochiHost": 24,
+    "targeted": 460,
+    "typescript": "passed",
+    "productionBuild": "passed"
+  },
+  "browserReports": {
+    "product": {
+      "browser": "Chromium",
+      "route": "/ai-create",
+      "generation": "offline HTTP response, no paid API",
+      "cases": [
+        {
+          "width": 1366,
+          "passed": true,
+          "customInstances": 2,
+          "builtinRenders": 3,
+          "dragInput": "mouse",
+          "reference": {
+            "id": "custom-1",
+            "definitionId": "test-countdown",
+            "versionDigest": "sha256:5a00391acc66078473fce840a79288e2e60ce1690883194e889512f4109dcbd7",
+            "props": {
+              "label": "新版参数"
+            }
+          },
+          "checks": [
+            "real product route",
+            "mixed selection/drag/layout persistence",
+            "trusted props save/Schema rejection",
+            "stale custom draft",
+            "invalid digest atomic rejection",
+            "concurrent import rejects",
+            "new definition admission",
+            "same-definition version/Schema re-admission",
+            "builtin Inspector field editing",
+            "builtin form/list CRUD and live metric",
+            "B/C state retention",
+            "exact unavailable viewer",
+            "no iframe or generated module execution",
+            "Logo/Pixelify/Mochi",
+            "no horizontal overflow",
+            "legacy Home/clarification/Demo task roundtrip"
+          ],
+          "paidCalls": 0
+        },
+        {
+          "width": 390,
+          "passed": true,
+          "customInstances": 2,
+          "builtinRenders": 3,
+          "dragInput": "Chromium touch events",
+          "reference": {
+            "id": "custom-1",
+            "definitionId": "test-countdown",
+            "versionDigest": "sha256:5a00391acc66078473fce840a79288e2e60ce1690883194e889512f4109dcbd7",
+            "props": {
+              "label": "新版参数"
+            }
+          },
+          "checks": [
+            "real product route",
+            "mixed selection/drag/layout persistence",
+            "trusted props save/Schema rejection",
+            "stale custom draft",
+            "invalid digest atomic rejection",
+            "concurrent import rejects",
+            "new definition admission",
+            "same-definition version/Schema re-admission",
+            "builtin Inspector field editing",
+            "builtin form/list CRUD and live metric",
+            "B/C state retention",
+            "exact unavailable viewer",
+            "no iframe or generated module execution",
+            "Logo/Pixelify/Mochi",
+            "no horizontal overflow",
+            "legacy Home/clarification/Demo task roundtrip"
+          ],
+          "paidCalls": 0
+        }
+      ],
+      "errors": []
+    },
+    "mochi": {
+      "browser": "Chromium",
+      "cases": [
+        {
+          "width": 1366,
+          "passed": true,
+          "confirmedRevision": 1,
+          "finalRevision": 2,
+          "networkCalls": 0,
+          "checks": [
+            "production disabled",
+            "single host/UI",
+            "StrictMode cleanup",
+            "preview zero writes",
+            "cancel/reselect/mode invalidation",
+            "duplicate confirmation",
+            "real receipt",
+            "B/C records",
+            "ignore suggestion",
+            "chat drag isolation",
+            "canvas drag",
+            "error retains committed app/draft",
+            "history scroll anchor",
+            "overlay scroll anchor",
+            "reduced motion",
+            "no horizontal overflow"
+          ]
+        },
+        {
+          "width": 390,
+          "passed": true,
+          "confirmedRevision": 1,
+          "finalRevision": 2,
+          "networkCalls": 0,
+          "checks": [
+            "production disabled",
+            "single host/UI",
+            "StrictMode cleanup",
+            "preview zero writes",
+            "cancel/reselect/mode invalidation",
+            "duplicate confirmation",
+            "real receipt",
+            "B/C records",
+            "ignore suggestion",
+            "chat drag isolation",
+            "canvas drag",
+            "error retains committed app/draft",
+            "history scroll anchor",
+            "overlay scroll anchor",
+            "reduced motion",
+            "no horizontal overflow"
+          ]
+        }
+      ],
+      "errors": []
+    },
+    "motion": {
+      "browser": "Chromium",
+      "fixture": "Real MochiWorkshop + AppRuntime, offline fixed Mock planner (not AI)",
+      "cases": [
+        {
+          "width": 1366,
+          "height": 900,
+          "passed": true,
+          "intermediatePositions": 100,
+          "blink": {
+            "name": "mochi-blink",
+            "closed": "1",
+            "open": "0"
+          },
+          "checks": [
+            "original PNG: idle/curious/thinking/happy/celebrating/error; real Inspector save/error and canvas snap",
+            "real selection/drag + pointer cancellation + no event theft",
+            "rapid reselection",
+            "scroll anchor on desktop/mobile",
+            "viewport resize",
+            "B/C same Runtime",
+            "click opens existing chat",
+            "no overlap at landing",
+            "reduced-motion cancels WAAPI and CSS",
+            "no horizontal overflow"
+          ],
+          "frameCount": 117
+        },
+        {
+          "width": 390,
+          "height": 900,
+          "passed": true,
+          "intermediatePositions": 41,
+          "blink": {
+            "name": "mochi-blink",
+            "closed": "1",
+            "open": "0"
+          },
+          "checks": [
+            "original PNG: idle/curious/thinking/happy/celebrating/error; real Inspector save/error and canvas snap",
+            "real selection/drag + pointer cancellation + no event theft",
+            "rapid reselection",
+            "scroll anchor on desktop/mobile",
+            "viewport resize",
+            "B/C same Runtime",
+            "click opens existing chat",
+            "no overlap at landing",
+            "reduced-motion cancels WAAPI and CSS",
+            "no horizontal overflow"
+          ],
+          "frameCount": 75
+        }
+      ],
+      "errors": [],
+      "outbound": [],
+      "version": "151.0.7922.34",
+      "lowResource": "390px mobile + 2 logical CPUs: limited quality, CSS body animation disabled, real Chromium touch drag commits with no Mochi event theft"
+    },
+    "bc": {
+      "scope": "Offline static metadata only; real React lifecycle and owner; unavailable metadata uses explicit test projections; no generated component compilation or execution; no production wiring",
+      "results": [
+        {
+          "viewport": {
+            "width": 1366,
+            "height": 900
+          },
+          "checks": [
+            "selection",
+            "draft-no-write",
+            "typed-enums",
+            "nested-optional-props",
+            "trusted-schema-rejection",
+            "stale-draft",
+            "pointer-drag",
+            "pointer-cancel",
+            "isolated-instance-props",
+            "mixed-render-order",
+            "exact-version-viewer",
+            "pending-build",
+            "unavailable",
+            "forged-runnable-denied",
+            "reload-persistence",
+            "no-horizontal-overflow",
+            "collision-no-write",
+            "mixed-snap",
+            "whole-stack-single-revision",
+            "detach-single-revision",
+            "arrange-single-revision",
+            "stale-drag-denied",
+            "dirty-instance-switch",
+            "dirty-version-switch",
+            "new-version-valid-save",
+            "pending-readonly-owner-rejection",
+            "readonly-controls",
+            "readonly-pointer-no-write",
+            "shared-metadata-states"
+          ],
+          "revision": 7,
+          "geometryRevision": 5
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 900
+          },
+          "checks": [
+            "selection",
+            "draft-no-write",
+            "typed-enums",
+            "nested-optional-props",
+            "trusted-schema-rejection",
+            "stale-draft",
+            "pointer-drag",
+            "pointer-cancel",
+            "isolated-instance-props",
+            "mixed-render-order",
+            "exact-version-viewer",
+            "pending-build",
+            "unavailable",
+            "forged-runnable-denied",
+            "reload-persistence",
+            "no-horizontal-overflow",
+            "collision-no-write",
+            "mixed-snap",
+            "whole-stack-single-revision",
+            "detach-single-revision",
+            "arrange-single-revision",
+            "stale-drag-denied",
+            "dirty-instance-switch",
+            "dirty-version-switch",
+            "new-version-valid-save",
+            "pending-readonly-owner-rejection",
+            "readonly-controls",
+            "readonly-pointer-no-write",
+            "shared-metadata-states"
+          ],
+          "revision": 7,
+          "geometryRevision": 5
+        }
+      ],
+      "errors": [],
+      "assetErrors": [],
+      "externalRequests": []
+    }
+  },
+  "logEvidence": {
+    "project-test.log": {
+      "sha256": "aa8e4f9f388ce741dc08b0194be4de4701934e01252b8a460cd22a5beb71c2ec",
+      "tail": [
+        "✔ unsupported targets and bad addBlock bindings are rejected (0.215084ms)",
+        "ℹ tests 158",
+        "ℹ suites 0",
+        "ℹ pass 158",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 691.512208"
+      ]
+    },
+    "server-test.log": {
+      "sha256": "2b3ca13da566cbc242d76644eef254914f4e03a5c445b75a423e7e914a874b3f",
+      "tail": [
+        "✔ cross-origin requests and wrong methods/paths never call upstream (1.284083ms)",
+        "ℹ tests 23",
+        "ℹ suites 0",
+        "ℹ pass 23",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 155.5215"
+      ]
+    },
+    "mochi-host.log": {
+      "sha256": "9ef240b78a81932261455af9cadcdb01ae875211a3250de6233251b039874eb9",
+      "tail": [
+        "✔ disposal aborts requests, cancels pending confirmation and releases Runtime subscription (23.159917ms)",
+        "ℹ tests 24",
+        "ℹ suites 0",
+        "ℹ pass 24",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 518.219"
+      ]
+    },
+    "targeted-test.log": {
+      "sha256": "381ea48579ff4bf126d32ef0ea1289f2aa0d2196628f54b3562a1abcd8d94905",
+      "tail": [
+        "✔ blocked or undersized surfaces have no landing or route through content (0.140916ms)",
+        "ℹ tests 460",
+        "ℹ suites 0",
+        "ℹ pass 460",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 2502.765625"
+      ]
+    },
+    "typescript.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": []
+    },
+    "build.log": {
+      "sha256": "17b93b6d755cb9c54f05422e52ac69b4b778c524022a3d084895017eb76d4009",
+      "tail": [
+        "dist/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2    7.90 kB",
+        "dist/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2    8.09 kB",
+        "dist/assets/pixelify-sans-latin-700-normal-BctWAS0u.woff    10.49 kB",
+        "dist/assets/pixelify-sans-latin-500-normal-Bq6pAlou.woff    10.68 kB",
+        "dist/assets/mochi-Btfatr0K.png                             114.52 kB",
+        "dist/assets/index-BB9VOV6g.css                              73.36 kB │ gzip:  14.49 kB",
+        "dist/assets/index-BFf83d_2.js                              387.97 kB │ gzip: 122.12 kB",
+        "",
+        "✓ built in 123ms"
+      ]
+    }
+  }
+}

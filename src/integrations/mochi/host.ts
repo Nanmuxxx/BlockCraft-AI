@@ -76,7 +76,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   const instanceId = `mochi-${globalThis.crypto.randomUUID()}`
   const planner = createAppChangePlanner(runtime)
   const listeners = new Set<() => void>()
-  type Entry = { plan: DeepReadonly<AppChangePlan>; epoch: number; authorizationKey: string; status: 'pending' | 'confirming' | 'committed' | 'cancelled' | 'rejected' | 'unknown' }
+  type Entry = { plan: DeepReadonly<AppChangePlan>; epoch: number; authorization: ReturnType<AppRuntime['customProject']['getAuthorization']>; authorizationKey: string; status: 'pending' | 'confirming' | 'committed' | 'cancelled' | 'rejected' | 'unknown' }
   const entries = new Map<string, Entry>()
   let selectedBlockId: string | null = null
   let authorizationKey = '' // Invalidation identity only; never a source of authority.
@@ -88,12 +88,15 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   let committing: Entry | null = null
   let disposed = false
   let observedRevision = runtime.getSnapshot().revision
+  let observedAuthorization = runtime.customProject?.getAuthorization()
   let view: HostView
 
+  const customInstances = () => runtime.customProject?.getSnapshot().custom.instances ?? []
+  const exists = (id: string | null) => runtime.getSnapshot().spec.blocks.some(block => block.id === id) || customInstances().some(instance => instance.id === id)
   function context(): MochiHostContext {
     const { spec, revision } = runtime.getSnapshot()
     return { appId: spec.id, instanceId, revision, selectedBlockId,
-      blocks: spec.blocks.map(block => ({ id: block.id, name: block.name, type: block.type, ...('fieldIds' in block ? { fieldIds: [...block.fieldIds] } : {}) })),
+      blocks: [...spec.blocks.map(block => ({ id: block.id, name: block.name, type: block.type, ...('fieldIds' in block ? { fieldIds: [...block.fieldIds] } : {}) })), ...customInstances().map(instance => ({ id: instance.id, name: '自定义积木', type: 'custom' }))],
       relations: spec.relations.map(({ blockId, entityId }) => ({ blockId, entityId })),
       entities: spec.entities.map(entity => ({ id: entity.id, name: entity.name, fields: entity.fields.map(({ id, name, type }) => ({ id, name, type })) })),
     }
@@ -137,7 +140,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   }
   function sameContext(entry: Entry) {
     const snapshot = runtime.getSnapshot()
-    return entry.epoch === epoch && entry.authorizationKey === authorizationKey && entry.plan.scope.selectedBlockId === selectedBlockId && entry.plan.appId === snapshot.spec.id && entry.plan.request.baseRevision === snapshot.revision
+    return entry.epoch === epoch && entry.authorizationKey === authorizationKey && entry.authorization === runtime.customProject.getAuthorization() && entry.plan.scope.selectedBlockId === selectedBlockId && entry.plan.appId === snapshot.spec.id && entry.plan.request.baseRevision === snapshot.revision
   }
   function current(entry: Entry, planId: string) {
     ensure(entry.status === 'pending' && activeId === planId, 'Plan is no longer pending', 'PLAN_NOT_PENDING')
@@ -153,11 +156,15 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   view = freeze({ context: context(), epoch, mode, phase: 'IDLE', requestId: null, lastApplied: null, anchor: null, preview: null, busy: false, ignoredSuggestionIds: [], error: null, receipt: null })
   const unsubscribe = runtime.subscribe(() => {
     const snapshot = runtime.getSnapshot()
-    if (snapshot.revision === observedRevision) return
+    const authorization = runtime.customProject?.getAuthorization()
+    if (snapshot.revision === observedRevision && authorization === observedAuthorization) return
     observedRevision = snapshot.revision
-    // The synchronous confirm owns this notification. Its receipt decides the outcome.
-    if (committing) return
-    if (!snapshot.spec.blocks.some(block => block.id === selectedBlockId)) selectedBlockId = null
+    const authorizationChanged = authorization !== observedAuthorization
+    observedAuthorization = authorization
+    // Only the commit's own revision notification belongs to its receipt.
+    // Authorization changes must retire the handle even while confirming.
+    if (committing && !authorizationChanged) return
+    if (!exists(selectedBlockId)) selectedBlockId = null
     invalidate()
   })
 
@@ -167,9 +174,11 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
       alive()
       const prepare = () => {
         ensure(!committing, 'A confirmation is in progress', 'PLAN_NOT_PENDING')
+        ensure(!runtime.customProject.getAuthorization().readOnly, '项目为只读，无法请求修改。', 'READ_ONLY')
         ensure(typeof prompt === 'string' && prompt.trim().length > 0 && prompt.length <= 4000, 'Expected a short nonempty instruction', 'INVALID_PROMPT')
         const snapshot = runtime.getSnapshot()
         ensure(selectedBlockId !== null, 'Select a block before requesting a plan', 'SELECTION_REQUIRED')
+        ensure(!customInstances().some(instance => instance.id === selectedBlockId), '自定义积木请使用参数面板；修改计划尚未开放此权限。', 'CUSTOM_SCOPE_UNAVAILABLE')
         const entityId = resolveBlockEntityId(snapshot, selectedBlockId)
         return { snapshot, scope: { selectedBlockId, allowedBlockIds: [selectedBlockId], allowedEntityIds: [entityId] } }
       }
@@ -185,18 +194,27 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         throw error
       }
       const { snapshot, scope } = prepared
+      const authorization = runtime.customProject.getAuthorization()
       const previous = detach()
       const attempt = { requestId: `${instanceId}-${++sequence}`, epoch, controller: new AbortController() }
       const requestContext = freeze(context())
       pending = attempt
       const ownsRequest = () => !disposed && pending === attempt && epoch === attempt.epoch && !attempt.controller.signal.aborted
+      const requestContextIsCurrent = () => runtime.getSnapshot() === snapshot && runtime.customProject.getAuthorization() === authorization
+      const checkRequestContext = () => {
+        if (requestContextIsCurrent()) return
+        invalidate({ code: 'CONTEXT_CHANGED', message: 'Context changed; request a new preview' })
+        throw new AppSpecError('CONTEXT_CHANGED', 'Discarded plan request after an unobserved context change')
+      }
       publish({ phase: 'REQUESTING', requestId: attempt.requestId, preview: null, anchor: null, error: null, receipt: null })
       previous?.abort()
       let stage: HostPhase = 'REQUEST_FAILED'
       try {
         ensure(ownsRequest(), 'Discarded obsolete plan request', 'CONTEXT_CHANGED')
+        checkRequestContext()
         const input = await provider(Object.freeze({ prompt: prompt.trim(), requestId: attempt.requestId, context: requestContext, snapshot: freeze(structuredClone(snapshot)), signal: attempt.controller.signal }))
         ensure(ownsRequest(), 'Discarded obsolete plan response', 'CONTEXT_CHANGED')
+        checkRequestContext()
         stage = 'PREVIEW_REJECTED'
         const result = planner.preview(input, scope)
         if (!result.ok) throw new AppSpecError(result.error.code, result.error.message)
@@ -205,7 +223,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
           throw new AppSpecError('PLAN_BINDING_MISMATCH', 'Provider changed the host requestId or revision')
         }
         const planId = `${attempt.requestId}-plan`
-        entries.set(planId, { plan: result.plan, epoch, authorizationKey, status: 'pending' })
+        entries.set(planId, { plan: result.plan, epoch, authorization, authorizationKey, status: 'pending' })
         activeId = planId
         pending = null
         publish({ phase: 'PREVIEW', preview: projection(planId, result.plan), error: null })
@@ -294,7 +312,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
     },
     setSelection(blockId: string | null) {
       alive()
-      if (blockId !== null) resolveBlockEntityId(runtime.getSnapshot(), blockId)
+      if (blockId !== null && !customInstances().some(instance => instance.id === blockId)) resolveBlockEntityId(runtime.getSnapshot(), blockId)
       if (blockId === selectedBlockId) return
       selectedBlockId = blockId
       invalidate()

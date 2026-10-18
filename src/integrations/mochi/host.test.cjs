@@ -32,6 +32,15 @@ async function plan(host) { await host.callbacks.onRequestPlan('这是固定 Moc
 const rejects = (promise, code) => assert.rejects(promise, error => error.code === code)
 function defer() { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b }); return { promise, resolve, reject } }
 
+// Inject notification loss at the Runtime boundary. The production v2 owner
+// isolates observer exceptions, so throwing subscribers no longer drop events.
+function notificationGate(runtime) {
+  const subscribe = runtime.subscribe
+  let paused = false
+  runtime.subscribe = listener => subscribe(() => { if (!paused) listener() })
+  return action => { paused = true; try { return action() } finally { paused = false } }
+}
+
 test('Mock preview is isolated, immutable, complete; confirm updates real B/C renderers exactly once', async () => {
   const s = setup()
   const before = s.runtime.getSnapshot()
@@ -383,7 +392,10 @@ test('explicit failure with identical immutable snapshot is COMMIT_FAILED and te
 
 for (const afterWrite of [false, true]) test(`unexpected exception ${afterWrite ? 'after Runtime writes' : 'before known receipt'} is UNKNOWN, never a rollback claim`, async () => {
   const s = setup(), id = await plan(s.host), before = s.runtime.getSnapshot()
-  if (afterWrite) s.runtime.subscribe(() => { throw new Error('subscriber failed AFTER session changed') })
+  if (afterWrite) {
+    const execute = s.runtime.executeCommand
+    s.runtime.executeCommand = (...args) => { execute(...args); throw new Error('receipt unavailable AFTER session changed') }
+  }
   else s.runtime.executeCommand = () => { throw new Error('unexpected exception') }
   await rejects(s.host.callbacks.onConfirm(id), 'COMMIT_OUTCOME_UNKNOWN')
   assert.equal(s.host.getSnapshot().phase, 'COMMIT_OUTCOME_UNKNOWN')
@@ -467,7 +479,9 @@ test('invalid initial input reports an attempt without superseding a valid reque
 
 test('context invalidation inside Runtime publication cannot hide an uncertain write', async () => {
   const s = setup(), id = await plan(s.host)
-  s.runtime.subscribe(() => { s.host.setSelection('applicant-list'); throw new Error('after-write observer') })
+  s.runtime.subscribe(() => { s.host.setSelection('applicant-list') })
+  const execute = s.runtime.executeCommand
+  s.runtime.executeCommand = (...args) => { execute(...args); throw new Error('receipt unavailable after write') }
   await rejects(s.host.callbacks.onConfirm(id), 'COMMIT_OUTCOME_UNKNOWN')
   assert.equal(s.runtime.getSnapshot().revision, 1)
   assert.equal(s.host.getSnapshot().phase, 'COMMIT_OUTCOME_UNKNOWN')
@@ -492,7 +506,7 @@ test('invalid input over 4000 characters reports an error without revoking a val
 
 for (const reenter of [false, true]) test(`missed Runtime notification terminates stale preview before confirm${reenter ? ' without cancelling a reentrant newer request' : ''}`, async () => {
   const runtime = createAppRuntime(createClubRegistrationExample())
-  const stop = runtime.subscribe(() => { throw new Error('early subscriber prevents later notifications') })
+  const withoutNotification = notificationGate(runtime)
   const deferred = defer()
   let calls = 0, nextRequest, nextPromise, writes = 0, notifications = 0
   const execute = runtime.executeCommand
@@ -507,7 +521,7 @@ for (const reenter of [false, true]) test(`missed Runtime notification terminate
     notifications++
     if (reenter && host.getSnapshot().phase === 'STALE') nextPromise = host.callbacks.onRequestPlan('newer after stale')
   })
-  assert.throws(() => runtime.moveBlock('applicant-list', { x: 0.3, y: 0.4 }), /early subscriber/)
+  assert.equal(withoutNotification(() => runtime.moveBlock('applicant-list', { x: 0.3, y: 0.4 })).ok, true)
   const changed = runtime.getSnapshot()
   assert.equal(changed.revision, view.context.revision + 1)
   assert.equal(changed.blockPositions['applicant-list'].x, 0.3)
@@ -531,19 +545,20 @@ for (const reenter of [false, true]) test(`missed Runtime notification terminate
   const final = host.getSnapshot()
   await rejects(host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
   assert.strictEqual(host.getSnapshot(), final)
-  stop(); host.dispose()
+  host.dispose()
 })
 
 test('revision changed by a CONFIRMING observer with missed notification also terminates the preview', async () => {
   const runtime = createAppRuntime(createClubRegistrationExample())
-  const stop = runtime.subscribe(() => { throw new Error('early observer') })
+  const withoutNotification = notificationGate(runtime)
   const host = createMochiHost(runtime, mockAddOptionalField)
   host.setSelection('registration-form')
   const id = await plan(host)
   let changed
   host.subscribe(() => {
     if (host.getSnapshot().phase === 'CONFIRMING') {
-      try { runtime.moveBlock('applicant-list', { x: 0.2, y: 0.4 }) } catch { changed = runtime.getSnapshot() }
+      assert.equal(withoutNotification(() => runtime.moveBlock('applicant-list', { x: 0.2, y: 0.4 })).ok, true)
+      changed = runtime.getSnapshot()
     }
   })
   await rejects(host.callbacks.onConfirm(id), 'CONTEXT_CHANGED')
@@ -553,5 +568,107 @@ test('revision changed by a CONFIRMING observer with missed notification also te
   assert.equal(host.getSnapshot().preview, null)
   assert.equal(host.getSnapshot().error.code, 'CONTEXT_CHANGED')
   await rejects(host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
-  stop(); host.dispose()
+  host.dispose()
+})
+
+for (const restore of [false, true]) test(`missed authorization notification retires in-flight response${restore ? ' after regrant' : ''}`, async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample()), withoutNotification = notificationGate(runtime)
+  const response = defer()
+  let request
+  const host = createMochiHost(runtime, input => { request = input; return response.promise })
+  host.setSelection('registration-form')
+  const before = runtime.customProject.getSnapshot(), pending = host.callbacks.onRequestPlan('old authorization')
+  withoutNotification(() => { runtime.customProject.setReadOnly(true); if (restore) runtime.customProject.setReadOnly(false) })
+  response.resolve(mockAddOptionalField(request))
+  await rejects(pending, 'CONTEXT_CHANGED')
+  assert.equal(host.getSnapshot().phase, 'STALE')
+  assert.equal(host.getSnapshot().preview, null); assert.equal(host.getSnapshot().busy, false)
+  assert.equal(request.signal.aborted, true)
+  assert.strictEqual(runtime.customProject.getSnapshot(), before)
+  host.dispose()
+})
+
+for (const duringConfirm of [false, true]) test(`missed authorization generation cannot commit${duringConfirm ? ' from CONFIRMING observer' : ' an old preview'}`, async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample()), withoutNotification = notificationGate(runtime)
+  const host = createMochiHost(runtime, mockAddOptionalField)
+  host.setSelection('registration-form')
+  const id = await plan(host), before = runtime.customProject.getSnapshot()
+  let writes = 0
+  const execute = runtime.executeCommand
+  runtime.executeCommand = (...args) => { writes++; return execute(...args) }
+  const revoke = () => withoutNotification(() => { runtime.customProject.setReadOnly(true); runtime.customProject.setReadOnly(false) })
+  if (duringConfirm) host.subscribe(() => { if (host.getSnapshot().phase === 'CONFIRMING') revoke() })
+  else revoke()
+  await rejects(host.callbacks.onConfirm(id), 'CONTEXT_CHANGED')
+  assert.equal(writes, 0)
+  assert.equal(host.getSnapshot().phase, 'STALE'); assert.equal(host.getSnapshot().preview, null)
+  assert.strictEqual(runtime.customProject.getSnapshot(), before)
+  await rejects(host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  host.dispose()
+})
+
+test('observed authorization revocation while CONFIRMING prevents writes', async () => {
+  const s = setup(), id = await plan(s.host), before = s.runtime.customProject.getSnapshot()
+  s.host.subscribe(() => { if (s.host.getSnapshot().phase === 'CONFIRMING') s.runtime.customProject.setReadOnly(true) })
+  await rejects(s.host.callbacks.onConfirm(id), 'CONTEXT_CHANGED')
+  assert.equal(s.executions(), 0); assert.strictEqual(s.runtime.customProject.getSnapshot(), before)
+  assert.equal(s.host.getSnapshot().phase, 'STALE'); assert.equal(s.host.getSnapshot().preview, null)
+  s.host.dispose()
+})
+
+test('production owner isolates throwing observers and preserves a known successful receipt', async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample())
+  runtime.subscribe(() => { throw new Error('early observer cannot hide successful publication') })
+  const host = createMochiHost(runtime, mockAddOptionalField)
+  host.setSelection('registration-form')
+  const id = await plan(host)
+  runtime.subscribe(() => { throw new Error('late observer cannot hide successful publication') })
+  await host.callbacks.onConfirm(id)
+  assert.equal(host.getSnapshot().phase, 'APPLIED')
+  assert.equal(host.getSnapshot().receipt.committedRevision, runtime.getSnapshot().revision)
+  await host.callbacks.onConfirm(id)
+  assert.equal(runtime.getSnapshot().revision, 1)
+  host.dispose()
+})
+
+test('readonly request never reaches provider or changes the sole owner', async () => {
+  let calls = 0
+  const s = setup(() => { calls++ }), owner = s.runtime.customProject, before = owner.getSnapshot()
+  owner.setReadOnly(true)
+  await rejects(plan(s.host), 'READ_ONLY')
+  assert.equal(calls, 0); assert.equal(s.executions(), 0)
+  assert.strictEqual(s.runtime.customProject, owner); assert.strictEqual(owner.getSnapshot(), before)
+  s.host.dispose()
+})
+
+test('missed revision notification rejects the in-flight provider response', async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample()), withoutNotification = notificationGate(runtime)
+  const response = defer()
+  let request
+  const host = createMochiHost(runtime, input => { request = input; return response.promise })
+  host.setSelection('registration-form')
+  const pending = host.callbacks.onRequestPlan('stale response')
+  withoutNotification(() => runtime.moveBlock('applicant-list', { x: .7, y: .6 }))
+  const changed = runtime.customProject.getSnapshot()
+  response.resolve(mockAddOptionalField(request))
+  await rejects(pending, 'CONTEXT_CHANGED')
+  assert.equal(host.getSnapshot().phase, 'STALE'); assert.equal(host.getSnapshot().preview, null)
+  assert.strictEqual(runtime.customProject.getSnapshot(), changed)
+  host.dispose()
+})
+
+test('a missed context change while publishing REQUESTING never reaches provider', async () => {
+  const runtime = createAppRuntime(createClubRegistrationExample()), withoutNotification = notificationGate(runtime)
+  let calls = 0
+  const host = createMochiHost(runtime, input => { calls++; return mockAddOptionalField(input) })
+  host.setSelection('registration-form')
+  host.subscribe(() => {
+    if (host.getSnapshot().phase === 'REQUESTING') withoutNotification(() => runtime.customProject.setReadOnly(true))
+  })
+  const before = runtime.customProject.getSnapshot()
+  await rejects(host.callbacks.onRequestPlan('revoked before provider'), 'CONTEXT_CHANGED')
+  assert.equal(calls, 0); assert.equal(host.getSnapshot().busy, false)
+  assert.equal(host.getSnapshot().phase, 'STALE'); assert.equal(host.getSnapshot().preview, null)
+  assert.strictEqual(runtime.customProject.getSnapshot(), before)
+  host.dispose()
 })

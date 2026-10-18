@@ -35,3 +35,11 @@
   .app-spec-workshop .renderer-block { padding: 14px; }
   .app-spec-workshop .study-app__brand { flex-wrap: wrap; }
 }
+
+.custom-block-import { margin: 0 0 16px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 15px; background: #fffaf3; font-size: 13px; overflow-wrap: anywhere; }
+.custom-block-import summary { cursor: pointer; color: var(--brand-deep); font-weight: 600; }
+.custom-block-import label { display: grid; gap: 8px; }
+.custom-block-import input { max-width: 100%; min-width: 0; font: inherit; }
+.custom-block-import button { padding: 8px 12px; border: 1px solid var(--line); border-radius: 9px; background: #ffe1c9; color: var(--brand-deep); font: inherit; }
+
+.app-spec-workshop .workshop__blocks-layer { flex-direction: column; }

@@ -72,7 +72,8 @@ test('unavailable planner is explicit and disables prompt submission and suggest
 
 test('TypeScript callback contract accepts synchronous and asynchronous hosts through both UI entries', () => {
   const path = require('node:path')
-  const filename = path.join(__dirname, '__callback_contract_test__.ts')
+  const normalizePath = file => file.replace(/\\/g, '/')
+  const filename = normalizePath(path.join(__dirname, '__callback_contract_test__.ts'))
   const source = `
     import type { MochiCallbacks, MochiAiAssistantProps } from './types'
     import type { MochiAssistantProps } from './MochiTypes'
@@ -94,14 +95,9 @@ test('TypeScript callback contract accepts synchronous and asynchronous hosts th
   const options = { strict: true, noEmit: true, skipLibCheck: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.Bundler }
   const host = ts.createCompilerHost(options)
   const getSourceFile = host.getSourceFile.bind(host)
-  host.getSourceFile = (file, languageVersion, ...rest) => path.resolve(file) === path.resolve(filename)
+  host.getSourceFile = (file, languageVersion, ...rest) => normalizePath(file) === filename
     ? ts.createSourceFile(file, source, languageVersion, true)
     : getSourceFile(file, languageVersion, ...rest)
-  // Resolve the same existing dependencies as require(), including read-only
-  // NODE_PATH reuse in isolated Windows Worktrees with no local node_modules.
-  host.resolveModuleNames = (names, containingFile) => names.map(name =>
-    ts.resolveModuleName(name, containingFile, options, host).resolvedModule
-      ?? ts.resolveModuleName(name, require.resolve('typescript'), options, host).resolvedModule)
   const diagnostics = ts.getPreEmitDiagnostics(ts.createProgram([filename], options, host))
   assert.equal(diagnostics.length, 0, ts.formatDiagnosticsWithColorAndContext(diagnostics, {
     getCanonicalFileName: f => f, getCurrentDirectory: () => __dirname, getNewLine: () => '\n',

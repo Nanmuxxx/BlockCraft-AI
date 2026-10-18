@@ -13,21 +13,16 @@ import { mockAddOptionalField } from '../../src/integrations/mochi/mockPlanner'
 import { toMinimalPlanInput } from '../../src/integrations/mochi/planning'
 
 const runtime = createAppRuntime(createClubRegistrationExample())
-// Registered before Host/React observers: reproduce a real write whose early
-// subscriber prevents the Host from receiving that revision notification.
-const stopEarlySubscriber = runtime.subscribe(() => {
-  if (qa.missNextNotification) { qa.missNextNotification = false; throw new Error('Offline early subscriber failure after write') }
-})
 let subscriptions = 0
 const subscribe = runtime.subscribe
 runtime.subscribe = listener => {
   subscriptions++
-  const unsubscribe = subscribe(listener)
+  const unsubscribe = subscribe(() => { if (!qa.missNextNotification) listener() })
   return () => { subscriptions--; unsubscribe() }
 }
 const qa = { runtime, host: null as ReturnType<typeof createMochiHost> | null, failure: false, missNextNotification: false,
   defer: false, pending: [] as Array<{ resolve: () => void; reject: () => void }>, replaceHost: () => {},
-  calls: 0, get subscriptions() { return subscriptions }, inputs: [] as unknown[], unmount: () => { stopEarlySubscriber(); root.unmount() } }
+  calls: 0, get subscriptions() { return subscriptions }, inputs: [] as unknown[], unmount: () => { root.unmount() } }
 Object.assign(window, { mochiQA: qa })
 function Fixture() {
   const [generation, setGeneration] = useState(0)

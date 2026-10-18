@@ -26,7 +26,7 @@ async function run() {
       })
     } }] })
   let browser
-  const sourceFiles = execFileSync('git', ['diff', '--name-only'], { cwd: root, encoding: 'utf8' }).trim().split(/\r?\n/)
+  const sourceFiles = execFileSync('git', ['ls-files', '-z', '--', 'src', 'tests'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean)
   const fingerprint = () => Object.fromEntries(sourceFiles.map(file => [file, createHash('sha256').update(readFileSync(path.join(root, file))).digest('hex')]))
   const report = { startedAt: new Date().toISOString(), command: [process.execPath, ...process.argv.slice(1)],
     baseline: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), sourceBefore: fingerprint(),
@@ -54,7 +54,7 @@ async function run() {
       const url = 'http://127.0.0.1:5197/__mochi'
       const b = page.getByRole('button', { name: 'B 模式 · 编辑积木', exact: true })
       const c = page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true })
-      const block = page.locator('[data-block-key="module:registration-form"]')
+      const block = page.locator('[data-block-key="builtin:registration-form"]')
       const input = page.getByRole('textbox', { name: '给 Mochi 发消息' })
       const send = page.getByRole('button', { name: '发送', exact: true })
       const preview = page.getByRole('region', { name: '修改计划预览' })
@@ -136,7 +136,7 @@ async function run() {
       await request()
       await expect(preview).toBeVisible()
       const staleId = await page.evaluate(() => window.mochiQA.host.getSnapshot().preview.planId)
-      await page.locator('[data-block-key="module:applicant-list"]').click()
+      await page.locator('[data-block-key="builtin:applicant-list"]').click()
       await expect(preview).toHaveCount(0)
       await page.screenshot({ path: path.join(output, `stale-${width}.png`), fullPage: true })
       const staleCode = await page.evaluate(async id => { try { await window.mochiQA.host.callbacks.onConfirm(id) } catch (e) { return e.code } }, staleId)
@@ -201,30 +201,36 @@ async function run() {
       assert.deepEqual((await state()).snapshot, committed.snapshot)
       await expect(page.getByText(/Runtime 已确认应用修改/)).toBeVisible()
       // History follows only at the bottom; reading older messages stays anchored.
-      for (let i = 0; i < 8; i++) { await request(`离线失败 ${i} ${'保留数据。'.repeat(25)}`); await expect(send).toBeEnabled() }
       const history = page.getByRole('region', { name: '对话记录', exact: true })
+      // Earlier pointer/focus scenarios may scroll the panel. Establish the
+      // follow-at-bottom precondition explicitly before checking new messages.
+      await history.evaluate(e => { e.scrollTop = e.scrollHeight; e.dispatchEvent(new Event('scroll')) })
+      await expect.poll(() => history.evaluate(e => e.scrollHeight - e.scrollTop - e.clientHeight)).toBeLessThan(25)
+      for (let i = 0; i < 8; i++) {
+        await request(`离线失败 ${i} ${'保留数据。'.repeat(25)}`)
+        await expect(send).toBeEnabled()
+        await expect.poll(() => history.evaluate(e => e.scrollHeight - e.scrollTop - e.clientHeight)).toBeLessThan(25)
+      }
       assert.ok(await history.evaluate(e => e.scrollHeight > e.clientHeight))
       await expect.poll(() => history.evaluate(e => e.scrollHeight - e.scrollTop - e.clientHeight)).toBeLessThan(25)
       await history.evaluate(e => { e.scrollTop = 0; e.dispatchEvent(new Event('scroll')) })
       await request('查看历史时保持滚动位置')
       await expect(send).toBeEnabled()
       assert.equal(await history.evaluate(e => e.scrollTop), 0)
-      // A selected block's overlay tracks window scroll and actual canvas dragging.
-      await block.scrollIntoViewIfNeeded()
+      // Center first: a viewport edge intentionally changes Mochi's safe side.
+      await block.evaluate(e => e.scrollIntoView({ block: 'center' }))
+      await page.waitForTimeout(120)
+      await expect(page.locator('.mochi-overlay')).toHaveAttribute('data-locomotion', 'rest')
       await expect(page.locator('.mochi-overlay')).toBeVisible()
-      if (width === 1366) {
+      {
         const delta = () => page.evaluate(() => {
-          const block = document.querySelector('[data-block-key="module:registration-form"]').getBoundingClientRect()
+          const block = document.querySelector('[data-block-key="builtin:registration-form"]').getBoundingClientRect()
           const overlay = document.querySelector('.mochi-overlay').getBoundingClientRect()
           return { x: overlay.x - block.x, y: overlay.y - block.y }
         })
         const before = await delta()
-        await page.mouse.wheel(0, 120)
+        await page.mouse.wheel(0, -65)
         await expect.poll(async () => Math.abs((await delta()).y - before.y)).toBeLessThan(2)
-      } else {
-        assert.equal(await page.locator('.mochi-overlay').evaluate(e => getComputedStyle(e).position), 'fixed')
-        await expect.poll(() => page.locator('.mochi-overlay').evaluate(e => Math.abs(innerWidth - e.getBoundingClientRect().right - 12))).toBeLessThan(1)
-        await expect.poll(() => page.locator('.mochi-overlay').evaluate(e => Math.abs(innerHeight - e.getBoundingClientRect().bottom - 12))).toBeLessThan(1)
       }
       await block.scrollIntoViewIfNeeded()
       const dragBox = await block.boundingBox()
@@ -242,7 +248,7 @@ async function run() {
       await c.click()
       await expect(page.getByRole('cell', { name: '小林', exact: true })).toBeVisible()
       // Exercise UI classification against real planner/Runtime, including a
-      // subscriber throwing after Runtime session publication. No fake receipts.
+      // loss of a receipt after Runtime publication. No fake successful receipts.
       await page.evaluate(() => { window.mochiQA.failure = false })
       await request('明确提交失败')
       await expect(preview).toBeVisible()
@@ -258,10 +264,12 @@ async function run() {
       assert.deepEqual((await state()).snapshot, beforeFailure)
       await page.screenshot({ path: path.join(output, `commit-failed-${width}.png`), fullPage: true })
       await page.evaluate(() => window.mochiQA.restoreExecution())
-      await request('提交后订阅者异常')
+      await request('提交后回执异常')
       await expect(preview).toBeVisible()
       const unknownId = await page.evaluate(() => {
-        window.mochiQA.stopThrowing = window.mochiQA.runtime.subscribe(() => { throw new Error('Subscriber failed AFTER Runtime write') })
+        const runtime = window.mochiQA.runtime, original = runtime.executeCommand
+        window.mochiQA.restoreExecution = () => { runtime.executeCommand = original }
+        runtime.executeCommand = (...args) => { original(...args); throw new Error('Receipt unavailable AFTER Runtime write') }
         return window.mochiQA.host.getSnapshot().preview.planId
       })
       await page.getByRole('button', { name: '确认', exact: true }).click()
@@ -271,7 +279,7 @@ async function run() {
       await expect(page.getByText('本次修改已应用', { exact: true })).toHaveCount(0)
       await page.screenshot({ path: path.join(output, `commit-unknown-${width}.png`), fullPage: true })
       const unknownCode = await page.evaluate(async id => {
-        window.mochiQA.stopThrowing()
+        window.mochiQA.restoreExecution()
         try { await window.mochiQA.host.callbacks.onConfirm(id) } catch (error) { return error.code }
       }, unknownId)
       assert.equal(unknownCode, 'PLAN_NOT_PENDING')
@@ -280,11 +288,11 @@ async function run() {
       const missed = await page.evaluate(() => {
         const qa = window.mochiQA, view = qa.host.getSnapshot()
         qa.missNextNotification = true
-        let error
-        try { qa.runtime.moveBlock('applicant-list', { x: 0.31, y: 0.41 }) } catch (problem) { error = problem.message }
-        return { error, missed: qa.host.getSnapshot() === view, beforeRevision: view.context.revision, snapshot: qa.runtime.getSnapshot() }
+        let result
+        try { result = qa.runtime.moveBlock('applicant-list', { x: 0.31, y: 0.41 }) } finally { qa.missNextNotification = false }
+        return { result, missed: qa.host.getSnapshot() === view, beforeRevision: view.context.revision, snapshot: qa.runtime.getSnapshot() }
       })
-      assert.match(missed.error, /early subscriber failure after write/)
+      assert.equal(missed.result.ok, true)
       assert.equal(missed.missed, true)
       assert.equal(missed.snapshot.revision, missed.beforeRevision + 1)
       await page.getByRole('button', { name: '确认', exact: true }).click()
