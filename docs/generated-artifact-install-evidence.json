@@ -1,0 +1,128 @@
+{
+  "contractVersion": 1,
+  "verifiedAtUtc": "2026-10-18T14:15:14Z",
+  "baseMain": "f0ddd21cb44749adf34fa473f3ae52115e273d3f",
+  "environment": {
+    "node": "v24.22.0",
+    "platform": "macOS",
+    "dependencies": "existing repository node_modules symlink; no install"
+  },
+  "checks": [
+    {
+      "command": "node server/custom-block/build-protocol.mjs",
+      "exitCode": 0,
+      "logSha256": "1887d4076df0c0a2bb7bd33b49edea45618715736d05a830e82b99522df51ff3"
+    },
+    {
+      "command": "node --test tests/generated-artifact/*.test.cjs",
+      "exitCode": 0,
+      "logSha256": "7e556abf8d2068bf984480b8848634989e6f15987b329db3c005c7a8c373bd2e",
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 977.108792
+    },
+    {
+      "command": "node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs src/integrations/mochi/host.test.cjs tests/mochi-source/*.test.cjs tests/generated-artifact/*.test.cjs",
+      "exitCode": 0,
+      "logSha256": "e96dde44735aada765b8843c6747b855ac3ea79dabbd5aabf93d660340c85aff",
+      "tests": 326,
+      "pass": 326,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 1265.709
+    },
+    {
+      "command": "node --test tests/custom-block-generation/*.test.mjs",
+      "exitCode": 0,
+      "logSha256": "c89fc5a314c2b08f739f36a586cda7e46fb65619e3aa2c82131af8bbcc39c027",
+      "tests": 82,
+      "pass": 82,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 752.456833
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "logSha256": "6a5932586d98df479594856eb5eb1bc770995869a5c4f7702aeabd1e1ea00234",
+      "tests": 192,
+      "pass": 192,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 1104.247834
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "logSha256": "9361c22996e4238d1a4e3ff54c616273137b07d1f228517996c78c579fdff7b4"
+    },
+    {
+      "command": "npm --prefix server run build",
+      "exitCode": 0,
+      "logSha256": "34fc8f532e8455212c5eeba2f44af8dd0d5a13e2138025e81ecd8272dd2f48fa"
+    },
+    {
+      "command": "node --test tests/mochi-ai/*.test.mjs",
+      "exitCode": 0,
+      "logSha256": "2b77238d88294f66abf22d9e68937279c144988b7128e679662ee0df7a4131ef",
+      "tests": 40,
+      "pass": 40,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 315.622208
+    }
+  ],
+  "offlineArtifact": {
+    "fixture": "tests/generated-artifact/fixtures/pomodoro.pending.json",
+    "recordFileSha256": "c20f74f0ef3c92824f817cce10f1a24c9266174502129d4b705f0f2185f386c1",
+    "definitionId": "accept-pomodoro-20261018",
+    "versionDigest": "sha256:d0a7d25b581048dfaf07bd8cafce09191eb02e9932ff90ac3e327782852d35fa",
+    "provenance": {
+      "kind": "deepseek",
+      "requestId": "accept-20261018-pomodoro-02",
+      "requirementDigest": "sha256:12c313e556430effb282d86f99ab29d17a8cc14a0c89426e871b213a77430acc"
+    },
+    "source": "unchanged archived pending record from prior real DeepSeek acceptance; no new online provenance verification",
+    "result": "private store put/inspect -> export -> prepare -> confirm -> existing session.install/CAS -> B metadata adapter",
+    "beforeConfirmation": "no project/registry write",
+    "afterConfirmation": "one instance appended; siblings/state/business records/positions/renderOrder preserved",
+    "status": "pending-build",
+    "build": "not-attempted",
+    "execution": "denied"
+  },
+  "scope": {
+    "newPaidCalls": 0,
+    "productionUiChanged": false,
+    "generatorProviderStoreChanged": false,
+    "ownerChanged": false,
+    "compilerOrViewerChanged": false,
+    "candidateSourceCompiledOrExecuted": false,
+    "browserAcceptance": false,
+    "mergedOrDeployed": false
+  },
+  "limitations": [
+    "Module tests are included in combined regression; counts are not additive.",
+    "No real browser generation-result/confirmation UI was wired or tested.",
+    "No model request or source behavior/quality acceptance in this run.",
+    "Viewer interface is a proposed handoff contract, not joint integration acceptance.",
+    "Host must synchronously gate project switch/dispose during confirmation.",
+    "No new HTTP route, project persistence or execution permission."
+  ]
+}
