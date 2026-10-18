@@ -124,6 +124,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     check(!disposed, 'DISPOSED')
     const sequence = ++statusSequence, consentAtStart = consentSequence
     await consentTail.catch(() => {})
+    if (disposed || sequence !== statusSequence) return state
     let result
     try { result = await api.status() }
     catch (error) {
@@ -141,7 +142,12 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     const sequence = ++consentSequence
     // Serialize consent writes so rapid on/off cannot leave the server enabled.
     if (!enabled) { cancel(); emit({ proactiveEnabled: false }) }
-    const write = consentTail.catch(() => {}).then(() => api.consent(enabled))
+    const write = consentTail.catch(() => {}).then(() => {
+      // Never send a queued opt-in from a closed conversation. An explicit
+      // opt-out must still follow an already sent opt-in to preserve revocation.
+      if (enabled) check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
+      return api.consent(enabled)
+    })
     consentTail = write
     try {
       const result = await write
