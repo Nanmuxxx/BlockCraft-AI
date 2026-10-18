@@ -57,6 +57,17 @@ function freeze<T>(value: T): T {
 const json = (value: unknown) => canonicalJson(value as JsonValue)
 const reference = ({ definitionId, versionDigest }: ArtifactReference): ArtifactReference => ({ definitionId, versionDigest })
 const same = (a: ArtifactReference, b: ArtifactReference) => a.definitionId === b.definitionId && a.versionDigest === b.versionDigest
+async function cancellable<T>(operation: Promise<T>, signal: AbortSignal): Promise<T> {
+  let abort: () => void = () => {}
+  const cancellation = new Promise<never>((_, reject) => {
+    abort = () => reject(new Error('Source plan cancelled'))
+    signal.addEventListener('abort', abort, { once: true })
+  })
+  try {
+    if (signal.aborted) abort()
+    return await Promise.race([operation, cancellation])
+  } finally { signal.removeEventListener('abort', abort) }
+}
 function text(value: unknown, max: number): asserts value is string {
   check(typeof value === 'string' && value.trim().length > 0 && value.length <= max, 'Expected bounded nonempty text', 'INVALID_PLAN')
 }
@@ -105,9 +116,15 @@ export function createSourceEditPlanner(session: CustomProjectSession, provider:
   const alive = () => check(!disposed, 'Planner disposed', 'PLANNER_DISPOSED')
   const unlocked = () => check(!confirming, 'Selection is locked until confirmation settles', 'CONFIRM_BUSY')
   function invalidate() {
-    epoch++; pending?.abort(); pending = null
+    const ownEpoch = ++epoch
+    const previous = pending
+    pending = null
     if (active) { const entry = entries.get(active)!; if (entry.status === 'pending') entry.status = 'cancelled' }
     active = null
+    // Abort listeners may synchronously start another request. Detach the old
+    // handles first and let that newer epoch retain ownership.
+    previous?.abort()
+    return ownEpoch
   }
   function current(snapshot: CustomProject, authorization: WriteAuthorization, ownEpoch: number, blockId: string, base: ArtifactReference) {
     alive()
@@ -124,7 +141,7 @@ export function createSourceEditPlanner(session: CustomProjectSession, provider:
     setSelection(blockId: string | null) {
       alive(); unlocked()
       if (blockId !== null) { id(blockId); check(session.getSnapshot().custom.instances.some(item => item.id === blockId), 'Select an existing custom block', 'SELECTION_REQUIRED') }
-      if (selected !== blockId) { invalidate(); selected = blockId }
+      if (selected !== blockId) { selected = blockId; invalidate() }
     },
     invalidate() { alive(); unlocked(); invalidate() },
     async request(input: unknown): Promise<SourcePlanPreview> {
@@ -134,8 +151,8 @@ export function createSourceEditPlanner(session: CustomProjectSession, provider:
       assertArtifactReference(base); text(input.intent, 4000)
       check(selected === input.blockId, 'Explicit target must match current selection', 'SELECTION_REQUIRED')
       const blockId = input.blockId, intent = input.intent.trim()
-      invalidate()
-      const snapshot = session.getSnapshot(), authorization = session.getAuthorization(), ownEpoch = epoch
+      const ownEpoch = invalidate()
+      const snapshot = session.getSnapshot(), authorization = session.getAuthorization()
       current(snapshot, authorization, ownEpoch, blockId, base)
       const target = snapshot.custom.instances.find(item => item.id === blockId)!
       const controller = new AbortController(); pending = controller
@@ -143,7 +160,13 @@ export function createSourceEditPlanner(session: CustomProjectSession, provider:
         const artifact = await resolveArtifact(session.registry, base)
         current(snapshot, authorization, ownEpoch, blockId, base)
         const request = freeze({ contractVersion: 1 as const, requestId: `source-${globalThis.crypto.randomUUID()}`, projectId: snapshot.base.spec.id, baseRevision: snapshot.revision, intent, target: cloneJson(target), current: artifact })
-        const raw = await provider.generate(request, controller.signal)
+        let raw: unknown
+        try { raw = await cancellable(Promise.resolve(provider.generate(request, controller.signal)), controller.signal) }
+        catch (error) {
+          alive()
+          if (controller.signal.aborted) check(false, 'Request cancelled', 'CONTEXT_CHANGED')
+          throw error
+        }
         current(snapshot, authorization, ownEpoch, blockId, base)
         const proposal = await validateSourcePlan(raw, request)
         // Validate the entire replacement with the same official project parser.
@@ -186,6 +209,6 @@ export function createSourceEditPlanner(session: CustomProjectSession, provider:
     },
     getStatus(planId: string) { return owned(planId).status },
     getHistory(): readonly SourceVersionRecord[] { return freeze([...history]) },
-    dispose() { if (disposed) return; unlocked(); invalidate(); unsubscribe(); disposed = true },
+    dispose() { if (disposed) return; unlocked(); disposed = true; unsubscribe(); invalidate() },
   }
 }

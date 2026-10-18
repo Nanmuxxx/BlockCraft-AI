@@ -119,6 +119,45 @@ test('late provider response ignoring abort cannot revive old plan or supersede 
   assert.equal(f.planner.getStatus(next.planId), 'pending')
   assert.equal((await f.planner.confirm(next.planId)).ok, true)
 })
+test('context cancellation retires a never-settling source provider before it can return', { timeout: 1000 }, async () => {
+  const started = deferred(); let rejectOld, calls = 0
+  const f = await setup((r) => {
+    if (++calls > 1) return candidate(r)
+    started.resolve()
+    return new Promise((_, reject) => { rejectOld = reject })
+  })
+  const old = f.request(), rejected = assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  await started.promise
+  f.planner.invalidate(); await rejected
+  const before = f.owner.getSnapshot(), next = await f.request()
+  rejectOld(new Error('late provider failure'))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(f.owner.getSnapshot(), before)
+  assert.equal(f.planner.getStatus(next.planId), 'pending')
+  assert.equal(f.planner.getHistory().length, 0)
+  assert.equal((await f.planner.confirm(next.planId)).ok, true)
+  assert.equal(f.planner.getHistory().length, 1)
+  f.planner.dispose()
+})
+test('synchronous abort reentry cannot share a source request epoch with its superseder', async () => {
+  const started = deferred(); let calls = 0, reentered, f
+  f = await setup((r, signal) => {
+    if (++calls !== 1) return candidate(r)
+    signal.addEventListener('abort', () => { reentered = f.request() }, { once: true })
+    started.resolve()
+    return new Promise(() => {})
+  })
+  const old = f.request(), oldRejected = assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  await started.promise
+  const superseder = f.request()
+  await assert.rejects(superseder, { code: 'CONTEXT_CHANGED' })
+  await oldRejected
+  const newest = await reentered
+  assert.equal(f.planner.getStatus(newest.planId), 'pending')
+  assert.equal((await f.planner.confirm(newest.planId)).ok, true)
+  assert.equal(f.planner.getHistory().length, 1)
+  f.planner.dispose()
+})
 test('readonly and explicit stale input reject before provider; no untrusted getters execute', async () => {
   let calls = 0, getterCalls = 0
   const f = await setup(r => { calls++; return candidate(r) })
