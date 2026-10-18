@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "id": "qa-personal-tasks",
+  "name": "个人任务管理",
+  "entities": [
+    {
+      "id": "personal-tasks-tasks",
+      "name": "任务",
+      "fields": [
+        {
+          "id": "personal-tasks-tasks-title",
+          "name": "任务名称",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "personal-tasks-tasks-due",
+          "name": "截止日期",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "personal-tasks-tasks-priority",
+          "name": "优先级",
+          "type": "select",
+          "required": true,
+          "options": [
+            "低",
+            "中",
+            "高"
+          ]
+        },
+        {
+          "id": "personal-tasks-tasks-status",
+          "name": "任务状态",
+          "type": "select",
+          "required": true,
+          "options": [
+            "待办",
+            "进行中",
+            "已完成"
+          ]
+        },
+        {
+          "id": "personal-tasks-tasks-minutes",
+          "name": "预计分钟",
+          "type": "number",
+          "required": false
+        },
+        {
+          "id": "personal-tasks-tasks-notes",
+          "name": "备注",
+          "type": "text",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "id": "personal-tasks-task-form",
+      "name": "添加任务",
+      "type": "form",
+      "fieldIds": [
+        "personal-tasks-tasks-title",
+        "personal-tasks-tasks-due",
+        "personal-tasks-tasks-priority",
+        "personal-tasks-tasks-status",
+        "personal-tasks-tasks-minutes",
+        "personal-tasks-tasks-notes"
+      ]
+    },
+    {
+      "id": "personal-tasks-task-list",
+      "name": "个人任务清单",
+      "type": "list",
+      "fieldIds": [
+        "personal-tasks-tasks-title",
+        "personal-tasks-tasks-due",
+        "personal-tasks-tasks-priority",
+        "personal-tasks-tasks-status",
+        "personal-tasks-tasks-minutes",
+        "personal-tasks-tasks-notes"
+      ]
+    },
+    {
+      "id": "personal-tasks-task-count",
+      "name": "任务记录总数",
+      "type": "metric",
+      "aggregation": "count"
+    }
+  ],
+  "relations": [
+    {
+      "id": "personal-tasks-task-form-binding",
+      "type": "dataBinding",
+      "blockId": "personal-tasks-task-form",
+      "entityId": "personal-tasks-tasks"
+    },
+    {
+      "id": "personal-tasks-task-list-binding",
+      "type": "dataBinding",
+      "blockId": "personal-tasks-task-list",
+      "entityId": "personal-tasks-tasks"
+    },
+    {
+      "id": "personal-tasks-task-count-binding",
+      "type": "dataBinding",
+      "blockId": "personal-tasks-task-count",
+      "entityId": "personal-tasks-tasks"
+    }
+  ]
+}

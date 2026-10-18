@@ -1,0 +1,242 @@
+{
+  "version": 1,
+  "id": "qa-fitness-plan",
+  "name": "健身计划",
+  "entities": [
+    {
+      "id": "fitness-plan-exercises",
+      "name": "动作资料",
+      "fields": [
+        {
+          "id": "fitness-plan-exercises-name",
+          "name": "动作名称",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "fitness-plan-exercises-muscle",
+          "name": "肌群",
+          "type": "select",
+          "required": true,
+          "options": [
+            "上肢",
+            "下肢",
+            "核心"
+          ]
+        },
+        {
+          "id": "fitness-plan-exercises-instructions",
+          "name": "动作说明",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "fitness-plan-plans",
+      "name": "训练计划",
+      "fields": [
+        {
+          "id": "fitness-plan-plans-date",
+          "name": "计划日期",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "fitness-plan-plans-exercise",
+          "name": "动作名称",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "fitness-plan-plans-sets",
+          "name": "目标组数",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "fitness-plan-plans-reps",
+          "name": "每组次数",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "fitness-plan-plans-completed",
+          "name": "是否完成",
+          "type": "boolean",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "fitness-plan-workouts",
+      "name": "训练记录",
+      "fields": [
+        {
+          "id": "fitness-plan-workouts-date",
+          "name": "训练日期",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "fitness-plan-workouts-exercise",
+          "name": "动作名称",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "fitness-plan-workouts-sets",
+          "name": "实际组数",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "fitness-plan-workouts-reps",
+          "name": "每组次数",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "fitness-plan-workouts-minutes",
+          "name": "训练分钟",
+          "type": "number",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "id": "fitness-plan-exercise-form",
+      "name": "录入动作资料",
+      "type": "form",
+      "fieldIds": [
+        "fitness-plan-exercises-name",
+        "fitness-plan-exercises-muscle",
+        "fitness-plan-exercises-instructions"
+      ]
+    },
+    {
+      "id": "fitness-plan-exercise-list",
+      "name": "动作资料库",
+      "type": "list",
+      "fieldIds": [
+        "fitness-plan-exercises-name",
+        "fitness-plan-exercises-muscle",
+        "fitness-plan-exercises-instructions"
+      ]
+    },
+    {
+      "id": "fitness-plan-plan-form",
+      "name": "安排训练计划",
+      "type": "form",
+      "fieldIds": [
+        "fitness-plan-plans-date",
+        "fitness-plan-plans-exercise",
+        "fitness-plan-plans-sets",
+        "fitness-plan-plans-reps",
+        "fitness-plan-plans-completed"
+      ]
+    },
+    {
+      "id": "fitness-plan-plan-list",
+      "name": "训练计划列表",
+      "type": "list",
+      "fieldIds": [
+        "fitness-plan-plans-date",
+        "fitness-plan-plans-exercise",
+        "fitness-plan-plans-sets",
+        "fitness-plan-plans-reps",
+        "fitness-plan-plans-completed"
+      ]
+    },
+    {
+      "id": "fitness-plan-workout-form",
+      "name": "记录实际训练",
+      "type": "form",
+      "fieldIds": [
+        "fitness-plan-workouts-date",
+        "fitness-plan-workouts-exercise",
+        "fitness-plan-workouts-sets",
+        "fitness-plan-workouts-reps",
+        "fitness-plan-workouts-minutes"
+      ]
+    },
+    {
+      "id": "fitness-plan-workout-list",
+      "name": "训练记录列表",
+      "type": "list",
+      "fieldIds": [
+        "fitness-plan-workouts-date",
+        "fitness-plan-workouts-exercise",
+        "fitness-plan-workouts-sets",
+        "fitness-plan-workouts-reps",
+        "fitness-plan-workouts-minutes"
+      ]
+    },
+    {
+      "id": "fitness-plan-workout-sum",
+      "name": "累计训练分钟",
+      "type": "metric",
+      "aggregation": "sum",
+      "fieldId": "fitness-plan-workouts-minutes"
+    },
+    {
+      "id": "fitness-plan-workout-average",
+      "name": "平均训练分钟",
+      "type": "metric",
+      "aggregation": "average",
+      "fieldId": "fitness-plan-workouts-minutes"
+    }
+  ],
+  "relations": [
+    {
+      "id": "fitness-plan-exercise-form-binding",
+      "type": "dataBinding",
+      "blockId": "fitness-plan-exercise-form",
+      "entityId": "fitness-plan-exercises"
+    },
+    {
+      "id": "fitness-plan-exercise-list-binding",
+      "type": "dataBinding",
+      "blockId": "fitness-plan-exercise-list",
+      "entityId": "fitness-plan-exercises"
+    },
+    {
+      "id": "fitness-plan-plan-form-binding",
+      "type": "dataBinding",
+      "blockId": "fitness-plan-plan-form",
+      "entityId": "fitness-plan-plans"
+    },
+    {
+      "id": "fitness-plan-plan-list-binding",
+      "type": "dataBinding",
+      "blockId": "fitness-plan-plan-list",
+      "entityId": "fitness-plan-plans"
+    },
+    {
+      "id": "fitness-plan-workout-form-binding",
+      "type": "dataBinding",
+      "blockId": "fitness-plan-workout-form",
+      "entityId": "fitness-plan-workouts"
+    },
+    {
+      "id": "fitness-plan-workout-list-binding",
+      "type": "dataBinding",
+      "blockId": "fitness-plan-workout-list",
+      "entityId": "fitness-plan-workouts"
+    },
+    {
+      "id": "fitness-plan-workout-sum-binding",
+      "type": "dataBinding",
+      "blockId": "fitness-plan-workout-sum",
+      "entityId": "fitness-plan-workouts"
+    },
+    {
+      "id": "fitness-plan-workout-average-binding",
+      "type": "dataBinding",
+      "blockId": "fitness-plan-workout-average",
+      "entityId": "fitness-plan-workouts"
+    }
+  ]
+}

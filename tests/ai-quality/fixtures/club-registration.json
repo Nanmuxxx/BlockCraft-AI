@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "id": "qa-club-registration",
+  "name": "社团报名",
+  "entities": [
+    {
+      "id": "club-registration-applicants",
+      "name": "报名者",
+      "fields": [
+        {
+          "id": "club-registration-applicants-name",
+          "name": "姓名",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "club-registration-applicants-department",
+          "name": "意向部门",
+          "type": "select",
+          "required": true,
+          "options": [
+            "宣传部",
+            "策划部",
+            "技术部"
+          ]
+        },
+        {
+          "id": "club-registration-applicants-contact",
+          "name": "联系方式",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "club-registration-applicants-interview",
+          "name": "可参加面试",
+          "type": "boolean",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "id": "club-registration-applicant-form",
+      "name": "招新报名表",
+      "type": "form",
+      "fieldIds": [
+        "club-registration-applicants-name",
+        "club-registration-applicants-department",
+        "club-registration-applicants-contact",
+        "club-registration-applicants-interview"
+      ]
+    },
+    {
+      "id": "club-registration-applicant-list",
+      "name": "社团报名名单",
+      "type": "list",
+      "fieldIds": [
+        "club-registration-applicants-name",
+        "club-registration-applicants-department",
+        "club-registration-applicants-contact",
+        "club-registration-applicants-interview"
+      ]
+    },
+    {
+      "id": "club-registration-application-count",
+      "name": "报名记录数",
+      "type": "metric",
+      "aggregation": "count"
+    }
+  ],
+  "relations": [
+    {
+      "id": "club-registration-applicant-form-binding",
+      "type": "dataBinding",
+      "blockId": "club-registration-applicant-form",
+      "entityId": "club-registration-applicants"
+    },
+    {
+      "id": "club-registration-applicant-list-binding",
+      "type": "dataBinding",
+      "blockId": "club-registration-applicant-list",
+      "entityId": "club-registration-applicants"
+    },
+    {
+      "id": "club-registration-application-count-binding",
+      "type": "dataBinding",
+      "blockId": "club-registration-application-count",
+      "entityId": "club-registration-applicants"
+    }
+  ]
+}
