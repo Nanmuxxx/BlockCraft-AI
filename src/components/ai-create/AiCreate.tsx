@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { createAppRuntime, type AppRuntime } from '../../model/appRuntime'
-import { AppRenderer } from '../app-renderer/AppRenderer'
+import { AppSpecWorkshop } from '../app-builder/AppSpecWorkshop'
 import { generateProject } from './generateApp'
 import './ai-create.css'
 
@@ -41,7 +41,7 @@ export function AiCreate() {
     </form>
     {pending && <p role="status">AI 正在设计应用，请稍候。已有应用仍可使用。</p>}
     {error && <p role="alert" className="ai-create-error">{error}{app && ' 当前应用和数据已保留。'}</p>}
-    {app ? <section aria-label="生成的应用"><h2>{app.runtime.getSnapshot().spec.name}</h2><AppRenderer key={app.generation} runtime={app.runtime} /></section>
+    {app ? <AppSpecWorkshop key={app.generation} runtime={app.runtime} />
       : !pending && <p className="ai-create-empty">生成后，表单、列表与统计会显示在这里。</p>}
   </main>
 }

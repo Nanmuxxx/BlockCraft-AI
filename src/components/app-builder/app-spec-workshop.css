@@ -1,0 +1,6 @@
+.app-spec-workshop { margin-top: 32px; }
+.app-spec-workshop__modes { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+.app-spec-workshop__modes button { padding: 12px 18px; border: 1px solid #688675; border-radius: 8px; font: inherit; color: #305d40; background: #fffdf8; cursor: pointer; }
+.app-spec-workshop__modes button[aria-pressed="true"] { color: white; background: #3e6852; }
+.app-spec-workshop__modes button:focus-visible { outline: 2px solid #3e6852; outline-offset: 3px; }
+.app-spec-workshop > [hidden] { display: none; }

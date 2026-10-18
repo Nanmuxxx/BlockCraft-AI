@@ -61,14 +61,15 @@ function RecordList({ runtime, entityId, fieldIds }: { runtime: AppRuntime; enti
   return <>
     <button type="button" onClick={() => { setAdding(true); setEditing(null) }}>新增记录</button>
     {adding && <RecordEditor fields={editorFields} onSave={create} onCancel={() => setAdding(false)} />}
-    {rows.length === 0 ? <p>暂无记录</p> : <div className="renderer-table"><table>
+    {rows.length === 0 && <p>暂无记录</p>}
+    <div className="renderer-table"><table>
       <thead><tr>{fields.map(field => <th key={field.id}>{field.name}</th>)}<th>操作</th></tr></thead>
       <tbody>{rows.map(row => <tr key={row.id}>{fields.map(field => <td key={field.id}>{typeof row.values[field.id] === 'boolean' ? row.values[field.id] ? '是' : '否' : String(row.values[field.id] ?? '—')}</td>)}
         <td><div className="renderer-actions"><button type="button" onClick={() => { setEditing(row.id); setAdding(false) }}>编辑</button><button type="button" onClick={() => {
           try { runtime.dispatch({ type: 'delete', entityId, recordId: row.id }); if (editing === row.id) setEditing(null); setError('') }
           catch (error) { setError(error instanceof Error ? error.message : '删除失败') }
         }}>删除</button></div></td></tr>)}</tbody>
-    </table></div>}
+    </table></div>
     {error && <p role="alert">{error}</p>}
     {rows.filter(row => row.id === editing).map(row => <RecordEditor key={row.id} fields={editorFields} initial={row} onCancel={() => setEditing(null)} onSave={values => {
       runtime.dispatch({ type: 'update', entityId, recordId: row.id, values }); setEditing(null)
