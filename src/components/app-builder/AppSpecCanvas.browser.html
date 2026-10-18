@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AppSpecCanvas browser QA</title>
+    <style>
+      body { margin: 0; }
+      #qa-controls { padding: 12px 20px; border-bottom: 1px solid #ccc; background: #fff; font: 13px/1.5 sans-serif; }
+      #qa-controls p { margin: 5px 0; }
+      #qa-controls button { margin-right: 8px; }
+      #qa { display: block; max-height: 240px; overflow: auto; margin: 8px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+    </style>
+  </head>
+  <body>
+    <aside id="qa-controls" aria-label="Browser QA controls">
+      <p>无效落点：从初始布局拖动“阅读流水”到“我的书架”的可见中心，再查看画布下方状态消息。以实际位置为准，不使用固定屏幕坐标。</p>
+      <button type="button" id="capture">Capture snapshot</button>
+      <button type="button" id="external">External move</button>
+      <button type="button" id="unmount">Unmount</button>
+      <p>画布状态：<output id="status-message"></output></p>
+      <pre id="qa" aria-label="QA event and snapshot log"></pre>
+    </aside>
+    <div id="root"></div>
+    <script type="module" src="./AppSpecCanvas.browser.tsx"></script>
+  </body>
+</html>
