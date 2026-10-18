@@ -11,7 +11,7 @@ import { assertJson, check, cloneJson, CustomBlockError, id, keys, object, revis
 export interface ProjectRevisionOwner {
   getSnapshot: () => CustomProject
   subscribe: (listener: () => void) => () => void
-  compareAndSwap: (expectedSnapshot: CustomProject, nextProject: CustomProject) => RuntimeResult
+  compareAndSwap: (expectedSnapshot: CustomProject, nextProject: CustomProject) => RuntimeResult | Promise<RuntimeResult>
 }
 export type OrderedBlock =
   | { kind: 'builtin'; id: string; block: BlockSpec }

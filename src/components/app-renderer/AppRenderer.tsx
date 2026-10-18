@@ -1,5 +1,5 @@
 import { useState, useSyncExternalStore } from 'react'
-import type { EntityRecord, FieldSpec } from '../../model/appSpec'
+import type { BlockSpec, EntityRecord, FieldSpec } from '../../model/appSpec'
 import { metricValue, parseFieldDraft, type AppRuntime, type FieldDraft } from '../../model/appRuntime'
 import './app-renderer.css'
 
@@ -77,19 +77,23 @@ function RecordList({ runtime, entityId, fieldIds }: { runtime: AppRuntime; enti
   </>
 }
 
-/** AppSpec v1 has no previewOrder; its blocks array is the canonical display order. */
+/** Render exactly one trusted builtin against the shared runtime facade. */
+export function BuiltinBlockRenderer({ runtime, blockId }: { runtime: AppRuntime; blockId: BlockSpec['id'] }) {
+  const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
+  const block = state.spec.blocks.find(block => block.id === blockId)
+  const binding = state.spec.relations.find(relation => relation.blockId === blockId)
+  const entity = state.spec.entities.find(entity => entity.id === binding?.entityId)
+  if (!block || !entity) return null
+  return <section className={`renderer-block renderer-block--${block.type}`} aria-label={block.name}>
+    <h2>{block.name}</h2>
+    {block.type === 'metric' ? <output className="renderer-metric" aria-live="polite">{metricValue(state, block).toLocaleString('zh-CN', { maximumFractionDigits: 2 })}</output>
+      : block.type === 'list' ? <RecordList runtime={runtime} entityId={entity.id} fieldIds={block.fieldIds} />
+        : <RecordEditor fields={block.fieldIds.map(id => entity.fields.find(field => field.id === id)!)} onSave={values => runtime.dispatch({ type: 'create', entityId: entity.id, record: { id: `record-${crypto.randomUUID()}`, values } })} />}
+  </section>
+}
+
+/** Legacy/Demo composition retains canonical v1 ordering. */
 export function AppRenderer({ runtime }: { runtime: AppRuntime }) {
   const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
-  return <div className="app-renderer">
-    {state.spec.blocks.map(block => {
-      const binding = state.spec.relations.find(relation => relation.blockId === block.id)!
-      const entity = state.spec.entities.find(entity => entity.id === binding.entityId)!
-      return <section className={`renderer-block renderer-block--${block.type}`} key={block.id} aria-label={block.name}>
-        <h2>{block.name}</h2>
-        {block.type === 'metric' ? <output className="renderer-metric" aria-live="polite">{metricValue(state, block).toLocaleString('zh-CN', { maximumFractionDigits: 2 })}</output>
-          : block.type === 'list' ? <RecordList runtime={runtime} entityId={entity.id} fieldIds={block.fieldIds} />
-            : <RecordEditor fields={block.fieldIds.map(id => entity.fields.find(field => field.id === id)!)} onSave={values => runtime.dispatch({ type: 'create', entityId: entity.id, record: { id: `record-${crypto.randomUUID()}`, values } })} />}
-      </section>
-    })}
-  </div>
+  return <div className="app-renderer">{state.spec.blocks.map(block => <BuiltinBlockRenderer key={block.id} runtime={runtime} blockId={block.id} />)}</div>
 }

@@ -84,10 +84,12 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   let observedRevision = runtime.getSnapshot().revision
   let view: HostView
 
+  const customInstances = () => runtime.customProject?.getSnapshot().custom.instances ?? []
+  const exists = (id: string | null) => runtime.getSnapshot().spec.blocks.some(block => block.id === id) || customInstances().some(instance => instance.id === id)
   function context(): MochiHostContext {
     const { spec, revision } = runtime.getSnapshot()
     return { appId: spec.id, instanceId, revision, selectedBlockId,
-      blocks: spec.blocks.map(block => ({ id: block.id, name: block.name, type: block.type, ...('fieldIds' in block ? { fieldIds: [...block.fieldIds] } : {}) })),
+      blocks: [...spec.blocks.map(block => ({ id: block.id, name: block.name, type: block.type, ...('fieldIds' in block ? { fieldIds: [...block.fieldIds] } : {}) })), ...customInstances().map(instance => ({ id: instance.id, name: '自定义积木', type: 'custom' }))],
       relations: spec.relations.map(({ blockId, entityId }) => ({ blockId, entityId })),
       entities: spec.entities.map(entity => ({ id: entity.id, name: entity.name, fields: entity.fields.map(({ id, name, type }) => ({ id, name, type })) })),
     }
@@ -129,7 +131,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
     if (snapshot.revision === observedRevision) return
     observedRevision = snapshot.revision
     invalidate()
-    if (!snapshot.spec.blocks.some(block => block.id === selectedBlockId)) selectedBlockId = null
+    if (!exists(selectedBlockId)) selectedBlockId = null
     publish({ anchor: null, preview: null, busy: false })
   })
 
@@ -143,6 +145,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         ensure(!pending, 'A plan request is already in progress', 'REQUEST_BUSY')
         const snapshot = runtime.getSnapshot()
         ensure(selectedBlockId !== null, 'Select a block before requesting a plan', 'SELECTION_REQUIRED')
+        ensure(!customInstances().some(instance => instance.id === selectedBlockId), '自定义积木请使用参数面板；修改计划尚未开放此权限。', 'CUSTOM_SCOPE_UNAVAILABLE')
         const entityId = resolveBlockEntityId(snapshot, selectedBlockId)
         const scope = { selectedBlockId, allowedBlockIds: [selectedBlockId], allowedEntityIds: [entityId] }
         invalidate()
@@ -213,7 +216,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
     callbacks,
     setSelection(blockId: string | null) {
       alive()
-      if (blockId !== null) resolveBlockEntityId(runtime.getSnapshot(), blockId)
+      if (blockId !== null && !customInstances().some(instance => instance.id === blockId)) resolveBlockEntityId(runtime.getSnapshot(), blockId)
       if (blockId === selectedBlockId) return
       invalidate(); selectedBlockId = blockId
       publish({ anchor: null, preview: null, busy: false, error: null })

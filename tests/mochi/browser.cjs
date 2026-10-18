@@ -5,11 +5,12 @@ const { expect } = require('playwright/test')
 const assert = require('node:assert/strict')
 const { mkdir, writeFile } = require('node:fs/promises')
 const path = require('node:path')
+const { realpathSync } = require('node:fs')
 const root = path.resolve(__dirname, '../..')
 const output = process.env.MOCHI_QA_OUTPUT || '/tmp/blockcraft-mochi-audit'
 async function run() {
   const { createServer } = await import('vite')
-  const vite = await createServer({ root, server: { host: '127.0.0.1', port: 5197, strictPort: true },
+  const vite = await createServer({ root, server: { host: '127.0.0.1', port: 5197, strictPort: true, fs: { allow: [root, path.dirname(realpathSync(path.join(root, 'node_modules/react')))] } },
     plugins: [{ name: 'offline-mochi-qa-only', configureServer(server) {
       server.middlewares.use('/__mochi', async (_req, res, next) => {
         try {
@@ -32,7 +33,7 @@ async function run() {
       const url = 'http://127.0.0.1:5197/__mochi'
       const b = page.getByRole('button', { name: 'B 模式 · 编辑积木', exact: true })
       const c = page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true })
-      const block = page.locator('[data-block-key="module:registration-form"]')
+      const block = page.locator('[data-block-key="builtin:registration-form"]')
       const input = page.getByRole('textbox', { name: '给 Mochi 发消息' })
       const send = page.getByRole('button', { name: '发送', exact: true })
       const preview = page.getByRole('region', { name: '修改计划预览' })
@@ -67,7 +68,7 @@ async function run() {
       await request()
       await expect(preview).toBeVisible()
       const staleId = await page.evaluate(() => window.mochiQA.host.getSnapshot().preview.planId)
-      await page.locator('[data-block-key="module:applicant-list"]').click()
+      await page.locator('[data-block-key="builtin:applicant-list"]').click()
       await expect(preview).toHaveCount(0)
       const staleCode = await page.evaluate(async id => { try { await window.mochiQA.host.callbacks.onConfirm(id) } catch (e) { return e.code } }, staleId)
       assert.equal(staleCode, 'PLAN_NOT_PENDING')
@@ -123,7 +124,7 @@ async function run() {
       await expect(page.locator('.mochi-overlay')).toBeVisible()
       if (width === 1366) {
         const delta = () => page.evaluate(() => {
-          const block = document.querySelector('[data-block-key="module:registration-form"]').getBoundingClientRect()
+          const block = document.querySelector('[data-block-key="builtin:registration-form"]').getBoundingClientRect()
           const overlay = document.querySelector('.mochi-overlay').getBoundingClientRect()
           return { x: overlay.x - block.x, y: overlay.y - block.y }
         })
