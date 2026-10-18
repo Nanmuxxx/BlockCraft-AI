@@ -70,3 +70,20 @@ test('malformed, incompatible and executable model outputs fail closed; legacy r
   candidate = fixture
   assert.equal((await request({ idea })).body.error.code, 'AI_INVALID_SPEC')
 })
+test('provider errors, truncated completion and invalid JSON never become successful configurations', async t => {
+  for (const [response, code] of [
+    [() => new Response('unavailable', { status: 503 }), 'AI_UNAVAILABLE'],
+    [() => Response.json({ choices: [{ finish_reason: 'length', message: { content: JSON.stringify(fixture) } }] }), 'AI_INVALID_RESPONSE'],
+    [() => Response.json({ choices: [{ finish_reason: 'stop', message: { content: '{"version":2,' } }] }), 'AI_INVALID_SPEC'],
+    [() => Response.json({ choices: [] }), 'AI_INVALID_RESPONSE'],
+  ]) {
+    let calls = 0
+    const request = await harness(t, offlineOptions('http://offline.test'), async () => { calls++; return response() })
+    const result = await request()
+    assert.equal(result.status, 502); assert.equal(result.body.error.code, code); assert.equal(calls, 1)
+    assert.equal(result.body.spec, undefined)
+    for (const body of [{ idea, protocol: 'trusted-interactive/2' }, { idea, protocol: 'trusted-interactive/1', permissions: ['execute'] }]) {
+      assert.equal((await request(body)).status, 400); assert.equal(calls, 1)
+    }
+  }
+})

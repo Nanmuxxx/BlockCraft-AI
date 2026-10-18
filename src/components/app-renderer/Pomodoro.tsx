@@ -9,13 +9,23 @@ export function Pomodoro({ runtime, block }: { runtime: AppRuntime; block: Extra
   const timer = snapshot.timers?.[block.id] ?? { remainingMs: block.durationSeconds * 1000, startedAt: null }
   const [now, setNow] = useState(Date.now)
   const [error, setError] = useState('')
-  useEffect(() => {
-    if (timer.startedAt === null) return
-    const id = setInterval(() => setNow(Date.now()), 100)
-    return () => clearInterval(id)
-  }, [timer.startedAt])
   const remaining = Math.ceil(timerRemaining(timer, Math.max(now, Date.now())) / 1000)
   const running = timer.startedAt !== null && remaining > 0
+  useEffect(() => {
+    if (!running) return
+    const refresh = () => setNow(Date.now())
+    const id = setInterval(refresh, 100)
+    // Visibility changes and BFCache restore can precede the next throttled tick.
+    document.addEventListener('visibilitychange', refresh)
+    window.addEventListener('pageshow', refresh)
+    window.addEventListener('focus', refresh)
+    return () => {
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', refresh)
+      window.removeEventListener('pageshow', refresh)
+      window.removeEventListener('focus', refresh)
+    }
+  }, [timer.startedAt, running])
   function act(action: 'start' | 'pause' | 'reset') {
     const result = runtime.timerAction(block.id, action)
     setNow(Date.now()); setError(result.ok ? '' : result.error.message)

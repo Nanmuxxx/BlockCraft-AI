@@ -1,0 +1,39 @@
+
+> test
+> npm run build && node --test *.test.mjs
+
+
+> build
+> tsc -p tsconfig.json
+
+✔ health works without a key and never calls upstream (13.073041ms)
+✔ missing key produces safe 503 without upstream call (4.089833ms)
+✔ invalid idea, unexpected fields, and malformed JSON never reach upstream (6.6375ms)
+✔ body byte limit and content type are enforced before upstream (1.3325ms)
+✔ chunked body cannot bypass byte limit (1.352417ms)
+✔ mock valid result uses official endpoint, default model, JSON mode, and actual AppSpec source (2.236667ms)
+✔ DEEPSEEK_MODEL overrides the default server-side (0.790125ms)
+✔ rejects non-JSON model content with the existing validator and safe errors (1.190959ms)
+✔ rejects wrong protocol with the existing validator and safe errors (0.6435ms)
+✔ rejects extra executable property with the existing validator and safe errors (0.747791ms)
+✔ rejects missing binding with the existing validator and safe errors (0.621917ms)
+✔ rejects cross-entity field with the existing validator and safe errors (0.6375ms)
+✔ handles malformed upstream JSON (0.678708ms)
+✔ handles truncated output (0.610166ms)
+✔ handles empty choices (0.616875ms)
+✔ handles upstream HTTP failure (0.621917ms)
+✔ handles oversized envelope (1.114916ms)
+✔ handles oversized generated content (0.869542ms)
+✔ timeout aborts an upstream call and returns safe 504 (27.125292ms)
+✔ timeout also covers upstream body consumption (26.495375ms)
+✔ rate limit ignores forged forwarding headers and leaves health available (5.370375ms)
+✔ concurrency cap rejects excess calls without starting another upstream request (6.914709ms)
+✔ cross-origin requests and wrong methods/paths never call upstream (1.250916ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 146.048

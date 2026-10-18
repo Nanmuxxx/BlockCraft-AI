@@ -1,6 +1,6 @@
 const test = require('node:test')
 const assert = require('node:assert/strict')
-const { createAppRuntime, createClubRegistrationExample, mixedProject } = require('../custom-block/fixtures.cjs')
+const { createAppRuntime, createClubRegistrationExample } = require('../custom-block/fixtures.cjs')
 const { assertAppSpec, assertProjectState } = require('../../src/model/appSpecValidation.ts')
 const { initializeGeneratedProject } = require('../../src/components/ai-create/generateApp.ts')
 const { timerRemaining } = require('../../src/model/appRuntime.ts')
@@ -119,4 +119,56 @@ test('Mochi can select/read timer metadata but cannot grant timer modification a
     await assert.rejects(host.callbacks.onRequestPlan('修改时间'), { code: 'TIMER_SCOPE_UNAVAILABLE' })
     assert.equal(calls, 0)
   } finally { host.dispose() }
+})
+
+test('duplicate actions and rapid switching never extend a running deadline or subtract twice', () => {
+  const spec = copy(); spec.blocks[0].durationSeconds = 6
+  const runtime = createAppRuntime(initializeGeneratedProject(spec)), original = Date.now
+  let now = 10000; Date.now = () => now
+  try {
+    runtime.timerAction('focus-timer', 'start')
+    for (let i = 0; i < 40; i++) {
+      now += 10
+      runtime.timerAction('focus-timer', 'start')
+      const current = runtime.getSnapshot().timers['focus-timer']
+      assert.equal(current.remainingMs + current.startedAt, 16000)
+    }
+    for (let i = 0; i < 40; i++) {
+      runtime.timerAction('focus-timer', 'pause')
+      const paused = runtime.getSnapshot().timers['focus-timer'].remainingMs
+      now += 100
+      runtime.timerAction('focus-timer', 'pause')
+      assert.equal(runtime.getSnapshot().timers['focus-timer'].remainingMs, paused)
+      runtime.timerAction('focus-timer', 'start')
+      now += 10
+    }
+    runtime.timerAction('focus-timer', 'reset')
+    runtime.timerAction('focus-timer', 'reset')
+    assert.deepEqual(runtime.getSnapshot().timers['focus-timer'], { remainingMs: 6000, startedAt: null })
+  } finally { Date.now = original }
+})
+test('completion is a stable read-only derived state until an explicit reset', () => {
+  const spec = copy(); spec.blocks[0].durationSeconds = 1
+  const runtime = createAppRuntime(initializeGeneratedProject(spec)), original = Date.now
+  let now = 1000; Date.now = () => now
+  try {
+    runtime.timerAction('focus-timer', 'start')
+    const anchor = runtime.getSnapshot(), revision = anchor.revision
+    let completedTransitions = 0, previous = false
+    for (let i = 0; i < 40; i++) {
+      now += 100
+      const completed = timerRemaining(anchor.timers['focus-timer'], now) === 0
+      if (completed && !previous) completedTransitions++
+      previous = completed
+    }
+    assert.equal(completedTransitions, 1)
+    assert.equal(runtime.getSnapshot(), anchor)
+    assert.equal(runtime.getSnapshot().revision, revision)
+    for (let i = 0; i < 10; i++) {
+      runtime.timerAction('focus-timer', 'start')
+      assert.equal(timerRemaining(runtime.getSnapshot().timers['focus-timer'], now), 0)
+    }
+    runtime.timerAction('focus-timer', 'reset')
+    assert.equal(timerRemaining(runtime.getSnapshot().timers['focus-timer'], now), 1000)
+  } finally { Date.now = original }
 })

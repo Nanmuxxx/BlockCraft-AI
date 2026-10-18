@@ -71,3 +71,37 @@ npm run test:mochi-host
 建议在 P1-B Draft PR 后做小范围集成评审：优先合入独立协议、可信组件、验证和拒绝导出的安全边界，统一处理 AiCreate 入口，不直接覆盖三份临时独占文件。只集成番茄钟，不扩大为答题器/表达式/任意源码执行平台。
 
 当前不建议把它宣布为已完成的真实 AI 演示。尚需：P1-B 协调后统一 UI Diff、主线全量回归、部署方可信访问与持久预算适配器配置，以及 Tech Lead 单独批准真实付费请求之后的一次真实需求→配置→B/C 验收。没有自动合并、部署、付费请求或密钥提交。
+
+## 集成准备增补验收
+
+核心独立提交 `2c057094cca3ec1a848e306e7689b07e156945f2` 已发布于 Draft PR #38。原 `validation-results.json` 的 **651 项历史快照保持不变**。本轮加入重复操作、完成稳定性、客户端严格 envelope 与上游错误测试后，**655 项通过**（专项从 11 增至 15，其余分类不变），生产 build 通过。最终回归使用 staged tree 的 `git archive` 干净副本，排除本地 AiCreate 改动及补丁；各命令、退出码和日志见 `final-validation-results.json`。兼容测试需要先运行 `node tools/project-zip-export/prepare.mjs` 生成仓库可信协议，首次干净副本缺少此前工作目录已有的生成文件导致失败；补做该仓库标准准备后 306 项全部通过。
+
+| 分类 | 原冻结通过数 | 本轮通过数 | 命令 |
+| --- | ---: | ---: | --- |
+| AppSpec / Runtime / CRUD / Canvas / generation client / Mochi | 192 | 192 | `npm test` |
+| 原服务器 | 23 | 23 | `npm --prefix server test` |
+| 原生成路径 | 24 | 24 | `npm run test:generation` |
+| Mochi host | 55 | 55 | `npm run test:mochi-host` |
+| Mochi AI | 40 | 40 | `node --test tests/mochi-ai/*.test.mjs` |
+| CustomBlock / B-C / Workshop / 制品 / ZIP | 306 | 306 | `node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs tests/generated-artifact/*.test.cjs tests/project-zip-export/*.test.mjs tests/workshop-export/*.test.*` |
+| 可信交互专项 | 11 | 15 | `npm run test:trusted-interactive` |
+| 合计 | **651** | **655** | 构建另计 `npm run build` |
+
+新增 Chromium 151.0.7922.34 可靠性验收：桌面 1440×1000、手机视口 390×844，2/2 通过，0 pageErrors、0 模型调用。开始/暂停/继续/重置、真实双击、5 轮快速操作、暂停锚点、真实隐藏标签页恢复、隐藏到完成、完成保持与重置通过。隐藏标签页使用原生 Chromium 加 `connectOverCDP({noDefaults:true})`，实际断言 visibilityState=hidden，未伪造页面属性。普通 Playwright 默认连接会保持标签页可见，不能作为后台证据。
+
+重绘回调有意从 100ms 放慢到 2000ms（**模拟 20 倍节流**）；隐藏 2.4 秒后恢复，向上取整到秒的显示与锚点计算之差为 446ms / 459ms（详见可靠性 JSON）。自然完成在每个验收周期只观察到一次 UI 状态转换，等待后续回调仍为一次，owner revision 不变。它是派生显示，并没有持久化完成事件或通知副作用；不能据此承诺跨进程 exactly-once。旧 records、spec、布局保留，伪造 runnable 的不可信 Viewer 仍为 unavailable 且无 iframe。新增组件在 visibilitychange/pageshow/focus 恢复时重绘，完成后停止无用 interval。
+
+证据：`reliability-browser-results.json`、`reliability-completed-1440.png`、`reliability-completed-390.png`。复现：
+
+```sh
+# 如运行环境没有项目内 Playwright，先提供已有运行时依赖路径：
+export NODE_PATH=/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules
+npm run test:trusted-interactive:browser
+npm run test:trusted-interactive:reliability
+```
+
+需空闲 loopback 5198 和 5201；`dev:trusted-fixture` 与第一条浏览器测试不能同时占用 5198。演示仍可使用前文离线入口。
+
+能力边界：未实现音频、Notification API、Service Worker 或系统级提醒；页面关闭不会运行。秒级显示精度不等于后台通知送达保证。时间由 Date.now 墙钟锚点计算，系统时钟调整可能影响剩余值；没有单调时钟或休眠保证。未验收 Chromium 连续后台五分钟的 intensive throttling、真实手机/OS 休眠。尝试的 CDP renderer freeze 后自动交互未可靠恢复，未计入通过项；保留限制，不声称已通过冻结/休眠测试。真实隐藏标签页及模拟节流验收已通过，不能替代这些未覆盖条件。
+
+生成契约、服务器生产适配条件及 P1-B 最小接点见 `INTEGRATION.md`。实际完整变更文件及共享协议影响见 `CHANGED_FILES.md`。结论仍是**离线内核与集成准备 GO；正式 UI / 真实付费 AI / 生产 NO-GO（待协调及验收）**。
