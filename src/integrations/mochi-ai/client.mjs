@@ -84,7 +84,15 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   function emit(patch) { if (disposed) return; state = freeze({ ...state, ...patch }); listeners.forEach(fn => fn()) }
   function remember(map, key) { if (map.size >= 200) map.delete(map.keys().next().value); map.set(key, now() + COOLDOWN) }
   function purge() { for (const map of [seen, ignored, events]) for (const [k, expiry] of map) if (expiry <= now()) map.delete(k) }
-  function cancel() { epoch++; pending?.abort(); pending = null; emit({ busy: false }) }
+  function cancel() {
+    epoch++
+    const previous = pending
+    pending = null
+    emit({ busy: false })
+    // Abort callbacks may synchronously start a new request. Detach the retired
+    // controller and publish its idle state before invoking those callbacks.
+    previous?.abort()
+  }
   function syncContext() {
     check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
     let context
@@ -151,7 +159,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     const controller = new AbortController(), owned = epoch
     pending = controller; emit({ busy: true, error: null })
     try {
-      const reply = await api.analyze(input, { signal: controller.signal })
+      const reply = await abortable(Promise.resolve(api.analyze(input, { signal: controller.signal })), controller.signal)
       check(!disposed && !controller.signal.aborted && owned === epoch && JSON.stringify(projectContext(readContext())) === signature, 'CONTEXT_CHANGED', '已丢弃过期回复。', 409)
       validateReply(reply, context)
       const suggestions = reply.suggestions.filter(s => {
@@ -162,6 +170,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       emit({ messages: [...state.messages, { role: 'assistant', content: reply.message }].slice(-40), suggestions })
       return { ...reply, suggestions }
     } catch (error) {
+      if (controller.signal.aborted || disposed || owned !== epoch) throw new MochiError('CONTEXT_CHANGED', '已丢弃过期回复。', 409)
       if (owned === epoch && !disposed) emit({ error: { code: error.code || 'AI_UNAVAILABLE', message: errors[error.code] || 'Mochi 暂时无法回答，请稍后重试。' } })
       throw error
     } finally { if (pending === controller) { pending = null; emit({ busy: false }) } }
@@ -182,6 +191,6 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     async continueSuggestion(id, question) { const item = suggestion(id); if (item.blockId !== null) focusBlock(item.blockId); return run('chat', question || `请解释这条建议：${item.text}`) },
     async ignore(id) { const item = suggestion(id); remember(ignored, fingerprint(item)); emit({ suggestions: state.suggestions.filter(s => s.id !== id) }); await api.ignore(id) },
     requestModification(id) { suggestion(id); throw new MochiError('AI_MODIFICATION_DISABLED', errors.AI_MODIFICATION_DISABLED, 503) },
-    dispose() { cancel(); disposed = true; listeners.clear() },
+    dispose() { disposed = true; cancel(); listeners.clear() },
   }
 }

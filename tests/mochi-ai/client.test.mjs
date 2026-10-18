@@ -74,6 +74,42 @@ test('cancel and dispose suppress late output; disabled status never falls back'
   await assert.rejects(pending, { code: 'CONTEXT_CHANGED' }); assert.equal(f.client.getSnapshot().messages.length, 1)
 })
 
+test('cancel retires an ignored analysis promise without altering newer history', { timeout: 500 }, async () => {
+  let rejectOld, calls = 0
+  const f = fixture(input => ++calls === 1 ? new Promise((_, reject) => { rejectOld = reject }) : wire(input.context))
+  await f.client.refreshStatus()
+  const old = f.client.chat('old question')
+  f.client.cancel()
+  await assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  await f.client.chat('new question')
+  const snapshot = f.client.getSnapshot()
+  rejectOld(new Error('late ignored transport failure'))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(f.client.getSnapshot(), snapshot)
+  assert.equal(snapshot.messages.length, 3)
+  assert.equal(snapshot.busy, false)
+})
+
+test('abort listener reentry retains ownership of the newer conversation request', { timeout: 500 }, async () => {
+  let fresh, releaseFresh, calls = 0
+  const f = fixture((input, { signal }) => {
+    if (++calls === 1) {
+      signal.addEventListener('abort', () => { fresh = f.client.chat('new question') }, { once: true })
+      return new Promise(() => {})
+    }
+    return new Promise(resolve => { releaseFresh = () => resolve(wire(input.context)) })
+  })
+  await f.client.refreshStatus()
+  const old = f.client.chat('old question')
+  f.client.cancel()
+  await assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.client.getSnapshot().busy, true)
+  await assert.rejects(f.client.chat('must not supersede'), { code: 'AI_BUSY' })
+  releaseFresh(); await fresh
+  assert.equal(f.client.getSnapshot().messages.length, 3)
+  assert.equal(f.client.getSnapshot().busy, false)
+})
+
 test('rapid consent on/off is serialized and ends off at the server', async () => {
   const f = fixture(), writes = []; let server = false
   f.api.consent = async enabled => { writes.push(enabled); server = enabled; return { proactiveEnabled: enabled } }
