@@ -1,6 +1,10 @@
 # PR #25 最终合并兼容记录
 
-2026-10-18 核实 main 为 `2678c5e9c8dca05b79a45f37f0c4104b9cfc5cdc`，已包含 #27。#24 仍 open，准确 head 为 `55fe03765da93582ec4d5878bcf860e32428a138`；已在 #24 留言协调先人工合并，尚未收到回复。本分支显式纳入其准确提交作为审核依赖，没有合并 GitHub PR。应先审核并人工合并 #24，再处理 #25。
+2026-10-18 最终同步核实：#24 已由负责人合并，merge commit 与最新 main 均为 `5eca85e710cb1c5513961abfb7e45510ba339019`，其父提交为已含 #27 的 `2678c5e` 和 #24 准确 head `55fe037`。
+
+此前 #25 的 `c878890` 已同时包含这两个父提交及完整兼容代码，但未包含新的 main 合并提交。GitHub 报告 `dirty / mergeable=false`；本地核查存在两个共同祖先，`git merge-tree --write-tree c878890 origin/main` 和实际 `git merge --no-commit --no-ff origin/main` 均无冲突，所得源码树与 `c878890` 完全相同。本轮显式同步 main 合并提交消除分支拓扑差异，没有选择 ours/theirs、覆盖授权修复或回退动画，也无需修改生产源码或测试实现。
+
+Git CLI fetch 因本机无 GitHub 凭据失败；改用已连接 GitHub API 读取完整 main 树及签名提交，导入时逐树和提交 SHA 精确校验，再更新本地 origin/main。发布仅非强制快进原 #25 分支，不合并 GitHub PR。
 
 ## 原子边界
 
@@ -15,6 +19,8 @@
 没有修改 #27 的 Overlay、动画控制器、动画 CSS 或锚点定位实现。只将其浏览器脚本的旧 `module:` 测试选择器适配为产品 `builtin:`，并把新证据输出到 checkout 外，保留既有历史截图。真实浏览器验证连续位移、快速重选、滚动锚点、resize、pointer cancellation、无落点遮挡、点击原聊天、reduced-motion 和手机低资源触摸拖动。
 
 ## 实测结果
+
+以下检查已在显式合入 `5eca85e` 的工作树中全部重新执行。源码及测试树与已发布 `c878890` 相同；本次仅新增同步后的验证记录。完整机器摘要见 [合并 #24 后复验](custom-block-compat-audit/post24-verification.json)。
 
 | 检查 | 结果 |
 | --- | --- |
