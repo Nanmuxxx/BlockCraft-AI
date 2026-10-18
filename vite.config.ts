@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { localProjectExportPlugin } from './server/project-export/vite-plugin.mjs'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), localProjectExportPlugin()],
   server: {
     proxy: {
       // Preserve Host: the local backend checks Origin against it.

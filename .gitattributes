@@ -1,0 +1,2 @@
+# Trusted sample hashes bind exact repository bytes on Windows as well.
+tests/custom-block-compiler/fixtures/* text eol=lf
