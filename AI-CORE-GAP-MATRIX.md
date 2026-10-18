@@ -116,3 +116,13 @@ core-caller-cancel最新649/649；REAL_MODEL_CALLS=0。上述VERIFIED仅指Fixtu
 | HTTP scope快照 | VERIFIED | server/mochi-ai/http.mjs:createMochiHandler | http.test.mjs：body end回调修改resolver对象仍绑定原session/app；旧409，修复相关33/33 |
 
 全量774/774、构建0及metadata-observer正式页桌面/移动通过，baseline f1df14f；之后的HTTP scope修复有独立33/33，未混称已被774项覆盖。所有调用均Fixture；REAL_MODEL_CALLS=0。
+
+## 第九轮边界证据（04:20，持续开发）
+
+| 项目 | 状态 | 函数/文件 | 验证 |
+|---|---|---|---|
+| 元数据失败后版本恢复 | VERIFIED | context.mjs:update/read | context.test.mjs：失败v1→精确已准入v2 pending→新字段，相关43/43；不做失败引用轮询 |
+| 旧建议动作退休 | VERIFIED | client.mjs:suggestion/ignore | suggestion-actions.test.mjs：dispose零定位/请求、忽略通知换项目/关闭零发送；旧3失败，修复40/40 |
+| 镜像运行依赖集成 | BLOCKED | server/ai-abort.mjs；DEPLOYMENT-INTERFACE-NOTE.md | 固定PR35 inventory缺文件时Node链接失败，补单文件成功；部署负责人需真实组合镜像验收 |
+
+全量775/775、默认192/192和隔离质量93/93退出0，baseline2e40b76；晚于此基线的测试/建议动作改动分别独立验证。未执行TSX，REAL_MODEL_CALLS=0。

@@ -1,0 +1,48 @@
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (2.247209ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.78425ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.673ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.336917ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.201417ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.1845ms)
+✔ cancel retires an ignored analysis promise without altering newer history (1.820208ms)
+✔ abort listener reentry retains ownership of the newer conversation request (0.359458ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.086709ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (22.226708ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.086958ms)
+✔ late status cannot re-enable consent after explicit off (0.081875ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.167667ms)
+✔ subscriber cancellation during message publication prevents analysis egress (0.101291ms)
+✔ subscriber cancellation during busy publication prevents analysis egress (0.064875ms)
+✔ subscriber replacement at request publication keeps only the fresh analysis and history (0.157ms)
+✔ project transition publishes the new identity before abort reentry (0.285792ms)
+✔ project transition publishes the new identity before subscriber reentry (0.13675ms)
+✔ context synchronization is idempotent inside a state subscriber (0.052125ms)
+✔ a newer project transition during notification cannot be overwritten by the older transition (0.114833ms)
+✔ project changed during context notification blocks stale-context egress (0.077167ms)
+✔ project changed during busy notification blocks stale-context egress (0.058791ms)
+✔ a failing state observer cannot skip transport cancellation or later observers (0.112333ms)
+✔ disposing a conversation prevents its queued opt-in and delayed status egress (1.912542ms)
+✔ an explicitly queued opt-out still revokes after disposal and an already sent opt-in (0.422334ms)
+✔ late opt-in acknowledgment cannot mark a disabled capability as proactive (0.784042ms)
+✔ explicit opt-out publishes revocation before notifying idle subscribers (1.256917ms)
+✔ a subscriber opt-in after revocation preserves user order in the serialized queue (0.110292ms)
+✔ invalid status retires prior enabled capability: null (1.413583ms)
+✔ invalid status retires prior enabled capability: {"enabled":true,"proactiveEnabled":false,"modificationsEnabled":true} (0.128375ms)
+✔ invalid status retires prior enabled capability: {"enabled":"true","proactiveEnabled":false,"modificationsEnabled":false} (0.123ms)
+✔ invalid latest status aborts active advice without publishing another enabled state (0.454125ms)
+✔ status reason constructor cannot use an inherited message (0.081375ms)
+✔ status reason __proto__ cannot use an inherited message (0.040334ms)
+✔ status reason toString cannot use an inherited message (0.034ms)
+✔ an adapter rejecting with null still disables the conversation (0.0945ms)
+✔ queued suggestion actions from a disposed conversation cannot focus or send network requests (2.34675ms)
+✔ ignore publication followed by dispose cannot dispatch a retired action (0.291916ms)
+✔ ignore publication followed by replace cannot dispatch a retired action (0.316833ms)
+✔ host bridge listens to settled structural events, ignores records/anchors/mode, and cleans up (53.5025ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 89.869959

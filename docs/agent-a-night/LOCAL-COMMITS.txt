@@ -59,3 +59,7 @@ d82b341f27b772fc38645abbde32d8c938fedee5 fix(mochi): retire enabled capability o
 275c306a6426a215c2f70e3623285c99fe327340 fix(mochi): reserve consent queue order before observer reentry
 f1df14f9c257c1de3502f9b4cf434021dd09b9ad fix(mochi): isolate metadata projection notification failures
 f95d6877e1342ae33fbaa1682b6c50a2f7c5f256 fix(mochi): bind HTTP access scope before reading uploaded bodies
+1b29ceeebfa889cceb5c50d53a78d19decd16517 docs(ai-core): record status consent and metadata boundary evidence
+2e40b76429c0ab85180f204ef6b57c5410c82066 docs(ai-core): specify runtime module handoff without editing deployment files
+2abfb7d30b71a0c124995d328785e9534c41f4c0 test(mochi): verify metadata recovery on a new admitted reference
+383c64f4fa7f311552e0dc1a0dcc6ff49aec83ea fix(mochi): retire suggestion actions with their conversation context

@@ -1,6 +1,6 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 04:00（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
+阶段检查点：2026-10-19 04:20（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
@@ -34,7 +34,7 @@
 
 每条命令、cwd、时间、退出码和原始日志见[TEST-COMMANDS.md](docs/agent-a-night/TEST-COMMANDS.md)与[commands.jsonl](docs/agent-a-night/logs/commands.jsonl)。修复前失败、前置产物缺失、一次启动参数错误和修正后重跑均保留。
 
-- 最新`node tests/ai-core-night/regression.mjs`：**774/774，退出码0**（baseline f1df14f，最后HTTP scope修复晚于此全量，另有相关33/33），自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
+- 最新`node tests/ai-core-night/regression.mjs`：**775/775，退出码0**（baseline 2e40b76，涵盖HTTP scope修复；之后元数据恢复和建议操作新增另有43/43、40/40），自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
 - 组合安装/编辑1/1，重装相关26/26，惰性源码/Viewer25/25，鉴权异常HTTP19/19，跨进程存储/安装32/32，退出码均0；这些属于各次运行，不能相加成另一项全量结果。
 - 最近生产构建`build-metadata-observer`退出0，对应代码HEAD `f1df14f`；之后仅改服务HTTP scope及其测试，相关33/33通过。
 - 存储短读修复前2项失败，修复后相关37/37、精确上限19/19；源码截止首次3项失败，修复后含owner组合50/50；AppSpec截止首次2项失败，第一次修复改变调用时序导致旧取消测试超时，恢复时序后相关73/73及同步异常16/16，全部保留日志。
@@ -90,3 +90,12 @@ Agent B负责React ZIP模板/导出器，本分支不修改其文件；需共同
 status格式/异常关闭旧能力；主动建议的迟到确认、撤销通知及同步队列重入均有修复前复现。metadata成功/失败观察者异常不再产生未处理拒绝；HTTP身份在body await之前捕获。提交d82b341、855bd80、064dd38、275c306、f1df14f、f95d687均已发布，逐一验证文件树。
 
 较广核心774/774与build-metadata-observer退出0，baseline f1df14f；正式/ai-create的metadata-observer桌面1366/移动390通过，无页面异常/外部请求。之后HTTP scope修复只宣称相关33/33，不把早先全量当作后续覆盖。当前继续元数据失败恢复及取消跨层审计，六小时尚未结束。REAL_MODEL_CALLS=0。
+
+## 第九轮补充证据（04:20，继续开发）
+
+- 最新核心775/775、默认npm test192/192、隔离/业务质量93/93，均退出0，代码基线2e40b76。元数据失败后更换精确已准入版本可恢复，相关43/43，提交2abfb7d；同一失败引用不会自动轮询重试。
+- 383c64f修复已关闭会话仍能操作旧建议、忽略通知期间换项目仍发请求；旧3失败保留，修复相关40/40。没有增加修改或执行权限。
+- PR35显式镜像清单缺少server/ai-abort.mjs。固定清单Node链接复现ERR_MODULE_NOT_FOUND，补齐单文件后链接成功；这不是容器实测。详见[部署接口交接](docs/agent-a-night/DEPLOYMENT-INTERFACE-NOTE.md)，未编辑部署文件或向其他chat发消息。
+- 本地383c64f对应远端cb16eeffcc9bbb053c65581041cfb5f32db862e8，文件树相同，Draft #40仍未合并。继续安全独立队列，REAL_MODEL_CALLS=0。
+
+383c64f之后生产构建退出0；suggestion-actions正式页桌面1366/移动390通过，0页面异常、0外部请求、10次离线Provider与12次fixture预留。首次运行缺少NODE_PATH退出1，纠正环境后退出0；两次原始输出均保留。

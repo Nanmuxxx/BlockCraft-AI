@@ -364,5 +364,29 @@
     "remote": "dbeb007505496c27127713280ebac00a75cb5e2e",
     "tree": "ed4d127f68ba4e3f49c136448d82a868c9e2e7ca",
     "message": "fix(mochi): bind HTTP access scope before reading uploaded bodies"
+  },
+  {
+    "local": "1b29ceeebfa889cceb5c50d53a78d19decd16517",
+    "remote": "4272b55ec7e36b0112e978b321eedcca84677a9b",
+    "tree": "6b7cd768ec35094a83a43333bbfa631b9137d94f",
+    "message": "docs(ai-core): record status consent and metadata boundary evidence"
+  },
+  {
+    "local": "2e40b76429c0ab85180f204ef6b57c5410c82066",
+    "remote": "9beff5570418f7f7a68f30d34f1b0092d0b3f574",
+    "tree": "1624994c0c58b92f7ea7cb1fe61287632fe90134",
+    "message": "docs(ai-core): specify runtime module handoff without editing deployment files"
+  },
+  {
+    "local": "2abfb7d30b71a0c124995d328785e9534c41f4c0",
+    "remote": "27d38aa9e45b5b8d24fd85db16bcc0bd0562e7da",
+    "tree": "1671550f61eefb2c4788209f5b8eb4007b656837",
+    "message": "test(mochi): verify metadata recovery on a new admitted reference"
+  },
+  {
+    "local": "383c64f4fa7f311552e0dc1a0dcc6ff49aec83ea",
+    "remote": "cb16eeffcc9bbb053c65581041cfb5f32db862e8",
+    "tree": "d93a5462ad2154c79273f67dbca6ef1b14c4cab7",
+    "message": "fix(mochi): retire suggestion actions with their conversation context"
   }
 ]
