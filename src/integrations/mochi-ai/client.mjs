@@ -157,7 +157,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     try {
       const result = await write
       check(result.proactiveEnabled === enabled, 'AI_INVALID_RESPONSE')
-      if (sequence === consentSequence) emit({ proactiveEnabled: enabled })
+      if (sequence === consentSequence) emit({ proactiveEnabled: enabled && state.enabled })
     } catch (error) { if (sequence === consentSequence) emit({ proactiveEnabled: false, error: { code: error.code || 'AI_UNAVAILABLE', message: '主动建议设置失败，请重试。' } }); throw error }
   }
   async function run(kind, prompt, event) {
