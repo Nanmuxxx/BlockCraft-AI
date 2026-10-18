@@ -54,6 +54,9 @@ for (const [label, value] of [
   ['refusal', { choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: '{}', refusal: 'no' } }] }],
   ['tool call', { choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: '{}', tool_calls: [] } }] }],
   ['not text', envelope({})], ['wrong role', { choices: [{ finish_reason: 'stop', message: { role: 'user', content: '{}' } }] }],
+  ['mixed error and content', { ...envelope(), error: {} }],
+  ['false refusal', { choices: [{ ...envelope().choices[0], message: { ...envelope().choices[0].message, refusal: false } }] }],
+  ['null tool call', { choices: [{ ...envelope().choices[0], message: { ...envelope().choices[0].message, tool_calls: null } }] }],
 ]) test(`provider rejects ${label}`, async () => { await assert.rejects(make(async () => reply(value)).generate(request()), { code: 'UPSTREAM_INVALID' }) })
 
 test('HTTP errors and transport failures are redacted and never retried', async () => {
@@ -81,4 +84,20 @@ test('timeout bounds both connection and response body; aborts transport', async
   await assert.rejects(make(async (_, init) => { signal = init.signal; return new Promise(() => {}) }, { timeoutMs: 15 }).generate(request()), { code: 'UPSTREAM_TIMEOUT' })
   assert.ok(signal.aborted)
   await assert.rejects(make(async () => new Response(new ReadableStream({ start() {} })), { timeoutMs: 15 }).generate(request()), { code: 'UPSTREAM_TIMEOUT' })
+})
+
+test('timeout releases late and hanging response bodies; early HTTP/size rejection also cancels', async () => {
+  let resolve, cancelled = 0
+  const provider = make(() => new Promise(r => { resolve = r }), { timeoutMs: 10 })
+  await assert.rejects(provider.generate(request()), { code: 'UPSTREAM_TIMEOUT' })
+  resolve(new Response(new ReadableStream({ cancel() { cancelled++ } })))
+  await new Promise(r => setImmediate(r))
+  assert.equal(cancelled, 1)
+  for (const [init, code] of [[{}, 'UPSTREAM_TIMEOUT'], [{ status: 503 }, 'UPSTREAM_UNAVAILABLE'], [{ headers: { 'content-length': '9999999' } }, 'UPSTREAM_LIMIT']]) {
+    let released = 0
+    await assert.rejects(make(async () => new Response(new ReadableStream({
+      cancel() { released++; return new Promise(() => {}) },
+    }), init), { timeoutMs: 10 }).generate(request()), { code })
+    assert.equal(released, 1)
+  }
 })
