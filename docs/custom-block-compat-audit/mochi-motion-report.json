@@ -1,0 +1,1652 @@
+{
+  "browser": "Chromium",
+  "fixture": "Real MochiWorkshop + AppRuntime, offline fixed Mock planner (not AI)",
+  "cases": [
+    {
+      "width": 1366,
+      "height": 900,
+      "passed": true,
+      "intermediatePositions": 100,
+      "frames": [
+        {
+          "t": 2698,
+          "x": 391,
+          "y": 421.75,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2706.3,
+          "x": 391,
+          "y": 421.75,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2714.6,
+          "x": 391,
+          "y": 421.75,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2723,
+          "x": 391,
+          "y": 421.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2731.3,
+          "x": 391.1522521972656,
+          "y": 419.4325866699219,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2739.7,
+          "x": 391.3379211425781,
+          "y": 416.6061096191406,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2747.9,
+          "x": 391.5518493652344,
+          "y": 413.3497619628906,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2756.3,
+          "x": 391.8057556152344,
+          "y": 409.48468017578125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2764.6,
+          "x": 392.0924072265625,
+          "y": 405.12103271484375,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2773,
+          "x": 392.4198303222656,
+          "y": 400.1368713378906,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2781.3,
+          "x": 392.7811279296875,
+          "y": 394.63726806640625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2789.6,
+          "x": 393.18060302734375,
+          "y": 388.5562438964844,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2798,
+          "x": 393.6241455078125,
+          "y": 381.8045654296875,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2806.3,
+          "x": 394.1011962890625,
+          "y": 374.5429992675781,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2814.6,
+          "x": 394.6163330078125,
+          "y": 366.7011413574219,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2822.9,
+          "x": 395.1687316894531,
+          "y": 358.29248046875,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2831.3,
+          "x": 395.7642822265625,
+          "y": 349.22705078125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2839.7,
+          "x": 396.3945617675781,
+          "y": 339.63287353515625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2847.1,
+          "x": 396.9765930175781,
+          "y": 330.773193359375,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2856.4,
+          "x": 397.74029541015625,
+          "y": 319.1474914550781,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2864.6,
+          "x": 398.4400634765625,
+          "y": 308.4958190917969,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2872.9,
+          "x": 399.1697082519531,
+          "y": 297.3889465332031,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2881.3,
+          "x": 399.9260559082031,
+          "y": 285.875732421875,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2889.7,
+          "x": 410.62127685546875,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2898,
+          "x": 422.3761291503906,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2906.3,
+          "x": 434.2154235839844,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2914.7,
+          "x": 446.2254638671875,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2923,
+          "x": 458.06744384765625,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2931.3,
+          "x": 469.8370056152344,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2939.6,
+          "x": 481.4923400878906,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2948,
+          "x": 493.13494873046875,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2956.3,
+          "x": 504.4568176269531,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2964.7,
+          "x": 515.7050170898438,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2973,
+          "x": 526.5913696289062,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2981.3,
+          "x": 537.2353515625,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2989,
+          "x": 546.8828125,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2998,
+          "x": 557.8729248046875,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3006.3,
+          "x": 567.7291259765625,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3014.5,
+          "x": 577.2006225585938,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3023,
+          "x": 586.7386474609375,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3031.3,
+          "x": 595.778076171875,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3039.7,
+          "x": 604.6528930664062,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3048,
+          "x": 613.1551513671875,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3056.3,
+          "x": 621.3961791992188,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3064.6,
+          "x": 629.3809204101562,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3073,
+          "x": 637.2062377929688,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3081.3,
+          "x": 644.691650390625,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3089.7,
+          "x": 652.0235595703125,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3098,
+          "x": 659.0335693359375,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3106.3,
+          "x": 665.81640625,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3114.7,
+          "x": 672.4560546875,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3122.9,
+          "x": 678.7254028320312,
+          "y": 284.75,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3131.3,
+          "x": 684.0341796875,
+          "y": 285.68585205078125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3139.7,
+          "x": 684.2531127929688,
+          "y": 291.68524169921875,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3147.9,
+          "x": 684.4597778320312,
+          "y": 297.3474426269531,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3156.3,
+          "x": 684.6643676757812,
+          "y": 302.9543762207031,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3164.6,
+          "x": 684.8598022460938,
+          "y": 308.3079833984375,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3172.9,
+          "x": 685.048583984375,
+          "y": 313.4814758300781,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3181.2,
+          "x": 685.2310180664062,
+          "y": 318.4801025390625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3189.6,
+          "x": 685.4093627929688,
+          "y": 323.3660888671875,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3198,
+          "x": 685.5814819335938,
+          "y": 328.0832214355469,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3206.3,
+          "x": 685.7457275390625,
+          "y": 332.5831298828125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3214.7,
+          "x": 685.9061889648438,
+          "y": 336.9789123535156,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3223,
+          "x": 686.0591430664062,
+          "y": 341.17034912109375,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3231.3,
+          "x": 686.2067260742188,
+          "y": 345.2149658203125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3239.6,
+          "x": 686.3491821289062,
+          "y": 349.1168212890625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3247.1,
+          "x": 686.4734497070312,
+          "y": 352.5231018066406,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3256.3,
+          "x": 686.6204833984375,
+          "y": 356.55078125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3264.7,
+          "x": 686.74951171875,
+          "y": 360.0871887207031,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3273,
+          "x": 686.8723754882812,
+          "y": 363.45294189453125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3281.3,
+          "x": 686.9906616210938,
+          "y": 366.6943054199219,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3289.6,
+          "x": 687.1045532226562,
+          "y": 369.8145751953125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3298,
+          "x": 687.2153930664062,
+          "y": 372.852294921875,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3306.3,
+          "x": 687.3207397460938,
+          "y": 375.7382507324219,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3314.6,
+          "x": 687.4219970703125,
+          "y": 378.51220703125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3322.9,
+          "x": 687.5192260742188,
+          "y": 381.1769714355469,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3331,
+          "x": 687.6104125976562,
+          "y": 383.67486572265625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3339.7,
+          "x": 687.7042846679688,
+          "y": 386.24761962890625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3348,
+          "x": 687.7901000976562,
+          "y": 388.5982971191406,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3356.3,
+          "x": 687.8722534179688,
+          "y": 390.85015869140625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3362.3,
+          "x": 687.9295043945312,
+          "y": 392.4177551269531,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3370.9,
+          "x": 688.0083618164062,
+          "y": 394.57843017578125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3379.2,
+          "x": 688.0809936523438,
+          "y": 396.5694274902344,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3387.5,
+          "x": 688.150390625,
+          "y": 398.4700012207031,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3394.6,
+          "x": 688.2071533203125,
+          "y": 400.0255432128906,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3403.1,
+          "x": 688.2720336914062,
+          "y": 401.80450439453125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3411.4,
+          "x": 688.3323364257812,
+          "y": 403.455810546875,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3419.8,
+          "x": 688.3902587890625,
+          "y": 405.0426940917969,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3427.5,
+          "x": 688.440673828125,
+          "y": 406.4243469238281,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3435.9,
+          "x": 688.4928588867188,
+          "y": 407.8537292480469,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3444.3,
+          "x": 688.5421142578125,
+          "y": 409.2034912109375,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3452.6,
+          "x": 688.5879516601562,
+          "y": 410.4606628417969,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3459.9,
+          "x": 688.6260986328125,
+          "y": 411.5047607421875,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3469.1,
+          "x": 688.6712036132812,
+          "y": 412.74017333984375,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3477.3,
+          "x": 688.7086791992188,
+          "y": 413.7672119140625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3485.6,
+          "x": 688.7440795898438,
+          "y": 414.7371520996094,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3493.2,
+          "x": 688.7742919921875,
+          "y": 415.5650329589844,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3502.3,
+          "x": 688.8077392578125,
+          "y": 416.48199462890625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3510.5,
+          "x": 688.8353881835938,
+          "y": 417.24029541015625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3518.8,
+          "x": 688.861083984375,
+          "y": 417.9435119628906,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3527.1,
+          "x": 688.8843994140625,
+          "y": 418.5832214355469,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3535.4,
+          "x": 688.905517578125,
+          "y": 419.16064453125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3543.8,
+          "x": 688.924560546875,
+          "y": 419.6827697753906,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3552.1,
+          "x": 688.941162109375,
+          "y": 420.1383361816406,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3558,
+          "x": 688.95166015625,
+          "y": 420.42626953125,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3566.7,
+          "x": 688.9652099609375,
+          "y": 420.7973937988281,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3574.8,
+          "x": 688.9757690429688,
+          "y": 421.0865478515625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3583.4,
+          "x": 688.98486328125,
+          "y": 421.33514404296875,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3591.7,
+          "x": 688.9915771484375,
+          "y": 421.51904296875,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3598.8,
+          "x": 688.9957275390625,
+          "y": 421.6333923339844,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3607.3,
+          "x": 688.9989013671875,
+          "y": 421.7190856933594,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3614.8,
+          "x": 688.9999389648438,
+          "y": 421.74908447265625,
+          "locomotion": "travel",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3623.5,
+          "x": 689,
+          "y": 421.75,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3631.7,
+          "x": 689,
+          "y": 421.75,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3640,
+          "x": 689,
+          "y": 421.75,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3648.4,
+          "x": 689,
+          "y": 421.75,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 3656.4,
+          "x": 689,
+          "y": 421.75,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        }
+      ],
+      "blink": {
+        "name": "mochi-blink",
+        "closed": "1",
+        "open": "0"
+      },
+      "checks": [
+        "original PNG: idle/curious/thinking/happy/celebrating/error; real Inspector save/error and canvas snap",
+        "real selection/drag + pointer cancellation + no event theft",
+        "rapid reselection",
+        "scroll anchor on desktop/mobile",
+        "viewport resize",
+        "B/C same Runtime",
+        "click opens existing chat",
+        "no overlap at landing",
+        "reduced-motion cancels WAAPI and CSS",
+        "no horizontal overflow"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 900,
+      "passed": true,
+      "intermediatePositions": 41,
+      "frames": [
+        {
+          "t": 2057.3,
+          "x": 307,
+          "y": 196.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2065.6,
+          "x": 307,
+          "y": 196.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2074,
+          "x": 307,
+          "y": 196.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2081.4,
+          "x": 307,
+          "y": 196.828125,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2089.8,
+          "x": 307,
+          "y": 196.828125,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2098.1,
+          "x": 307,
+          "y": 199.52206420898438,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2106.4,
+          "x": 307,
+          "y": 203.47601318359375,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2115.6,
+          "x": 307,
+          "y": 209.47793579101562,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2124,
+          "x": 307,
+          "y": 216.51327514648438,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2132.3,
+          "x": 307,
+          "y": 224.9038543701172,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2140.7,
+          "x": 307,
+          "y": 234.71971130371094,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2149,
+          "x": 307,
+          "y": 245.47891235351562,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2157.3,
+          "x": 307,
+          "y": 256.9540100097656,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2165.6,
+          "x": 307,
+          "y": 268.77215576171875,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2174,
+          "x": 307,
+          "y": 280.7270202636719,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2182.3,
+          "x": 307,
+          "y": 292.2526550292969,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2190.6,
+          "x": 307,
+          "y": 303.297607421875,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2199,
+          "x": 307,
+          "y": 313.8660888671875,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2207.3,
+          "x": 307,
+          "y": 323.6482849121094,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2215.6,
+          "x": 307,
+          "y": 332.7579650878906,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2224,
+          "x": 307,
+          "y": 341.3033752441406,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2232.3,
+          "x": 307,
+          "y": 349.10723876953125,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2240.7,
+          "x": 307,
+          "y": 356.39239501953125,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2249,
+          "x": 307,
+          "y": 363.0229797363281,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2257.3,
+          "x": 307,
+          "y": 369.1268615722656,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2265.6,
+          "x": 307,
+          "y": 374.7406005859375,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2273.9,
+          "x": 307,
+          "y": 379.8985595703125,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2282.3,
+          "x": 307,
+          "y": 384.6874084472656,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2290.7,
+          "x": 307,
+          "y": 389.07293701171875,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2299,
+          "x": 307,
+          "y": 393.0374450683594,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2307.3,
+          "x": 307,
+          "y": 396.66015625,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2315.7,
+          "x": 307,
+          "y": 400.0014953613281,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2324,
+          "x": 307,
+          "y": 403.0025634765625,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2332.3,
+          "x": 307,
+          "y": 405.72369384765625,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2340.6,
+          "x": 307,
+          "y": 408.181884765625,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2349,
+          "x": 307,
+          "y": 410.4179382324219,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2356.8,
+          "x": 307,
+          "y": 412.28033447265625,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2365.4,
+          "x": 307,
+          "y": 414.1082458496094,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2374,
+          "x": 307,
+          "y": 415.71258544921875,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2382.3,
+          "x": 307,
+          "y": 417.0604248046875,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2389.9,
+          "x": 307,
+          "y": 418.1306457519531,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2398.9,
+          "x": 307,
+          "y": 419.2054138183594,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2407.3,
+          "x": 307,
+          "y": 420.02935791015625,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2415.7,
+          "x": 307,
+          "y": 420.6888427734375,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2424,
+          "x": 307,
+          "y": 421.1864318847656,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2432.3,
+          "x": 307,
+          "y": 421.537841796875,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2440.6,
+          "x": 307,
+          "y": 421.7495422363281,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2449,
+          "x": 307,
+          "y": 421.8276062011719,
+          "locomotion": "hop",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2457.4,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2465.6,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2474,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2482.3,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2490.7,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2499,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2507.3,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2515.7,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2524,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2532.3,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2540.6,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2548.5,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2556.7,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2565,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2574,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2581.4,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2589.8,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2598,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2606.4,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2614.7,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2623,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2632.4,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2640.7,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2648.9,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2657.4,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2665.6,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2674,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2682.3,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2690.6,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2698.1,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2707.3,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2714.8,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2724,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        },
+        {
+          "t": 2732.3,
+          "x": 307,
+          "y": 421.828125,
+          "locomotion": "rest",
+          "visible": "visible",
+          "occluded": false
+        }
+      ],
+      "blink": {
+        "name": "mochi-blink",
+        "closed": "1",
+        "open": "0"
+      },
+      "checks": [
+        "original PNG: idle/curious/thinking/happy/celebrating/error; real Inspector save/error and canvas snap",
+        "real selection/drag + pointer cancellation + no event theft",
+        "rapid reselection",
+        "scroll anchor on desktop/mobile",
+        "viewport resize",
+        "B/C same Runtime",
+        "click opens existing chat",
+        "no overlap at landing",
+        "reduced-motion cancels WAAPI and CSS",
+        "no horizontal overflow"
+      ]
+    }
+  ],
+  "errors": [],
+  "outbound": [],
+  "version": "151.0.7922.34",
+  "lowResource": "390px mobile + 2 logical CPUs: limited quality, CSS body animation disabled, real Chromium touch drag commits with no Mochi event theft"
+}

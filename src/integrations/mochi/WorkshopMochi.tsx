@@ -9,14 +9,14 @@ export type MochiHost = ReturnType<typeof createMochiHost>
 /** Measure against the actual positioned Workshop, including nested scroll/drag.
  * Each measurement is bound to the current host epoch and revision.
  */
-function useBlockAnchor(host: MochiHost, view: HostView, root: RefObject<HTMLElement | null>) {
+function useBlockAnchor(host: MochiHost, view: HostView, root: RefObject<HTMLElement | null>, canvasReady: boolean) {
   const { instanceId, revision, selectedBlockId } = view.context
   const epoch = view.epoch
   useLayoutEffect(() => {
     const surface = root.current
-    if (!surface || !selectedBlockId || view.mode !== 'blocks') return
+    if (!surface || !canvasReady || !selectedBlockId || view.mode !== 'blocks') return
     const block = [...surface.querySelectorAll<HTMLElement>('[data-block-key]')]
-      .find(element => element.dataset.blockKey === `module:${selectedBlockId}`)
+      .find(element => [`module:${selectedBlockId}`, `builtin:${selectedBlockId}`, `custom:${selectedBlockId}`].includes(element.dataset.blockKey ?? ''))
     if (!block) return
     let frame = 0
     let last = ''
@@ -29,7 +29,7 @@ function useBlockAnchor(host: MochiHost, view: HostView, root: RefObject<HTMLEle
       const box = block.getBoundingClientRect()
       const container = surface.getBoundingClientRect()
       const rect = { x: box.left - container.left + surface.scrollLeft, y: box.top - container.top + surface.scrollTop,
-        width: box.width, height: box.height, placement: box.right + 68 > window.innerWidth ? 'left' as const : 'right' as const,
+        width: box.width, height: box.height, placement: window.innerWidth <= 390 ? 'corner' as const : box.right + 68 > window.innerWidth ? 'left' as const : 'right' as const,
         visible: box.bottom > 0 && box.top < window.innerHeight && box.right > 0 && box.left < window.innerWidth }
       const signature = JSON.stringify(rect)
       if (signature === last) return
@@ -48,13 +48,13 @@ function useBlockAnchor(host: MochiHost, view: HostView, root: RefObject<HTMLEle
       stopped = true; cancelAnimationFrame(frame); resize.disconnect(); mutation.disconnect()
       document.removeEventListener('scroll', schedule, true); window.removeEventListener('resize', schedule)
     }
-  }, [host, root, instanceId, revision, selectedBlockId, epoch, view.mode])
+  }, [host, root, instanceId, revision, selectedBlockId, epoch, view.mode, canvasReady])
 }
 
-export function WorkshopMochi({ host, view, root, planningDisabledReason }: {
-  host: MochiHost; view: HostView; root: RefObject<HTMLElement | null>; planningDisabledReason?: string
+export function WorkshopMochi({ host, view, root, planningDisabledReason, canvasReady = true }: {
+  host: MochiHost; view: HostView; root: RefObject<HTMLElement | null>; planningDisabledReason?: string; canvasReady?: boolean
 }) {
-  useBlockAnchor(host, view, root)
+  useBlockAnchor(host, view, root, canvasReady)
   const [messages, setMessages] = useState<MochiChatMessage[]>([])
   const lastEvent = useRef({ receipt: '', error: '' })
   const receipt = view.receipt
@@ -73,11 +73,12 @@ export function WorkshopMochi({ host, view, root, planningDisabledReason }: {
       await host.callbacks.onRequestPlan(prompt, uiContext)
     },
   }), [host])
-  const suggestions = view.context.selectedBlockId ? evaluateMochiSuggestions(view.context)
+  const customSelected = view.context.blocks.some(block => block.id === view.context.selectedBlockId && block.type === 'custom')
+  const suggestions = view.context.selectedBlockId && !customSelected ? evaluateMochiSuggestions(view.context)
     .filter(item => !view.ignoredSuggestionIds.includes(item.id)) : []
   return <div className="app-spec-workshop__mochi" onPointerDown={event => event.stopPropagation()} onKeyDown={event => event.stopPropagation()}>
     <MochiAssistant {...callbacks} context={view.context} messages={messages}
-      suggestions={suggestions} preview={view.preview} planningDisabledReason={planningDisabledReason}
+      suggestions={suggestions} preview={view.preview} planningDisabledReason={customSelected ? '自定义积木请使用参数面板；修改计划尚未开放。' : planningDisabledReason}
       emotion={view.error ? 'error' : view.busy ? 'thinking' : receipt ? 'happy' : 'idle'}
       anchor={view.anchor} showOverlay={view.mode === 'blocks'} />
   </div>

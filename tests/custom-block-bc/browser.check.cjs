@@ -200,7 +200,7 @@ async function run() {
       await expect(page.getByTestId('validation-waiting')).toHaveText('waiting')
       await page.getByLabel('只读（测试）', { exact: true }).check()
       await page.getByRole('button', { name: '继续验证（测试）', exact: true }).click()
-      await expect(inspector.getByRole('alert')).toContainText('READ_ONLY')
+      await expect(inspector.getByRole('alert').filter({ hasText: 'READ_ONLY' })).toContainText('READ_ONLY')
       assert.deepEqual(await snapshot(), lifecycle)
       await expect(duration).toBeDisabled()
       await expect(inspector.getByRole('button', { name: '保存参数', exact: true })).toBeDisabled()

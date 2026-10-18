@@ -14,7 +14,7 @@ export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
 }) {
   const snapshot = useSyncExternalStore(adapter.subscribe, adapter.getSnapshot, adapter.getSnapshot)
   const authorization = useSyncExternalStore(adapter.subscribe, adapter.getAuthorization, adapter.getAuthorization)
-  const gesture = useRef(snapshot)
+  const gesture = useRef({ snapshot, authorization })
   const [error, setError] = useState('')
   const helpId = useId()
   const items = adapter.orderedBlocks(snapshot)
@@ -22,10 +22,10 @@ export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
   const snap = useSnapCanvas({
     ids: items.map(item => item.id),
     saved: { ...snapshot.base.blockPositions, ...snapshot.custom.positions }, localIds: [], disabled: authorization.readOnly,
-    onSelect: id => { gesture.current = adapter.getSnapshot(); onSelect(id); setError('') },
+    onSelect: id => { gesture.current = { snapshot: adapter.getSnapshot(), authorization: adapter.getAuthorization() }; onSelect(id); setError('') },
     onMove: (id, position) => {
       const item = items.find(item => item.id === id)
-      if (item) queueMove(gesture.current, item.kind, id, position)
+      if (item) queueMove(gesture.current.snapshot, item.kind, id, position, gesture.current.authorization)
     },
   })
   const selected = items.some(item => item.id === selectedId) ? selectedId : null
@@ -33,8 +33,8 @@ export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
   return <section className="block-canvas-stage custom-block-bc" aria-label="自定义与内置积木画布">
     <div className="block-canvas-toolbar"><span><Blocks size={16} aria-hidden="true" />我的功能 · {items.length} 块积木</span>
       <div className="block-canvas-actions">
-        <button type="button" disabled={authorization.readOnly || selectedStack.length < 2 || snap.dragging.length > 0} onClick={() => { gesture.current = adapter.getSnapshot(); if (selected) snap.detach(selected) }}><Unlink size={14} aria-hidden="true" />拆开这组</button>
-        <button type="button" disabled={authorization.readOnly || !items.length || snap.dragging.length > 0} onClick={() => { gesture.current = adapter.getSnapshot(); snap.arrange() }}><LayoutGrid size={14} aria-hidden="true" />一键整理</button>
+        <button type="button" disabled={authorization.readOnly || selectedStack.length < 2 || snap.dragging.length > 0} onClick={() => { gesture.current = { snapshot: adapter.getSnapshot(), authorization: adapter.getAuthorization() }; if (selected) snap.detach(selected) }}><Unlink size={14} aria-hidden="true" />拆开这组</button>
+        <button type="button" disabled={authorization.readOnly || !items.length || snap.dragging.length > 0} onClick={() => { gesture.current = { snapshot: adapter.getSnapshot(), authorization: adapter.getAuthorization() }; snap.arrange() }}><LayoutGrid size={14} aria-hidden="true" />一键整理</button>
       </div>
     </div>
     <div className="block-canvas-play-note"><span>上下靠近，轻轻拼上</span><small>自定义积木可编辑参数；运行取决于隔离服务是否可用。</small></div>

@@ -1,5 +1,8 @@
 import type { BlockSpec, EntityRecord, FieldSpec, FieldValue, ProjectState } from './appSpec'
 import { createCommandSession, processCommand, type CommandSession } from './appCommands'
+import { createProjectSession, type CustomProjectSession } from './customProjectSession'
+import { CustomBlockError } from '../custom-block/json'
+import type { WriteAuthorization } from '../integrations/custom-block-bc/owner'
 import { AppSpecError, assertProjectState, ensure } from './appSpecValidation'
 
 export type RecordChange =
@@ -35,9 +38,10 @@ export type RuntimeResult =
   | { ok: false; error: { code: string; message: string } }
 
 export interface AppRuntime {
+  customProject: CustomProjectSession
   getSnapshot: () => ProjectState
   subscribe: (listener: () => void) => () => void
-  executeCommand: (request: unknown) => RuntimeResult
+  executeCommand: (request: unknown, authorization?: WriteAuthorization) => RuntimeResult
   updateRecords: (change: RecordChange) => RuntimeResult
   moveBlock: (blockId: string, position: { x: number; y: number }) => RuntimeResult
   canUndo: () => boolean
@@ -47,33 +51,46 @@ export interface AppRuntime {
 
 /** One session owns state, history and receipts for both B and C. */
 export function createAppRuntime(initial: ProjectState): AppRuntime {
-  let session = freeze(createCommandSession(initial))
-  const listeners = new Set<() => void>()
-  const publish = (next: CommandSession) => {
-    session = freeze(next)
-    listeners.forEach(listener => listener())
-  }
+  const initialSession = createCommandSession(initial)
+  let metadata: Omit<CommandSession, 'state'> = freeze({ history: initialSession.history, receipts: initialSession.receipts })
+  const project = createProjectSession(initial, () => { metadata = freeze({ ...metadata, history: [] }) })
+  const session = (): CommandSession => ({ ...metadata, state: project.getBaseSnapshot() })
+  const publish = (next: CommandSession, expected: ReturnType<CustomProjectSession['getSnapshot']>, authorization: WriteAuthorization) => project.commitBuiltin(next.state, () => {
+    metadata = freeze({ history: next.history, receipts: next.receipts })
+  }, expected, authorization)
   // Full-state command history cannot cross a later data/layout transaction.
   // Keep receipts so retries across this boundary remain idempotent.
   const mutate = (apply: (state: ProjectState) => ProjectState): RuntimeResult => {
+    const expected = project.owner.getSnapshot(), authorization = project.owner.getAuthorization()
     let state: ProjectState
-    try { state = apply(session.state) }
+    try { state = apply(project.getBaseSnapshot()) }
     catch (error) {
-      if (!(error instanceof AppSpecError)) throw error
+      if (!(error instanceof AppSpecError) && !(error instanceof CustomBlockError)) throw error
       return { ok: false, error: { code: error.code, message: error.message } }
     }
-    publish({ ...session, state, history: [] })
-    return { ok: true, duplicate: false, committedRevision: state.revision }
+    try { return publish({ ...session(), state, history: [] }, expected, authorization) }
+    catch (error) {
+      if (!(error instanceof CustomBlockError)) throw error
+      return { ok: false, error: { code: error.code, message: error.message } }
+    }
   }
   const updateRecords = (change: RecordChange) => mutate(state => applyRecordChange(state, change))
   return {
-    getSnapshot: () => session.state,
-    subscribe(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener) } },
-    canUndo: () => session.history.length > 0,
-    executeCommand(request) {
-      const result = processCommand(session, request)
+    customProject: project.owner,
+    getSnapshot: project.getBaseSnapshot,
+    subscribe: project.owner.subscribe,
+    canUndo: () => metadata.history.length > 0,
+    executeCommand(request, authorization = project.owner.getAuthorization()) {
+      const expected = project.owner.getSnapshot()
+      const result = processCommand(session(), request)
       if (!result.ok) return { ok: false, error: result.error }
-      if (!result.duplicate) publish(result.session)
+      if (!result.duplicate) {
+        try { return publish(result.session, expected, authorization) }
+        catch (error) {
+          if (!(error instanceof CustomBlockError)) throw error
+          return { ok: false, error: { code: error.code, message: error.message } }
+        }
+      }
       return { ok: true, duplicate: result.duplicate, committedRevision: result.committedRevision }
     },
     updateRecords,

@@ -37,10 +37,10 @@ function emptyValue(schema: RestrictedSchema): JsonValue {
 function Editor({ adapter, instance, schema, baseRevision, readOnly }: {
   adapter: CustomBlockBCAdapter; instance: CustomBlockInstance; schema: ObjectSchema; baseRevision: number; readOnly: boolean
 }) {
-  const [draft, setDraft] = useState(() => ({ props: cloneJson(instance.props), baseRevision }))
+  const [draft, setDraft] = useState(() => ({ props: cloneJson(instance.props), baseRevision, authorization: adapter.getAuthorization() }))
   const [feedback, setFeedback] = useState('')
   const [busy, setBusy] = useState(false)
-  const stale = draft.baseRevision !== baseRevision
+  const stale = draft.baseRevision !== baseRevision || draft.authorization !== adapter.getAuthorization()
   const change = (path: string[], value: JsonValue | undefined) => setDraft(previous => {
     const props = cloneJson(previous.props)
     let parent = props
@@ -54,18 +54,18 @@ function Editor({ adapter, instance, schema, baseRevision, readOnly }: {
   })
   return <form noValidate aria-label="自定义积木参数" onSubmit={async event => {
     event.preventDefault(); setBusy(true); setFeedback('')
-    const result = await adapter.editProps({ baseRevision: draft.baseRevision, instanceId: instance.id, reference: referenceOf(instance), props: draft.props })
+    const result = await adapter.editProps({ baseRevision: draft.baseRevision, instanceId: instance.id, reference: referenceOf(instance), props: draft.props }, draft.authorization)
     setBusy(false)
     setFeedback(result.ok ? '参数已由宿主校验并保存。' : `${result.error.code}: ${result.error.message}`)
     if (result.ok) {
       const latest = adapter.getSnapshot(), current = latest.custom.instances.find(item => item.id === instance.id)
-      if (current && current.versionDigest === instance.versionDigest && current.definitionId === instance.definitionId) setDraft({ props: cloneJson(current.props), baseRevision: latest.revision })
+      if (current && current.versionDigest === instance.versionDigest && current.definitionId === instance.definitionId) setDraft({ props: cloneJson(current.props), baseRevision: latest.revision, authorization: adapter.getAuthorization() })
     }
   }}>
     <fieldset disabled={busy || readOnly}><legend>可编辑参数</legend><Fields schema={schema} value={draft.props} path={[]} change={change} /></fieldset>
     {stale && <p role="alert">项目已变化；请重新载入参数后再保存。</p>}
     <div className="custom-block-bc__actions"><button type="submit" disabled={busy || stale || readOnly}>保存参数</button>
-      <button type="button" disabled={busy} onClick={() => { setDraft({ props: cloneJson(instance.props), baseRevision }); setFeedback('') }}>重新载入参数</button></div>
+      <button type="button" disabled={busy} onClick={() => { setDraft({ props: cloneJson(instance.props), baseRevision, authorization: adapter.getAuthorization() }); setFeedback('') }}>重新载入参数</button></div>
     {feedback && <p role={feedback.startsWith('参数已') ? 'status' : 'alert'}>{feedback}</p>}
   </form>
 }
