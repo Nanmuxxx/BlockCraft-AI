@@ -105,3 +105,14 @@ core-caller-cancel最新649/649；REAL_MODEL_CALLS=0。上述VERIFIED仅指Fixtu
 | 当前完整验证 | VERIFIED | regression.mjs；npm run build | 761/761退出0、build-consent-lifecycle退出0，baseline06bcab0；正式Artifact页与只读建议页桌面/移动分别通过 |
 
 生产源码模型计算密码学摘要的语义可靠性仍未验证；现有seam只完成fixture。建议未来可信适配器复用computeVersionDigest，然后仍经resolveArtifact/validateSourcePlan，不绕过校验。该生产适配器MISSING；REAL_MODEL_CALLS=0。
+
+## 第八轮边界证据（04:00，持续开发）
+
+| 项目 | 状态 | 函数/文件 | 验证 |
+|---|---|---|---|
+| status失败关闭能力 | VERIFIED | mochi-ai/client.mjs:refreshStatus | status-validation.test.mjs：非法/null、当前请求退休、原型链reason、null拒绝；相关34/34 |
+| consent顺序与撤销 | VERIFIED | client.mjs:setProactive | consent-lifecycle.test.mjs：迟到确认、撤销通知零额外调用、同步重入false→true顺序；相关37/37 |
+| 元数据通知隔离 | VERIFIED | context.mjs:notify | context.test.mjs：查询成功/失败时观察者抛错均不跳过后续观察者，无未处理拒绝；相关42/42 |
+| HTTP scope快照 | VERIFIED | server/mochi-ai/http.mjs:createMochiHandler | http.test.mjs：body end回调修改resolver对象仍绑定原session/app；旧409，修复相关33/33 |
+
+全量774/774、构建0及metadata-observer正式页桌面/移动通过，baseline f1df14f；之后的HTTP scope修复有独立33/33，未混称已被774项覆盖。所有调用均Fixture；REAL_MODEL_CALLS=0。

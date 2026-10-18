@@ -1,6 +1,6 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 03:44（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
+阶段检查点：2026-10-19 04:00（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
@@ -28,15 +28,15 @@
 
 ## 3. Draft PR
 
-[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署。当前已发布代码至本地`b70acd7415423b624e881908c08858e6bb17e3fb`对应远端`79b14325cd3585c1b21aef979de96c2b22db8475`，树一致；后续同步见映射。
+[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署。当前已发布代码至本地`f95d6877e1342ae33fbaa1682b6c50a2f7c5f256`对应远端`dbeb007505496c27127713280ebac00a75cb5e2e`，树一致；后续同步见映射。
 
 ## 4. 测试命令及退出码
 
 每条命令、cwd、时间、退出码和原始日志见[TEST-COMMANDS.md](docs/agent-a-night/TEST-COMMANDS.md)与[commands.jsonl](docs/agent-a-night/logs/commands.jsonl)。修复前失败、前置产物缺失、一次启动参数错误和修正后重跑均保留。
 
-- 最新`node tests/ai-core-night/regression.mjs`：**761/761，退出码0**（baseline06bcab0，含第七轮服务、Host、consent及此前Artifact修复），自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
+- 最新`node tests/ai-core-night/regression.mjs`：**774/774，退出码0**（baseline f1df14f，最后HTTP scope修复晚于此全量，另有相关33/33），自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
 - 组合安装/编辑1/1，重装相关26/26，惰性源码/Viewer25/25，鉴权异常HTTP19/19，跨进程存储/安装32/32，退出码均0；这些属于各次运行，不能相加成另一项全量结果。
-- 最近生产构建`build-consent-lifecycle`退出0，对应代码HEAD `06bcab0`；此前build-host-retirement和build-admission-final亦退出0。
+- 最近生产构建`build-metadata-observer`退出0，对应代码HEAD `f1df14f`；之后仅改服务HTTP scope及其测试，相关33/33通过。
 - 存储短读修复前2项失败，修复后相关37/37、精确上限19/19；源码截止首次3项失败，修复后含owner组合50/50；AppSpec截止首次2项失败，第一次修复改变调用时序导致旧取消测试超时，恢复时序后相关73/73及同步异常16/16，全部保留日志。
 - 历史较广核心649/649、622/622、568/568，安全/编译/质量187/187、默认npm test192/192；准确范围及当时提交以日志为准。
 
@@ -84,3 +84,9 @@ Agent B负责React ZIP模板/导出器，本分支不修改其文件；需共同
 正式页面admission-artifact桌面/移动通过（代码d14d9cb），host-retirement正式只读建议页桌面/移动通过（代码9757f48），均0页面错误、0外部请求。源码模型自行计算摘要尚无真实语义证据，生产适配器缺口已写入接口契约。六小时窗口未结束，继续安全独立审计。
 
 最新consent-lifecycle正式页桌面/移动通过，baseline06bcab0；10次离线Provider调用、12次fixture费用预留，实际外部请求0。b70acd7让后续命令账本自动记录repositoryHead、codeChanges及明确白名单的测试路径配置，不读取或保存完整环境变量。对应evidence-baseline-check10/10退出0，codeChanges为空。
+
+## 第八轮补充证据（04:00）
+
+status格式/异常关闭旧能力；主动建议的迟到确认、撤销通知及同步队列重入均有修复前复现。metadata成功/失败观察者异常不再产生未处理拒绝；HTTP身份在body await之前捕获。提交d82b341、855bd80、064dd38、275c306、f1df14f、f95d687均已发布，逐一验证文件树。
+
+较广核心774/774与build-metadata-observer退出0，baseline f1df14f；正式/ai-create的metadata-observer桌面1366/移动390通过，无页面异常/外部请求。之后HTTP scope修复只宣称相关33/33，不把早先全量当作后续覆盖。当前继续元数据失败恢复及取消跨层审计，六小时尚未结束。REAL_MODEL_CALLS=0。

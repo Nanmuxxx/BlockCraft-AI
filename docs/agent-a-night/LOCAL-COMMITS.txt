@@ -52,3 +52,10 @@ d14d9cbb4549d14fc9097907f985d9c74b4fda7c fix(mochi): recheck cancellation across
 9757f484f81f287aff0160a41e25a8cc07ad590d fix(mochi): retire host waits when provider ignores cancellation
 06bcab0b98083539d9bf5deb724021251ea7019f fix(mochi): skip disposed consent opt-ins while preserving explicit revocation
 b70acd7415423b624e881908c08858e6bb17e3fb test(ai-core): bind command evidence to code revision and harness settings
+af2e636f20b0c5cfdd7cde810d756475f6fe0b1d docs(ai-core): archive host retirement and consent lifecycle evidence
+d82b341f27b772fc38645abbde32d8c938fedee5 fix(mochi): retire enabled capability on invalid status replies
+855bd80ee932096529b694304ca52ca2e83de0d4 fix(mochi): keep late consent acknowledgments subordinate to capability status
+064dd38f081115711e0f37a1c982ef1f3b86528e fix(mochi): publish consent revocation before idle notifications
+275c306a6426a215c2f70e3623285c99fe327340 fix(mochi): reserve consent queue order before observer reentry
+f1df14f9c257c1de3502f9b4cf434021dd09b9ad fix(mochi): isolate metadata projection notification failures
+f95d6877e1342ae33fbaa1682b6c50a2f7c5f256 fix(mochi): bind HTTP access scope before reading uploaded bodies

@@ -7,7 +7,7 @@
 - Agent B：`agent-b/react-zip-night-20261019`，正在修改 `tools/project-zip-export/templates.mjs`。本分支禁止编辑导出器、模板、部署及冻结材料。
 - REAL_MODEL_CALLS=0。服务测试显式注入固定 Fixture；不读取 `.env`、生产密钥或私人材料。
 
-## 当前任务（2026-10-19 03:44）
+## 当前任务（2026-10-19 04:00）
 
 已完成第一轮链路恢复、生成/协议/取消修复和离线端到端验证；继续接口审计、核心回归、生产浏览器盲区与 Draft PR 准备。六小时窗口尚未结束，不声称已工作六小时。
 
@@ -116,3 +116,15 @@
 - 最新owned-family全量761/761及build-consent-lifecycle退出0，baseline06bcab0。正式Artifact页admission-artifact桌面/移动通过；Host正式只读建议页host-retirement桌面/移动通过。consent-lifecycle正式浏览器桌面/移动亦通过，代码06bcab0，0页面错误/0外部请求。
 - 当前修改：service.mjs、mochi/host.ts、mochi-ai/client.mjs、三个新增测试及证据文档。代码d14d9cb/9757f48/06bcab0已发布；小范围Commit和远端映射见清单。
 - REAL_MODEL_CALLS=0；没有部署、合并或执行生成TSX。下一安全任务：继续协议、权限和生命周期审计；准确记录生产模型摘要适配器缺口。
+
+## 第八轮进展（04:00，继续开发）
+
+- d82b341：最新status非法/空对象或适配器拒绝，关闭旧enabled/proactive并退休请求；禁止继承constructor等错误文案。旧3失败，相关34/34。
+- 855bd80：迟到opt-in确认不能把disabled能力标记proactive；旧失败，相关35/35。
+- 064dd38：主动关闭原子发布，旧订阅重入曾多发一次分析；修复相关36/36。
+- 275c306：consentTail先取得队列位置再通知；重入重新开启按false→true发送，与最后用户意图一致；旧顺序true→false复现，相关37/37。
+- f1df14f：metadata查询成功/失败通知观察者异常隔离，不再未处理拒绝或跳过健康观察者；旧2失败，相关42/42。
+- f95d687：HTTP鉴权scope在异步读取body之前捕获，避免共享resolver对象变更导致跨session/project；旧409复现，修复相关33/33。
+- 最新较广回归774/774、build-metadata-observer退出0，代码f1df14f；最后HTTP scope修改晚于该全量，单独33/33通过。status-consent及metadata-observer正式/ai-create桌面/移动均通过，0页面异常/0外部请求。
+- 当前：归档第八轮证据并同步Draft #40。下一任务：元数据失败恢复与状态/上下文取消跨层审计，继续独立工作。六小时窗口尚未结束（约01:48开始）。
+- 以上六项代码已发布，SHA/树见COMMIT-MAPPING；未修改其他Agent生产文件，REAL_MODEL_CALLS=0。

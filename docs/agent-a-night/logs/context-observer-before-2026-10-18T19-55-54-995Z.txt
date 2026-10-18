@@ -1,0 +1,34 @@
+✔ projection sends parameter names/types only; rejects invented bindings and sensitive extras (2.327917ms)
+✔ exact-version pending metadata cannot publish after version change or disposal (0.402958ms)
+✔ context bounds reject oversized metadata rather than silently inventing or truncating (0.649875ms)
+✖ metadata success isolates observer errors (0.373208ms)
+✖ metadata failure isolates observer errors (0.381375ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 3
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 31.961625
+
+✖ failing tests:
+
+test at tests/mochi-ai/context.test.mjs:45:39
+✖ metadata success isolates observer errors (0.373208ms)
+  Error: render observer failed
+      at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/context.test.mjs:48:40
+      at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/context.mjs:10:64
+      at Set.forEach (<anonymous>)
+      at notify (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/context.mjs:10:50)
+      at Promise.all.then.pending (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/context.mjs:33:53)
+
+test at tests/mochi-ai/context.test.mjs:45:39
+✖ metadata failure isolates observer errors (0.381375ms)
+  Error: render observer failed
+      at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/context.test.mjs:48:40
+      at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/context.mjs:10:64
+      at Set.forEach (<anonymous>)
+      at notify (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/context.mjs:10:50)
+      at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/context.mjs:36:40
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)

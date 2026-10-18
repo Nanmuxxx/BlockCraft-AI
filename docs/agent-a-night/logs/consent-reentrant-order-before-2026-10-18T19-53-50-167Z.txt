@@ -1,0 +1,37 @@
+✔ disposing a conversation prevents its queued opt-in and delayed status egress (1.8955ms)
+✔ an explicitly queued opt-out still revokes after disposal and an already sent opt-in (0.366166ms)
+✔ late opt-in acknowledgment cannot mark a disabled capability as proactive (0.613167ms)
+✔ explicit opt-out publishes revocation before notifying idle subscribers (1.075292ms)
+✖ a subscriber opt-in after revocation preserves user order in the serialized queue (0.498584ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32.92
+
+✖ failing tests:
+
+test at tests/mochi-ai/consent-lifecycle.test.mjs:89:1
+✖ a subscriber opt-in after revocation preserves user order in the serialized queue (0.498584ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   true,
+      false,
+  -   true
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/consent-lifecycle.test.mjs:106:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ true, false ],
+    expected: [ false, true ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

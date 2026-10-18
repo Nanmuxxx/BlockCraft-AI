@@ -322,5 +322,47 @@
     "remote": "79b14325cd3585c1b21aef979de96c2b22db8475",
     "tree": "878dee0e05c14e961e2382e897053598d1785ab4",
     "message": "test(ai-core): bind command evidence to code revision and harness settings"
+  },
+  {
+    "local": "af2e636f20b0c5cfdd7cde810d756475f6fe0b1d",
+    "remote": "de6436eca480f8ee7fb9bbd3bd2b2ed353a88d45",
+    "tree": "a705c7effdff910468fb3aae1cdf89548ebbbc2e",
+    "message": "docs(ai-core): archive host retirement and consent lifecycle evidence"
+  },
+  {
+    "local": "d82b341f27b772fc38645abbde32d8c938fedee5",
+    "remote": "717f3b13c1178cfcf9e33d96a9c3cf5c9d1fb6e6",
+    "tree": "6d88998f1d318318676640113aba9de7bc7b821b",
+    "message": "fix(mochi): retire enabled capability on invalid status replies"
+  },
+  {
+    "local": "855bd80ee932096529b694304ca52ca2e83de0d4",
+    "remote": "3a682c405206577a2c725aae94bfec7454d7f38b",
+    "tree": "8cf8a0aa05eb7474383920ca57c866c8e00caca3",
+    "message": "fix(mochi): keep late consent acknowledgments subordinate to capability status"
+  },
+  {
+    "local": "064dd38f081115711e0f37a1c982ef1f3b86528e",
+    "remote": "9dc865742a24efc07f957a17c6ea8803c8469207",
+    "tree": "ff279ad6cc457734731bba02e8afc178aeda76b4",
+    "message": "fix(mochi): publish consent revocation before idle notifications"
+  },
+  {
+    "local": "275c306a6426a215c2f70e3623285c99fe327340",
+    "remote": "a3993d975e383c6dea61c61b23648ebf7c543464",
+    "tree": "1e30a544e808f72e78de80830287a4ed6bd47b7f",
+    "message": "fix(mochi): reserve consent queue order before observer reentry"
+  },
+  {
+    "local": "f1df14f9c257c1de3502f9b4cf434021dd09b9ad",
+    "remote": "372238a27403a56bc7e85674e4dfe0380668408a",
+    "tree": "9d03b1111dc63d6dceeb21d1c5329368e48bb4a6",
+    "message": "fix(mochi): isolate metadata projection notification failures"
+  },
+  {
+    "local": "f95d6877e1342ae33fbaa1682b6c50a2f7c5f256",
+    "remote": "dbeb007505496c27127713280ebac00a75cb5e2e",
+    "tree": "ed4d127f68ba4e3f49c136448d82a868c9e2e7ca",
+    "message": "fix(mochi): bind HTTP access scope before reading uploaded bodies"
   }
 ]
