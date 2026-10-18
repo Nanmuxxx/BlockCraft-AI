@@ -1,0 +1,87 @@
+{
+  "browser": "151.0.7922.34",
+  "base": "1a45d748027dea8e8e00dba336ed03b7d117284b",
+  "scope": "actual /ai-create, no source transforms or runtime introspection; legacy HTTP intercepted offline",
+  "paidCalls": 0,
+  "cases": [
+    {
+      "width": 1440,
+      "passed": true,
+      "generationHTTP": [
+        {
+          "idea": "离线兼容验收：社团报名工具"
+        },
+        {
+          "idea": "离线兼容验收：社团报名工具"
+        },
+        {
+          "idea": "离线兼容验收：社团报名工具"
+        },
+        {
+          "idea": "离线兼容验收：社团报名工具"
+        }
+      ],
+      "trustedGenerationHTTP": 0,
+      "downloadsForV2": 0,
+      "errors": [],
+      "external": [],
+      "video": "/Users/nanmuxun/BlockAI/BlockCraft-AI-trusted-pomodoro-ui/docs/acceptance/trusted-pomodoro-ui/browser/video/page@d1f65cfa4263b62be562fa7735093e38.webm",
+      "checks": [
+        "explicit choice, no action on selection",
+        "fully validated bundled fixture",
+        "persistent accurate source",
+        "B params/no data binding",
+        "C start/pause/resume/reset",
+        "B/C preserves countdown",
+        "v2 whole ZIP refused",
+        "legacy v1 success/CRUD",
+        "invalid/provider error/cancel preserve record and source",
+        "late cancelled response ignored",
+        "mode choice retains old app",
+        "no TSX execution",
+        "no page overflow",
+        "no QA bridge in normal UI"
+      ]
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "generationHTTP": [
+        {
+          "idea": "离线兼容验收：社团报名工具"
+        },
+        {
+          "idea": "离线兼容验收：社团报名工具"
+        },
+        {
+          "idea": "离线兼容验收：社团报名工具"
+        },
+        {
+          "idea": "离线兼容验收：社团报名工具"
+        }
+      ],
+      "trustedGenerationHTTP": 0,
+      "downloadsForV2": 0,
+      "errors": [],
+      "external": [],
+      "video": "/Users/nanmuxun/BlockAI/BlockCraft-AI-trusted-pomodoro-ui/docs/acceptance/trusted-pomodoro-ui/browser/video/page@e8265c6f60c7a55131ae8c2495b230b7.webm",
+      "checks": [
+        "explicit choice, no action on selection",
+        "fully validated bundled fixture",
+        "persistent accurate source",
+        "B params/no data binding",
+        "C start/pause/resume/reset",
+        "B/C preserves countdown",
+        "v2 whole ZIP refused",
+        "legacy v1 success/CRUD",
+        "invalid/provider error/cancel preserve record and source",
+        "late cancelled response ignored",
+        "mode choice retains old app",
+        "no TSX execution",
+        "no page overflow",
+        "no QA bridge in normal UI"
+      ]
+    }
+  ],
+  "errors": []
+}

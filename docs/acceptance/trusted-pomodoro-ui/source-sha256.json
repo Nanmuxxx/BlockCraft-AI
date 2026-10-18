@@ -1,0 +1,12 @@
+{
+  "base": "1a45d748027dea8e8e00dba336ed03b7d117284b",
+  "files": {
+    "package.json": "c7cbd7ba39868767a288902edc18e8220ddbb11d891ba87b9f00d03d44efca8e",
+    "src/components/ai-create/AiCreate.tsx": "07f11bf060eee2f000d34d104ab239500c11d62af611feeeab7ef3c0237074d3",
+    "src/components/ai-create/ai-create.css": "e1003c8ef3ca88f48d85ee855f61179b18ab87e1414a2b695acff29387094eb4",
+    "src/components/ai-create/trustedPomodoroFixture.ts": "6486663552b7f639413a03ebfe9929fab4b7ce04ee40790a162422b720b2a7d7",
+    "tests/trusted-pomodoro-ui/races.browser.cjs": "3b15cd840f7190b5bb6807bc9f0c78adbe5a2c7d948dcd7a9e1496d698302c99",
+    "tests/trusted-pomodoro-ui/browser.cjs": "f80065a1aa52f1a19497981eb103cfba8e0d2f0dc2f21fc34981852279d9d596",
+    "tests/trusted-pomodoro-ui/fixture.test.cjs": "7079e9ce9f608ce1affb058dd539014785eeab91baa268246d5b097b03d6e258"
+  }
+}
