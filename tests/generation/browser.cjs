@@ -1,7 +1,8 @@
-// Optional Playwright regression. Every API request is intercepted; no backend/key.
+// Optional Playwright regression against the real local HTTP route and Vite proxy.
+// Only DeepSeek fetch is injected; no real key or paid upstream request.
 const { chromium } = require('playwright')
 const { expect } = require('playwright/test')
-const { spawn } = require('node:child_process')
+const { mkdir } = require('node:fs/promises')
 const { once } = require('node:events')
 const assert = require('node:assert/strict')
 const path = require('node:path')
@@ -9,33 +10,51 @@ const root = path.resolve(__dirname, '../..')
 
 async function run() {
   const { cases } = await import('./fixtures.mjs')
-  const vite = spawn(process.execPath, [path.join(root, 'node_modules/vite/bin/vite.js'), '--host', '127.0.0.1', '--port', '5193', '--strictPort'], {
-    cwd: root, stdio: ['ignore', 'pipe', 'pipe'],
-  })
+  const { createServer: createViteServer } = await import('vite')
+  const { createAppServer } = await import('../../server/index.mjs')
+  const { buildGenerationMessages } = await import('../../server/aiGenerationPrompt.mjs')
+  let candidate
+  let mode = 'success'
+  let calls = 0
+  const backendOptions = { apiKey: 'offline-test-key', model: 'offline-browser-model', fetchImpl: async (url, options) => {
+    calls++
+    assert.equal(url, 'https://api.deepseek.com/chat/completions')
+    const request = JSON.parse(options.body)
+    assert.deepEqual(request.messages, buildGenerationMessages(candidate.idea))
+    assert.equal(request.model, 'offline-browser-model')
+    if (mode === 'failure') return new Response('', { status: 503 })
+    if (mode === 'network') throw new TypeError('offline simulated connection failure')
+    let spec = candidate.spec
+    if (mode === 'invalid') spec = { version: 999 }
+    if (mode === 'empty') spec = { version: 1, id: 'empty', name: '空应用', entities: [], blocks: [], relations: [] }
+    if (mode === 'no-input') {
+      spec = structuredClone(spec)
+      spec.blocks = [{ id: spec.blocks[0].id, type: 'metric', name: '条数', aggregation: 'count' }]
+    }
+    return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(spec) } }] })
+  } }
+  let backend = createAppServer(backendOptions)
+  backend.listen(0, '127.0.0.1')
+  await once(backend, 'listening')
+  const backendPort = backend.address().port
+  const closeBackend = () => new Promise(resolve => { backend.closeAllConnections(); backend.close(resolve) })
+  const vite = await createViteServer({ root, server: { host: '127.0.0.1', port: 5193, strictPort: true,
+    proxy: { '/api': { target: `http://127.0.0.1:${backendPort}`, changeOrigin: false } } } })
   let browser
   try {
-    await Promise.race([
-      new Promise((resolve, reject) => {
-        let output = ''
-        vite.stdout.on('data', chunk => { output += chunk; if (output.includes('http://127.0.0.1:5193')) resolve() })
-        vite.once('exit', code => reject(new Error(`Vite exited: ${code}`)))
-      }),
-      new Promise((_, reject) => { const timer = setTimeout(() => reject(new Error('Vite startup timeout')), 15000); timer.unref() }),
-    ])
+    await vite.listen()
+    await mkdir('/tmp/blockcraft-g2-audit', { recursive: true })
     browser = await chromium.launch({ headless: true })
     const page = await browser.newPage()
     const failures = []
+    const assetFailures = []
+    page.on('response', response => {
+      if (!new URL(response.url()).pathname.startsWith('/api/') && response.status() >= 400) assetFailures.push(response.url())
+    })
     page.on('pageerror', error => failures.push(error.message))
-    let candidate
-    let mode = 'success'
-    let calls = 0
-    await page.route('**/api/**', async route => {
-      assert.equal(new URL(route.request().url()).pathname, '/api/ai/generate')
-      assert.deepEqual(route.request().postDataJSON(), { idea: candidate.idea })
-      calls++
-      if (mode === 'network') return route.abort('failed')
-      return route.fulfill({ status: mode === 'failure' ? 502 : 200, contentType: 'application/json',
-        body: JSON.stringify(mode === 'failure' ? { error: { code: 'AI_INVALID_SPEC' } } : mode === 'invalid' ? { version: 999 } : candidate.spec) })
+    const responses = []
+    page.on('response', response => {
+      if (new URL(response.url()).pathname === '/api/ai/generate') responses.push(response.status())
     })
     await page.goto('http://127.0.0.1:5193/ai-create')
     for (candidate of cases) {
@@ -68,16 +87,36 @@ async function run() {
         await expect(page.getByRole('region', { name: block.name, exact: true }).locator('output')).toHaveText(String(value))
       }
     }
+    // Isolate failure scenarios from the seven successes; production rate limits stay intact.
+    await closeBackend()
+    backend = createAppServer(backendOptions)
+    backend.listen(backendPort, '127.0.0.1')
+    await once(backend, 'listening')
     candidate = cases.find(candidate => candidate.id === 'movie-log')
+    await page.getByRole('button', { name: 'B 模式 · 编辑积木', exact: true }).click()
+    await page.getByRole('region', { name: '功能积木画布', exact: true }).getByRole('button', { name: '已看电影记录', exact: true }).click()
+    const inspector = page.getByRole('complementary', { name: '积木属性', exact: true })
+    await inspector.getByLabel('字段名称', { exact: true }).fill('导演')
+    await inspector.getByRole('button', { name: '新增字段', exact: true }).click()
+    await inspector.getByRole('checkbox', { name: '展示 导演', exact: true }).check()
+    await page.screenshot({ path: '/tmp/blockcraft-g2-audit/generated-b.png', fullPage: true })
+    await page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
     const region = page.getByRole('region', { name: '已看电影记录', exact: true })
     await region.getByRole('button', { name: '编辑', exact: true }).click()
     await region.getByLabel('电影名', { exact: false }).fill('保留的电影')
+    await region.getByLabel('导演', { exact: true }).fill('宫崎骏')
     await region.getByRole('button', { name: '保存修改', exact: true }).click()
+    await page.getByRole('button', { name: 'B 模式 · 编辑积木', exact: true }).click()
+    await expect(inspector.getByRole('checkbox', { name: '展示 导演', exact: true })).toBeChecked()
+    await page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
+    await expect(region.getByRole('cell', { name: '宫崎骏', exact: true })).toBeVisible()
+    await page.screenshot({ path: '/tmp/blockcraft-g2-audit/generated-c.png', fullPage: true })
     if (!await page.getByLabel('你想做什么软件？').isVisible()) await page.locator('.ai-create-regenerate > summary').click()
-    for (mode of ['failure', 'invalid', 'network']) {
+    for (mode of ['failure', 'invalid', 'empty', 'no-input', 'network']) {
       await page.getByRole('button', { name: /^(生成新应用|重试生成)$/ }).click()
       await expect(page.getByRole('alert')).toContainText('当前应用和数据已保留')
       await expect(region.getByRole('cell', { name: '保留的电影', exact: true })).toBeVisible()
+      await expect(region.getByRole('cell', { name: '宫崎骏', exact: true })).toBeVisible()
     }
     await region.getByRole('button', { name: '删除', exact: true }).click()
     await expect(region.getByText('暂无记录')).toBeVisible()
@@ -86,12 +125,16 @@ async function run() {
     await expect(page.getByRole('alert')).toHaveCount(0)
     await page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
     await expect(region.getByText('暂无记录')).toBeVisible()
+    assert.deepEqual(responses, [...cases.map(() => 200), ...Array(5).fill(502), 200])
+    assert.equal(calls, responses.length)
+    await page.evaluate(() => document.fonts.ready)
+    assert.deepEqual(assetFailures, [], 'styles, fonts and images load without HTTP errors')
     assert.deepEqual(failures, [])
-    console.log(`PASS: ${cases.length} distinct offline apps rendered and recorded data; aggregates, edit/delete, 3 failures retain old app, retry; ${calls} intercepted API requests; zero paid calls.`)
+    console.log(`PASS: ${cases.length} distinct offline apps rendered and recorded data; aggregates, B Inspector edits / C records, edit/delete, 5 failures retain old app, retry; ${calls} real local HTTP requests with injected DeepSeek; zero paid calls.`)
   } finally {
     await browser?.close()
-    vite.kill('SIGTERM')
-    if (vite.exitCode === null) await once(vite, 'exit')
+    await vite.close()
+    await closeBackend()
   }
 }
 run().catch(error => { console.error(error); process.exitCode = 1 })
