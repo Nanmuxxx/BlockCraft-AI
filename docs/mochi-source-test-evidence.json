@@ -1,0 +1,83 @@
+{
+  "contractVersion": 1,
+  "verifiedAtUtc": "2026-10-18T13:06:02Z",
+  "baseMain": "85d4d5de016a2f424cbd49efb6312377dcdc4deb",
+  "branch": "codex/mochi-source-version-plans-20261018",
+  "environment": {
+    "platform": "macOS",
+    "node": "v24.22.0",
+    "dependencies": "existing repository node_modules; no install"
+  },
+  "checks": [
+    {
+      "command": "node --test tests/mochi-source/*.test.cjs",
+      "exitCode": 0,
+      "logSha256": "eccfb6ab45d0f872f57529c00ddfc0347eb1abeecf9e1647c2a88d1459758993",
+      "tests": 35,
+      "pass": 35,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 2148.611958
+    },
+    {
+      "command": "node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs src/integrations/mochi/host.test.cjs tests/mochi-source/*.test.cjs",
+      "exitCode": 0,
+      "logSha256": "096c9bcc5531d20e8479a36f580136cde14a73c802d5fa04b4aa518aad494b62",
+      "tests": 283,
+      "pass": 283,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 2642.085834
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "logSha256": "84f4968b400624c983f48d23584a5ba6100b234994df4270af5bbd5a4acf91c1",
+      "tests": 158,
+      "pass": 158,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 2292.009625
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "logSha256": "b2d3f0b2aaf65a8894d793cf0a193d21ab7ff4d3bec975f3cbb827d8c83cdd72",
+      "checks": [
+        "tsc -b",
+        "vite build"
+      ]
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "coverage": [
+    "real session.install and existing owner CAS",
+    "only selected instance changes; nonempty business records, siblings, layout and renderOrder preserved",
+    "candidate protocol, digest, schema, capabilities and exact source diff validation",
+    "cancel, stale selection/context/revision/authorization and late responses",
+    "concurrent real CAS, replacement conflict and confirmation selection lease",
+    "mock and completion callback data capture; malformed response; terminal rejection"
+  ],
+  "limitations": [
+    "Module suite is included in regression total, not additional coverage.",
+    "No real model or paid DeepSeek request. Completion callbacks in tests are controlled fixtures.",
+    "Candidate TSX is inert source text; no candidate compilation, import, eval or execution.",
+    "Build checks the existing production application; new module has no production UI wiring.",
+    "Selection/mode changes must synchronously respect CONFIRM_BUSY throughout confirmation.",
+    "Version history and old artifacts remain session-local; durable history needs existing persistence integration.",
+    "No merge or deployment."
+  ]
+}
