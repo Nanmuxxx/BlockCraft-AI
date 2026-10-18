@@ -6,7 +6,7 @@ import { createMochiHandler } from '../../server/mochi-ai/http.mjs'
 import { createMochiService } from '../../server/mochi-ai/service.mjs'
 import { createDeepSeekProvider } from '../../server/mochi-ai/provider.mjs'
 import { request, envelope, access, grant } from './fixtures.mjs'
-async function fixture(t, options = {}) {
+async function fixture(t, options = {}, handlerOptions = {}) {
   let calls = 0
   const provider = createDeepSeekProvider({ apiKey: 'OFFLINE FIXTURE ONLY', fetchImpl: async () => { calls++; return envelope() } })
   const service = createMochiService({ provider, enabled: true, approval: grant(Date.now()), ...options })
@@ -14,7 +14,7 @@ async function fixture(t, options = {}) {
   const server = createServer(async (req, res) => { if (!await handler(req,res)) { res.writeHead(404); res.end() } })
   server.listen(0, '127.0.0.1'); await once(server, 'listening')
   const origin = `http://127.0.0.1:${server.address().port}`
-  handler = createMochiHandler({ service, allowedOrigin: origin, resolveAccess: req => req.headers.cookie === 'test=trusted' ? access : null })
+  handler = createMochiHandler({ service, allowedOrigin: origin, resolveAccess: req => req.headers.cookie === 'test=trusted' ? access : null, ...handlerOptions })
   t.after(() => new Promise(resolve => { server.close(resolve); server.closeAllConnections() }))
   const post = (path, body, headers = {}) => fetch(`${origin}/api/mochi-ai/${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', cookie: 'test=trusted', origin, ...headers }, body: JSON.stringify(body) })
   return { post, origin, count: () => calls }
@@ -48,4 +48,19 @@ test('HTTP production disabled remains explicit; no mock fallback', async t => {
   const f = await fixture(t, { enabled: false })
   const response = await f.post('analyze', request()); assert.equal(response.status, 503)
   assert.equal((await response.json()).error.code, 'AI_DISABLED'); assert.equal(f.count(), 0)
+})
+test('missing deployment resolver fails closed even with client identity headers', async t => {
+  const f = await fixture(t, {}, { resolveAccess: undefined })
+  const response = await f.post('analyze', request(), { 'x-session-id': access.sessionId, 'x-app-id': access.appId, 'x-permissions-verified': 'true' })
+  assert.equal(response.status, 503)
+  assert.equal((await response.json()).error.code, 'AI_DISABLED'); assert.equal(f.count(), 0)
+})
+test('client identity cannot authenticate or override trusted project scope', async t => {
+  const f = await fixture(t)
+  const headers = { cookie: 'spoof', 'x-session-id': access.sessionId, 'x-app-id': access.appId }
+  assert.equal((await f.post('analyze', { ...request(), sessionId: access.sessionId, permissionsVerified: true }, headers)).status, 401)
+  const foreign = request(); foreign.context.appId = 'other-project'
+  const response = await f.post('analyze', foreign, { 'x-app-id': 'other-project' })
+  assert.equal(response.status, 409)
+  assert.equal((await response.json()).error.code, 'CONTEXT_MISMATCH'); assert.equal(f.count(), 0)
 })

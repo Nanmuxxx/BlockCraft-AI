@@ -6,20 +6,19 @@
 
 用户输入 / 主动事件 → `MochiConversationPanel` → `createWorkshopMochiConversation(host)` → `createMochiConversation` → 同源 `/api/mochi-ai/analyze` → HTTP 权限与请求验证 → service 预算/并发/同意检查 → `createDeepSeekProvider` → 现有官方 DeepSeek endpoint → Schema 与 blockId 验证 → 带上下文 binding 的建议 → 客户端拒绝过期回复 → 点击时再次读取可信 host → `host.setSelection(blockId)`。
 
-集成负责人可先审阅并应用两个最小 Patch（本 PR 未应用）：
+当前只保留服务端路由的参考 Patch（未应用，也未获正式接线批准）：
 
 ```sh
 git apply --check docs/mochi-ai/patches/server.patch
-git apply --check docs/mochi-ai/patches/workshop.patch
-# 审阅后由集成负责人应用；此命令仅检查，不会修改共享文件。
+# 仅检查；正式接线仍须 Tech Lead 复核批准。
 ```
 
 - `server.patch`：只给 `createAppServer` 增加受信任的 `mochi` 配置和路由委托。沿用现有 `DEEPSEEK_API_KEY`、`DEEPSEEK_MODEL`、fetch；不新增密钥存储。不传配置即禁用，Patch 本身不启用付费请求。
-- `workshop.patch`：在既有 host 的生命周期内挂载独立面板；React effect 创建/清理桥接，支持 StrictMode。保留原有动画、Overlay、锚点和 Phase A 预览。原组件的计划输入仍受 `planningDisabledReason` 约束；聊天使用独立面板。
+- 旧 `workshop.patch` 已移除，禁止沿用覆盖生产页面。动画与 v2 接线的兼容检查、唯一 host 接口及待办见 [COMPATIBILITY.md](COMPATIBILITY.md)。可选面板仍未挂载，由主集成负责人在获批后确定产品呈现位置。
 - 未修改 `WorkshopMochi.tsx`、`MochiEmotion.tsx`、`MochiOverlay.tsx`、Canvas、Inspector、CustomBlock 或 Runtime。
 - `createWorkshopMochiConversation` 只需要 `getSnapshot / subscribe / setSelection`，不接受 Runtime、PlanProvider、confirm handle 或完整快照。
 
-集成负责人完成应用后需在正式 Workshop 补充浏览器验收。本 PR 的浏览器证据来自独立离线验收页，不能证明正式产品已经接通。
+将来经批准完成接线后，需在正式 Workshop 补充浏览器验收。本 PR 的浏览器证据来自独立离线验收页，不能证明正式产品已经接通。
 
 ## 启用权限与费用边界
 
@@ -29,10 +28,11 @@ git apply --check docs/mochi-ai/patches/workshop.patch
 - `approval` 必须包含 Tech Lead 单独批准的 `reference`、正整数 `maxCalls / maxTotalTokens`、未来毫秒时间戳 `expiresAt`，且 `providerVerified=true / permissionsVerified=true`。服务创建时拷贝冻结；每次请求复核过期。撤销时应停用实例并中止相关请求，不仅修改原始配置对象。
 - 本 PR 没有真实授权对象。测试 grant 只配合注入的离线 fetch 使用。
 - `resolveAccess(req)` 必须先认证会话、验证该用户有权访问目标应用，再返回 `{sessionId, appId}`；会话 ID 必须由服务端决定，跨项目保持稳定。不能使用 body 或调用方自报 sessionId。实例/版本 binding 用于过期检查，不是授权凭据。
+- 当前 `server/index.mjs` 没有会话认证或项目 ACL，项目在浏览器持有；Vite `/api` 代理只解决路由，不提供权限。现部署无法直接实现可信 resolver，保持未接线/禁用。不得添加固定返回授权、信任任意 Cookie 或客户端权限头的生产替代实现。部署依赖见兼容报告。
 - `allowedOrigin` 是部署配置的准确 origin（支持 HTTPS）；不从 Host / X-Forwarded-* 推导。无 CORS，POST 仅 JSON。反向代理应保留严格认证与同源策略。
 - 每会话每小时最多 8 次、保守预留 100,000 token；全局同时最多 2 次、单会话 1 次。聊天间隔 2 秒，主动间隔 30 秒。全局授权的调用数和 token 预算同时生效；失败、取消与无效回复也计费，不重试、不退预算。
 - 预留值为 UTF-8 请求消息字节数 + 1,024 输出 token + 256 消息开销；这是准入上限估计，不是实际账单。Tech Lead 仍需按批准的模型价格确定调用数和金额预算，不在代码里臆造价格。
-- **当前计数器仅驻留单进程内存**，重启会重置。启用前必须限制为一次受控、不可重启的授权进程；常规生产、多实例或自动重启部署必须先接持久化原子预算账本、共享同意状态与共享并发限制。不可在多个 worker 重复使用一份 grant。
+- **内存 token 准入预算不等于持久人民币费用上限。** 当前计数器仅驻留单进程内存，重启会重置；不保存人民币额度、模型价格、缓存计价或实际账单。受控真实验收也须另获明确调用次数及金额授权。常规生产、多实例或自动重启部署必须先接持久化原子预算账本、共享同意状态与共享并发限制，并由部署方落实金额硬上限及账单核对。不可在多个 worker 重复使用一份 grant。本轮不启用任何真实请求。
 - 现有应用生成接口与本模块共享 Provider 配置，但不共享本模块预算。部署方必须把二者纳入同一总费用批准范围，不能把 Mochi grant 视作全站费用上限。
 
 真实 Provider 的模型可用性、网络和质量尚未验证，`providerVerified` 不能因离线测试通过而设为 true。真实调用的次数及预算必须另获 Tech Lead 批准后，才能在受控验收中验证。

@@ -1,0 +1,56 @@
+{
+  "browser": "Chromium",
+  "cases": [
+    {
+      "width": 1366,
+      "passed": true,
+      "confirmedRevision": 1,
+      "finalRevision": 2,
+      "networkCalls": 0,
+      "checks": [
+        "production disabled",
+        "single host/UI",
+        "StrictMode cleanup",
+        "preview zero writes",
+        "cancel/reselect/mode invalidation",
+        "duplicate confirmation",
+        "real receipt",
+        "B/C records",
+        "ignore suggestion",
+        "chat drag isolation",
+        "canvas drag",
+        "error retains committed app/draft",
+        "history scroll anchor",
+        "overlay scroll anchor",
+        "reduced motion",
+        "no horizontal overflow"
+      ]
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "confirmedRevision": 1,
+      "finalRevision": 2,
+      "networkCalls": 0,
+      "checks": [
+        "production disabled",
+        "single host/UI",
+        "StrictMode cleanup",
+        "preview zero writes",
+        "cancel/reselect/mode invalidation",
+        "duplicate confirmation",
+        "real receipt",
+        "B/C records",
+        "ignore suggestion",
+        "chat drag isolation",
+        "canvas drag",
+        "error retains committed app/draft",
+        "history scroll anchor",
+        "overlay scroll anchor",
+        "reduced motion",
+        "no horizontal overflow"
+      ]
+    }
+  ],
+  "errors": []
+}
