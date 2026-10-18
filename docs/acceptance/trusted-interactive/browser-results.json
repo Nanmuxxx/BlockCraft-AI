@@ -1,0 +1,41 @@
+{
+  "source": "offline-fixture",
+  "paidCalls": 0,
+  "fixtureCalls": 8,
+  "browser": "151.0.7922.34",
+  "evidence": [
+    {
+      "viewport": "desktop",
+      "size": {
+        "width": 1440,
+        "height": 1000
+      },
+      "passed": [
+        "request-to-validated-config",
+        "B-config",
+        "C-start-pause-resume-reset-completion",
+        "mode-anchor-preserved",
+        "failed-generation-preserves-owner",
+        "ZIP-explicit-refusal",
+        "timer-fits-viewport"
+      ]
+    },
+    {
+      "viewport": "mobile",
+      "size": {
+        "width": 390,
+        "height": 844
+      },
+      "passed": [
+        "request-to-validated-config",
+        "B-config",
+        "C-start-pause-resume-reset-completion",
+        "mode-anchor-preserved",
+        "failed-generation-preserves-owner",
+        "ZIP-explicit-refusal",
+        "timer-fits-viewport"
+      ]
+    }
+  ],
+  "pageErrors": []
+}

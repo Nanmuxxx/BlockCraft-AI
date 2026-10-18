@@ -52,3 +52,27 @@ export async function generateProject(idea: string, signal?: AbortSignal): Promi
     signal?.removeEventListener('abort', abort)
   }
 }
+
+export interface InteractiveGeneration { state: ProjectState; source: 'deepseek' | 'offline-fixture'; model: string }
+/** Opt-in extension; legacy v1 generation response and UI path stay available. */
+export async function generateInteractiveProject(idea: string, signal?: AbortSignal): Promise<InteractiveGeneration> {
+  const input = idea.trim()
+  if (!input || input.length > 4000) throw new Error('请输入 1–4000 字的软件创意。')
+  const controller = new AbortController()
+  const abort = () => controller.abort()
+  signal?.addEventListener('abort', abort, { once: true })
+  if (signal?.aborted) abort()
+  const timeout = setTimeout(abort, 45000)
+  try {
+    const response = await fetch('/api/ai/generate', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idea: input, protocol: 'trusted-interactive/1' }), signal: controller.signal,
+    })
+    const reply = await response.json()
+    if (!response.ok) throw new Error(`可信交互生成失败：${reply?.error?.code ?? response.status}。当前部署需可信会话、Tech Lead 批准及费用预算。`)
+    if (reply?.protocol !== 'trusted-interactive/1' || !['deepseek', 'offline-fixture'].includes(reply?.provenance?.source) || typeof reply?.provenance?.model !== 'string') throw new Error('生成来源校验失败。')
+    const state = initializeGeneratedProject(reply.spec)
+    if (state.spec.version !== 2 || state.spec.blocks.length !== 1 || state.spec.blocks[0].type !== 'pomodoro' || state.spec.entities.length || state.spec.relations.length) throw new Error('可信番茄钟配置校验失败。')
+    return { state, ...reply.provenance }
+  } finally { clearTimeout(timeout); signal?.removeEventListener('abort', abort) }
+}

@@ -33,10 +33,11 @@ function apply(state: ProjectState, command: Exclude<AppCommand, { type: 'undo' 
       spec.blocks = spec.blocks.filter(b => b.id !== command.blockId)
       spec.relations = spec.relations.filter(r => r.blockId !== command.blockId)
       delete state.blockPositions[command.blockId]
+      if (state.timers) delete state.timers[command.blockId]
       break
     case 'configureBlockFields': {
       const b = spec.blocks.find(b => b.id === command.blockId)
-      ensure(b && b.type !== 'metric', 'Display fields require list or form')
+      ensure(b && (b.type === 'list' || b.type === 'form'), 'Display fields require list or form')
       b.fieldIds = [...command.fieldIds]
       break
     }
@@ -53,7 +54,7 @@ function apply(state: ProjectState, command: Exclude<AppCommand, { type: 'undo' 
         e.fields[index] = clone(command.field)
       } else {
         const bound = new Set(spec.relations.filter(r => r.entityId === e.id).map(r => r.blockId))
-        ensure(!spec.blocks.some(b => bound.has(b.id) && (b.type === 'metric' ? b.aggregation !== 'count' && b.fieldId === command.fieldId : b.fieldIds.includes(command.fieldId))), 'Field referenced by block', 'FIELD_REFERENCED')
+        ensure(!spec.blocks.some(b => bound.has(b.id) && (b.type === 'metric' ? b.aggregation !== 'count' && b.fieldId === command.fieldId : b.type !== 'pomodoro' && b.fieldIds.includes(command.fieldId))), 'Field referenced by block', 'FIELD_REFERENCED')
         ensure(!(state.records[e.id] ?? []).some(row => Object.prototype.hasOwnProperty.call(row.values, command.fieldId)), 'Field contains business data', 'FIELD_REFERENCED')
         e.fields.splice(index, 1)
       }

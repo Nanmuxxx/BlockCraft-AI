@@ -13,7 +13,7 @@ function position(value: unknown) {
 export function assertCustomProjectStructure(input: unknown): asserts input is CustomProject {
   assertJson(input); object(input); keys(input, ['formatVersion', 'revision', 'base', 'custom', 'renderOrder'])
   check(input.formatVersion === 2, 'Unknown project format version'); revision(input.revision)
-  object(input.base); keys(input.base, ['spec', 'records', 'blockPositions'])
+  object(input.base); keys(input.base, ['spec', 'records', 'blockPositions'], ['timers'])
   assertProjectState({ revision: input.revision, ...input.base })
   const base = input.base as unknown as CustomProject['base']
   const globalIds = new Set([base.spec.id, ...base.spec.entities.flatMap(e => [e.id, ...e.fields.map(f => f.id)]), ...base.spec.blocks.map(b => b.id), ...base.spec.relations.map(r => r.id)])
@@ -77,6 +77,7 @@ export function exportProjectState(input: unknown) {
   assertCustomProjectStructure(input)
   check(input.custom.instances.length === 0 && Object.keys(input.custom.positions).length === 0 && Object.keys(input.custom.states).length === 0, 'Custom project cannot be exported as v1', 'LOSSY_EXPORT')
   check(input.renderOrder.every((item, index) => item.kind === 'builtin' && item.id === input.base.spec.blocks[index].id), 'v1 export would lose render order', 'LOSSY_EXPORT')
+  check(input.base.spec.version === 1, 'AppSpec v2 cannot be exported as v1', 'LOSSY_EXPORT')
   const result = cloneJson({ revision: input.revision, ...input.base })
   assertProjectState(result)
   return result

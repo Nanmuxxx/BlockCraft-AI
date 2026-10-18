@@ -1,0 +1,471 @@
+{
+  "baseline": "7e94dc9568501dd4ad218a43b5aca31026aed2b2",
+  "browserVersion": "151.0.7922.34",
+  "touchDevice": false,
+  "cases": [
+    {
+      "width": 1366,
+      "height": 768,
+      "passed": true,
+      "confirmedRevision": 1,
+      "finalRevision": 4,
+      "networkCalls": 0,
+      "checks": [
+        "production disabled",
+        "single host/UI",
+        "StrictMode cleanup",
+        "preview zero writes",
+        "cancel/reselect invalidation",
+        "B/C preserves plan",
+        "request cancel/late resolve/reject isolation",
+        "host replacement isolation",
+        "late failure after unmount",
+        "explicit commit failure",
+        "post-write subscriber exception is UNKNOWN",
+        "duplicate confirmation",
+        "real receipt",
+        "B/C records",
+        "ignore suggestion",
+        "chat drag isolation",
+        "canvas drag",
+        "error retains committed app/draft",
+        "history scroll anchor",
+        "overlay scroll anchor",
+        "reduced motion",
+        "no horizontal overflow"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "passed": true,
+      "confirmedRevision": 1,
+      "finalRevision": 4,
+      "networkCalls": 0,
+      "checks": [
+        "production disabled",
+        "single host/UI",
+        "StrictMode cleanup",
+        "preview zero writes",
+        "cancel/reselect invalidation",
+        "B/C preserves plan",
+        "request cancel/late resolve/reject isolation",
+        "host replacement isolation",
+        "late failure after unmount",
+        "explicit commit failure",
+        "post-write subscriber exception is UNKNOWN",
+        "duplicate confirmation",
+        "real receipt",
+        "B/C records",
+        "ignore suggestion",
+        "chat drag isolation",
+        "canvas drag",
+        "error retains committed app/draft",
+        "history scroll anchor",
+        "overlay scroll anchor",
+        "reduced motion",
+        "no horizontal overflow"
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "F1-late-success",
+      "width": 1366,
+      "result": "PASS",
+      "newerRequestId": "mochi-d9866ee7-642f-4eb0-9230-8413ee7551aa-2",
+      "providerCalls": 2
+    },
+    {
+      "id": "F1-late-failure",
+      "width": 1366,
+      "result": "PASS",
+      "newerRequestId": "mochi-d9866ee7-642f-4eb0-9230-8413ee7551aa-4",
+      "providerCalls": 4
+    },
+    {
+      "id": "F1-invalid-input-and-retry",
+      "width": 1366,
+      "result": "PASS",
+      "preservedPlanId": "mochi-c2714a05-8941-4203-baeb-68839e2b4a3d-3-plan",
+      "correctedPlanId": "mochi-c2714a05-8941-4203-baeb-68839e2b4a3d-4-plan",
+      "revision": 0
+    },
+    {
+      "id": "F2-missed-notification",
+      "width": 1366,
+      "result": {
+        "ok": true,
+        "duplicate": false,
+        "committedRevision": 4
+      },
+      "missed": true,
+      "beforeRevision": 3,
+      "snapshot": {
+        "revision": 4,
+        "spec": {
+          "version": 1,
+          "id": "club-registration",
+          "name": "社团迎新报名",
+          "entities": [
+            {
+              "id": "applicants",
+              "name": "报名者",
+              "fields": [
+                {
+                  "id": "applicant-name",
+                  "name": "姓名",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "id": "department",
+                  "name": "意向部门",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                    "宣传部",
+                    "策划部",
+                    "技术部"
+                  ]
+                },
+                {
+                  "id": "available",
+                  "name": "可参加面试",
+                  "type": "boolean",
+                  "required": false
+                },
+                {
+                  "id": "mochi-c2714a05-8941-4203-baeb-68839e2b4a3d-4-field",
+                  "name": "Mock 备注",
+                  "type": "text",
+                  "required": false
+                },
+                {
+                  "id": "mochi-c2714a05-8941-4203-baeb-68839e2b4a3d-16-field",
+                  "name": "Mock 备注",
+                  "type": "text",
+                  "required": false
+                }
+              ]
+            }
+          ],
+          "blocks": [
+            {
+              "id": "registration-form",
+              "name": "报名表",
+              "type": "form",
+              "fieldIds": [
+                "applicant-name",
+                "department",
+                "available",
+                "mochi-c2714a05-8941-4203-baeb-68839e2b4a3d-4-field",
+                "mochi-c2714a05-8941-4203-baeb-68839e2b4a3d-16-field"
+              ]
+            },
+            {
+              "id": "applicant-list",
+              "name": "报名名单",
+              "type": "list",
+              "fieldIds": [
+                "applicant-name",
+                "department"
+              ]
+            },
+            {
+              "id": "applicant-total",
+              "name": "报名人数",
+              "type": "metric",
+              "aggregation": "count"
+            }
+          ],
+          "relations": [
+            {
+              "id": "registration-binding",
+              "type": "dataBinding",
+              "blockId": "registration-form",
+              "entityId": "applicants"
+            },
+            {
+              "id": "applicant-list-binding",
+              "type": "dataBinding",
+              "blockId": "applicant-list",
+              "entityId": "applicants"
+            },
+            {
+              "id": "applicant-total-binding",
+              "type": "dataBinding",
+              "blockId": "applicant-total",
+              "entityId": "applicants"
+            }
+          ]
+        },
+        "records": {
+          "applicants": [
+            {
+              "id": "applicant-001",
+              "values": {
+                "applicant-name": "小林",
+                "department": "技术部",
+                "available": true
+              }
+            }
+          ]
+        },
+        "blockPositions": {
+          "registration-form": {
+            "x": 0.20022371364653244,
+            "y": 0.5777777777777777
+          },
+          "applicant-list": {
+            "x": 0.31,
+            "y": 0.41
+          }
+        }
+      }
+    },
+    {
+      "id": "legacy-demo-cancel",
+      "width": 1366,
+      "result": "PASS",
+      "beforeTasks": [
+        {
+          "checked": false,
+          "title": "完成线性代数第三章习题"
+        },
+        {
+          "checked": true,
+          "title": "整理英语听力错题"
+        },
+        {
+          "checked": false,
+          "title": "复习 Python 函数与列表"
+        }
+      ],
+      "statsBefore": "任务总数\n3 项\n已经完成\n1 项\n任务完成率\n33%",
+      "expectedPrioritySelectors": 0
+    },
+    {
+      "id": "legacy-demo-confirm",
+      "width": 1366,
+      "result": "PASS",
+      "beforeTasks": [
+        {
+          "checked": false,
+          "title": "完成线性代数第三章习题"
+        },
+        {
+          "checked": true,
+          "title": "整理英语听力错题"
+        },
+        {
+          "checked": false,
+          "title": "复习 Python 函数与列表"
+        }
+      ],
+      "statsBefore": "任务总数\n3 项\n已经完成\n1 项\n任务完成率\n33%",
+      "expectedPrioritySelectors": 3
+    },
+    {
+      "id": "F1-late-success",
+      "width": 390,
+      "result": "PASS",
+      "newerRequestId": "mochi-80eee7c3-4855-433c-97b4-7a8925132744-2",
+      "providerCalls": 2
+    },
+    {
+      "id": "F1-late-failure",
+      "width": 390,
+      "result": "PASS",
+      "newerRequestId": "mochi-80eee7c3-4855-433c-97b4-7a8925132744-4",
+      "providerCalls": 4
+    },
+    {
+      "id": "F1-invalid-input-and-retry",
+      "width": 390,
+      "result": "PASS",
+      "preservedPlanId": "mochi-2114e322-4449-48df-8432-2ed14a62f652-3-plan",
+      "correctedPlanId": "mochi-2114e322-4449-48df-8432-2ed14a62f652-4-plan",
+      "revision": 0
+    },
+    {
+      "id": "F2-missed-notification",
+      "width": 390,
+      "result": {
+        "ok": true,
+        "duplicate": false,
+        "committedRevision": 4
+      },
+      "missed": true,
+      "beforeRevision": 3,
+      "snapshot": {
+        "revision": 4,
+        "spec": {
+          "version": 1,
+          "id": "club-registration",
+          "name": "社团迎新报名",
+          "entities": [
+            {
+              "id": "applicants",
+              "name": "报名者",
+              "fields": [
+                {
+                  "id": "applicant-name",
+                  "name": "姓名",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "id": "department",
+                  "name": "意向部门",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                    "宣传部",
+                    "策划部",
+                    "技术部"
+                  ]
+                },
+                {
+                  "id": "available",
+                  "name": "可参加面试",
+                  "type": "boolean",
+                  "required": false
+                },
+                {
+                  "id": "mochi-2114e322-4449-48df-8432-2ed14a62f652-4-field",
+                  "name": "Mock 备注",
+                  "type": "text",
+                  "required": false
+                },
+                {
+                  "id": "mochi-2114e322-4449-48df-8432-2ed14a62f652-16-field",
+                  "name": "Mock 备注",
+                  "type": "text",
+                  "required": false
+                }
+              ]
+            }
+          ],
+          "blocks": [
+            {
+              "id": "registration-form",
+              "name": "报名表",
+              "type": "form",
+              "fieldIds": [
+                "applicant-name",
+                "department",
+                "available",
+                "mochi-2114e322-4449-48df-8432-2ed14a62f652-4-field",
+                "mochi-2114e322-4449-48df-8432-2ed14a62f652-16-field"
+              ]
+            },
+            {
+              "id": "applicant-list",
+              "name": "报名名单",
+              "type": "list",
+              "fieldIds": [
+                "applicant-name",
+                "department"
+              ]
+            },
+            {
+              "id": "applicant-total",
+              "name": "报名人数",
+              "type": "metric",
+              "aggregation": "count"
+            }
+          ],
+          "relations": [
+            {
+              "id": "registration-binding",
+              "type": "dataBinding",
+              "blockId": "registration-form",
+              "entityId": "applicants"
+            },
+            {
+              "id": "applicant-list-binding",
+              "type": "dataBinding",
+              "blockId": "applicant-list",
+              "entityId": "applicants"
+            },
+            {
+              "id": "applicant-total-binding",
+              "type": "dataBinding",
+              "blockId": "applicant-total",
+              "entityId": "applicants"
+            }
+          ]
+        },
+        "records": {
+          "applicants": [
+            {
+              "id": "applicant-001",
+              "values": {
+                "applicant-name": "小林",
+                "department": "技术部",
+                "available": true
+              }
+            }
+          ]
+        },
+        "blockPositions": {
+          "registration-form": {
+            "x": 0.5887573964497042,
+            "y": 0.16111111111111112
+          },
+          "applicant-list": {
+            "x": 0.31,
+            "y": 0.41
+          }
+        }
+      }
+    },
+    {
+      "id": "legacy-demo-cancel",
+      "width": 390,
+      "result": "PASS",
+      "beforeTasks": [
+        {
+          "checked": false,
+          "title": "完成线性代数第三章习题"
+        },
+        {
+          "checked": true,
+          "title": "整理英语听力错题"
+        },
+        {
+          "checked": false,
+          "title": "复习 Python 函数与列表"
+        }
+      ],
+      "statsBefore": "任务总数\n3 项\n已经完成\n1 项\n任务完成率\n33%",
+      "expectedPrioritySelectors": 0
+    },
+    {
+      "id": "legacy-demo-confirm",
+      "width": 390,
+      "result": "PASS",
+      "beforeTasks": [
+        {
+          "checked": false,
+          "title": "完成线性代数第三章习题"
+        },
+        {
+          "checked": true,
+          "title": "整理英语听力错题"
+        },
+        {
+          "checked": false,
+          "title": "复习 Python 函数与列表"
+        }
+      ],
+      "statsBefore": "任务总数\n3 项\n已经完成\n1 项\n任务完成率\n33%",
+      "expectedPrioritySelectors": 3
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [],
+  "blockedRequests": [],
+  "finishedAt": "2026-10-18T14:59:37.601Z"
+}

@@ -2,6 +2,7 @@ import { useState, useSyncExternalStore } from 'react'
 import type { BlockSpec, EntityRecord, FieldSpec } from '../../model/appSpec'
 import { metricValue, parseFieldDraft, type AppRuntime, type FieldDraft } from '../../model/appRuntime'
 import './app-renderer.css'
+import { Pomodoro } from './Pomodoro'
 
 function RecordEditor({ fields, initial, onSave, onCancel }: {
   fields: FieldSpec[]; initial?: EntityRecord
@@ -83,6 +84,7 @@ export function BuiltinBlockRenderer({ runtime, blockId }: { runtime: AppRuntime
   const block = state.spec.blocks.find(block => block.id === blockId)
   const binding = state.spec.relations.find(relation => relation.blockId === blockId)
   const entity = state.spec.entities.find(entity => entity.id === binding?.entityId)
+  if (block?.type === 'pomodoro') return <Pomodoro runtime={runtime} block={block} />
   if (!block || !entity) return null
   return <section className={`renderer-block renderer-block--${block.type}`} aria-label={block.name}>
     <h2>{block.name}</h2>

@@ -49,7 +49,7 @@ export function AppSpecInspector({ runtime, snapshot, blockId }: AppSpecInspecto
     submit(current => {
       const latest = target(current, blockId)
       if (!latest.block || !latest.entity) return '当前积木或绑定实体已失效，请重新选择积木。'
-      if (latest.block.type === 'metric') return '指标积木不支持展示字段配置。'
+      if (latest.block.type === 'metric' || latest.block.type === 'pomodoro') return '指标积木不支持展示字段配置。'
       const field = latest.entity.fields.find(field => field.id === fieldId)
       if (!field) return '字段已不存在，请检查当前配置。'
       if (!checked && latest.block.type === 'form' && field.required) return '表单必须展示全部必填字段，不能移除此字段。'
@@ -86,7 +86,7 @@ export function AppSpecInspector({ runtime, snapshot, blockId }: AppSpecInspecto
         <dt>积木 ID</dt><dd><code>{block.id}</code></dd>
         <dt>绑定实体</dt><dd>{entity ? <>{entity.name}<br /><code>{entity.id}</code></> : '绑定异常'}</dd>
       </dl></details>
-      {!entity ? <p role="alert">绑定异常：当前积木需要唯一的数据绑定及有效实体，请联系负责人修复。</p> : <>
+      {block.type === 'pomodoro' ? <section aria-label="番茄钟配置"><p>时长：{block.durationSeconds} 秒</p><p>可信交互协议：1 · AppSpec v2</p><p>开始 / 暂停 / 重置由内置 React 组件执行。此版本暂不支持 ZIP 导出。</p></section> : !entity ? <p role="alert">绑定异常：当前积木需要唯一的数据绑定及有效实体，请联系负责人修复。</p> : <>
         {block.type === 'metric' ? <section aria-label="当前配置">
           <h3>当前配置</h3><p>聚合：{block.aggregation}</p>
           {block.aggregation !== 'count' && <p>字段：{entity.fields.find(field => field.id === block.fieldId)?.name ?? block.fieldId}（{block.fieldId}）</p>}
