@@ -1,21 +1,43 @@
-import { useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { ArrowLeft, Blocks, Monitor } from 'lucide-react'
 import type { AppRuntime } from '../../model/appRuntime'
 import { Logo } from '../Logo'
 import { AppRenderer } from '../app-renderer/AppRenderer'
 import { AppSpecCanvas } from './AppSpecCanvas'
 import { AppSpecInspector } from './AppSpecInspector'
-import { AppSpecMochiPanel } from './AppSpecMochiPanel'
+import { createMochiHost } from '../../integrations/mochi/host'
+import { AI_MODIFICATION_DISABLED, unavailablePlanProvider } from '../../integrations/mochi/planning'
+import { WorkshopMochi, type MochiHost } from '../../integrations/mochi/WorkshopMochi'
 import '../workshop.css'
 import './app-spec-workshop.css'
 
 /** The caller owns one runtime per generated application, never per mode. */
 export function AppSpecWorkshop({ runtime }: { runtime: AppRuntime }) {
-  const [mode, setMode] = useState<'blocks' | 'run'>('blocks')
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [owner, setOwner] = useState<{ runtime: AppRuntime; host: MochiHost } | null>(null)
+  useEffect(() => {
+    // Acquire only after commit. StrictMode cleanup disposes this instance; replay
+    // acquires a new live one. B/C never acquires another host or Runtime.
+    const host = createMochiHost(runtime, unavailablePlanProvider)
+    setOwner({ runtime, host })
+    return () => host.dispose()
+  }, [runtime])
+  if (!owner || owner.runtime !== runtime) return null
+  return <MochiWorkshop runtime={runtime} host={owner.host} planningDisabledReason={AI_MODIFICATION_DISABLED} />
+}
+
+/** Internal composition seam for offline integration tests; production uses the wrapper above. */
+export function MochiWorkshop({ runtime, host, planningDisabledReason }: {
+  runtime: AppRuntime; host: MochiHost; planningDisabledReason?: string
+}) {
+  const root = useRef<HTMLElement>(null)
+  const view = useSyncExternalStore(host.subscribe, host.getSnapshot, host.getSnapshot)
+  const mode = view.mode
+  const selectedId = view.context.selectedBlockId
+  const setMode = host.setMode
+  const setSelectedId = host.setSelection
   const snapshot = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
   const selected = snapshot.spec.blocks.some(block => block.id === selectedId) ? selectedId : null
-  return <section className="workshop app-spec-workshop" aria-label="生成的应用">
+  return <section ref={root} className="workshop app-spec-workshop" aria-label="生成的应用">
     <header className="workshop__topbar"><Logo />
       <div className="workshop__project"><span className="workshop__project-icon"><Blocks size={20} aria-hidden="true" /></span><div><h1>{snapshot.spec.name}</h1><span>Workshop · 创作工坊</span></div></div>
       <div className="workshop__modes" role="group" aria-label="工作模式">
@@ -35,7 +57,7 @@ export function AppSpecWorkshop({ runtime }: { runtime: AppRuntime }) {
         <div className="workshop__preview-stage" id="generated-preview" hidden={mode !== 'run'}><div className="study-app"><header className="study-app__topbar"><div className="study-app__brand"><span><Blocks size={18} aria-hidden="true" /></span><strong>{snapshot.spec.name}</strong><small>YOUR APP</small></div></header><div className="app-spec-preview-content"><AppRenderer runtime={runtime} /></div></div></div>
         <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
       </div>
-      <aside className="app-spec-workshop__sidebar" aria-label="创作助手与积木属性"><AppSpecMochiPanel snapshot={snapshot} blockId={selected} /><div hidden={mode !== 'blocks'}><AppSpecInspector key={selected ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selected} /></div></aside>
+      <aside className="app-spec-workshop__sidebar" aria-label="创作助手与积木属性"><WorkshopMochi host={host} view={view} root={root} planningDisabledReason={planningDisabledReason} /><div hidden={mode !== 'blocks'}><AppSpecInspector key={selected ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selected} /></div></aside>
     </div>
   </section>
 }

@@ -1,4 +1,4 @@
-.app-spec-workshop { min-width: 0; }
+.app-spec-workshop { min-width: 0; position: relative; }
 .app-spec-workshop [hidden] { display: none !important; }
 .app-spec-workshop .workshop__project, .app-spec-workshop .workshop__project > div { min-width: 0; }
 .app-spec-workshop .workshop__project { flex: 1; }
@@ -9,6 +9,10 @@
 .app-spec-workshop__sidebar { min-width: 0; border-left: 1px solid var(--line); background: #fffaf3; }
 .app-spec-workshop__sidebar .app-spec-mochi { border: 0; padding: 24px 18px 12px; }
 .app-spec-workshop__sidebar > div { padding: 0 14px 24px; }
+.app-spec-workshop__sidebar > .app-spec-workshop__mochi { padding: 0; }
+.app-spec-workshop__mochi .mochi-ai { border: 0; }
+.app-spec-workshop__mochi .mochi-ai__history { flex: none; height: 180px; }
+.app-spec-workshop__mochi .mochi-ai__diff { overflow-wrap: anywhere; word-break: break-word; }
 .app-spec-workshop .mochi-panel__speech p, .app-spec-workshop .mochi-panel__speech small { overflow-wrap: anywhere; }
 .app-spec-preview-content { padding: 22px; }
 .app-spec-workshop .app-renderer { grid-template-columns: minmax(0, 1fr); gap: 16px; }

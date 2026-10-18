@@ -1,0 +1,69 @@
+{
+  "verifiedAtUtc": "2026-10-18T09:21:32.205661+00:00",
+  "mainSha": "16cd342550b7989ad2d555687b8b867a06f3a2bf",
+  "priorIntegrationHead": "ecf7864bbdee109295122a27ae400ad38a519c36",
+  "validatedApplicationTree": "c1bdc49e989cfbd3abc04fa45e6c3e4a9fe7f789",
+  "scope": "Real Chromium and Runtime; fixed Mock only in test fixture; production modification capability disabled",
+  "validation": {
+    "projectTests": 157,
+    "hostTestsIncludedInProject": 24,
+    "generationTests": 23,
+    "typescript": "passed",
+    "productionBuild": "passed",
+    "generationBrowser": "7 offline apps, 13 local injected HTTP requests, zero paid calls"
+  },
+  "browser": "Chromium",
+  "cases": [
+    {
+      "width": 1366,
+      "passed": true,
+      "confirmedRevision": 1,
+      "finalRevision": 2,
+      "networkCalls": 0,
+      "checks": [
+        "production disabled",
+        "single host/UI",
+        "StrictMode cleanup",
+        "preview zero writes",
+        "cancel/reselect/mode invalidation",
+        "duplicate confirmation",
+        "real receipt",
+        "B/C records",
+        "ignore suggestion",
+        "chat drag isolation",
+        "canvas drag",
+        "error retains committed app/draft",
+        "history scroll anchor",
+        "overlay scroll anchor",
+        "reduced motion",
+        "no horizontal overflow"
+      ]
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "confirmedRevision": 1,
+      "finalRevision": 2,
+      "networkCalls": 0,
+      "checks": [
+        "production disabled",
+        "single host/UI",
+        "StrictMode cleanup",
+        "preview zero writes",
+        "cancel/reselect/mode invalidation",
+        "duplicate confirmation",
+        "real receipt",
+        "B/C records",
+        "ignore suggestion",
+        "chat drag isolation",
+        "canvas drag",
+        "error retains committed app/draft",
+        "history scroll anchor",
+        "overlay scroll anchor",
+        "reduced motion",
+        "no horizontal overflow"
+      ]
+    }
+  ],
+  "errors": []
+}
