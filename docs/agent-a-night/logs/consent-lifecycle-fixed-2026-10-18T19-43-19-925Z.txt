@@ -1,0 +1,45 @@
+✔ deadline retires ignored fetch abort (10.714667ms)
+✔ deadline retires ignored body abort (11.516417ms)
+✔ caller cancellation retires transport and cancels a late response body (0.331458ms)
+✔ reader cleanup cannot retain a completed response (0.368083ms)
+✔ reject malformed UTF-8 195-40 inside JSON (0.425208ms)
+✔ reject malformed UTF-8 228-184 inside JSON (0.110416ms)
+✔ declared oversized response is cancelled before acquiring a reader (0.217708ms)
+✔ valid split multibyte UTF-8 remains accepted (0.363875ms)
+✔ inherited error code constructor remains sanitized (0.147125ms)
+✔ inherited error code __proto__ remains sanitized (0.1285ms)
+✔ inherited error code toString remains sanitized (0.1215ms)
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (2.240583ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.799208ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.589083ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.333833ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.190292ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.177583ms)
+✔ cancel retires an ignored analysis promise without altering newer history (1.650542ms)
+✔ abort listener reentry retains ownership of the newer conversation request (0.275375ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.06975ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (22.756292ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.089167ms)
+✔ late status cannot re-enable consent after explicit off (0.065ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.145084ms)
+✔ subscriber cancellation during message publication prevents analysis egress (0.102042ms)
+✔ subscriber cancellation during busy publication prevents analysis egress (0.06425ms)
+✔ subscriber replacement at request publication keeps only the fresh analysis and history (0.163084ms)
+✔ project transition publishes the new identity before abort reentry (0.174125ms)
+✔ project transition publishes the new identity before subscriber reentry (0.107917ms)
+✔ context synchronization is idempotent inside a state subscriber (0.042291ms)
+✔ a newer project transition during notification cannot be overwritten by the older transition (0.098666ms)
+✔ project changed during context notification blocks stale-context egress (0.059042ms)
+✔ project changed during busy notification blocks stale-context egress (0.056875ms)
+✔ a failing state observer cannot skip transport cancellation or later observers (0.114166ms)
+✔ disposing a conversation prevents its queued opt-in and delayed status egress (1.767542ms)
+✔ an explicitly queued opt-out still revokes after disposal and an already sent opt-in (0.368084ms)
+✔ host bridge listens to settled structural events, ignores records/anchors/mode, and cleans up (51.844292ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 83.880459

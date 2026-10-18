@@ -1,5 +1,50 @@
 [
   {
+    "path": "docs/agent-a-night/browser/admission-artifact/installed-1366.png",
+    "bytes": 312947,
+    "sha256": "b3a7485da0a653e60a37924e853d12c426cd830bc5b6935df06a118acb938a23"
+  },
+  {
+    "path": "docs/agent-a-night/browser/admission-artifact/installed-390.png",
+    "bytes": 285020,
+    "sha256": "84d3561528d827257c99ddb6b55b63a818480845d3eecbf9707afae072026d28"
+  },
+  {
+    "path": "docs/agent-a-night/browser/admission-artifact/preview-1366.png",
+    "bytes": 269693,
+    "sha256": "e4bd603f9acd369f939802d43132f0b06874d3bd8426028c26fc0d529405aec9"
+  },
+  {
+    "path": "docs/agent-a-night/browser/admission-artifact/preview-390.png",
+    "bytes": 246753,
+    "sha256": "2126789b29db72cd95a7d4fda6ab7a3a3d225289115d95f2df7c324c06f095c6"
+  },
+  {
+    "path": "docs/agent-a-night/browser/admission-artifact/report.json",
+    "bytes": 1692,
+    "sha256": "f6535b585d160914801f6332722c29bc2bbac1a264e349a3e6f321c6fc50708f"
+  },
+  {
+    "path": "docs/agent-a-night/browser/admission-artifact/unavailable-1366.png",
+    "bytes": 158294,
+    "sha256": "f596190429e8f5458c115e22b808a38be52be3536748ed60dbeb73ecd7bfc138"
+  },
+  {
+    "path": "docs/agent-a-night/browser/admission-artifact/unavailable-390.png",
+    "bytes": 143041,
+    "sha256": "e9352a8b5b9d4c38fb7832b8bd8b65e3132b93f47e0b3da5a30b756bdc9a1e9a"
+  },
+  {
+    "path": "docs/agent-a-night/browser/admission-artifact/video/page@73db1eb3bb875f8de4bdd4642daa61fb.webm",
+    "bytes": 186620,
+    "sha256": "23088da274d5c467b6a29f9d1b069d745af5316fa9faa6060a8b3ffb7c4f4d2b"
+  },
+  {
+    "path": "docs/agent-a-night/browser/admission-artifact/video/page@d5a599085ffe2ce491ac12ea947961f9.webm",
+    "bytes": 129296,
+    "sha256": "91eced9b15f428e7860b584b9ed32647c1e34a15b0f75a16ce033726d6643801"
+  },
+  {
     "path": "docs/agent-a-night/browser/advice-publication/chat-1366.png",
     "bytes": 350541,
     "sha256": "b9eba6afb1f3afd1705abe28d0c1b259d2545e326da707e6d3d0b0dcfbb57a4f"
@@ -240,6 +285,41 @@
     "sha256": "e1396f64b32162167ed24ee3b1c1807f14d01395bf967bd162506d61bad258c7"
   },
   {
+    "path": "docs/agent-a-night/browser/consent-lifecycle/chat-1366.png",
+    "bytes": 350665,
+    "sha256": "781953fa9f555bbf9c29651dd65aac0ff35f0e5ca275e8eb6b7352a31a4b14ca"
+  },
+  {
+    "path": "docs/agent-a-night/browser/consent-lifecycle/chat-390.png",
+    "bytes": 312324,
+    "sha256": "d82b828d54deb53674a5efc6c5b784a435fec8b8d007aa5d0bc4fa9bcb1390a1"
+  },
+  {
+    "path": "docs/agent-a-night/browser/consent-lifecycle/disabled-1366.png",
+    "bytes": 302404,
+    "sha256": "636527c8452886464eec5ef247fb9bc53687e9a1239507bea59ba59c592046bc"
+  },
+  {
+    "path": "docs/agent-a-night/browser/consent-lifecycle/disabled-390.png",
+    "bytes": 265590,
+    "sha256": "db243c90eae2f10572ea1b8b7f3dc24e80a81c46c5c8402c1026617222ef33eb"
+  },
+  {
+    "path": "docs/agent-a-night/browser/consent-lifecycle/panel-1366.png",
+    "bytes": 72000,
+    "sha256": "378749614619a720c9b1663ffd1714344f49156434097a943c1d35eb627f97b5"
+  },
+  {
+    "path": "docs/agent-a-night/browser/consent-lifecycle/panel-390.png",
+    "bytes": 77143,
+    "sha256": "f8d3418f25905058b5b6931cffa4f07c37f596524ee8b8fa4b0160ca850cd9d0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/consent-lifecycle/report.json",
+    "bytes": 1686,
+    "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
+  },
+  {
     "path": "docs/agent-a-night/browser/context-atomic/chat-1366.png",
     "bytes": 350388,
     "sha256": "6d7ac81785b77f465f90c527da975a6c397d88c40efc1d1f0fe8aca65cac5ec9"
@@ -318,6 +398,41 @@
     "path": "docs/agent-a-night/browser/generation/generated-c.png",
     "bytes": 125147,
     "sha256": "e377f381e8e97823aa0d9fbf3bf6823435a3245e27a0713a59a7514bdcb47f1b"
+  },
+  {
+    "path": "docs/agent-a-night/browser/host-retirement/chat-1366.png",
+    "bytes": 350662,
+    "sha256": "50537afcfe27b1285c801230acd3ef7b57a726c0fc3d8fe92b7e72fb6348d037"
+  },
+  {
+    "path": "docs/agent-a-night/browser/host-retirement/chat-390.png",
+    "bytes": 312355,
+    "sha256": "05d256deea1b05d8f9570800d4ccf0ae2f7e2c6d5c1bfe49ff7e90dbf4fc2205"
+  },
+  {
+    "path": "docs/agent-a-night/browser/host-retirement/disabled-1366.png",
+    "bytes": 302381,
+    "sha256": "50154c881db66651c94cf20a7986ff0fc75c02727e19c47df85a4e5caaa7c725"
+  },
+  {
+    "path": "docs/agent-a-night/browser/host-retirement/disabled-390.png",
+    "bytes": 265590,
+    "sha256": "db243c90eae2f10572ea1b8b7f3dc24e80a81c46c5c8402c1026617222ef33eb"
+  },
+  {
+    "path": "docs/agent-a-night/browser/host-retirement/panel-1366.png",
+    "bytes": 72000,
+    "sha256": "378749614619a720c9b1663ffd1714344f49156434097a943c1d35eb627f97b5"
+  },
+  {
+    "path": "docs/agent-a-night/browser/host-retirement/panel-390.png",
+    "bytes": 77143,
+    "sha256": "f8d3418f25905058b5b6931cffa4f07c37f596524ee8b8fa4b0160ca850cd9d0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/host-retirement/report.json",
+    "bytes": 1686,
+    "sha256": "5fa1e8f045a6e215402f25d0c55ac0bbda4ed53c16d41b6b79bbd15b66d21049"
   },
   {
     "path": "docs/agent-a-night/browser/mochi-advice/chat-1366.png",

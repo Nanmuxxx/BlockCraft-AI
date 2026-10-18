@@ -7,9 +7,11 @@
 - Agent B：`agent-b/react-zip-night-20261019`，正在修改 `tools/project-zip-export/templates.mjs`。本分支禁止编辑导出器、模板、部署及冻结材料。
 - REAL_MODEL_CALLS=0。服务测试显式注入固定 Fixture；不读取 `.env`、生产密钥或私人材料。
 
-## 当前任务（2026-10-19 02:48）
+## 当前任务（2026-10-19 03:44）
 
 已完成第一轮链路恢复、生成/协议/取消修复和离线端到端验证；继续接口审计、核心回归、生产浏览器盲区与 Draft PR 准备。六小时窗口尚未结束，不声称已工作六小时。
+
+当前：第七轮取消/Host/consent生命周期修复已完成，归档回归并同步Draft #40。下一任务：继续剩余协议及生命周期独立审计；正式修改服务、隔离Viewer、付费语义验收和跨刷新设计仍受阻。详细本轮记录在末尾。
 
 ## 已完成与 Commit
 
@@ -105,3 +107,12 @@
 - 当前：归档第六轮证据并同步Draft #40；下一任务：协议兼容、源版本/安装边界与参数持久化剩余盲区。
 - 本轮较广回归746/746及build-context-atomic退出0，时间早于最后鉴权/访问scope/Artifact观察者修复，不能宣称覆盖后续HEAD。
 - REAL_MODEL_CALLS=0；正式修改Provider和隔离Viewer仍受阻，持续安全独立开发。
+
+## 第七轮进展（03:44，继续开发）
+
+- d14d9cb：同步可信回调取消不再漏过listener注册；预算后gate取消零Provider发出；主动授权撤销后重授不能复活旧请求。旧实现3个复现失败，相关32/32。
+- 9757f48：Host本身退休忽略AbortSignal的Provider等待，涵盖取消、选择、dispose、替换及同步取消后throw。旧实现4超时，修复相关79/79；新预览可确认、旧失败不覆盖lastApplied。首次补丁在发布前校验失败时产生未处理取消Promise，修正Promise创建位置后通过，日志保留。没有修改PR #36拥有的host.test.cjs。
+- 06bcab0：关闭会话后跳过排队opt-in和延迟status；保留已排队显式opt-out。旧夹具悬挂已终止并留日志，修正夹具后旧代码复现失败，新代码相关37/37。
+- 最新owned-family全量761/761及build-consent-lifecycle退出0，baseline06bcab0。正式Artifact页admission-artifact桌面/移动通过；Host正式只读建议页host-retirement桌面/移动通过。consent-lifecycle正式浏览器桌面/移动亦通过，代码06bcab0，0页面错误/0外部请求。
+- 当前修改：service.mjs、mochi/host.ts、mochi-ai/client.mjs、三个新增测试及证据文档。代码d14d9cb/9757f48/06bcab0已发布；小范围Commit和远端映射见清单。
+- REAL_MODEL_CALLS=0；没有部署、合并或执行生成TSX。下一安全任务：继续协议、权限和生命周期审计；准确记录生产模型摘要适配器缺口。

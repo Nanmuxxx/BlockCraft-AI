@@ -1,0 +1,39 @@
+✔ cancellation during reservation timestamp does not start downstream work (1.353917ms)
+✔ cancellation during post-budget gate does not start downstream work (0.322416ms)
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (15.452541ms)
+✔ HTTP rejects malformed UTF-8 before provider egress (3.088333ms)
+✔ ignored access resolver deadline retires HTTP admission with no model call (12.774709ms)
+✔ access resolver Error becomes a safe unavailable response (1.132083ms)
+✔ access resolver MochiError becomes a safe unavailable response (1.024292ms)
+✔ budget adapter cannot forge cancellation metadata into HTTP (1.162167ms)
+✔ HTTP disconnect aborts pending access and consumes a late rejection without egress (2.0345ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (3.580042ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (2.810041ms)
+✔ early HTTP rejection closes incomplete uploads without waiting for the remaining body (1.339667ms)
+✔ chunked uploads exceeding the body bound receive a structured 413 with no model call (0.451208ms)
+✔ chunked JSON accepts a multibyte prompt split across transport chunks (1.799041ms)
+✔ HTTP production disabled remains explicit; no mock fallback (0.723292ms)
+✔ missing deployment resolver fails closed even with client identity headers (0.909917ms)
+✔ client identity cannot authenticate or override trusted project scope (1.278416ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (1.785208ms)
+✔ default disabled, missing/expired/unverified grants make zero upstream calls (1.365708ms)
+✔ proactive requires explicit consent; events and suggestions deduplicate until cooldown (1.694458ms)
+✔ chat and proactive throttle on the server and enforce trusted application binding (0.265334ms)
+✔ global call/token budgets reserve before requests and failures are charged without retries (0.394ms)
+✔ session budget shared across projects; per-session/global concurrency bounded (0.767458ms)
+✔ revoking proactive consent aborts and discards an outstanding response (1.8045ms)
+✔ approval is snapshotted so caller mutation cannot increase the grant (0.189667ms)
+✔ trusted access is captured before budget await so later mutation cannot change dedup scope (0.147584ms)
+✔ durable monetary adapter required, deny/error/abort never reach provider (0.732084ms)
+✔ C-mode requests are rejected before budget reservation or provider (0.174917ms)
+✔ durable ledger timeout is unavailable and releases concurrency without provider egress (0.326375ms)
+✔ caller cancellation releases service despite provider ignoring abort (0.359833ms)
+✔ consent revocation releases service despite provider ignoring abort (0.166792ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 92.417875

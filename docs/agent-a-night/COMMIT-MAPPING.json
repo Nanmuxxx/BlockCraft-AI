@@ -244,5 +244,83 @@
     "remote": "44bb5e8c9158c7030a01cee5ee28e373c5d935e9",
     "tree": "018f559b3d1c5ba6745a45e5e673b9a7c079334e",
     "message": "docs(ai-core): record bounded storage and model deadlines"
+  },
+  {
+    "local": "7935647596989b3c9ef35038c9642f6f45c91a2b",
+    "remote": "77a87f37226fc7cf63f94cf8670fa6afa87960e1",
+    "tree": "b925735e4524a7d4c47b91b8ae014de32107a619",
+    "message": "docs(ai-core): archive model deadline browser and command evidence"
+  },
+  {
+    "local": "ba9fbd6528edc770a58c46a32403531207f58541",
+    "remote": "a572442ee3808670f6e2cd05e6fe09512411480d",
+    "tree": "9c033ad3637d25527e69c1ef650514ea230eeaba",
+    "message": "fix(mochi): close rejected incomplete HTTP uploads after response"
+  },
+  {
+    "local": "dac42d0d769693eefe927a3406713f4f91bded29",
+    "remote": "292f9521af341b719e153497d8a10f290e8f3c2a",
+    "tree": "b1d43386549b0ffc2a597648dd283ed69d36a42c",
+    "message": "test(mochi): cover incomplete and split chunked upload boundaries"
+  },
+  {
+    "local": "f56d2d4a93f956d376a6ccbf469d7909d129cb11",
+    "remote": "14e2d723ac60516f8e60ecff20701ae7f5fd0b76",
+    "tree": "245f96f232c4281d8eadd0a452861079d63af43d",
+    "message": "fix(mochi): bind conversation egress to atomically published project context"
+  },
+  {
+    "local": "66eddef1fe641ee21421b8cc61f584af76e91bf1",
+    "remote": "898a5b54caeedfd82cb1d69415d063b98581fbb7",
+    "tree": "abdc21dc85f564e034a7ccf7e942f19ab8d97110",
+    "message": "fix(mochi): isolate conversation observers from cancellation"
+  },
+  {
+    "local": "c27a704dbb2b889473b47618519185da4e107343",
+    "remote": "e1ec32e13ae11834bf800dbd6772aa02121470dd",
+    "tree": "ce1c2352b97e8bb8bcad62c8cf5882a4d1856905",
+    "message": "fix(mochi): sanitize access and ledger exception metadata"
+  },
+  {
+    "local": "11e952ef1a5982c69e6e89e6658af413e0723881",
+    "remote": "c7624c0301fb9eb50959dab07e5050d42580aa8f",
+    "tree": "b46ed8674b04b45d34bef09c84661db45444cc07",
+    "message": "fix(mochi): capture trusted application scope across async admission"
+  },
+  {
+    "local": "90f2762ef0cd89878bef1457cb36fdfe91899d82",
+    "remote": "cef4cf427ab2fdfbc4b8254be5e8d392b03feac8",
+    "tree": "f9be696ea7c578dfe7d86c955e1d422f3380d7d3",
+    "message": "fix(artifact): keep install receipts independent of render observer errors"
+  },
+  {
+    "local": "fb4247acd9ba2a60aa960ffcc3774b8dc7f71d83",
+    "remote": "a6a0fbb776f4c9abc43300166b468ab664f82fef",
+    "tree": "9dee572e96bd17a4985800396673d4524263abe3",
+    "message": "docs(ai-core): record HTTP admission and project transition evidence"
+  },
+  {
+    "local": "d14d9cbb4549d14fc9097907f985d9c74b4fda7c",
+    "remote": "9a0b2511d4699a667b7edd5a439184111eea91c8",
+    "tree": "7d35c535c3c5289a6b19b17f2fc5c830a5d593ca",
+    "message": "fix(mochi): recheck cancellation across synchronous admission callbacks"
+  },
+  {
+    "local": "9757f484f81f287aff0160a41e25a8cc07ad590d",
+    "remote": "f8e5821e7c64de8d8c65873bf5c8bace7a6b69c4",
+    "tree": "c786780178c556ae962eeb099d3d6b629f8a5eb5",
+    "message": "fix(mochi): retire host waits when provider ignores cancellation"
+  },
+  {
+    "local": "06bcab0b98083539d9bf5deb724021251ea7019f",
+    "remote": "6c52cd4d8fdddfbb86288731a8cd959f1e7af8bc",
+    "tree": "f5b52f6d7825bf9d8a9020f7037f71e660b015f3",
+    "message": "fix(mochi): skip disposed consent opt-ins while preserving explicit revocation"
+  },
+  {
+    "local": "b70acd7415423b624e881908c08858e6bb17e3fb",
+    "remote": "79b14325cd3585c1b21aef979de96c2b22db8475",
+    "tree": "878dee0e05c14e961e2382e897053598d1785ab4",
+    "message": "test(ai-core): bind command evidence to code revision and harness settings"
   }
 ]

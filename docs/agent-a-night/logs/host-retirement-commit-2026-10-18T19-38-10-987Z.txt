@@ -1,0 +1,119 @@
+✔ Mock preview is isolated, immutable, complete; confirm updates real B/C renderers exactly once (19.329083ms)
+✔ callback context cannot grant selection or scope; provider sees only host context (0.7805ms)
+✔ no selection cannot be replaced with a component hint (0.325167ms)
+✔ rejects sibling block sharing entity from provider without changing Runtime (0.383667ms)
+✔ rejects other entity from provider without changing Runtime (0.985042ms)
+✔ rejects record command from provider without changing Runtime (0.260834ms)
+✔ rejects provider request ID tampering (0.411417ms)
+✔ rejects provider revision tampering (0.226542ms)
+✔ rejects provider scope injection tampering (0.241625ms)
+✔ rejects provider unsupported capability tampering (0.29025ms)
+✔ cancel is idempotent; cancelled and invented planIds cannot execute (0.392167ms)
+✔ selection A→B→A and a newer request both revoke old plans (0.770333ms)
+✔ records revision invalidates preview and preserves the external update (0.445709ms)
+✔ layout revision invalidates preview and preserves the external update (0.404166ms)
+✔ schema revision invalidates preview and preserves the external update (0.508416ms)
+✔ same appId/revision in different Runtime cannot use the other host planId (0.605958ms)
+✔ reentrant confirmation during Runtime publish cannot execute twice (0.440625ms)
+✔ ignoring suggestions only updates host state and leaves pending plan intact (0.300208ms)
+✔ B/C mode changes preserve in-flight requests and previews without rebuilding Runtime (0.426125ms)
+✔ obsolete async success cannot clear a newer preview (0.487666ms)
+✔ obsolete async failure cannot clear a newer preview (0.434167ms)
+✔ anchor is host geometry bound to selection, instance, epoch and revision (0.450291ms)
+✔ failed next plan or rejected execution retains the previously confirmed application (0.709041ms)
+✔ disposal aborts requests, cancels pending confirmation and releases Runtime subscription (0.626333ms)
+✔ requestId cancellation ignores late resolve and cannot clear the next busy state (0.397625ms)
+✔ requestId cancellation ignores late reject and cannot clear the next busy state (0.34825ms)
+✔ new request supersedes old success without requiring cancellation (0.301042ms)
+✔ new request supersedes old failure without requiring cancellation (0.310416ms)
+✔ abort reentrancy starts a newer request without resurrecting the cancelled attempt (0.394708ms)
+✔ request replacement abort callbacks cannot overwrite the newest owner (0.403ms)
+✔ authorization identity invalidates plans but never grants scope (0.43ms)
+✔ confirm locks before Host observers and own Runtime notifications never publish stale (0.428916ms)
+✔ synchronous context change while publishing CONFIRMING prevents any write (0.28475ms)
+✔ explicit failure with identical immutable snapshot is COMMIT_FAILED and terminal (0.292416ms)
+✔ unexpected exception before known receipt is UNKNOWN, never a rollback claim (0.352167ms)
+✔ unexpected exception after Runtime writes is UNKNOWN, never a rollback claim (0.38ms)
+✔ a failure receipt after a write is UNKNOWN even without a thrown exception (1.80725ms)
+✔ new attempts clear current receipt while retaining history across cancel and preview rejection (0.571167ms)
+✔ disposed host cannot publish a late success into its replacement (0.314208ms)
+✔ disposed host cannot publish a late failure into its replacement (0.260375ms)
+✔ invalid initial input reports an attempt without superseding a valid request (0.26025ms)
+✔ context invalidation inside Runtime publication cannot hide an uncertain write (0.327708ms)
+✔ invalid input over 4000 characters reports an error without revoking a valid preview; corrected input retries (0.362125ms)
+✔ missed Runtime notification terminates stale preview before confirm (0.382584ms)
+✔ missed Runtime notification terminates stale preview before confirm without cancelling a reentrant newer request (0.4705ms)
+✔ revision changed by a CONFIRMING observer with missed notification also terminates the preview (0.36025ms)
+✔ missed authorization notification retires in-flight response (0.197709ms)
+✔ missed authorization notification retires in-flight response after regrant (0.149708ms)
+✔ missed authorization generation cannot commit an old preview (0.352959ms)
+✔ missed authorization generation cannot commit from CONFIRMING observer (0.27025ms)
+✔ observed authorization revocation while CONFIRMING prevents writes (0.268625ms)
+✔ production owner isolates throwing observers and preserves a known successful receipt (0.347875ms)
+✔ readonly request never reaches provider or changes the sole owner (0.153292ms)
+✔ missed revision notification rejects the in-flight provider response (0.245375ms)
+✔ a missed context change while publishing REQUESTING never reaches provider (0.16525ms)
+✔ production provider fails closed and preserves the original runtime (0.180125ms)
+✔ egress allowlist excludes records, unrelated blocks and arbitrary injected properties (0.3035ms)
+✔ offline HTTP service -> strict client -> selected Mochi plan -> confirmation -> shared B/C runtime (32.20725ms)
+✔ Host cancel retires an abort-ignoring provider without waiting for it (4.305584ms)
+✔ Host selection retires an abort-ignoring provider without waiting for it (1.523292ms)
+✔ Host dispose retires an abort-ignoring provider without waiting for it (1.754708ms)
+✔ Host supersede retires an abort-ignoring provider without waiting for it (4.331167ms)
+✖ synchronous provider cancellation and throw leave no unhandled retirement (0.855875ms)
+✔ AppSpec model plan deadline releases Host without a preview and late output cannot overwrite a newer confirmation (24.611917ms)
+✔ AppSpec model plan deadline configuration rejects unbounded or invalid values (0.136375ms)
+✔ synchronous completion failure and abort cannot leak an unhandled rejection or mutate Runtime (0.792ms)
+✔ completion only receives selected metadata, prompt and cancellation signal; preview requires explicit confirmation (1.25525ms)
+✔ malformed JSON: Phase A rejects model data and preserves project (0.613167ms)
+✔ oversized response: Phase A rejects model data and preserves project (0.378958ms)
+✔ forged request ID: Phase A rejects model data and preserves project (0.630459ms)
+✔ stale revision: Phase A rejects model data and preserves project (0.41075ms)
+✔ record command: Phase A rejects model data and preserves project (0.361916ms)
+✔ unselected removal: Phase A rejects model data and preserves project (0.37025ms)
+✔ invented TSX: Phase A rejects model data and preserves project (0.315792ms)
+✔ unsupported button style: Phase A rejects model data and preserves project (0.271209ms)
+✔ cancelled late completion cannot replace newer preview or apply receipt/history (0.641375ms)
+✔ authorization ABA and concurrent revision invalidate exact preview without implicit reauthorization (0.800375ms)
+✔ cancel retires Host await even when completion never settles; late failures stay obsolete (1.33775ms)
+✔ large valid selected metadata is rejected by UTF-8 bytes before completion, without truncation or mutation (0.641167ms)
+ℹ tests 79
+ℹ suites 0
+ℹ pass 78
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 380.820042
+
+✖ failing tests:
+
+test at tests/mochi-ai/host-cancellation.test.cjs:41:1
+✖ synchronous provider cancellation and throw leave no unhandled retirement (0.855875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + Comparison {}
+  - Comparison {
+  -   code: 'CONTEXT_CHANGED'
+  - }
+  
+      at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/host-cancellation.test.cjs:49:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: synchronous provider failure after cancellation
+        at /Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/host-cancellation.test.cjs:46:11
+        at Object.onRequestPlan (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi/host.ts:189:49)
+        at TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/host-cancellation.test.cjs:49:39)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: { code: 'CONTEXT_CHANGED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

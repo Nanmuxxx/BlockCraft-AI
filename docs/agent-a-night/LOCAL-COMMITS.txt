@@ -47,3 +47,8 @@ f56d2d4a93f956d376a6ccbf469d7909d129cb11 fix(mochi): bind conversation egress to
 c27a704dbb2b889473b47618519185da4e107343 fix(mochi): sanitize access and ledger exception metadata
 11e952ef1a5982c69e6e89e6658af413e0723881 fix(mochi): capture trusted application scope across async admission
 90f2762ef0cd89878bef1457cb36fdfe91899d82 fix(artifact): keep install receipts independent of render observer errors
+fb4247acd9ba2a60aa960ffcc3774b8dc7f71d83 docs(ai-core): record HTTP admission and project transition evidence
+d14d9cbb4549d14fc9097907f985d9c74b4fda7c fix(mochi): recheck cancellation across synchronous admission callbacks
+9757f484f81f287aff0160a41e25a8cc07ad590d fix(mochi): retire host waits when provider ignores cancellation
+06bcab0b98083539d9bf5deb724021251ea7019f fix(mochi): skip disposed consent opt-ins while preserving explicit revocation
+b70acd7415423b624e881908c08858e6bb17e3fb test(ai-core): bind command evidence to code revision and harness settings

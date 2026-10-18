@@ -1,0 +1,30 @@
+✖ Host cancel retires an abort-ignoring provider without waiting for it (502.841917ms)
+✖ Host selection retires an abort-ignoring provider without waiting for it (501.923041ms)
+✖ Host dispose retires an abort-ignoring provider without waiting for it (502.3155ms)
+✖ Host supersede retires an abort-ignoring provider without waiting for it (503.063042ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 0
+ℹ cancelled 4
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2195.858917
+
+✖ failing tests:
+
+test at tests/mochi-ai/host-cancellation.test.cjs:8:3
+✖ Host cancel retires an abort-ignoring provider without waiting for it (502.841917ms)
+  'test timed out after 500ms'
+
+test at tests/mochi-ai/host-cancellation.test.cjs:8:3
+✖ Host selection retires an abort-ignoring provider without waiting for it (501.923041ms)
+  'test timed out after 500ms'
+
+test at tests/mochi-ai/host-cancellation.test.cjs:8:3
+✖ Host dispose retires an abort-ignoring provider without waiting for it (502.3155ms)
+  'test timed out after 500ms'
+
+test at tests/mochi-ai/host-cancellation.test.cjs:8:3
+✖ Host supersede retires an abort-ignoring provider without waiting for it (503.063042ms)
+  'test timed out after 500ms'

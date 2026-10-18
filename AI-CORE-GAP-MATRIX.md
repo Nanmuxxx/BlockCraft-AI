@@ -94,3 +94,14 @@ core-caller-cancel最新649/649；REAL_MODEL_CALLS=0。上述VERIFIED仅指Fixtu
 | 可信访问scope快照 | VERIFIED | service.mjs:analyze | service.test.mjs：预算await期间复用access对象变更不污染跨项目去重；旧实现失败，相关30/30 |
 
 较广核心746/746与build-context-atomic退出0；正式/ai-create桌面/移动context-atomic浏览器通过。该全量/浏览器早于本轮最后几项服务及Artifact修改，准确覆盖以命令时间和代码提交为准。REAL_MODEL_CALLS=0。
+
+## 第七轮边界证据（03:44，持续开发）
+
+| 项目 | 状态 | 函数/文件 | 验证 |
+|---|---|---|---|
+| 同步准入取消/撤销 | VERIFIED | mochi-ai/service.mjs:analyze | admission-cancellation.test.mjs：missed abort、预算后gate、主动授权ABA；旧3失败，修复相关32/32 |
+| Host等待退休 | VERIFIED | mochi/host.ts:onRequestPlan | host-cancellation.test.cjs：忽略abort的Provider四种退休、迟到拒绝、新请求唯一确认、同步abort+throw；相关79/79 |
+| 已关闭consent队列 | VERIFIED | mochi-ai/client.mjs:setProactive/refreshStatus | consent-lifecycle.test.mjs：排队opt-in及status零发出，显式opt-out继续完成；相关37/37 |
+| 当前完整验证 | VERIFIED | regression.mjs；npm run build | 761/761退出0、build-consent-lifecycle退出0，baseline06bcab0；正式Artifact页与只读建议页桌面/移动分别通过 |
+
+生产源码模型计算密码学摘要的语义可靠性仍未验证；现有seam只完成fixture。建议未来可信适配器复用computeVersionDigest，然后仍经resolveArtifact/validateSourcePlan，不绕过校验。该生产适配器MISSING；REAL_MODEL_CALLS=0。

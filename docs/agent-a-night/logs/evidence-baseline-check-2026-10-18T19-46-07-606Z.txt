@@ -1,0 +1,18 @@
+✔ cancellation during reservation timestamp does not start downstream work (1.663959ms)
+✔ cancellation during post-budget gate does not start downstream work (0.300667ms)
+✔ synchronous proactive revocation and reapproval cannot revive the old request (0.189834ms)
+✔ disposing a conversation prevents its queued opt-in and delayed status egress (2.3185ms)
+✔ an explicitly queued opt-out still revokes after disposal and an already sent opt-in (0.390875ms)
+✔ Host cancel retires an abort-ignoring provider without waiting for it (3.033084ms)
+✔ Host selection retires an abort-ignoring provider without waiting for it (0.746334ms)
+✔ Host dispose retires an abort-ignoring provider without waiting for it (0.732125ms)
+✔ Host supersede retires an abort-ignoring provider without waiting for it (3.773334ms)
+✔ synchronous provider cancellation and throw leave no unhandled retirement (0.7425ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 190.048458
