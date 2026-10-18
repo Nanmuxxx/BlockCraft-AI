@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:export": "node tools/project-zip-export/prepare.mjs && vite --mode local-export --host 127.0.0.1 --port 5173 --strictPort",
+    "test:workshop-export": "node tools/project-zip-export/prepare.mjs && node --test tests/workshop-export/*.test.*",
+    "test:workshop-export:browser": "node tools/project-zip-export/prepare.mjs && node tests/workshop-export/browser.cjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "node --test src/model/appSpec.test.cjs src/model/appRuntime.test.cjs src/model/appChangePlan.test.cjs src/components/blocks/blocks.test.cjs src/components/ai-create/generateApp.test.cjs src/components/app-builder/AppSpecCanvas.test.cjs src/integrations/mochi/planning.test.cjs src/components/mochi-ai/mochi-ai.test.cjs src/components/mochi-ai/mochi-ai-v2.test.cjs",

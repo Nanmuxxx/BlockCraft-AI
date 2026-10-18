@@ -126,6 +126,10 @@ for (const [name, source, code] of [
   ['escaping import', "import x from '../outside'; export default function C() {return x}", 'UNSUPPORTED_SOURCE'],
   ['host protocol', "export default function C() {parent.postMessage('x', '*'); return null}", 'UNSUPPORTED_PROTOCOL'],
   ['network source', "export default function C() {fetch('https://example.com'); return null}", 'UNSUPPORTED_PROTOCOL'],
+  ['window through event.view', "export default function C() {return <button onClick={event => event.view.open('https://example.com')}>x</button>}", 'UNSUPPORTED_PROTOCOL'],
+  ['window through event string subscript', "export default function C() {return <button onClick={event => event['view'].open('https://example.com')}>x</button>}", 'UNSUPPORTED_PROTOCOL'],
+  ['window through ownerDocument.defaultView', "export default function C() {return <div ref={node => node?.ownerDocument.defaultView?.open('https://example.com')}>x</div>}", 'UNSUPPORTED_PROTOCOL'],
+  ['window through iframe.contentWindow', "export default function C() {return <iframe ref={node => node?.contentWindow?.open('https://example.com')} />}", 'UNSUPPORTED_PROTOCOL'],
   ['private source', "// /Users/private/code\nexport default function C() {return null}", 'PRIVATE_CONTENT'],
 ]) test('refuse ' + name, async () => {
   const input = await mixed(); input.artifacts[0].artifact.sources['Counter.tsx'] = source
@@ -140,6 +144,26 @@ test('declared capabilities, events, stateSchema and saved host state refuse wit
   const input = await mixed()
   input.project.custom.states.counter = { versionDigest: input.artifacts[0].versionDigest, stateRevision: 0, value: {} }
   await assert.rejects(exportProjectZip(input), { code: 'UNSUPPORTED_PROTOCOL' })
+})
+test('reported DeepSeek Pomodoro stateSchema refuses without changing the artifact', async () => {
+  const input = await mixed()
+  const artifact = input.artifacts[0].artifact
+  artifact.manifest.name = 'DeepSeek 番茄钟（非空 stateSchema 回归）'
+  artifact.manifest.stateSchema = {
+    type: 'object',
+    properties: {
+      remainingSeconds: { type: 'integer', minimum: 0, maximum: 86400 },
+      running: { type: 'boolean' },
+      phase: { type: 'string', maxLength: 16, enum: ['focus', 'break'] },
+    },
+    required: ['remainingSeconds', 'running', 'phase'],
+    additionalProperties: false,
+  }
+  await rehash(input)
+  const before = structuredClone(input)
+  await assert.rejects(exportProjectZip(input), { code: 'UNSUPPORTED_PROTOCOL' })
+  assert.deepEqual(input, before)
+  assert.equal(Object.keys(input.artifacts[0].artifact.manifest.stateSchema.properties).length, 3)
 })
 test('unreachable source, duplicate or unused entries refuse', async () => {
   const input = await mixed(); input.artifacts[0].artifact.sources['extra.ts'] = 'export const x = 1'; await rehash(input)
