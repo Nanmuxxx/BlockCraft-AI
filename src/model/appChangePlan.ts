@@ -73,7 +73,8 @@ function fail(error: unknown): Failure {
   return { ok: false, error: { code: error.code, message: error.message } }
 }
 /** Read data descriptors only. Reject executable values, accessors, cycles and oversized input
- * before calling the common JSON protocol validator. Strings are plain text, never evaluated.
+ * before calling the common JSON protocol validator. Strings are opaque text, never evaluated;
+ * consumers must render them as text or controlled values, never as HTML or executable code.
  */
 function copyJson(input: unknown): unknown {
   const ancestors = new Set<object>()
@@ -83,7 +84,7 @@ function copyJson(input: unknown): unknown {
     if (value === null || typeof value === 'boolean') return value
     if (typeof value === 'number') { ensure(Number.isFinite(value), 'Non-JSON number', 'UNSAFE_INPUT'); return value }
     if (typeof value === 'string') {
-      ensure(value.length <= 4000 && !/[<>]|javascript\s*:|data\s*:\s*text\/html|\b(?:eval|Function|function)\s*\(|=>|\b(?:window|document|globalThis)\s*[.[]/i.test(value), 'Only plain text is allowed; scripts and markup are forbidden', 'UNSAFE_INPUT')
+      ensure(value.length <= 4000, 'Plan string exceeds length limit', 'UNSAFE_INPUT')
       return value
     }
     ensure(value && typeof value === 'object', 'Only JSON data is allowed', 'UNSAFE_INPUT')

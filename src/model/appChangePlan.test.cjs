@@ -3,9 +3,18 @@ const test = require('node:test')
 const assert = require('node:assert/strict')
 const fs = require('node:fs')
 const ts = require('typescript')
-require.extensions['.ts'] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }, fileName: filename,
-}).outputText, filename)
+for (const extension of ['.ts', '.tsx']) {
+  require.extensions[extension] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true }, fileName: filename,
+  }).outputText, filename)
+}
+require.extensions['.css'] = () => {}
+require.extensions['.png'] = (module, filename) => { module.exports = filename }
+const React = require('react')
+const { renderToStaticMarkup } = require('react-dom/server')
+const { AppRenderer } = require('../components/app-renderer/AppRenderer.tsx')
+const { AppSpecCanvas } = require('../components/app-builder/AppSpecCanvas.tsx')
+const { AppSpecMochiPanel } = require('../components/app-builder/AppSpecMochiPanel.tsx')
 const { createAppChangePlanner, resolveBlockEntityId, AI_CHANGE_COMMANDS } = require('./appChangePlan.ts')
 const { APP_CAPABILITIES, getAppCapability, getBlockCapabilityId } = require('./appCapabilities.ts')
 const { createAppRuntime, metricValue } = require('./appRuntime.ts')
@@ -31,6 +40,74 @@ function rejected(result, code) {
 function newBlock(block, entityId = 'applicants') {
   return { type: 'addBlock', block, binding: { id: `${block.id}-binding`, type: 'dataBinding', blockId: block.id, entityId }, position: { x: 0.25, y: 0.5 } }
 }
+
+for (const name of [
+  'x < 10', 'x > 0; x <= 10; x >= 0',
+  '字段说明：C++、箭头 →、=>',
+  'HTML 教学：<script>globalThis.__planTextExecuted = true</script>',
+  'JavaScript: function(x) { return x < 10 }; () => document.title; window.alert(1)',
+  '示例：eval("1 + 1"); Function("return 1"); data:text/html,<b>文本</b>',
+  '中文 English ∑ α ≤ ≥ 😀 e\u0301\n第二行\t"引号" & \'单引号\'',
+]) {
+  test(`business text survives preview, confirmation and Runtime unchanged: ${JSON.stringify(name)}`, () => {
+    const app = setup()
+    const before = app.runtime.getSnapshot()
+    const command = { ...addContact, field: { ...addContact.field, name } }
+    const plan = planOf(app.preview([command, showContact('registration-form'), showContact('applicant-list')]))
+    assert.equal(plan.request.commands[0].field.name, name)
+    assert.equal(plan.diff.addedFields[0].field.name, name)
+    assert.equal(plan.after.spec.entities[0].fields.at(-1).name, name)
+    assert.strictEqual(app.runtime.getSnapshot(), before)
+    assert.equal(app.notifications(), 0)
+    assert.equal(app.planner.confirm(plan).ok, true)
+    assert.equal(app.runtime.getSnapshot().spec.entities[0].fields.at(-1).name, name)
+    assert.deepEqual(app.runtime.getSnapshot(), plan.after)
+    assert.equal(app.notifications(), 1)
+  })
+}
+
+test('teaching text is escaped by real React renderers in labels, options, records, canvas and Mochi', () => {
+  const app = setup()
+  const before = app.runtime.getSnapshot()
+  const text = '<script>globalThis.__planTextExecuted = true</script><img src=x onerror="globalThis.__planTextExecuted = true"> & \' =>'
+  const escaped = '&lt;script&gt;globalThis.__planTextExecuted = true&lt;/script&gt;&lt;img src=x onerror=&quot;globalThis.__planTextExecuted = true&quot;&gt; &amp; &#x27; =&gt;'
+  assert.equal(Object.hasOwn(globalThis, '__planTextExecuted'), false)
+  const field = { ...addContact.field, name: text, type: 'select', options: [text, 'x < 10'] }
+  const block = { id: 'teaching-form', name: text, type: 'form', fieldIds: ['applicant-name', 'department', 'contact'] }
+  const plan = planOf(app.preview([
+    { ...addContact, field }, showContact('registration-form'), showContact('applicant-list'), newBlock(block),
+  ], { capabilityIds: ['form'] }))
+  assert.deepEqual(plan.request.commands[0].field, field)
+  assert.deepEqual(plan.diff.addedBlocks, [block])
+  // Render the isolated preview using the actual runtime and components, without confirming it.
+  const previewRuntime = createAppRuntime(plan.after)
+  const previewHtml = renderToStaticMarkup(React.createElement(AppRenderer, { runtime: previewRuntime }))
+  assert.ok(previewHtml.includes(`<h2>${escaped}</h2>`))
+  assert.ok(previewHtml.includes(`<span>${escaped}</span>`))
+  assert.ok(previewHtml.includes(`<th>${escaped}</th>`))
+  assert.ok(previewHtml.includes(`<option value="${escaped}">${escaped}</option>`))
+  assert.strictEqual(app.runtime.getSnapshot(), before)
+  assert.equal(app.runtime.getSnapshot().revision, 0)
+  assert.equal(app.notifications(), 0)
+  assert.equal(app.planner.confirm(plan).ok, true)
+  assert.deepEqual(app.runtime.getSnapshot(), plan.after)
+  assert.equal(renderToStaticMarkup(React.createElement(AppRenderer, { runtime: app.runtime })), previewHtml)
+  const values = { ...app.runtime.getSnapshot().records.applicants[0].values, contact: text }
+  assert.equal(app.runtime.updateRecords({ type: 'update', entityId: 'applicants', recordId: 'applicant-001', values }).ok, true)
+  assert.equal(app.runtime.getSnapshot().records.applicants[0].values.contact, text)
+  const runtimeHtml = renderToStaticMarkup(React.createElement(AppRenderer, { runtime: app.runtime }))
+  assert.ok(runtimeHtml.includes(`<td>${escaped}</td>`))
+  const canvasHtml = renderToStaticMarkup(React.createElement(AppSpecCanvas, { runtime: app.runtime, selectedBlockId: block.id }))
+  assert.ok(canvasHtml.includes(`<span class="block-canvas__title">${escaped}</span>`))
+  assert.ok(canvasHtml.includes(`<h3>${escaped}</h3>`))
+  const mochiHtml = renderToStaticMarkup(React.createElement(AppSpecMochiPanel, { snapshot: app.runtime.getSnapshot(), blockId: block.id }))
+  assert.ok(mochiHtml.includes(`「${escaped}」`))
+  for (const html of [previewHtml, runtimeHtml, canvasHtml, mochiHtml]) {
+    assert.doesNotMatch(html, /<script\b|<img\s+src=x/i)
+    assert.ok(html.includes(escaped))
+  }
+  assert.equal(Object.hasOwn(globalThis, '__planTextExecuted'), false)
+})
 
 test('contact field and form/list display change are previewed in isolation and committed atomically once', () => {
   const app = setup()
@@ -244,32 +321,80 @@ test('cross-entity references, nonunique bindings, duplicate IDs and transient r
   assert.equal(app.notifications(), 0)
 })
 
-test('strict JSON input rejects scripts, hidden code, getters, prototypes, cycles and non-JSON values', () => {
+test('strict JSON input rejects accessors, prototypes, cycles and non-JSON values without executing them', () => {
   const app = setup()
-  let getterCalls = 0
+  const before = app.runtime.getSnapshot()
+  let accessorCalls = 0
   const getterField = { ...addContact.field }
-  Object.defineProperty(getterField, 'name', { enumerable: true, get() { getterCalls++; return 'executed' } })
+  Object.defineProperty(getterField, 'name', { enumerable: true, get() { accessorCalls++; return 'executed' } })
+  const setterField = { ...addContact.field }
+  Object.defineProperty(setterField, 'name', { enumerable: true, set(_) { accessorCalls++ } })
   const cyclic = { ...addContact }; cyclic.field = cyclic
-  for (const command of [
-    { ...addContact, script: 'alert(1)' },
-    { ...addContact, field: { ...addContact.field, name: '<script>alert(1)</script>' } },
-    { ...addContact, field: { ...addContact.field, name: 'javascript:alert(1)' } },
-    { ...addContact, field: { ...addContact.field, name: '() => window.alert(1)' } },
-    { ...addContact, field: { ...addContact.field, onChange: () => {} } },
+  const symbolKey = { ...addContact.field, [Symbol('hidden')]: 'value' }
+  const hidden = { ...addContact.field }
+  Object.defineProperty(hidden, 'hidden', { value: 'not JSON' })
+  const sparse = { ...addContact.field, type: 'select', options: new Array(1) }
+  const commands = [
     { ...addContact, field: getterField },
+    { ...addContact, field: setterField },
+    { ...addContact, field: symbolKey },
+    { ...addContact, field: hidden },
+    { ...addContact, field: sparse },
     { ...addContact, field: Object.assign(Object.create({ inherited: true }), addContact.field) },
-    { ...addContact, field: { ...addContact.field, id: 'constructor' } },
-    { ...addContact, field: { ...addContact.field, required: undefined } },
     cyclic,
-  ]) rejected(app.preview([command]))
-  assert.equal(getterCalls, 0)
+    ...[() => { throw new Error('must not execute') }, Symbol('value'), undefined, 1n, NaN, Infinity, -Infinity, new Date()].map(name => ({ ...addContact, field: { ...addContact.field, name } })),
+    ...['__proto__', 'constructor', 'prototype'].map(key => ({
+      ...addContact, field: Object.fromEntries([...Object.entries(addContact.field), [key, {}]]),
+    })),
+  ]
+  for (const command of commands) {
+    rejected(app.preview([command]), 'UNSAFE_INPUT')
+    assert.strictEqual(app.runtime.getSnapshot(), before)
+  }
+  assert.equal(accessorCalls, 0)
+  assert.equal(app.runtime.canUndo(), false)
+  assert.equal(app.notifications(), 0)
+})
+
+test('text compatibility does not allow unknown properties, invalid IDs or malformed requests', () => {
+  const app = setup()
+  const before = app.runtime.getSnapshot()
+  for (const command of [
+    { ...addContact, script: '<script>alert(1)</script>' },
+    { ...addContact, field: { ...addContact.field, description: 'C++ → =>' } },
+    { ...addContact, field: { ...addContact.field, onChange: '() => window.alert(1)' } },
+    { ...addContact, field: { ...addContact.field, id: 'constructor' } },
+    { ...addContact, field: { ...addContact.field, id: 'x < 10' } },
+    { ...addContact, field: { ...addContact.field, type: 'javascript' } },
+  ]) rejected(app.preview([command]), 'VALIDATION')
   for (const request of [
     { requestId: 'bad id', baseRevision: 0, commands: [addContact] },
     { requestId: 'negative', baseRevision: -1, commands: [addContact] },
     { requestId: 'fraction', baseRevision: 0.5, commands: [addContact] },
     { requestId: 'empty', baseRevision: 0, commands: [] },
     { requestId: 'code', baseRevision: 0, commands: [addContact], code: 'alert(1)' },
-  ]) rejected(app.planner.preview({ request, capabilityIds: [] }, app.scope))
+  ]) rejected(app.planner.preview({ request, capabilityIds: [] }, app.scope), 'VALIDATION')
+  assert.strictEqual(app.runtime.getSnapshot(), before)
+  assert.equal(app.runtime.canUndo(), false)
+  assert.equal(app.notifications(), 0)
+})
+
+test('string length, JSON depth and JSON node limits still reject oversized input', () => {
+  const app = setup()
+  const before = app.runtime.getSnapshot()
+  const boundary = 'x < 10; => <script>'.padEnd(4000, '文')
+  assert.equal(planOf(app.preview([{ ...addContact, field: { ...addContact.field, name: boundary } }])).request.commands[0].field.name, boundary)
+  const tooLong = { ...addContact, field: { ...addContact.field, name: boundary + 'x' } }
+  let deep = null
+  for (let i = 0; i < 33; i++) deep = { nested: deep }
+  const tooMany = { ...addContact, field: { ...addContact.field, type: 'select', options: Array.from({ length: 10001 }, (_, i) => `option-${i}`) } }
+  for (const command of [tooLong, { ...addContact, extra: deep }, tooMany]) {
+    const result = app.preview([command])
+    rejected(result, 'UNSAFE_INPUT')
+    assert.match(result.error.message, /limit/)
+    assert.strictEqual(app.runtime.getSnapshot(), before)
+  }
+  assert.equal(app.runtime.canUndo(), false)
   assert.equal(app.notifications(), 0)
 })
 
