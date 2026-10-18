@@ -1,0 +1,49 @@
+
+> blockcraft-ai@0.1.0 test:trusted-interactive:browser
+> npm --prefix server run build && node tests/trusted-interactive/browser.cjs
+
+
+> build
+> tsc -p tsconfig.json
+
+11:45:18 PM [vite] (client) Re-optimizing dependencies because vite config has changed
+ExpectError: expect(locator).toContainText(expected) failed
+
+Locator: getByLabel('积木属性')
+Expected substring: "无需数据绑定"
+Error: strict mode violation: getByLabel('积木属性') resolved to 2 elements:
+    1) <aside aria-label="创作助手与积木属性" class="app-spec-workshop__sidebar">…</aside> aka getByRole('complementary', { name: '创作助手与积木属性' })
+    2) <aside aria-label="积木属性" class="app-spec-inspector">…</aside> aka getByRole('complementary', { name: '积木属性', exact: true })
+
+Call log:
+  - Expect "to.have.text" with timeout 5000ms
+  - waiting for getByLabel('积木属性')
+
+    at captureRawStack (/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright-core/lib/coreBundle.js:9681:17)
+    at callMatcherAsStep (/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/lib/matchers/expect.js:13310:57)
+    at Object.toContainText (/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/lib/matchers/expect.js:13300:23)
+    at run (/Users/nanmuxun/BlockAI/BlockCraft-AI-trusted-interactive-p0/tests/trusted-interactive/browser.cjs:47:45) {
+  matcherResult: {
+    name: 'toContainText',
+    expected: '无需数据绑定',
+    message: 'expect(locator).toContainText(expected) failed\n' +
+      '\n' +
+      "Locator: getByLabel('积木属性')\n" +
+      'Expected substring: "无需数据绑定"\n' +
+      "Error: strict mode violation: getByLabel('积木属性') resolved to 2 elements:\n" +
+      `    1) <aside aria-label="创作助手与积木属性" class="app-spec-workshop__sidebar">…</aside> aka getByRole('complementary', { name: '创作助手与积木属性' })\n` +
+      `    2) <aside aria-label="积木属性" class="app-spec-inspector">…</aside> aka getByRole('complementary', { name: '积木属性', exact: true })\n` +
+      '\n' +
+      'Call log:\n' +
+      '  - Expect "to.have.text" with timeout 5000ms\n' +
+      "  - waiting for getByLabel('积木属性')\n",
+    pass: false,
+    actual: undefined,
+    log: [
+      '  - Expect "to.have.text" with timeout 5000ms',
+      "  - waiting for getByLabel('积木属性')"
+    ],
+    timeout: undefined,
+    ariaSnapshot: undefined
+  }
+}

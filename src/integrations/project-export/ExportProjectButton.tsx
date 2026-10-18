@@ -5,6 +5,7 @@ import type { CustomProjectSession } from '../../model/customProjectSession'
 import { captureExport, ExportFailure } from './capture'
 
 const reasons: Record<string, string> = {
+  UNSUPPORTED_APP_SPEC: 'AppSpec v2 可信交互积木暂不支持 React ZIP 导出，已拒绝打包。',
   EXPORT_UNAUTHORIZED: '导出授权无效，请重新打开本机工坊。',
   VERSION_MISSING: '缺少精确版本的源码制品，请重新导入后重试。',
   DIGEST_MISMATCH: '源码制品与版本不符，已拒绝导出。',
@@ -24,6 +25,9 @@ export function ExportProjectButton({ owner }: { owner: CustomProjectSession }) 
 
   async function download() {
     if (active.current) return
+    if (owner.getSnapshot().base.spec.version !== 1) {
+      setFeedback({ error: true, message: `${reasons.UNSUPPORTED_APP_SPEC} 未下载 ZIP。` }); return
+    }
     if (!localExportToken) {
       setFeedback({ error: true, message: '下载暂未开放。请在受控本机工坊启动导出；公网部署仍需身份与项目读取授权。' })
       return

@@ -1,0 +1,65 @@
+[
+  {
+    "name": "trusted-browser",
+    "command": "npm run test:trusted-interactive:browser",
+    "exitCode": 0,
+    "seconds": null,
+    "initialExitCode": 1,
+    "finalCommand": "npm run test:trusted-interactive:browser",
+    "finalLog": "trusted-browser-rerun.log"
+  },
+  {
+    "name": "trusted-reliability",
+    "command": "npm run test:trusted-interactive:reliability",
+    "exitCode": 0,
+    "seconds": 29.3
+  },
+  {
+    "name": "generated-ui",
+    "command": "node tests/generated-artifact-ui/browser.cjs",
+    "exitCode": 0,
+    "seconds": 4.15
+  },
+  {
+    "name": "generated-production",
+    "command": "node tests/generated-artifact-ui/production-browser.cjs",
+    "exitCode": 0,
+    "seconds": 2.03
+  },
+  {
+    "name": "generation-browser",
+    "command": "npm run test:generation:browser",
+    "exitCode": 0,
+    "seconds": 3.02
+  },
+  {
+    "name": "mochi-browser",
+    "command": "npm run test:mochi:browser",
+    "exitCode": 0,
+    "seconds": null,
+    "initialExitCode": 1,
+    "finalCommand": "npm run test:mochi:browser",
+    "finalLog": "mochi-browser-rerun.log"
+  },
+  {
+    "name": "zip-browser",
+    "command": "npm run test:workshop-export:browser",
+    "exitCode": 0,
+    "seconds": 3.49
+  },
+  {
+    "name": "workshop-browser",
+    "command": "node tests/custom-block-workshop/browser.cjs",
+    "exitCode": 0,
+    "seconds": 6.98
+  },
+  {
+    "name": "bc-browser",
+    "command": "node tests/custom-block-bc/browser.cjs",
+    "exitCode": 0,
+    "seconds": null,
+    "initialExitCode": 1,
+    "finalCommand": "node tests/custom-block-bc/browser.check.cjs",
+    "finalLog": "bc-browser-rerun.log"
+  }
+]

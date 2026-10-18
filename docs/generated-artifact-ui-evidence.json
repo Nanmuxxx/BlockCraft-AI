@@ -1,0 +1,592 @@
+{
+  "contractVersion": 1,
+  "verifiedAtUtc": "2026-10-18T15:13:29.449700+00:00",
+  "baseMain": "7e94dc9568501dd4ad218a43b5aca31026aed2b2",
+  "testedCodeCommit": "a216dd28459c6e21704f5828bfab70bfd177b19a",
+  "localValidatedCodeCommit": "803547b4da63adbed73c15db6f3b80b6b11c6694",
+  "testedCodeTree": "07f0eaf7ea7ed3acdf24088e33500ba5654fc1e1",
+  "testExecution": "Tests ran against the exact source working tree later committed locally as localValidatedCodeCommit. The published testedCodeCommit has the identical Git tree. Subsequent changes only documentation/evidence. Browser fingerprints may show the earlier plan-only HEAD; source hashes below identify the tested bytes.",
+  "publishedHeadLocation": "Draft PR description and /Users/nanmuxun/BlockAI/reports/p1b-generated-artifact-ui/report.md",
+  "environment": {
+    "node": "v24.22.0",
+    "browser": "Chromium 151.0.7922.34, existing bundled Playwright; no installs/downloads",
+    "viewports": [
+      1366,
+      390
+    ],
+    "mobile": "Chromium viewport/touch simulation, not physical phone",
+    "NODE_PATH": "/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules"
+  },
+  "checks": [
+    {
+      "name": "npm-test",
+      "command": "npm test",
+      "exitCode": 0,
+      "log": "/tmp/p1b-final-npm-test.log",
+      "logSha256": "ae4264698bd4f9997dc12ca7cf16bd8b0fff944e72c1e9de00892b5a977e39d9",
+      "tests": 192,
+      "pass": 192,
+      "fail": 0
+    },
+    {
+      "name": "module",
+      "command": "node --test tests/generated-artifact/*.test.cjs",
+      "exitCode": 0,
+      "log": "/tmp/p1b-final-module.log",
+      "logSha256": "4889fee70f78e654c62104dfa5a912a9b4231f0b0df623c8f5f2a878c3e1d448",
+      "tests": 12,
+      "pass": 12,
+      "fail": 0
+    },
+    {
+      "name": "ui",
+      "command": "node --test tests/generated-artifact-ui/*.test.cjs",
+      "exitCode": 0,
+      "log": "/tmp/p1b-final-ui.log",
+      "logSha256": "929dbeb5ae8fadb8c1cb4e68ede16e8977bc1281d63188b4333a1d94cebd2f62",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0
+    },
+    {
+      "name": "combined",
+      "command": "node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs src/integrations/mochi/host.test.cjs tests/mochi-source/*.test.cjs tests/generated-artifact/*.test.cjs tests/generated-artifact-ui/*.test.cjs",
+      "exitCode": 0,
+      "log": "/tmp/p1b-final-combined.log",
+      "logSha256": "4ed1e778b869b8d2d862be9a5e20db27c28157be2cbb41db94f966ffed1c1fce",
+      "tests": 335,
+      "pass": 335,
+      "fail": 0
+    },
+    {
+      "name": "generation",
+      "command": "node --test tests/custom-block-generation/*.test.mjs",
+      "exitCode": 0,
+      "log": "/tmp/p1b-final-generation.log",
+      "logSha256": "e3b9a557fda865f037f2ee377fd1f2b55718629ee4cea4946a7dcbf4500ee6db",
+      "tests": 82,
+      "pass": 82,
+      "fail": 0
+    },
+    {
+      "name": "mochi-ai",
+      "command": "node --test tests/mochi-ai/*.test.mjs",
+      "exitCode": 0,
+      "log": "/tmp/p1b-final-mochi-ai.log",
+      "note": "Rerun passed after npm --prefix server test built required server/.generated.",
+      "logSha256": "928fb22ff65d8d40c834fd5e90572f5c8e8e78438ae9671746dde70bdb0efc66",
+      "tests": 40,
+      "pass": 40,
+      "fail": 0
+    },
+    {
+      "name": "server",
+      "command": "npm --prefix server test",
+      "exitCode": 0,
+      "log": "/tmp/p1b-final-server.log",
+      "logSha256": "cb01563b22c2cf7730962681416bedf474de4890b3019c525700bb2cd1010c34",
+      "tests": 23,
+      "pass": 23,
+      "fail": 0
+    },
+    {
+      "name": "export",
+      "command": "node --test tests/workshop-export/*.test.mjs tests/workshop-export/*.test.cjs tests/project-zip-export/*.test.mjs",
+      "exitCode": 0,
+      "log": "/tmp/p1b-final-export.log",
+      "logSha256": "ac786c63a13e82ef635c78dbf02cc305b47527fdaa64e23d933dffcb6d166319",
+      "tests": 70,
+      "pass": 70,
+      "fail": 0
+    },
+    {
+      "name": "tsc",
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "log": "/tmp/p1b-final-tsc.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "diff",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "log": "/tmp/p1b-final-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build",
+      "command": "npm run build",
+      "log": "/tmp/p1b-final-build.log",
+      "exitCode": 0,
+      "logSha256": "b91d24f00bd3c683bc337b5655cd99fe7bd0b20e116c2272ae52a16b38d9458c"
+    }
+  ],
+  "browserChecks": [
+    {
+      "name": "generated-ui-race",
+      "command": "node tests/generated-artifact-ui/browser.cjs",
+      "exitCode": 0,
+      "reportPath": "/tmp/p1b-final-generated-ui/report.json",
+      "reportSha256": "8d02006f8419dcb9fce1c428f716f339ebce06c23b68d5e70ae32522481c5625",
+      "logSha256": "532330d73083f8b561bbde1922e7c3b3c0e74ebc74cfe06a289ab1b77367d049",
+      "cases": [
+        {
+          "width": 1366,
+          "passed": true,
+          "checks": [
+            "real archived export",
+            "manual import retained",
+            "nonempty CRUD/older state preserved",
+            "read/preview zero write",
+            "cancel zero write",
+            "wrong digest rejected",
+            "revision invalidation",
+            "authorization invalidation",
+            "same-turn duplicate confirm installs once",
+            "mode/link/regenerate/unmount gated synchronously",
+            "beforeunload cancelled while busy",
+            "async generation completion gated before setApp",
+            "successful project replacement cancels preview without old project write",
+            "B selection/drag/Inspector",
+            "C unavailable/no execution",
+            "single Mochi",
+            "duplicate ID rejected",
+            "no external requests",
+            "no horizontal overflow"
+          ],
+          "installCalls": 3,
+          "generationRequestsInterceptedOffline": 3,
+          "video": "/tmp/p1b-final-generated-ui/video/page@2490b5887470343d68ccbe257fd6fd74.webm"
+        },
+        {
+          "width": 390,
+          "passed": true,
+          "checks": [
+            "real archived export",
+            "manual import retained",
+            "nonempty CRUD/older state preserved",
+            "read/preview zero write",
+            "cancel zero write",
+            "wrong digest rejected",
+            "revision invalidation",
+            "authorization invalidation",
+            "same-turn duplicate confirm installs once",
+            "mode/link/regenerate/unmount gated synchronously",
+            "beforeunload cancelled while busy",
+            "async generation completion gated before setApp",
+            "successful project replacement cancels preview without old project write",
+            "B selection/drag/Inspector",
+            "C unavailable/no execution",
+            "single Mochi",
+            "duplicate ID rejected",
+            "no external requests",
+            "no horizontal overflow"
+          ],
+          "installCalls": 3,
+          "generationRequestsInterceptedOffline": 3,
+          "video": "/tmp/p1b-final-generated-ui/video/page@c0a4cb4b6ac213c5ee83028e125f748c.webm"
+        }
+      ],
+      "scenarioCount": 0
+    },
+    {
+      "name": "generated-ui-production",
+      "command": "node tests/generated-artifact-ui/production-browser.cjs",
+      "exitCode": 0,
+      "reportPath": "/tmp/p1b-final-production-browser/report.json",
+      "reportSha256": "5c7370f2a1d3ce6ebe7b4118d95dfbdbfb829be9a94c1875b41bead9e949d26c",
+      "logSha256": "d442a707fff24e08700c9e75b48f77a1817bb3220f316c5fd05da14d162f472f",
+      "cases": [
+        {
+          "width": 1366,
+          "passed": true,
+          "checks": [
+            "production route without QA decoration",
+            "archived export load",
+            "preview with exact version/props/source/pending",
+            "preview/cancel no added card",
+            "explicit confirm adds one",
+            "B selects and inspects parameters",
+            "C unavailable without iframe",
+            "no QA bridge",
+            "no external/API egress",
+            "no horizontal overflow"
+          ],
+          "video": "/tmp/p1b-final-production-browser/video/page@01873fc3bca1a44e45514b6df48c45bf.webm"
+        },
+        {
+          "width": 390,
+          "passed": true,
+          "checks": [
+            "production route without QA decoration",
+            "archived export load",
+            "preview with exact version/props/source/pending",
+            "preview/cancel no added card",
+            "explicit confirm adds one",
+            "B selects and inspects parameters",
+            "C unavailable without iframe",
+            "no QA bridge",
+            "no external/API egress",
+            "no horizontal overflow"
+          ],
+          "video": "/tmp/p1b-final-production-browser/video/page@3286307add7a4d8d7f8df25e7f55638a.webm"
+        }
+      ],
+      "scenarioCount": 0
+    },
+    {
+      "name": "export",
+      "command": "node tests/workshop-export/browser.cjs",
+      "exitCode": 0,
+      "reportPath": "/tmp/p1b-final-export-browser/browser-report.json",
+      "reportSha256": "7fb9539ddb5b339e8974ea3a3c922d95342caded0e9ac543df11d10ffadb6f12",
+      "logSha256": "08b68f731e839eef81f76c4a8530622cf0f24ba91f46a2616c09ff9387fdc834",
+      "cases": [
+        {
+          "width": 1366,
+          "passed": true,
+          "checks": [
+            "creation",
+            "Inspector field edit",
+            "form/list create-update-delete",
+            "metric updates",
+            "B/C retention",
+            "B and C real ZIP downloads + CRC + central directory + required files",
+            "package build scripts and pinned versions",
+            "exact digest, project revision and edited props",
+            "export revision unchanged",
+            "stale snapshot blocks download",
+            "non-empty stateSchema blocks whole ZIP",
+            "Mochi conversation panel remains visible and disabled",
+            "single Mochi mount",
+            "no CustomBlock execution",
+            "no horizontal overflow",
+            "no external requests"
+          ]
+        },
+        {
+          "width": 390,
+          "passed": true,
+          "checks": [
+            "creation",
+            "Inspector field edit",
+            "form/list create-update-delete",
+            "metric updates",
+            "B/C retention",
+            "B and C real ZIP downloads + CRC + central directory + required files",
+            "package build scripts and pinned versions",
+            "exact digest, project revision and edited props",
+            "export revision unchanged",
+            "stale snapshot blocks download",
+            "non-empty stateSchema blocks whole ZIP",
+            "Mochi conversation panel remains visible and disabled",
+            "single Mochi mount",
+            "no CustomBlock execution",
+            "no horizontal overflow",
+            "no external requests"
+          ]
+        },
+        {
+          "passed": true,
+          "surface": "ordinary dev",
+          "enabled": false,
+          "endpointStatus": 404
+        },
+        {
+          "passed": true,
+          "surface": "production preview",
+          "enabled": false,
+          "endpointStatus": 404
+        }
+      ],
+      "scenarioCount": 0
+    },
+    {
+      "name": "workshop",
+      "command": "CUSTOM_WORKSHOP_QA_PORT=5298 node tests/custom-block-workshop/browser.cjs",
+      "exitCode": 0,
+      "reportPath": "/tmp/p1b-final-workshop-browser/report.json",
+      "reportSha256": "91298fb8bdce0d3373246221a61cae77e0a373d31e6c2075b89fa72e85a9a894",
+      "logSha256": "ff9387e68daa97c8ce0b1def5a6f82b5f469de0df85151d4a0dc9d0b01ddd8d2",
+      "cases": [
+        {
+          "width": 1366,
+          "passed": true,
+          "checks": [
+            "real product route",
+            "mixed selection/drag/layout persistence",
+            "trusted props save/Schema rejection",
+            "stale custom draft",
+            "invalid digest atomic rejection",
+            "concurrent import rejects",
+            "new definition admission",
+            "same-definition version/Schema re-admission",
+            "builtin Inspector field editing",
+            "builtin form/list CRUD and live metric",
+            "B/C state retention",
+            "exact unavailable viewer",
+            "no iframe or generated module execution",
+            "Logo/Pixelify/Mochi",
+            "no horizontal overflow",
+            "legacy Home/clarification/Demo task roundtrip"
+          ]
+        },
+        {
+          "width": 390,
+          "passed": true,
+          "checks": [
+            "real product route",
+            "mixed selection/drag/layout persistence",
+            "trusted props save/Schema rejection",
+            "stale custom draft",
+            "invalid digest atomic rejection",
+            "concurrent import rejects",
+            "new definition admission",
+            "same-definition version/Schema re-admission",
+            "builtin Inspector field editing",
+            "builtin form/list CRUD and live metric",
+            "B/C state retention",
+            "exact unavailable viewer",
+            "no iframe or generated module execution",
+            "Logo/Pixelify/Mochi",
+            "no horizontal overflow",
+            "legacy Home/clarification/Demo task roundtrip"
+          ]
+        }
+      ],
+      "scenarioCount": 0
+    },
+    {
+      "name": "bc",
+      "command": "node tests/custom-block-bc/browser.check.cjs",
+      "exitCode": 0,
+      "reportPath": "/tmp/p1b-final-bc-browser/browser-report.json",
+      "reportSha256": "0352cf11fa96f7a9f9ac04d1f43dce497789dd7320c6de5c233a42f0950e419c",
+      "logSha256": "0352cf11fa96f7a9f9ac04d1f43dce497789dd7320c6de5c233a42f0950e419c",
+      "cases": [
+        {
+          "viewport": {
+            "width": 1366,
+            "height": 900
+          },
+          "checks": [
+            "selection",
+            "draft-no-write",
+            "typed-enums",
+            "nested-optional-props",
+            "trusted-schema-rejection",
+            "stale-draft",
+            "pointer-drag",
+            "pointer-cancel",
+            "isolated-instance-props",
+            "mixed-render-order",
+            "exact-version-viewer",
+            "pending-build",
+            "unavailable",
+            "forged-runnable-denied",
+            "reload-persistence",
+            "no-horizontal-overflow",
+            "collision-no-write",
+            "mixed-snap",
+            "whole-stack-single-revision",
+            "detach-single-revision",
+            "arrange-single-revision",
+            "stale-drag-denied",
+            "dirty-instance-switch",
+            "dirty-version-switch",
+            "new-version-valid-save",
+            "pending-readonly-owner-rejection",
+            "readonly-controls",
+            "readonly-pointer-no-write",
+            "shared-metadata-states"
+          ]
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 900
+          },
+          "checks": [
+            "selection",
+            "draft-no-write",
+            "typed-enums",
+            "nested-optional-props",
+            "trusted-schema-rejection",
+            "stale-draft",
+            "pointer-drag",
+            "pointer-cancel",
+            "isolated-instance-props",
+            "mixed-render-order",
+            "exact-version-viewer",
+            "pending-build",
+            "unavailable",
+            "forged-runnable-denied",
+            "reload-persistence",
+            "no-horizontal-overflow",
+            "collision-no-write",
+            "mixed-snap",
+            "whole-stack-single-revision",
+            "detach-single-revision",
+            "arrange-single-revision",
+            "stale-drag-denied",
+            "dirty-instance-switch",
+            "dirty-version-switch",
+            "new-version-valid-save",
+            "pending-readonly-owner-rejection",
+            "readonly-controls",
+            "readonly-pointer-no-write",
+            "shared-metadata-states"
+          ]
+        }
+      ],
+      "scenarioCount": 0
+    },
+    {
+      "name": "mochi",
+      "command": "node tests/mochi/browser.cjs",
+      "exitCode": 0,
+      "reportPath": "/tmp/p1b-final-mochi-browser/report.json",
+      "reportSha256": "f01c163a1e77bb497babd6c4447191712bc1b39ec35aca222027a58dd80243f8",
+      "logSha256": "50e7a637d691df18a364fe29440a2747c9faa19338760a4935be4c51c07c11cf",
+      "cases": [
+        {
+          "width": 1366,
+          "height": 768,
+          "passed": true,
+          "checks": [
+            "production disabled",
+            "single host/UI",
+            "StrictMode cleanup",
+            "preview zero writes",
+            "cancel/reselect invalidation",
+            "B/C preserves plan",
+            "request cancel/late resolve/reject isolation",
+            "host replacement isolation",
+            "late failure after unmount",
+            "explicit commit failure",
+            "post-write subscriber exception is UNKNOWN",
+            "duplicate confirmation",
+            "real receipt",
+            "B/C records",
+            "ignore suggestion",
+            "chat drag isolation",
+            "canvas drag",
+            "error retains committed app/draft",
+            "history scroll anchor",
+            "overlay scroll anchor",
+            "reduced motion",
+            "no horizontal overflow"
+          ]
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "passed": true,
+          "checks": [
+            "production disabled",
+            "single host/UI",
+            "StrictMode cleanup",
+            "preview zero writes",
+            "cancel/reselect invalidation",
+            "B/C preserves plan",
+            "request cancel/late resolve/reject isolation",
+            "host replacement isolation",
+            "late failure after unmount",
+            "explicit commit failure",
+            "post-write subscriber exception is UNKNOWN",
+            "duplicate confirmation",
+            "real receipt",
+            "B/C records",
+            "ignore suggestion",
+            "chat drag isolation",
+            "canvas drag",
+            "error retains committed app/draft",
+            "history scroll anchor",
+            "overlay scroll anchor",
+            "reduced motion",
+            "no horizontal overflow"
+          ]
+        }
+      ],
+      "scenarioCount": 12
+    }
+  ],
+  "sourceHashes": {
+    "src/components/ai-create/AiCreate.tsx": "8d9f6a897c04454a0e55b2d2f2f22d6142fd236a5bb948313dd2446fd8de618e",
+    "src/components/app-builder/AppSpecWorkshop.tsx": "b3bea6444c18eb5b34415c43e7f192207b3f5d08f2a4c6427b66ae0bd6a9809e",
+    "src/integrations/custom-block-bc/CustomBlockImport.tsx": "9b88a116b58ce16d824a73b692765378bba6517a50cd6df19a649cbca7b67cb8",
+    "src/integrations/generated-artifact/ui.css": "a1b1cdb9d9aef9214b6c534c3e7cd20eb0d9f098b35cc01d7969292eb61c32a0",
+    "src/integrations/generated-artifact/ui.ts": "105bc00f0ac36f9e0bd55a181323740174c153b36f08559f4bae047612d0efa6",
+    "src/integrations/generated-artifact/useInstallLifecycle.ts": "2a2af736148fc99adfcd94cd6d41968c72923432bc630d4e9c1b66ac8d2c6901",
+    "tests/custom-block-workshop/browser.cjs": "149e7b4372e21c5fa1f08f6ebff54eb74c2f0e5863f4e38104e227ae46786a4e",
+    "tests/generated-artifact-ui/browser.cjs": "4e0fc90d009110358c58b73be07627fb541bed40ac3a281f840b16e9326b8d15",
+    "tests/generated-artifact-ui/offline-export.mjs": "b2ecfb3f08870af164695c966833adb813141f49783caacbb44bafc20537001a",
+    "tests/generated-artifact-ui/production-browser.cjs": "64be8ba0e0bc46c0791025ae4ad6b5198251e6fbdfebd36e6c7ecf7e615d17c6",
+    "tests/generated-artifact-ui/ui.test.cjs": "0ffc76fc5227eb05c0eb26ab7b4618aee75add3bc0a6c2f0c8fa0031e0b6d902",
+    "tests/mochi/browser.cjs": "307507727b9d183d30af37e5c7f5451c1542f4f3253a087132fce44b2ee13aa3",
+    "src/integrations/generated-artifact/install.ts": "158c20628c1662becc99a53d400c282e6b1965feef649c8b0977599a1e4ebcb1",
+    "tests/generated-artifact/fixtures/pomodoro.pending.json": "c20f74f0ef3c92824f817cce10f1a24c9266174502129d4b705f0f2185f386c1"
+  },
+  "offlineArtifact": {
+    "definitionId": "accept-pomodoro-20261018",
+    "versionDigest": "sha256:d0a7d25b581048dfaf07bd8cafce09191eb02e9932ff90ac3e327782852d35fa",
+    "fixtureSha256": "c20f74f0ef3c92824f817cce10f1a24c9266174502129d4b705f0f2185f386c1",
+    "status": "pending-build",
+    "build": "not-attempted",
+    "execution": "denied",
+    "source": "unchanged archived real DeepSeek record; no new model/provenance online verification",
+    "flow": "original pending store -> original install-export -> shared CustomBlockImport AI path -> original installer -> original session.install/CAS -> existing B canvas/Inspector",
+    "beforeConfirmation": "no project/registry write",
+    "afterConfirmation": "exact target appended once; previous distinct artifact/state, instances, nonempty records, positions/renderOrder preserved"
+  },
+  "scope": {
+    "existingProductionFilesChanged": [
+      "src/integrations/custom-block-bc/CustomBlockImport.tsx",
+      "src/components/app-builder/AppSpecWorkshop.tsx",
+      "src/components/ai-create/AiCreate.tsx"
+    ],
+    "ownerOrCasChanged": false,
+    "sourceProtocolChanged": false,
+    "originalInstallerChanged": false,
+    "generatorProviderStoreChanged": false,
+    "zipImplementationChanged": false,
+    "mochiHostLifecycleChanged": false,
+    "compilerViewerChanged": false,
+    "newHttpEndpoints": 0,
+    "paidCalls": 0,
+    "candidateCompiledOrExecuted": false,
+    "mergedOrDeployed": false
+  },
+  "negativeCoverage": [
+    "read/preview/cancel zero write",
+    "duplicate confirm one install",
+    "wrong digest/protocol/props/ID collision",
+    "revision/auth change",
+    "late/superseding reads",
+    "concurrent CAS or permission revoke during confirm",
+    "synchronous mode/link/regeneration/unmount gates",
+    "already in-flight generation completion before setApp",
+    "normal project replacement cancels pending preview",
+    "exceptions terminal, no retry"
+  ],
+  "limitations": [
+    "All browser initial AppSpec/status responses were fixed offline; no actual model request.",
+    "Race browser alone uses test-only session decorators/introspection; separate ordinary production route passes without them.",
+    "Known production navigation/runtime replacement are synchronously gated. Future host callers must gate before setters/unmount; React cleanup cannot veto external forced unmount.",
+    "Browser may allow explicit forced page departure; no persistence or crash recovery guarantee.",
+    "No real mobile device, production deployment, model quality, Viewer or generated-source execution acceptance.",
+    "Archived pomodoro has stateSchema; installation does not override ZIP profile rejection.",
+    "Local videos/traces/screenshots are outside repository, with hashes and reproduction commands here."
+  ],
+  "environmentRepairs": [
+    "Chat routing test initially lacked server/.generated; existing server build restored prerequisite, rerun 40/40.",
+    "Port 5198 occupied; Workshop browser uses explicit 5298, without stopping another process.",
+    "Mochi isolated Vite harness needed existing #31 disabled export plugin; added to test harness only.",
+    "Race test exposed allocation of unused replacement Runtime before gate; moved allocation after gate; final production and race browsers pass."
+  ],
+  "decision": {
+    "offlineBMode": "GO for Tech Lead review, Draft only; not approval to merge",
+    "liveProductionGeneration": "NO-GO: missing authentication, project ACL, durable budget/audit",
+    "sourceExecution": "NO-GO: Viewer/security acceptance remains separate"
+  }
+}

@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+import { buildInteractiveMessages, assertInteractiveSpec, createInteractiveGate } from './trusted-interactive.mjs'
 import { createServer } from 'node:http'
 import { readFile, realpath, stat } from 'node:fs/promises'
 import { extname, isAbsolute, relative, resolve, sep } from 'node:path'
@@ -156,7 +158,7 @@ async function readUpstream(response, controller) {
   } finally { reader.releaseLock() }
 }
 
-async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs }, res) {
+async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interactive = false }, res) {
   const controller = new AbortController()
   let timedOut = false
   const timer = setTimeout(() => { timedOut = true; controller.abort() }, aiTimeoutMs)
@@ -170,7 +172,7 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs }, res) {
       signal: controller.signal,
       body: JSON.stringify({
         model,
-        messages: buildGenerationMessages(idea),
+        messages: interactive ? buildInteractiveMessages(idea) : buildGenerationMessages(idea),
         response_format: { type: 'json_object' },
         stream: false,
         max_tokens: 8192,
@@ -185,8 +187,13 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs }, res) {
     }
     if (Buffer.byteLength(content) > LIMITS.outputBytes) throw fail(502, 'AI_OUTPUT_TOO_LARGE', 'AI 结果超过大小限制。')
     let spec
-    try { spec = JSON.parse(content); assertAppSpec(spec) }
-    catch { throw fail(502, 'AI_INVALID_SPEC', 'AI 结果不符合 AppSpec 协议，请重试。') }
+    try {
+      spec = JSON.parse(content)
+      assertAppSpec(spec)
+      if (interactive) assertInteractiveSpec(spec)
+      else if (spec.version !== 1) throw new Error('Legacy generation requires v1')
+    } catch { throw fail(502, 'AI_INVALID_SPEC', 'AI 结果不符合 AppSpec 协议，请重试。') }
+    if (interactive) return spec
     const quality = checkGeneratedApplication(spec, { idea })
     if (!quality.completeness.valid) {
       throw fail(502, 'AI_INCOMPLETE_APP', 'AI 生成的应用不完整，缺少可操作的实体、字段或录入入口，请重试。')
@@ -214,6 +221,7 @@ export function createAppServer({
   staticDir = resolve(fileURLToPath(new URL('../dist/', import.meta.url))),
   publicOrigin = process.env.PUBLIC_ORIGIN?.trim() || '',
   mochi,
+  interactive,
 } = {}) {
   if (publicOrigin) {
     const origin = new URL(publicOrigin)
@@ -224,6 +232,7 @@ export function createAppServer({
   // Trusted deployment injection only; CLI/env cannot manufacture access or
   // money authorization. Shared existing key/model/fetch; disabled by default.
   const mochiAi = createMochiIntegration({ ...mochi, apiKey, model, fetchImpl, timeoutMs: aiTimeoutMs })
+  const admitInteractive = createInteractiveGate(interactive)
   const clients = new Map()
   let inFlight = 0
   const server = createServer(async (req, res) => {
@@ -265,13 +274,23 @@ export function createAppServer({
       try {
         const input = await readInput(req)
         if (!input || Array.isArray(input) || typeof input !== 'object' ||
-            Object.keys(input).length !== 1 || typeof input.idea !== 'string' ||
-            !input.idea.trim() || input.idea.length > LIMITS.ideaChars) {
+            !Object.keys(input).every(key => key === 'idea' || key === 'protocol') ||
+            (Object.hasOwn(input, 'protocol') && input.protocol !== 'trusted-interactive/1') ||
+            typeof input.idea !== 'string' || !input.idea.trim() || input.idea.length > LIMITS.ideaChars) {
           throw fail(400, 'INVALID_INPUT', `请提供 1–${LIMITS.ideaChars} 个字符的软件创意（idea）。`)
         }
+        const isInteractive = input.protocol === 'trusted-interactive/1'
+        if (isInteractive) {
+          try {
+            await admitInteractive(req, { model, requestId: randomUUID(), maxTokens: Buffer.byteLength(JSON.stringify(buildInteractiveMessages(input.idea.trim()))) + 8192 })
+          } catch (error) {
+            throw fail(error.status ?? 503, error.code ?? 'AI_DISABLED', '可信交互生成未获授权或预算不可用。')
+          }
+          if (res.destroyed) return
+        }
         if (!apiKey) throw fail(503, 'AI_NOT_CONFIGURED', 'AI 服务尚未配置。')
-        const spec = await generate(input.idea.trim(), { apiKey, model, fetchImpl, aiTimeoutMs }, res)
-        send(res, 200, spec)
+        const spec = await generate(input.idea.trim(), { apiKey, model, fetchImpl, aiTimeoutMs, interactive: isInteractive }, res)
+        send(res, 200, isInteractive ? { protocol: 'trusted-interactive/1', spec, provenance: { source: fetchImpl === globalThis.fetch ? 'deepseek' : 'offline-fixture', model } } : spec)
       } finally { inFlight-- }
     } catch (error) {
       const safe = error instanceof HttpError ? error : fail(500, 'INTERNAL_ERROR', '服务暂时不可用。')

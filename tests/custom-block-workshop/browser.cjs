@@ -9,13 +9,14 @@ const { realpathSync } = require('node:fs')
 const { api, artifact, createClubRegistrationExample } = require('../custom-block/fixtures.cjs')
 const root = path.resolve(__dirname, '../..')
 const output = process.env.CUSTOM_WORKSHOP_QA_OUTPUT || '/tmp/blockcraft-custom-workshop-audit'
+const port = Number(process.env.CUSTOM_WORKSHOP_QA_PORT || 5198)
 async function payload(id, source = artifact(), props = { durationSeconds: 600 }) {
   const versionDigest = await api.computeVersionDigest(source)
   return { instance: { id, definitionId: source.manifest.definitionId, versionDigest, props }, artifact: { versionDigest, artifact: source } }
 }
 async function run() {
   const { createServer } = await import('vite')
-  const vite = await createServer({ root, server: { host: '127.0.0.1', port: 5198, strictPort: true, fs: { allow: [root, path.dirname(realpathSync(path.join(root, 'node_modules/react')))] } } })
+  const vite = await createServer({ root, server: { host: '127.0.0.1', port, strictPort: true, fs: { allow: [root, path.dirname(realpathSync(path.join(root, 'node_modules/react')))] } } })
   const report = { browser: 'Chromium', route: '/ai-create', generation: 'offline HTTP response, no paid API', cases: [], errors: [] }
   let browser
   try {
@@ -50,7 +51,7 @@ async function run() {
       }
       const source = artifact(); source.manifest.name = '惰性制品测试'
       const first = await payload('custom-1', source)
-      await page.goto('http://127.0.0.1:5198/ai-create')
+      await page.goto(`http://127.0.0.1:${port}/ai-create`)
       await page.getByLabel('你想做什么软件？').fill('社团迎新报名，离线产品回归')
       await page.getByRole('button', { name: '生成应用', exact: true }).click()
       await expect(card('builtin:registration-form')).toBeVisible()
@@ -184,7 +185,7 @@ async function run() {
       assert.deepEqual(outbound, [])
       report.cases.push({ width, passed: true, customInstances: 2, builtinRenders: 3, dragInput: width === 390 ? 'Chromium touch events' : 'mouse', reference: version.instance, checks: ['real product route', 'mixed selection/drag/layout persistence', 'trusted props save/Schema rejection', 'stale custom draft', 'invalid digest atomic rejection', 'concurrent import rejects', 'new definition admission', 'same-definition version/Schema re-admission', 'builtin Inspector field editing', 'builtin form/list CRUD and live metric', 'B/C state retention', 'exact unavailable viewer', 'no iframe or generated module execution', 'Logo/Pixelify/Mochi', 'no horizontal overflow'], paidCalls: 0 })
       // Legacy home → clarification → Demo retains its original task state.
-      await page.goto('http://127.0.0.1:5198/')
+      await page.goto(`http://127.0.0.1:${port}/`)
       await page.getByLabel('描述你想创造的软件').fill('学习管理 App')
       await page.getByRole('button', { name: '开始创造' }).click()
       await page.getByRole('heading', { name: '先确定最重要的功能' }).waitFor()

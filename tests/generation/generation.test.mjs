@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
-import { buildGenerationMessages, buildGenerationSystemPrompt, readGenerationProtocol } from '../../server/aiGenerationPrompt.mjs'
+import { buildGenerationMessages, buildGenerationSystemPrompt, readGenerationProtocol, readV1GenerationProtocol } from '../../server/aiGenerationPrompt.mjs'
 import { buildGenerationReviewMessages, checkGeneratedApplication, generationReviewContext } from '../../server/aiGenerationQuality.mjs'
 import { assertAppSpec } from '../../server/.generated/appSpecValidation.js'
 import { cases } from './fixtures.mjs'
@@ -33,7 +33,7 @@ test('prompt embeds the exact live protocol boundary and keeps idea in its own u
   assert.deepEqual(messages.map(message => message.role), ['system', 'user'])
   assert.equal(messages[1].content, idea)
   assert.equal(messages[0].content, buildGenerationSystemPrompt())
-  assert.ok(messages[0].content.includes(readGenerationProtocol()))
+  assert.ok(messages[0].content.includes(readV1GenerationProtocol()))
   assert.ok(!messages[0].content.includes(idea))
   assert.ok(!messages[0].content.includes('export interface ProjectState'))
   for (const invalid of ['', ' ', null, 42, 'x'.repeat(4001)]) assert.throws(() => buildGenerationMessages(invalid))
@@ -242,4 +242,9 @@ test('legacy demos keep their original protocol and remain usable without requir
     assert.equal(result.requirements.status, 'needs-review')
     assert.doesNotThrow(() => createAppRuntime(initializeGeneratedProject(spec)))
   }
+})
+
+test('legacy protocol projection does not advertise trusted v2 primitives', () => {
+  assert.ok(!readV1GenerationProtocol().includes("type: 'pomodoro'"))
+  assert.ok(readV1GenerationProtocol().includes('version: 1;'))
 })

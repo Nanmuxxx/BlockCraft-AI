@@ -1,0 +1,5 @@
+
+> blockcraft-ai@0.1.0 test:trusted-interactive:reliability
+> node tests/trusted-interactive/reliability.browser.cjs
+
+{"passed":2,"realHiddenTabs":true,"deliberateThrottle":"20x","paidCalls":0,"errors":[]}

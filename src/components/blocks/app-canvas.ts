@@ -2,13 +2,14 @@ import type { ProjectState } from '../../model/appSpec'
 import type { AppBlockType, BlockModuleData } from './contract'
 
 export const APP_BLOCK_CATALOG = {
+  pomodoro: { name: '番茄钟', description: '可信倒计时：开始、暂停、重置。', detail: 'AppSpec v2 · 可信交互 / 1', tone: 'apricot' },
   list: { name: '列表', description: '查看和编辑绑定实体的记录。', detail: '记录列表', tone: 'sage' },
   form: { name: '表单', description: '向绑定实体提交新记录。', detail: '记录录入', tone: 'blue' },
   metric: { name: '指标', description: '从绑定实体的记录计算统计。', detail: '实时统计', tone: 'apricot' },
 } as const
 
 export function appBlockKind(module: BlockModuleData<string>): AppBlockType | null {
-  return module.kind === 'list' || module.kind === 'form' || module.kind === 'metric' ? module.kind : null
+  return module.kind === 'list' || module.kind === 'form' || module.kind === 'metric' || module.kind === 'pomodoro' ? module.kind : null
 }
 
 /** A projection, never a second project store. Identity always comes from block.id. */

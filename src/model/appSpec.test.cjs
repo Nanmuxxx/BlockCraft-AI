@@ -105,7 +105,7 @@ test('multiple undo operations restore prior snapshots in order', () => {
   assert.deepEqual(fourth.state.spec, fresh().state.spec); assert.equal(fourth.state.revision, 4)
 })
 const invalidStates = {
-  'unsupported version': s => { s.spec.version = 2 },
+  'unsupported version': s => { s.spec.version = 3 },
   'duplicate global ID': s => { s.spec.blocks[0].id = s.spec.entities[0].id },
   'duplicate field ID across entities': s => { s.spec.entities[1].fields[0].id = 'book-title' },
   'unknown entity binding': s => { s.spec.relations[0].entityId = 'absent' },

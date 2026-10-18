@@ -1,7 +1,7 @@
 import type { BlockSpec } from './appSpec'
 
 /** Business names are compositions, never new renderer types or executable code. */
-export type PrimitiveCapabilityId = 'form' | 'list' | 'metric-count' | 'metric-sum' | 'metric-average'
+export type PrimitiveCapabilityId = 'pomodoro' | 'form' | 'list' | 'metric-count' | 'metric-sum' | 'metric-average'
 export interface PrimitiveCapability {
   readonly id: PrimitiveCapabilityId
   readonly kind: 'primitive'
@@ -29,6 +29,7 @@ export interface UnsupportedCapability {
 export type AppCapability = PrimitiveCapability | SemanticCapability | UnsupportedCapability
 
 const definitions: AppCapability[] = [
+  { id: 'pomodoro', kind: 'primitive', status: 'supported', name: '可信番茄钟', behavior: 'AppSpec v2：开始、暂停、重置倒计时。', limitations: ['仅当前页面会话；不发送通知；暂不支持 ZIP 导出。'] },
   { id: 'form', kind: 'primitive', status: 'supported', name: '记录表单', behavior: '按实体字段校验并创建记录。', limitations: ['没有自动填充、关联查询或工作流。'] },
   { id: 'list', kind: 'primitive', status: 'supported', name: '记录列表', behavior: '展示字段，编辑和删除实体记录。', limitations: ['没有分组、筛选、排序或行内打卡交互。'] },
   { id: 'metric-count', kind: 'primitive', status: 'supported', name: '记录数', behavior: '统计绑定实体的全部记录条数。', limitations: ['不是去重人数、打卡天数或连续天数。'] },

@@ -1,0 +1,44 @@
+{
+  "baseline": "7e94dc9568501dd4ad218a43b5aca31026aed2b2",
+  "source": "offline-fixture",
+  "paidCalls": 0,
+  "totalPassed": 651,
+  "suites": [
+    {
+      "suite": "unit",
+      "passed": 192,
+      "failed": 0
+    },
+    {
+      "suite": "server",
+      "passed": 23,
+      "failed": 0
+    },
+    {
+      "suite": "generation",
+      "passed": 24,
+      "failed": 0
+    },
+    {
+      "suite": "mochi",
+      "passed": 55,
+      "failed": 0
+    },
+    {
+      "suite": "mochi-ai",
+      "passed": 40,
+      "failed": 0
+    },
+    {
+      "suite": "compat",
+      "passed": 306,
+      "failed": 0
+    },
+    {
+      "suite": "specific",
+      "passed": 11,
+      "failed": 0
+    }
+  ],
+  "build": "passed"
+}

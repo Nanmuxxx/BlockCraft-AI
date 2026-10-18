@@ -1,0 +1,6 @@
+.generated-artifact-preview { margin-top: 12px; padding: 12px; border: 1px solid #e4d8ce; border-radius: 10px; background: #fffaf4; min-width: 0; }
+.generated-artifact-preview h3 { margin: 0 0 8px; }
+.generated-artifact-preview code, .generated-artifact-preview p { overflow-wrap: anywhere; }
+.generated-artifact-preview pre { max-height: 180px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.generated-artifact-preview button { margin: 6px 10px 0 0; }
+.custom-block-import select { max-width: 100%; margin: 6px; }

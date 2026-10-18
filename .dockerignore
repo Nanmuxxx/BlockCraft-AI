@@ -12,6 +12,7 @@
 !server/package.json
 !server/tsconfig.json
 !server/index.mjs
+!server/trusted-interactive.mjs
 !server/aiGenerationPrompt.mjs
 !server/aiGenerationQuality.mjs
 !server/mochi-ai/

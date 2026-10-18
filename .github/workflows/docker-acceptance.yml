@@ -79,6 +79,10 @@ jobs:
           } | tee -a "$log"
           npm run test:mochi-host 2>&1 | tee -a "$log"
           {
+            echo "command=npm run test:trusted-interactive"
+          } | tee -a "$log"
+          npm run test:trusted-interactive 2>&1 | tee -a "$log"
+          {
             echo "command=npm run test:workshop-export"
           } | tee -a "$log"
           npm run test:workshop-export 2>&1 | tee -a "$log"
@@ -306,6 +310,15 @@ jobs:
           assert.match(generation.headers.get('content-type') || '', /^application\/json/)
           assert.equal((await generation.json()).error.code, 'AI_NOT_CONFIGURED')
           log('POST /api/ai/generate without key -> 503 application/json {error.code:"AI_NOT_CONFIGURED"}')
+          const trustedGeneration = await localFetch('/api/ai/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idea: 'offline trusted timer smoke test', protocol: 'trusted-interactive/1' }),
+          })
+          assert.equal(trustedGeneration.status, 503)
+          assert.match(trustedGeneration.headers.get('content-type') || '', /^application\\/json/)
+          assert.equal((await trustedGeneration.json()).error.code, 'AI_DISABLED')
+          log('POST /api/ai/generate trusted-interactive/1 without server authorization -> 503 AI_DISABLED; no key, no upstream request')
           zipLog('PASS production image has no successful local-project-export route')
           log(`PASS ${assets.length} local resources, routes, health, traversal, and no-key degradation`)
           NODE

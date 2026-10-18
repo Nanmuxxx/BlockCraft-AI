@@ -1,0 +1,9 @@
+
+> blockcraft-ai@0.1.0 test:trusted-interactive:browser
+> npm --prefix server run build && node tests/trusted-interactive/browser.cjs
+
+
+> build
+> tsc -p tsconfig.json
+
+{"passed":2,"fixtureCalls":8,"paidCalls":0,"artifacts":"/private/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/blockcraft-p0-review-tree-u7v74yda/docs/acceptance/trusted-interactive"}

@@ -47,7 +47,7 @@ const invalidProjects = {
   'unknown v2 format': p => { p.formatVersion = 3 },
   'inner writable revision': p => { p.base.revision = 0 },
   'invalid outer revision': p => { p.revision = Number.MAX_SAFE_INTEGER + 1 },
-  'v1 unknown version': p => { p.base.spec.version = 2 },
+  'v1 unknown version': p => { p.base.spec.version = 3 },
   'dangling v1 binding': p => { p.base.spec.relations[0].entityId = 'missing' },
   'invalid custom ID': p => { p.custom.instances[0].id = '__proto__' },
   'custom collides with builtin': p => { p.custom.instances[0].id = p.base.spec.blocks[0].id },

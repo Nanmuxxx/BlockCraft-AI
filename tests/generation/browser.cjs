@@ -38,7 +38,7 @@ async function run() {
   await once(backend, 'listening')
   const backendPort = backend.address().port
   const closeBackend = () => new Promise(resolve => { backend.closeAllConnections(); backend.close(resolve) })
-  const vite = await createViteServer({ root, server: { host: '127.0.0.1', port: 5193, strictPort: true,
+  const vite = await createViteServer({ root, server: { host: '127.0.0.1', port: 5193, strictPort: true, fs: { allow: [root, require('node:fs').realpathSync(path.join(root, 'node_modules'))] },
     proxy: { '/api': { target: `http://127.0.0.1:${backendPort}`, changeOrigin: false } } } })
   let browser
   try {
@@ -94,7 +94,7 @@ async function run() {
     await once(backend, 'listening')
     candidate = cases.find(candidate => candidate.id === 'movie-log')
     await page.getByRole('button', { name: 'B 模式 · 编辑积木', exact: true }).click()
-    await page.getByRole('region', { name: '功能积木画布', exact: true }).getByRole('button', { name: '已看电影记录', exact: true }).click()
+    await page.getByRole('region', { name: '自定义与内置积木画布', exact: true }).getByRole('button', { name: '已看电影记录', exact: true }).click()
     const inspector = page.getByRole('complementary', { name: '积木属性', exact: true })
     await inspector.getByLabel('字段名称', { exact: true }).fill('导演')
     await inspector.getByRole('button', { name: '新增字段', exact: true }).click()

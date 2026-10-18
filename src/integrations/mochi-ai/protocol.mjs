@@ -48,11 +48,11 @@ export function validateContext(c) {
   check(c.selectedBlockId === null || blockIds.has(c.selectedBlockId))
   const bound = new Set()
   for (const r of c.relations) {
-    object(r, ['blockId', 'entityId']); check(blockIds.has(r.blockId) && c.blocks.find(b => b.id === r.blockId).type !== 'custom' && entityIds.has(r.entityId) && !bound.has(r.blockId)); bound.add(r.blockId)
+    object(r, ['blockId', 'entityId']); check(blockIds.has(r.blockId) && !['custom', 'pomodoro'].includes(c.blocks.find(b => b.id === r.blockId).type) && entityIds.has(r.entityId) && !bound.has(r.blockId)); bound.add(r.blockId)
     const entity = c.entities.find(e => e.id === r.entityId)
     check(c.blocks.find(b => b.id === r.blockId).fieldIds.every(fid => entity.fields.some(f => f.id === fid)))
   }
-  check(c.blocks.every(b => b.type === 'custom' || bound.has(b.id)))
+  check(c.blocks.every(b => b.type === 'custom' || (b.type === 'pomodoro' ? b.fieldIds.length === 0 && !bound.has(b.id) : bound.has(b.id))))
   check(bytes(c) <= LIMITS.contextBytes, 'CONTEXT_TOO_LARGE', '当前结构较大，请缩小分析范围。')
   return c
 }

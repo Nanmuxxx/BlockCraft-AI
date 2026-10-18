@@ -7,6 +7,8 @@ import { CustomBlockCanvas } from '../../integrations/custom-block-bc/CustomBloc
 import { CustomBlockInspector } from '../../integrations/custom-block-bc/CustomBlockInspector'
 import { CustomBlockRunSurface } from '../../integrations/custom-block-bc/CustomBlockViewer'
 import { CustomBlockImport } from '../../integrations/custom-block-bc/CustomBlockImport'
+import { createGeneratedArtifactUI, type GeneratedArtifactUI } from '../../integrations/generated-artifact/ui'
+import { useInstallLifecycle } from '../../integrations/generated-artifact/useInstallLifecycle'
 import { useWorkshopAdapter } from '../../integrations/custom-block-bc/useWorkshopAdapter'
 import { AppSpecInspector } from './AppSpecInspector'
 import { ExportProjectButton } from '../../integrations/project-export/ExportProjectButton'
@@ -21,9 +23,11 @@ import './app-spec-workshop.css'
 export interface WorkshopPanelMount {
   /** One panel in the existing sidebar; host lifetime and owner stay in Workshop. */
   renderMochi?: (props: WorkshopMochiProps) => ReactNode
+  /** Parent must synchronously gate runtime replacement using this same binding. */
+  installation?: GeneratedArtifactUI
 }
 
-export function AppSpecWorkshop({ runtime, renderMochi }: { runtime: AppRuntime } & WorkshopPanelMount) {
+export function AppSpecWorkshop({ runtime, renderMochi, installation }: { runtime: AppRuntime } & WorkshopPanelMount) {
   const [owner, setOwner] = useState<{ runtime: AppRuntime; host: MochiHost } | null>(null)
   useEffect(() => {
     // Acquire only after commit. StrictMode cleanup disposes this instance; replay
@@ -33,14 +37,17 @@ export function AppSpecWorkshop({ runtime, renderMochi }: { runtime: AppRuntime 
     return () => host.dispose()
   }, [runtime])
   if (!owner || owner.runtime !== runtime) return null
-  return <MochiWorkshop runtime={runtime} host={owner.host} renderMochi={renderMochi} planningDisabledReason={AI_MODIFICATION_DISABLED} />
+  return <MochiWorkshop runtime={runtime} host={owner.host} installation={installation} renderMochi={renderMochi} planningDisabledReason={AI_MODIFICATION_DISABLED} />
 }
 
 /** Internal composition seam for offline integration tests; production uses the wrapper above. */
-export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMochi }: {
+export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMochi, installation: suppliedInstallation }: {
   runtime: AppRuntime; host: MochiHost; planningDisabledReason?: string
 } & WorkshopPanelMount) {
   const root = useRef<HTMLElement>(null)
+  const installation = useMemo(() => suppliedInstallation ?? createGeneratedArtifactUI(runtime.customProject), [runtime, suppliedInstallation])
+  useInstallLifecycle(installation)
+  const [installGateError, setInstallGateError] = useState('')
   // Only exact admitted references and the existing owner's immutable registry.
   // No new Host, Runtime, owner or plan authority is created for advice.
   const customContext = useMemo(() => ({
@@ -50,7 +57,10 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
   const view = useSyncExternalStore(host.subscribe, host.getSnapshot, host.getSnapshot)
   const mode = view.mode
   const selectedId = view.context.selectedBlockId
-  const setMode = host.setMode
+  const setMode = (next: typeof mode) => {
+    try { if (next !== mode) installation.beforeContextChange(); host.setMode(next); setInstallGateError('') }
+    catch (error) { setInstallGateError(error instanceof Error ? error.message : '暂不可切换模式。') }
+  }
   const setSelectedId = host.setSelection
   const snapshot = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
   const { adapter, error, snapshot: project } = useWorkshopAdapter(runtime)
@@ -75,7 +85,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
       </nav>
       <div className="workshop__workspace">
         <div className="workshop__canvas-header"><div><p className="workshop__eyebrow">{mode === 'blocks' ? 'BUILD WITH BLOCKS' : 'A GLIMPSE OF YOUR APP'}</p><h2>{mode === 'blocks' ? '从一块积木开始' : '让想法有个模样'}</h2><p>{mode === 'blocks' ? '每一块，都是软件的一种可能。' : `这里是「${snapshot.spec.name}」的预览空间。`}</p></div><span className="workshop__badge">{project.renderOrder.length} 块功能积木</span></div>
-        <div className="workshop__blocks-layer" id="generated-blocks" hidden={mode !== 'blocks'}><CustomBlockImport owner={runtime.customProject} />{adapter ? <CustomBlockCanvas adapter={adapter} selectedId={selected} onSelect={setSelectedId} /> : admission}</div>
+        <div className="workshop__blocks-layer" id="generated-blocks" hidden={mode !== 'blocks'}>{installGateError && <p role="alert">{installGateError}</p>}<CustomBlockImport owner={runtime.customProject} generated={installation} />{adapter ? <CustomBlockCanvas adapter={adapter} selectedId={selected} onSelect={setSelectedId} /> : admission}</div>
         <div className="workshop__preview-stage" id="generated-preview" hidden={mode !== 'run'}><div className="study-app"><header className="study-app__topbar"><div className="study-app__brand"><span><Blocks size={18} aria-hidden="true" /></span><strong>{snapshot.spec.name}</strong><small>YOUR APP</small></div></header><div className="app-spec-preview-content">{adapter ? <CustomBlockRunSurface adapter={adapter} renderBuiltin={block => <BuiltinBlockRenderer runtime={runtime} blockId={block.id} />} /> : admission}</div></div></div>
         <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
       </div>

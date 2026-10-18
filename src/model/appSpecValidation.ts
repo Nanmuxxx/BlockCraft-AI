@@ -32,7 +32,12 @@ function field(value: unknown) {
 }
 function block(value: unknown) {
   object(value)
-  if (value.type === 'list' || value.type === 'form') {
+  if (value.type === 'pomodoro') {
+    keys(value, ['id', 'name', 'type', 'protocolVersion', 'durationSeconds'])
+    ensure(value.protocolVersion === 1, 'Unsupported pomodoro protocol')
+    ensure(Number.isInteger(value.durationSeconds) && (value.durationSeconds as number) >= 1 && (value.durationSeconds as number) <= 7200, 'Duration must be 1–7200 seconds')
+    ensure(typeof value.name === 'string' && value.name.length <= 120, 'Title too long')
+  } else if (value.type === 'list' || value.type === 'form') {
     keys(value, ['id', 'name', 'type', 'fieldIds']); ids(value.fieldIds); ensure(value.fieldIds.length > 0, 'Empty display fields')
   } else {
     ensure(value.type === 'metric', 'Unsupported block type')
@@ -53,7 +58,7 @@ function position(value: unknown) {
 /** Throws AppSpecError; no coercion, evaluation, or default insertion. */
 export function assertAppSpec(value: unknown): asserts value is AppSpec {
   object(value); keys(value, ['version', 'id', 'name', 'entities', 'blocks', 'relations'])
-  ensure(value.version === 1, 'Unsupported AppSpec version'); id(value.id); label(value.name)
+  ensure(value.version === 1 || value.version === 2, 'Unsupported AppSpec version'); id(value.id); label(value.name)
   array(value.entities); array(value.blocks); array(value.relations)
   const globalIds: unknown[] = [value.id]
   for (const entity of value.entities) {
@@ -69,6 +74,11 @@ export function assertAppSpec(value: unknown): asserts value is AppSpec {
   }
   for (const b of spec.blocks) {
     const links = spec.relations.filter(r => r.blockId === b.id)
+    if (b.type === 'pomodoro') {
+      ensure(spec.version === 2, 'Pomodoro requires AppSpec v2')
+      ensure(links.length === 0, 'Pomodoro cannot bind CRUD entities')
+      continue
+    }
     ensure(links.length === 1, 'Block requires exactly one binding')
     const entity = spec.entities.find(e => e.id === links[0].entityId)!
     const refs = b.type === 'metric' ? (b.aggregation === 'count' ? [] : [b.fieldId]) : b.fieldIds
@@ -81,8 +91,18 @@ export function assertAppSpec(value: unknown): asserts value is AppSpec {
   }
 }
 export function assertProjectState(value: unknown): asserts value is ProjectState {
-  object(value); keys(value, ['revision', 'spec', 'records', 'blockPositions']); revision(value.revision); assertAppSpec(value.spec)
+  object(value); keys(value, ['revision', 'spec', 'records', 'blockPositions'], ['timers']); revision(value.revision); assertAppSpec(value.spec)
   object(value.records); object(value.blockPositions)
+  if (hasOwn(value, 'timers')) {
+    ensure(value.spec.version === 2, 'Timer state requires v2'); object(value.timers)
+    for (const [blockId, timer] of Object.entries(value.timers)) {
+      const b = value.spec.blocks.find(b => b.id === blockId)
+      ensure(b?.type === 'pomodoro', 'Dangling timer state')
+      object(timer); keys(timer, ['remainingMs', 'startedAt'])
+      ensure(typeof timer.remainingMs === 'number' && Number.isFinite(timer.remainingMs) && timer.remainingMs >= 0 && timer.remainingMs <= b.durationSeconds * 1000, 'Invalid remaining time')
+      ensure(timer.startedAt === null || (typeof timer.startedAt === 'number' && Number.isSafeInteger(timer.startedAt) && timer.startedAt >= 0 && timer.startedAt <= Number.MAX_SAFE_INTEGER - 7200000), 'Invalid start time')
+    }
+  }
   for (const [entityId, rows] of Object.entries(value.records)) {
     const entity = value.spec.entities.find(e => e.id === entityId); ensure(entity, 'Unknown records entity'); array(rows)
     const rowIds: unknown[] = []
