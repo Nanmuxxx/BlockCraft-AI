@@ -208,5 +208,41 @@
     "remote": "63d58fa503598c92636afa0f6f7942be683f069f",
     "tree": "2b76a26c1202d2a645eaf0f6c8ea1f492cf134ad",
     "message": "test(ai-core): connect fixture generation installation and source edits"
+  },
+  {
+    "local": "d3a9c2f9aebf719311e8ee51b9485517687edce3",
+    "remote": "7bdbfbeab581e4cddbb6a0f02fab1e43efc53d4b",
+    "tree": "605132d07fe59aceb6eee384a60c08f9411cc9a0",
+    "message": "fix(custom-block): enforce pending store quota across writers"
+  },
+  {
+    "local": "f2afc73192b767502510160a71d6d02e5200d0a1",
+    "remote": "b0a121464d2bc950970aa2f276497898c64b3c2f",
+    "tree": "4da4e18022616035662f800653de46da1636bdd8",
+    "message": "docs(ai-core): record 724 checks and pending source edit vertical slice"
+  },
+  {
+    "local": "84a1255a67077e42fd9323fd33a2d3419f5e5f65",
+    "remote": "468aa12b842c0ae269bf527f8b4f3c58a2f733fc",
+    "tree": "8014f28266d81ee5e92c2a58862fb7ad1a203c53",
+    "message": "fix(custom-block): consume complete bounded store records before validation"
+  },
+  {
+    "local": "2f6d630e177b1564280d6691ff791c96492d7f2a",
+    "remote": "93c38e3062b31e47048f7f43beca8ad64c0634da",
+    "tree": "4bb3145d8461b153a371e32c2dcac8647e146bd2",
+    "message": "fix(mochi): bound source model completion and retire cancelled transports"
+  },
+  {
+    "local": "9c9bc818e770f2e3befda2dd862e9adc59e72d4b",
+    "remote": "8fb63c539b0b2ab08b695ebfb52479b60f1329d8",
+    "tree": "9de5e7a684ea6d6988c4fccf32fc8787f5db0ffe",
+    "message": "fix(mochi): cap AppSpec model plan waits without changing invocation order"
+  },
+  {
+    "local": "809f6a76021a58f3c1fb487d66f4fd63169dc841",
+    "remote": "44bb5e8c9158c7030a01cee5ee28e373c5d935e9",
+    "tree": "018f559b3d1c5ba6745a45e5e673b9a7c079334e",
+    "message": "docs(ai-core): record bounded storage and model deadlines"
   }
 ]

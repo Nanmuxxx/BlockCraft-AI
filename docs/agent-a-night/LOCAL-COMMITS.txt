@@ -34,3 +34,8 @@ dca5903e22ff51e781a165d255b4e6280bfa963c feat(custom-block): propagate caller ca
 36025d2de9f7ce3cff140c9baef596df72bad4d3 test(custom-block): keep hazardous admitted source inert and execution denied
 6d700369bfe5c9715df3266e16a631643c49d136 test(ai-core): connect fixture generation installation and source edits
 d3a9c2f9aebf719311e8ee51b9485517687edce3 fix(custom-block): enforce pending store quota across writers
+f2afc73192b767502510160a71d6d02e5200d0a1 docs(ai-core): record 724 checks and pending source edit vertical slice
+84a1255a67077e42fd9323fd33a2d3419f5e5f65 fix(custom-block): consume complete bounded store records before validation
+2f6d630e177b1564280d6691ff791c96492d7f2a fix(mochi): bound source model completion and retire cancelled transports
+9c9bc818e770f2e3befda2dd862e9adc59e72d4b fix(mochi): cap AppSpec model plan waits without changing invocation order
+809f6a76021a58f3c1fb487d66f4fd63169dc841 docs(ai-core): record bounded storage and model deadlines
