@@ -1,0 +1,102 @@
+{
+  "importFile": {
+    "instance": {
+      "id": "offline-pomodoro",
+      "definitionId": "accept-pomodoro-20261018",
+      "versionDigest": "sha256:d0a7d25b581048dfaf07bd8cafce09191eb02e9932ff90ac3e327782852d35fa",
+      "props": {
+        "initialMinutes": 25,
+        "title": "离线真实番茄钟"
+      }
+    },
+    "artifact": {
+      "versionDigest": "sha256:d0a7d25b581048dfaf07bd8cafce09191eb02e9932ff90ac3e327782852d35fa",
+      "artifact": {
+        "artifactVersion": 1,
+        "manifest": {
+          "protocolVersion": 1,
+          "definitionId": "accept-pomodoro-20261018",
+          "name": "中文番茄钟",
+          "sdkVersion": "1.0.0",
+          "entry": "src/Pomodoro.tsx",
+          "propsSchema": {
+            "type": "object",
+            "properties": {
+              "initialMinutes": {
+                "type": "integer",
+                "title": "初始分钟数",
+                "minimum": 1,
+                "maximum": 1440
+              },
+              "title": {
+                "type": "string",
+                "title": "标题",
+                "maxLength": 120
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "stateSchema": {
+            "type": "object",
+            "properties": {
+              "remainingSeconds": {
+                "type": "integer",
+                "title": "剩余秒数",
+                "minimum": 0,
+                "maximum": 86400
+              },
+              "status": {
+                "type": "string",
+                "title": "状态",
+                "enum": [
+                  "idle",
+                  "running",
+                  "paused",
+                  "finished"
+                ],
+                "maxLength": 16
+              }
+            },
+            "required": [
+              "remainingSeconds",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          "events": {},
+          "requestedCapabilities": []
+        },
+        "sources": {
+          "src/Pomodoro.tsx": "import React, { useCallback, useEffect, useRef, useState } from 'react';\n\nexport interface PomodoroProps {\n  initialMinutes?: number;\n  title?: string;\n}\n\ntype Status = 'idle' | 'running' | 'paused' | 'finished';\n\nfunction formatTime(totalSeconds: number): string {\n  const safe = Math.max(0, Math.floor(totalSeconds));\n  const mm = Math.floor(safe / 60);\n  const ss = safe % 60;\n  return `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;\n}\n\nexport default function Pomodoro({ initialMinutes = 25, title = '番茄钟' }: PomodoroProps) {\n  const totalSeconds = Math.max(1, Math.floor(initialMinutes * 60));\n\n  const [remaining, setRemaining] = useState<number>(totalSeconds);\n  const [status, setStatus] = useState<Status>('idle');\n\n  const endAtRef = useRef<number | null>(null);\n  const intervalRef = useRef<number | null>(null);\n\n  const clearTimer = useCallback(() => {\n    if (intervalRef.current !== null) {\n      window.clearInterval(intervalRef.current);\n      intervalRef.current = null;\n    }\n  }, []);\n\n  useEffect(() => {\n    return () => {\n      clearTimer();\n    };\n  }, [clearTimer]);\n\n  const startTicking = useCallback(() => {\n    clearTimer();\n    intervalRef.current = window.setInterval(() => {\n      const endAt = endAtRef.current;\n      if (endAt === null) return;\n      const left = Math.ceil((endAt - Date.now()) / 1000);\n      if (left <= 0) {\n        endAtRef.current = null;\n        clearTimer();\n        setRemaining(0);\n        setStatus('finished');\n      } else {\n        setRemaining(left);\n      }\n    }, 200);\n  }, [clearTimer]);\n\n  const handleStart = useCallback(() => {\n    if (status === 'running') return;\n    if (status === 'finished') return;\n    const base = remaining > 0 ? remaining : totalSeconds;\n    endAtRef.current = Date.now() + base * 1000;\n    setStatus('running');\n    startTicking();\n  }, [status, remaining, totalSeconds, startTicking]);\n\n  const handlePause = useCallback(() => {\n    if (status !== 'running') return;\n    const endAt = endAtRef.current;\n    clearTimer();\n    endAtRef.current = null;\n    if (endAt !== null) {\n      const left = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));\n      setRemaining(left);\n    }\n    setStatus('paused');\n  }, [status, clearTimer]);\n\n  const handleReset = useCallback(() => {\n    clearTimer();\n    endAtRef.current = null;\n    setRemaining(totalSeconds);\n    setStatus('idle');\n  }, [clearTimer, totalSeconds]);\n\n  const progress = totalSeconds > 0 ? (totalSeconds - remaining) / totalSeconds : 0;\n  const percent = Math.min(100, Math.max(0, progress * 100));\n\n  const statusText: Record<Status, string> = {\n    idle: '准备开始',\n    running: '计时中',\n    paused: '已暂停',\n    finished: '已完成',\n  };\n\n  return (\n    <div\n      style={{\n        display: 'flex',\n        flexDirection: 'column',\n        alignItems: 'center',\n        gap: 16,\n        padding: 24,\n        borderRadius: 16,\n        background: '#fff7f2',\n        color: '#3a2c25',\n        fontFamily: 'system-ui, -apple-system, sans-serif',\n        maxWidth: 360,\n        margin: '0 auto',\n      }}\n    >\n      <h2 style={{ margin: 0, fontSize: 20 }}>{title}</h2>\n\n      <div\n        aria-live=\"polite\"\n        style={{\n          fontSize: 64,\n          fontWeight: 700,\n          fontVariantNumeric: 'tabular-nums',\n          letterSpacing: 2,\n          color: status === 'finished' ? '#c0392b' : '#d35400',\n        }}\n      >\n        {formatTime(remaining)}\n      </div>\n\n      <div style={{ width: '100%', height: 8, borderRadius: 4, background: '#f3d9cc', overflow: 'hidden' }}>\n        <div\n          style={{\n            width: `${percent}%`,\n            height: '100%',\n            background: '#e67e22',\n            transition: 'width 0.2s linear',\n          }}\n        />\n      </div>\n\n      <div style={{ fontSize: 14, color: '#8a6d5c' }}>{statusText[status]}</div>\n\n      {status === 'finished' && (\n        <div\n          role=\"status\"\n          style={{\n            padding: '8px 16px',\n            borderRadius: 8,\n            background: '#fdecea',\n            color: '#c0392b',\n            fontSize: 14,\n            fontWeight: 600,\n          }}\n        >\n          恭喜，番茄钟完成！休息一下吧。\n        </div>\n      )}\n\n      <div style={{ display: 'flex', gap: 12 }}>\n        {status === 'running' ? (\n          <button type=\"button\" onClick={handlePause} style={buttonStyle('#e67e22')}>\n            暂停\n          </button>\n        ) : (\n          <button\n            type=\"button\"\n            onClick={handleStart}\n            disabled={status === 'finished'}\n            style={buttonStyle(status === 'finished' ? '#bdc3c7' : '#e67e22')}\n          >\n            开始\n          </button>\n        )}\n        <button type=\"button\" onClick={handleReset} style={buttonStyle('#95a5a6')}>\n          重置\n        </button>\n      </div>\n    </div>\n  );\n}\n\nfunction buttonStyle(background: string): React.CSSProperties {\n  return {\n    padding: '10px 24px',\n    borderRadius: 999,\n    border: 'none',\n    background,\n    color: '#fff',\n    fontSize: 15,\n    fontWeight: 600,\n    cursor: 'pointer',\n  };\n}\n"
+        },
+        "dependencies": {
+          "react": {
+            "version": "19.3.1",
+            "integrity": "sha512-QNhWdt7nrgVWWQG58QuGsAR3jv3Hbe4mb4vz7w2csnHavciZJgda1CPNaldF6eVxv90ud3jUXpKlHL69gO38yw=="
+          }
+        },
+        "build": {
+          "profile": "react-isolated-v1",
+          "toolchain": {
+            "name": "esbuild",
+            "version": "0.25.12",
+            "integrity": "sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg=="
+          },
+          "target": "es2020",
+          "format": "esm",
+          "maxBundleBytes": 524288
+        }
+      }
+    }
+  },
+  "provenance": {
+    "kind": "deepseek",
+    "requestId": "accept-20261018-pomodoro-02",
+    "requirementDigest": "sha256:12c313e556430effb282d86f99ab29d17a8cc14a0c89426e871b213a77430acc"
+  },
+  "status": "pending-build",
+  "validation": "source-admitted",
+  "build": "not-attempted",
+  "execution": "denied"
+}

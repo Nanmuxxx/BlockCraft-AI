@@ -14,7 +14,11 @@
     "test:generation": "npm --prefix server run build && node --test tests/generation/*.test.mjs",
     "test:generation:browser": "node tests/generation/browser.cjs",
     "test:mochi-host": "node --test src/integrations/mochi/host.test.cjs",
-    "test:mochi:browser": "node tests/mochi/browser.cjs"
+    "test:mochi:browser": "node tests/mochi/browser.cjs",
+    "test:trusted-interactive": "npm --prefix server run build && node tools/project-zip-export/prepare.mjs && node --test tests/trusted-interactive/*.test.*",
+    "test:trusted-interactive:browser": "npm --prefix server run build && node tests/trusted-interactive/browser.cjs",
+    "dev:trusted-fixture": "npm --prefix server run build && node tests/trusted-interactive/serve.mjs",
+    "test:trusted-interactive:reliability": "node tests/trusted-interactive/reliability.browser.cjs"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "5.3.0",

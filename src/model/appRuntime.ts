@@ -44,6 +44,7 @@ export interface AppRuntime {
   executeCommand: (request: unknown, authorization?: WriteAuthorization) => RuntimeResult
   updateRecords: (change: RecordChange) => RuntimeResult
   moveBlock: (blockId: string, position: { x: number; y: number }) => RuntimeResult
+  timerAction: (blockId: string, action: 'start' | 'pause' | 'reset') => RuntimeResult
   canUndo: () => boolean
   /** B1 compatibility: record transaction, throwing AppSpecError on rejection. */
   dispatch: (change: RecordChange) => void
@@ -94,6 +95,24 @@ export function createAppRuntime(initial: ProjectState): AppRuntime {
       return { ok: true, duplicate: result.duplicate, committedRevision: result.committedRevision }
     },
     updateRecords,
+    timerAction(blockId, action) {
+      return mutate(state => {
+        const block = state.spec.blocks.find(b => b.id === blockId)
+        ensure(block?.type === 'pomodoro' && state.spec.version === 2, 'Unknown timer')
+        ensure(['start', 'pause', 'reset'].includes(action), 'Unknown timer action')
+        const now = Date.now()
+        const timer = state.timers?.[blockId] ?? { remainingMs: block.durationSeconds * 1000, startedAt: null }
+        const remainingMs = timerRemaining(timer, now)
+        const next = structuredClone(state)
+        next.timers ??= {}
+        next.timers[blockId] = action === 'reset' ? { remainingMs: block.durationSeconds * 1000, startedAt: null }
+          : action === 'pause' ? { remainingMs, startedAt: null }
+            : { remainingMs, startedAt: remainingMs > 0 ? now : null }
+        next.revision++
+        assertProjectState(next)
+        return next
+      })
+    },
     moveBlock(blockId, position) {
       return mutate(state => {
         ensure(state.spec.blocks.some(block => block.id === blockId), 'Unknown position block')
@@ -148,4 +167,9 @@ export function parseFieldDraft(fields: FieldSpec[], draft: FieldDraft): Record<
     }
   }
   return values
+}
+
+/** A repaint clock never owns or commits project data. Hidden B/C views use this same anchor. */
+export function timerRemaining(timer: import('./appSpec').TimerState, now: number): number {
+  return Math.max(0, timer.remainingMs - (timer.startedAt === null ? 0 : Math.max(0, now - timer.startedAt)))
 }

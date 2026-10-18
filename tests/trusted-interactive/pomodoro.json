@@ -1,0 +1,1 @@
+{"version":2,"id":"focus-app","name":"考试专注番茄钟","entities":[],"blocks":[{"id":"focus-timer","name":"数学专注","type":"pomodoro","protocolVersion":1,"durationSeconds":1500}],"relations":[]}

@@ -8,6 +8,7 @@ export class ExportFailure extends Error {
 /** Capture the sole owner's immutable snapshot; never creates an owner or writes. */
 export async function captureExport(owner: Pick<CustomProjectSession, 'getSnapshot' | 'registry'>) {
   const project = owner.getSnapshot()
+  if (project.base.spec.version !== 1) throw new ExportFailure('UNSUPPORTED_APP_SPEC')
   const refs = new Map(project.custom.instances.map(({ definitionId, versionDigest }) =>
     [`${definitionId}/${versionDigest}`, { definitionId, versionDigest }]))
   if (refs.size > 32) throw new ExportFailure('ARTIFACT_COUNT_LIMIT')

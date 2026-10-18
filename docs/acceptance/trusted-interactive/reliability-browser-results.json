@@ -1,0 +1,69 @@
+{
+  "browser": "151.0.7922.34",
+  "method": "native Chromium headless default context; connectOverCDP noDefaults:true; no synthetic document.visibilityState",
+  "paidCalls": 0,
+  "cases": [
+    {
+      "width": 1440,
+      "realVisibility": [
+        "visible",
+        "hidden",
+        "visible"
+      ],
+      "intervalPolicy": "100ms repaint callbacks deliberately slowed to 2000ms",
+      "recoveryDisplayErrorMs": 466,
+      "beforeBackgroundTicks": 0,
+      "completionDisplayTransitions": 1,
+      "completedOwnerWrites": 0,
+      "oldRecordsAndBlocksPreserved": true,
+      "forgedRunnableViewer": "unavailable",
+      "checks": [
+        "start-pause-resume-reset",
+        "real-double-click",
+        "five-rapid-cycles",
+        "paused-anchor-stable",
+        "real-hidden-tab-resume",
+        "deliberate-20x-throttle",
+        "hidden-tab-completion-once",
+        "read-only-derived-completion",
+        "old-data-preserved",
+        "untrusted-viewer-denied"
+      ]
+    },
+    {
+      "width": 390,
+      "realVisibility": [
+        "visible",
+        "hidden",
+        "visible"
+      ],
+      "intervalPolicy": "100ms repaint callbacks deliberately slowed to 2000ms",
+      "recoveryDisplayErrorMs": 456,
+      "beforeBackgroundTicks": 0,
+      "completionDisplayTransitions": 1,
+      "completedOwnerWrites": 0,
+      "oldRecordsAndBlocksPreserved": true,
+      "forgedRunnableViewer": "unavailable",
+      "checks": [
+        "start-pause-resume-reset",
+        "real-double-click",
+        "five-rapid-cycles",
+        "paused-anchor-stable",
+        "real-hidden-tab-resume",
+        "deliberate-20x-throttle",
+        "hidden-tab-completion-once",
+        "read-only-derived-completion",
+        "old-data-preserved",
+        "untrusted-viewer-denied"
+      ]
+    }
+  ],
+  "errors": [],
+  "limits": [
+    "No audio, Notification API, service worker or OS alarm implemented.",
+    "Completion is a stable derived UI transition, not a durable exactly-once business event.",
+    "Second display rounds up; restore repaint is browser-scheduled.",
+    "System clock changes can affect wall-clock anchors; no monotonic/OS sleep guarantee.",
+    "No long-duration five-minute intensive-throttling, renderer-freeze, or real mobile device/OS-sleep acceptance."
+  ]
+}

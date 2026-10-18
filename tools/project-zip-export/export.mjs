@@ -74,6 +74,7 @@ function sourcePolicy(artifact) {
 export async function exportProjectZip(input, options = {}) {
   guarded(() => { protocol.assertJson(input); json.object(input); json.keys(input, ['project', 'artifacts']) }, 'INVALID_INPUT')
   const snapshot = json.cloneJson(input)
+  ensure(snapshot.project?.base?.spec?.version === 1, 'UNSUPPORTED_APP_SPEC')
   guarded(() => { protocol.assertJson(options); json.object(options); json.keys(options, [], ['filename', 'limits']) }, 'INVALID_OPTIONS')
   const settings = json.cloneJson(options)
   const filename = settings.filename ?? 'blockcraft-project.zip'

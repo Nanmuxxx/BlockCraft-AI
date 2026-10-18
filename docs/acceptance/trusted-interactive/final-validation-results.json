@@ -1,0 +1,74 @@
+{
+  "baseline": "7e94dc9568501dd4ad218a43b5aca31026aed2b2",
+  "testedTree": "5b36a9b13d364aa4eeff9e03fd23bf0755dce79c",
+  "method": "git archive staged source tree with dependency symlink; excludes pending AiCreate diff and patch; only generated evidence files change after this tree",
+  "prerequisite": "node tools/project-zip-export/prepare.mjs",
+  "paidCalls": 0,
+  "totalPassed": 655,
+  "suites": [
+    {
+      "suite": "unit",
+      "command": "npm test",
+      "exitCode": 0,
+      "passed": 192,
+      "expected": 192,
+      "log": "final-unit.log.txt"
+    },
+    {
+      "suite": "server",
+      "command": "npm --prefix server test",
+      "exitCode": 0,
+      "passed": 23,
+      "expected": 23,
+      "log": "final-server.log.txt"
+    },
+    {
+      "suite": "generation",
+      "command": "npm run test:generation",
+      "exitCode": 0,
+      "passed": 24,
+      "expected": 24,
+      "log": "final-generation.log.txt"
+    },
+    {
+      "suite": "mochi",
+      "command": "npm run test:mochi-host",
+      "exitCode": 0,
+      "passed": 55,
+      "expected": 55,
+      "log": "final-mochi.log.txt"
+    },
+    {
+      "suite": "mochi-ai",
+      "command": "node --test tests/mochi-ai/*.test.mjs",
+      "exitCode": 0,
+      "passed": 40,
+      "expected": 40,
+      "log": "final-mochi-ai.log.txt"
+    },
+    {
+      "suite": "compat",
+      "command": "node --test tests/custom-block/*.test.cjs tests/custom-block-bc/*.test.cjs tests/custom-block-workshop/*.test.cjs tests/generated-artifact/*.test.cjs tests/project-zip-export/*.test.mjs tests/workshop-export/*.test.*",
+      "exitCode": 0,
+      "passed": 306,
+      "expected": 306,
+      "log": "final-compat.log.txt"
+    },
+    {
+      "suite": "specific",
+      "command": "npm run test:trusted-interactive",
+      "exitCode": 0,
+      "passed": 15,
+      "expected": 15,
+      "log": "final-specific.log.txt"
+    },
+    {
+      "suite": "build",
+      "command": "npm run build",
+      "exitCode": 0,
+      "passed": null,
+      "expected": null,
+      "log": "final-build.log.txt"
+    }
+  ]
+}

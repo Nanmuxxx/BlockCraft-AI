@@ -1,0 +1,31 @@
+
+> blockcraft-ai@0.1.0 test:trusted-interactive
+> npm --prefix server run build && node tools/project-zip-export/prepare.mjs && node --test tests/trusted-interactive/*.test.*
+
+
+> build
+> tsc -p tsconfig.json
+
+✔ client validates complete v2 envelope and rejects permissions, invalid schemas and fake successful errors (9.625ms)
+✔ pure ZIP boundary explicitly rejects v2 even when caller bypasses UI capture (1.314875ms)
+✔ strict v2 config accepts boundaries and rejects executable/unknown/malformed fields (1.007041ms)
+✔ timer anchors survive mode-like remounts, pause/resume/reset, completion and backwards wall clock (1.7485ms)
+✔ same owner preserves CRUD, custom state and layout; read-only and stale CAS fail atomically (1.4625ms)
+✔ state schema rejects dangling/invalid timers; removing timer cleans state and undo restores it (0.58275ms)
+✔ timer commits preserve admitted custom props/state and exact render order (5.032625ms)
+✔ Mochi can select/read timer metadata but cannot grant timer modification authority (20.249958ms)
+✔ duplicate actions and rapid switching never extend a running deadline or subtract twice (6.409333ms)
+✔ completion is a stable read-only derived state until an explicit reset (0.655375ms)
+✔ real provider HTTP request shape is reused, paid fetch replaced by fixture, both ends validated (23.252583ms)
+✔ all authorization and budget gates reject before upstream; no body can grant approval (23.627542ms)
+✔ approved call cap and origin remain enforced (3.757625ms)
+✔ malformed, incompatible and executable model outputs fail closed; legacy route cannot admit v2 (4.054625ms)
+✔ provider errors, truncated completion and invalid JSON never become successful configurations (6.685792ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 248.053209

@@ -170,7 +170,7 @@ function diff(before: ProjectState, after: ProjectState, request: AiChangeReques
   const addedFields = after.spec.entities.flatMap(entity => entity.fields.filter(field => !before.spec.entities.find(old => old.id === entity.id)!.fields.some(old => old.id === field.id)).map(field => ({ entityId: entity.id, field })))
   const blockFieldChanges = after.spec.blocks.flatMap(block => {
     const old = before.spec.blocks.find(old => old.id === block.id)
-    return old && old.type !== 'metric' && block.type !== 'metric' && JSON.stringify(old.fieldIds) !== JSON.stringify(block.fieldIds)
+    return old && (old.type === 'form' || old.type === 'list') && (block.type === 'form' || block.type === 'list') && JSON.stringify(old.fieldIds) !== JSON.stringify(block.fieldIds)
       ? [{ blockId: block.id, before: old.fieldIds, after: block.fieldIds }] : []
   })
   const affectedEntityIds = new Set<string>()

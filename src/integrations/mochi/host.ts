@@ -179,6 +179,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         const snapshot = runtime.getSnapshot()
         ensure(selectedBlockId !== null, 'Select a block before requesting a plan', 'SELECTION_REQUIRED')
         ensure(!customInstances().some(instance => instance.id === selectedBlockId), '自定义积木请使用参数面板；修改计划尚未开放此权限。', 'CUSTOM_SCOPE_UNAVAILABLE')
+        ensure(snapshot.spec.blocks.find(b => b.id === selectedBlockId)?.type !== 'pomodoro', '可信番茄钟暂不支持 AI 修改计划。', 'TIMER_SCOPE_UNAVAILABLE')
         const entityId = resolveBlockEntityId(snapshot, selectedBlockId)
         return { snapshot, scope: { selectedBlockId, allowedBlockIds: [selectedBlockId], allowedEntityIds: [entityId] } }
       }
@@ -312,7 +313,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
     },
     setSelection(blockId: string | null) {
       alive()
-      if (blockId !== null && !customInstances().some(instance => instance.id === blockId)) resolveBlockEntityId(runtime.getSnapshot(), blockId)
+      if (blockId !== null && !customInstances().some(instance => instance.id === blockId) && runtime.getSnapshot().spec.blocks.find(b => b.id === blockId)?.type !== 'pomodoro') resolveBlockEntityId(runtime.getSnapshot(), blockId)
       if (blockId === selectedBlockId) return
       selectedBlockId = blockId
       invalidate()

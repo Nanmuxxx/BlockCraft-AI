@@ -7,7 +7,7 @@ import type { PlanProvider } from './host'
  */
 export const mockAddOptionalField: PlanProvider = ({ context, snapshot, requestId }) => {
   const block = snapshot.spec.blocks.find(item => item.id === context.selectedBlockId)
-  if (!block || block.type === 'metric') throw new Error('Mock fixture requires a form or list')
+  if (!block || (block.type !== 'form' && block.type !== 'list')) throw new Error('Mock fixture requires a form or list')
   const entityId = snapshot.spec.relations.find(item => item.blockId === block.id)!.entityId
   const fieldId = `${requestId}-field`
   const candidate: AppChangeCandidate = {

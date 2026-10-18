@@ -1,0 +1,48 @@
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (4.688583ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.773542ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.535791ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (1.427333ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.168292ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.150083ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.092625ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (30.166958ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.148875ms)
+✔ late status cannot re-enable consent after explicit off (0.123125ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.204709ms)
+✔ projection sends parameter names/types only; rejects invented bindings and sensitive extras (6.058166ms)
+✔ exact-version pending metadata cannot publish after version change or disposal (2.491416ms)
+✔ context bounds reject oversized metadata rather than silently inventing or truncating (1.470083ms)
+✔ current main host supports advice without another host or any Runtime write (80.927667ms)
+✔ mixed v2 context uses the existing owner registry without invented bindings or data egress (3.998084ms)
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (17.354583ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (11.612166ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (5.828875ms)
+✔ HTTP production disabled remains explicit; no mock fallback (1.733459ms)
+✔ missing deployment resolver fails closed even with client identity headers (0.878666ms)
+✔ client identity cannot authenticate or override trusted project scope (1.466375ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (1.8015ms)
+✔ real provider request shape uses existing configuration, bounded context and no records (18.975ms)
+✔ server rejects snapshots/records/extra metadata instead of forwarding them (0.254792ms)
+✔ schema and referential validation reject unknown fields/blocks, capabilities and silent modifications (1.528375ms)
+✔ provider fails closed without key and never retries/falls back on HTTP, JSON or truncation errors (0.571083ms)
+✔ provider aborts on deadline and external cancellation, including body reads (22.719584ms)
+✔ production server mounts routes but requires trusted access and durable cost control (24.862791ms)
+✔ default disabled, missing/expired/unverified grants make zero upstream calls (2.836916ms)
+✔ proactive requires explicit consent; events and suggestions deduplicate until cooldown (3.100916ms)
+✔ chat and proactive throttle on the server and enforce trusted application binding (0.456417ms)
+✔ global call/token budgets reserve before requests and failures are charged without retries (0.811875ms)
+✔ session budget shared across projects; per-session/global concurrency bounded (1.664958ms)
+✔ revoking proactive consent aborts and discards an outstanding response (4.34025ms)
+✔ approval is snapshotted so caller mutation cannot increase the grant (0.632083ms)
+✔ durable monetary adapter required, deny/error/abort never reach provider (1.296041ms)
+✔ C-mode requests are rejected before budget reservation or provider (0.102583ms)
+✔ durable ledger timeout is unavailable and releases concurrency without provider egress (0.329417ms)
+✔ host bridge listens to settled structural events, ignores records/anchors/mode, and cleans up (51.366417ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 315.507084
