@@ -69,3 +69,26 @@ test('continued suggestion accepts its own target selection change', async () =>
   assert.equal(f.counts().analyzed, 2)
   f.client.dispose()
 })
+
+for (const transition of ['cancel', 'project-round-trip']) test(`continued suggestion is retired by ${transition} during focus`, async () => {
+  const f = await fixture(({ client, current, setContext }) => {
+    if (transition === 'cancel') client.cancel()
+    else {
+      setContext({ ...current, appId: 'replacement', instanceId: 'replacement-instance' }); client.syncContext()
+      setContext(current); client.syncContext()
+    }
+  })
+  await assert.rejects(f.client.continueSuggestion(f.id), { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.counts().analyzed, 1)
+  f.client.dispose()
+})
+
+test('continued suggestion cannot survive a selection round trip during focus', async () => {
+  const f = await fixture(({ client, current, setContext }) => {
+    setContext({ ...current, selectedBlockId: null }); client.syncContext()
+    setContext(current); client.syncContext()
+  })
+  await assert.rejects(f.client.continueSuggestion(f.id), { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.counts().analyzed, 1)
+  f.client.dispose()
+})

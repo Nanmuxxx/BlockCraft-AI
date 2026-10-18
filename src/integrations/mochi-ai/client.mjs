@@ -77,7 +77,7 @@ const freeze = value => { if (value && typeof value === 'object') { Object.value
 /** Trusted adapter owns readContext/focusBlock. This module never receives Runtime/PlanProvider. */
 export function createMochiConversation({ api = createMochiApi(), readContext, focusBlock, now = Date.now }) {
   let state = freeze({ contextAvailable: true, enabled: false, disabledReason: '正在检查 Mochi AI 状态…', proactiveEnabled: false, busy: false, modificationsEnabled: false, messages: [], suggestions: [], error: null })
-  let disposed = false, pending = null, epoch = 0, signature = '', identity = '', prompts = [], lastProactive = -Infinity, consentSequence = 0, statusSequence = 0
+  let disposed = false, pending = null, epoch = 0, actionEpoch = 0, signature = '', identity = '', prompts = [], lastProactive = -Infinity, consentSequence = 0, statusSequence = 0
   let consentTail = Promise.resolve()
   const messageFor = (code, fallback) => typeof code === 'string' && Object.hasOwn(errors, code) ? errors[code] : fallback
   const listeners = new Set(), seen = new Map(), ignored = new Map(), events = new Map()
@@ -90,8 +90,9 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   }
   function remember(map, key) { if (map.size >= 200) map.delete(map.keys().next().value); map.set(key, now() + COOLDOWN) }
   function purge() { for (const map of [seen, ignored, events]) for (const [k, expiry] of map) if (expiry <= now()) map.delete(k) }
-  function retire(patch = {}) {
+  function retire(patch = {}, selectionOnly = false) {
     epoch++
+    if (!selectionOnly) actionEpoch++
     const previous = pending
     pending = null
     emit({ ...patch, busy: false })
@@ -113,11 +114,12 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     const nextIdentity = `${context.appId}:${context.instanceId}`, next = JSON.stringify(context)
     if (next !== signature) {
       const newProject = identity !== nextIdentity
+      const selectionOnly = signature !== '' && JSON.stringify({ ...JSON.parse(signature), selectedBlockId: context.selectedBlockId }) === next
       // Publish a coherent identity/history before notifying or aborting. Both
       // callbacks may synchronously synchronize or enter a newer project.
       signature = next; identity = nextIdentity
       if (newProject) { prompts = []; seen.clear(); ignored.clear(); events.clear(); lastProactive = -Infinity }
-      retire({ contextAvailable: true, ...(newProject ? { messages: [] } : {}), suggestions: [], error: null })
+      retire({ contextAvailable: true, ...(newProject ? { messages: [] } : {}), suggestions: [], error: null }, selectionOnly)
     } else if (!state.contextAvailable) emit({ contextAvailable: true, error: null })
     return context
   }
@@ -220,13 +222,14 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     chat: prompt => run('chat', prompt), onEvent: event => run('proactive', undefined, event),
     focusSuggestion(id) { const item = suggestion(id); if (item.blockId !== null) focusBlock(item.blockId); return item },
     async continueSuggestion(id, question) {
-      const item = suggestion(id), before = projectContext(readContext())
+      const item = suggestion(id), before = projectContext(readContext()), owned = actionEpoch, contextEpoch = epoch
       if (item.blockId !== null) focusBlock(item.blockId)
       // Focusing can synchronously publish a new selection, edit or project.
       // Only this action's target selection may change before sending its text.
       check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
       const after = projectContext(readContext())
-      check(JSON.stringify({ ...before, selectedBlockId: after.selectedBlockId }) === JSON.stringify(after)
+      check(actionEpoch === owned && (epoch === contextEpoch || (epoch === contextEpoch + 1 && before.selectedBlockId !== after.selectedBlockId && after.selectedBlockId === item.blockId))
+        && JSON.stringify({ ...before, selectedBlockId: after.selectedBlockId }) === JSON.stringify(after)
         && (after.selectedBlockId === before.selectedBlockId || after.selectedBlockId === item.blockId), 'CONTEXT_CHANGED', '项目已变化，请重新提问。', 409)
       return run('chat', question || `请解释这条建议：${item.text}`)
     },
