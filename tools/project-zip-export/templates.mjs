@@ -39,7 +39,7 @@ export default function FormBlock({ fields, initial, onSave, onCancel }: { field
       const current = values[field.id];
       if (field.type === 'boolean') { next[field.id] = current === true; continue; }
       const raw = String(current ?? '');
-      if (raw.trim() === '') { if (field.required) { setError('请填写：' + field.name); return; } continue; }
+      if (raw.trim() === '') { if (field.required) { setError('请填写：' + field.name); return; } if (initial) next[field.id] = ''; continue; }
       if (field.type === 'number') { const value = Number(raw); if (!Number.isFinite(value)) { setError('无效数字'); return; } next[field.id] = value; }
       else { next[field.id] = raw; }
     }
@@ -90,7 +90,7 @@ export default function App() {
   const positionedHeight = Math.max(0, ...[...Object.values(project.base.blockPositions), ...Object.values(project.custom.positions)].map(position => position.y * 800 + 620));
   function add(entity: string, row: Row) { setRecords(current => ({ ...current, [entity]: [...(own(current, entity) ?? []), row] })); }
   function remove(entity: string, id: string) { setRecords(current => ({ ...current, [entity]: (own(current, entity) ?? []).filter(row => row.id !== id) })); setEditing(current => current?.entity === entity && current.id === id ? null : current); }
-  function update(entity: string, id: string, values: Record<string, Value>) { setRecords(current => ({ ...current, [entity]: (own(current, entity) ?? []).map(row => row.id === id ? { ...row, id, values } : row) })); setEditing(null); }
+  function update(entity: string, id: string, values: Record<string, Value>) { setRecords(current => ({ ...current, [entity]: (own(current, entity) ?? []).map(row => { if (row.id !== id) return row; const next = { ...row.values }; for (const [field, value] of Object.entries(values)) value === '' ? delete next[field] : next[field] = value; return { ...row, id, values: next }; }) })); setEditing(null); }
   return <main><h1>{project.base.spec.name}</h1><div className="board" style={{ '--positioned-height': positionedHeight + 'px' } as CSSProperties}>{project.renderOrder.map((item, index) => {
     const position = item.kind === 'builtin' ? own(project.base.blockPositions, item.id) : own(project.custom.positions, item.id);
     // Normalized saved coordinates determine the desktop board; DOM/tab order stays renderOrder.

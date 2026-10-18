@@ -26,7 +26,9 @@ test('exported list exposes update flow that preserves ids and clears stale edit
   assert.match(list, /onClick=\{\(\) => onEdit\(row\.id\)\}/)
   assert.match(list, /onUpdate\(editing\.id, values\)/)
   assert.match(form, /initial \? '保存修改' : '保存'/)
-  assert.match(app, /map\(row => row\.id === id \? \{ \.\.\.row, id, values \} : row\)/)
+  assert.match(app, /if \(row\.id !== id\) return row; const next = \{ \.\.\.row\.values \}/)
+  assert.match(app, /return \{ \.\.\.row, id, values: next \}/)
+  assert.match(app, /value === '' \? delete next\[field\] : next\[field\] = value/)
   assert.match(app, /current\?\.entity === entity && current\.id === id \? null : current/)
 })
 test('real TSX, helper module, exact digest, props, coordinates and interleaved order survive', async () => {
