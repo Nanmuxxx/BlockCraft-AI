@@ -1,0 +1,40 @@
+✔ default disabled, missing/expired/unverified grants make zero upstream calls (0.797875ms)
+✔ proactive requires explicit consent; events and suggestions deduplicate until cooldown (1.470042ms)
+✔ chat and proactive throttle on the server and enforce trusted application binding (0.236417ms)
+✔ global call/token budgets reserve before requests and failures are charged without retries (0.35375ms)
+✔ session budget shared across projects; per-session/global concurrency bounded (0.695375ms)
+✔ revoking proactive consent aborts and discards an outstanding response (1.797375ms)
+✔ approval is snapshotted so caller mutation cannot increase the grant (0.128458ms)
+✖ trusted access is captured before budget await so later mutation cannot change dedup scope (0.373125ms)
+✔ durable monetary adapter required, deny/error/abort never reach provider (0.795667ms)
+✔ C-mode requests are rejected before budget reservation or provider (0.100334ms)
+✔ durable ledger timeout is unavailable and releases concurrency without provider egress (0.265417ms)
+✔ caller cancellation releases service despite provider ignoring abort (0.364917ms)
+✔ consent revocation releases service despite provider ignoring abort (0.22875ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 12
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38.576416
+
+✖ failing tests:
+
+test at tests/mochi-ai/service.test.mjs:88:1
+✖ trusted access is captured before budget await so later mutation cannot change dedup scope (0.373125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/service.test.mjs:100:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,6 +1,6 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 03:15（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
+阶段检查点：2026-10-19 03:29（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
@@ -15,6 +15,8 @@
 - 同版本重装保留状态/布局，新版本仅重置选中状态，无效替换原子失败；危险源码Fixture始终惰性且execution denied。
 - 私有存储读到EOF后再校验，修复短读接受合法JSON前缀、遗漏尾部内容；精确字节上限和stat后增长均有回归。
 - 两个Mochi模型修改适配器均有最长45秒截止时间；取消/超时退休忽略abort的completion，消费迟到拒绝，清理信号。保留AppSpec适配器原有同步调用时序；超时后零写入，新请求可确认且旧结果不能覆盖。
+
+- 第六轮：Mochi未完成上传提前拒绝后关闭连接；上下文身份/历史原子发布防同步重入，出站前绑定本次项目；观察者异常不能阻断取消。鉴权/ledger异常净化、可信访问scope快照；Artifact观察者异常不能把已成功安装回执改为失败。修复前失败均有保存。
 
 ## 2. Diff 与 Commit
 
@@ -32,11 +34,13 @@
 
 每条命令、cwd、时间、退出码和原始日志见[TEST-COMMANDS.md](docs/agent-a-night/TEST-COMMANDS.md)与[commands.jsonl](docs/agent-a-night/logs/commands.jsonl)。修复前失败、前置产物缺失、一次启动参数错误和修正后重跑均保留。
 
-- 最新`node tests/ai-core-night/regression.mjs`：**736/736，退出码0**，自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
+- 最新`node tests/ai-core-night/regression.mjs`：**746/746，退出码0**（运行早于第六轮最后几项服务/Artifact修改），自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
 - 组合安装/编辑1/1，重装相关26/26，惰性源码/Viewer25/25，鉴权异常HTTP19/19，跨进程存储/安装32/32，退出码均0；这些属于各次运行，不能相加成另一项全量结果。
 - 最近生产构建`build-model-deadline`退出0，对应代码HEAD `9c9bc81`；此前`build-source-deadline`亦退出0。
 - 存储短读修复前2项失败，修复后相关37/37、精确上限19/19；源码截止首次3项失败，修复后含owner组合50/50；AppSpec截止首次2项失败，第一次修复改变调用时序导致旧取消测试超时，恢复时序后相关73/73及同步异常16/16，全部保留日志。
 - 历史较广核心649/649、622/622、568/568，安全/编译/质量187/187、默认npm test192/192；准确范围及当时提交以日志为准。
+
+- 第六轮：未完成上传32/32，chunked兼容14/14，上下文重入37/37，观察者取消38/38，适配器异常37/37，访问scope30/30，Artifact回执36/36；均退出0。build-context-atomic退出0，早于最后服务/Artifact修改。
 
 ## 5. 真实模型调用
 
@@ -47,6 +51,8 @@
 [浏览器报告](docs/agent-a-night/browser)与[文件大小/SHA-256清单](docs/agent-a-night/browser-inventory.json)保留正式`/ai-create`、可信离线入口、生成Fixture、安装/替换竞态、CustomBlock参数/重装、Mochi计划/只读建议。桌面1366与移动390；移动为Chromium视口/触摸模拟，不冒充真机。
 
 正式页面`artifact-utf8`和`advice-publication`桌面/移动均通过，0外部请求、0真实模型调用。前者包含原生File损坏UTF-8拒绝后正常预览/安装，后者覆盖正式只读Mochi。最新`model-deadline`桌面/移动模型计划fixture浏览器通过，baseline为`9c9bc81`；它是Mochi集成测试页，不冒充正式修改服务。一次并发运行初始输入框超时，串行重跑通过；缓存竞争尚非已确认根因。旧脚本报告中的固定baseline不能证明最新HEAD。新增组合源码案例为Node协议回归，未声称浏览器执行了生成TSX。
+
+第六轮正式页面`context-atomic`桌面/移动通过，0外部请求、0页面异常；证据对应当时客户端代码66eddef，后续服务和Artifact修改需另行验证。
 
 ## 7. 新发现的问题
 

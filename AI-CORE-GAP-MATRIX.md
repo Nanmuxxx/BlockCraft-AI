@@ -82,3 +82,15 @@ core-caller-cancel最新649/649；REAL_MODEL_CALLS=0。上述VERIFIED仅指Fixtu
 | 当前构建与回归 | VERIFIED | tests/ai-core-night/regression.mjs；npm run build | 736/736退出0；build-model-deadline退出0；模型计划集成浏览器桌面/移动通过，baseline9c9bc81 |
 
 所有completion均为fixture注入；不授予付费调用、修改或TSX运行权限。正式页面修改服务仍MISSING，源码隔离执行仍BLOCKED。
+
+## 第六轮边界证据（03:29，持续开发）
+
+| 项目 | 状态 | 函数/文件 | 验证 |
+|---|---|---|---|
+| 未完成HTTP上传退休 | VERIFIED | server/mochi-ai/http.mjs:send | http.test.mjs：401/403/415未完成上传及时close；超限chunked结构化413；emoji跨块兼容；相关32/32及14/14 |
+| 项目切换同步重入 | VERIFIED | mochi-ai/client.mjs:syncContext/retire/run | client.test.mjs：递归同步、通知期间第三项目、abort重入、出站前项目替换；旧实现4失败，修复37/37 |
+| 观察者与取消/回执 | VERIFIED | client.mjs:emit；generated-artifact/ui.ts:publish | 观察者失败不阻断取消或把实际成功安装显示为失败；建议38/38，Artifact36/36 |
+| Mochi适配器异常净化 | VERIFIED | http.mjs:resolveAccess catch；service.mjs:budget catch | MochiError私有code/message/status和伪造CANCELLED均为安全503；HTTP3项旧失败，修复37/37 |
+| 可信访问scope快照 | VERIFIED | service.mjs:analyze | service.test.mjs：预算await期间复用access对象变更不污染跨项目去重；旧实现失败，相关30/30 |
+
+较广核心746/746与build-context-atomic退出0；正式/ai-create桌面/移动context-atomic浏览器通过。该全量/浏览器早于本轮最后几项服务及Artifact修改，准确覆盖以命令时间和代码提交为准。REAL_MODEL_CALLS=0。

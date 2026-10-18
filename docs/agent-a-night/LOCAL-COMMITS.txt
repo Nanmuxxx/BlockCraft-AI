@@ -39,3 +39,11 @@ f2afc73192b767502510160a71d6d02e5200d0a1 docs(ai-core): record 724 checks and pe
 2f6d630e177b1564280d6691ff791c96492d7f2a fix(mochi): bound source model completion and retire cancelled transports
 9c9bc818e770f2e3befda2dd862e9adc59e72d4b fix(mochi): cap AppSpec model plan waits without changing invocation order
 809f6a76021a58f3c1fb487d66f4fd63169dc841 docs(ai-core): record bounded storage and model deadlines
+7935647596989b3c9ef35038c9642f6f45c91a2b docs(ai-core): archive model deadline browser and command evidence
+ba9fbd6528edc770a58c46a32403531207f58541 fix(mochi): close rejected incomplete HTTP uploads after response
+dac42d0d769693eefe927a3406713f4f91bded29 test(mochi): cover incomplete and split chunked upload boundaries
+f56d2d4a93f956d376a6ccbf469d7909d129cb11 fix(mochi): bind conversation egress to atomically published project context
+66eddef1fe641ee21421b8cc61f584af76e91bf1 fix(mochi): isolate conversation observers from cancellation
+c27a704dbb2b889473b47618519185da4e107343 fix(mochi): sanitize access and ledger exception metadata
+11e952ef1a5982c69e6e89e6658af413e0723881 fix(mochi): capture trusted application scope across async admission
+90f2762ef0cd89878bef1457cb36fdfe91899d82 fix(artifact): keep install receipts independent of render observer errors
