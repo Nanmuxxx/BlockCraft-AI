@@ -21,3 +21,5 @@
   .app-spec-canvas { grid-template-columns: minmax(0, 1fr); }
   .app-spec-canvas > .app-spec-inspector { grid-column: 1; grid-row: 3; }
 }
+
+.app-spec-canvas--embedded { display: block; width: 100%; min-width: 0; }

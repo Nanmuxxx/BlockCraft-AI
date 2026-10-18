@@ -81,11 +81,11 @@ export function AppSpecInspector({ runtime, snapshot, blockId }: AppSpecInspecto
     <h2>积木属性</h2>
     {!block ? <p className="app-spec-inspector__empty">请选择一块积木，查看并编辑属性。</p> : <>
       <h3>{block.name}</h3>
-      <dl>
+      <details><summary>积木与数据详情</summary><dl>
         <dt>类型</dt><dd>{block.type}</dd>
         <dt>积木 ID</dt><dd><code>{block.id}</code></dd>
         <dt>绑定实体</dt><dd>{entity ? <>{entity.name}<br /><code>{entity.id}</code></> : '绑定异常'}</dd>
-      </dl>
+      </dl></details>
       {!entity ? <p role="alert">绑定异常：当前积木需要唯一的数据绑定及有效实体，请联系负责人修复。</p> : <>
         {block.type === 'metric' ? <section aria-label="当前配置">
           <h3>当前配置</h3><p>聚合：{block.aggregation}</p>
