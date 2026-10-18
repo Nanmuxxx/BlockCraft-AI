@@ -158,3 +158,32 @@ test('disabled reason survives selection and mode changes; C mode never sends ch
   await f.client.refreshStatus(); f.change({ ...context(), mode: 'run' }); f.client.syncContext()
   await assert.rejects(f.client.chat('hello'), { code: 'MODE_UNAVAILABLE' }); assert.equal(f.count(), 0)
 })
+
+for (const trigger of ['message', 'busy']) test(`subscriber cancellation during ${trigger} publication prevents analysis egress`, async () => {
+  const f = fixture(); await f.client.refreshStatus(); f.client.syncContext()
+  let armed = true
+  const off = f.client.subscribe(() => {
+    const state = f.client.getSnapshot()
+    if (!armed || (trigger === 'message' ? state.messages.length === 0 : !state.busy)) return
+    armed = false; f.client.cancel()
+  })
+  await assert.rejects(f.client.chat('cancel before transport'), { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.count(), 0); assert.equal(f.client.getSnapshot().busy, false)
+  off(); f.client.dispose()
+})
+
+test('subscriber replacement at request publication keeps only the fresh analysis and history', async () => {
+  const f = fixture(); await f.client.refreshStatus(); f.client.syncContext()
+  let armed = true, fresh
+  const off = f.client.subscribe(() => {
+    if (!armed || !f.client.getSnapshot().busy) return
+    armed = false; f.client.cancel(); fresh = f.client.chat('fresh request')
+  })
+  await assert.rejects(f.client.chat('retired request'), { code: 'CONTEXT_CHANGED' })
+  await fresh
+  assert.equal(f.count(), 1); assert.equal(f.calls[0].prompt, 'fresh request')
+  assert.deepEqual(f.calls[0].history, ['retired request'])
+  assert.deepEqual(f.client.getSnapshot().messages.map(m => m.role), ['user', 'user', 'assistant'])
+  assert.equal(f.client.getSnapshot().busy, false)
+  off(); f.client.dispose()
+})

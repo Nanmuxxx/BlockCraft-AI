@@ -155,10 +155,15 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     } else check(typeof prompt === 'string' && prompt.trim().length > 0 && prompt.length <= LIMITS.promptChars, 'INVALID_INPUT', '请简短说说你的问题。')
     const input = { version: 1, kind, context, history: kind === 'chat' ? prompts.slice(-LIMITS.history) : [],
       ...(kind === 'chat' ? { prompt: redact(prompt.trim()) } : { event: { type: event.type } }) }
-    if (kind === 'chat') { prompts.push(input.prompt); prompts = prompts.slice(-LIMITS.history); emit({ messages: [...state.messages, { role: 'user', content: input.prompt }].slice(-40) }) }
     const controller = new AbortController(), owned = epoch
-    pending = controller; emit({ busy: true, error: null })
+    pending = controller
     try {
+      // Reserve ownership before notifying subscribers. They can synchronously
+      // cancel, dispose or start a replacement while this state is published.
+      let messages = state.messages
+      if (kind === 'chat') { prompts.push(input.prompt); prompts = prompts.slice(-LIMITS.history); messages = [...messages, { role: 'user', content: input.prompt }].slice(-40) }
+      emit({ busy: true, error: null, messages })
+      check(!disposed && !controller.signal.aborted && pending === controller && owned === epoch, 'CONTEXT_CHANGED', '已丢弃过期请求。', 409)
       const reply = await abortable(Promise.resolve(api.analyze(input, { signal: controller.signal })), controller.signal)
       check(!disposed && !controller.signal.aborted && owned === epoch && JSON.stringify(projectContext(readContext())) === signature, 'CONTEXT_CHANGED', '已丢弃过期回复。', 409)
       validateReply(reply, context)
