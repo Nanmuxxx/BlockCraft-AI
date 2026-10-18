@@ -1,0 +1,85 @@
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { createMochiService, POLICY } from '../../server/mochi-ai/service.mjs'
+import { request, advice, access, grant } from './fixtures.mjs'
+function fixture(options = {}) {
+  let time = 1000, count = 0
+  const provider = { configured: true, analyze: async () => { count++; return advice() } }
+  const service = createMochiService({ provider, enabled: true, approval: grant(time), now: () => time, ...options })
+  return { service, tick(ms = 31_000) { time += ms }, count: () => count }
+}
+
+test('default disabled, missing/expired/unverified grants make zero upstream calls', async () => {
+  let count = 0; const provider = { configured: true, analyze: async () => { count++ } }
+  for (const options of [{}, { enabled: true }, { enabled: true, approval: grant(0) }, { enabled: true, approval: { ...grant(Date.now()), permissionsVerified: false } }, { enabled: true, approval: { ...grant(Date.now()), providerVerified: false } }]) {
+    const service = createMochiService({ provider, ...options }); await assert.rejects(service.analyze(access, request()), { code: 'AI_DISABLED' })
+    assert.equal(service.status(access).modificationsEnabled, false)
+  }
+  assert.equal(count, 0)
+})
+
+test('proactive requires explicit consent; events and suggestions deduplicate until cooldown', async () => {
+  const f = fixture()
+  await assert.rejects(f.service.analyze(access, request('proactive')), { code: 'PROACTIVE_DISABLED' })
+  f.service.consent(access, { enabled: true })
+  const first = await f.service.analyze(access, request('proactive'))
+  assert.equal(first.suggestions.length, 1); assert.equal(first.capabilities.modifications, false)
+  f.tick()
+  await assert.rejects(f.service.analyze(access, request('proactive')), { code: 'DUPLICATE_EVENT' })
+  const second = await f.service.analyze(access, request()); assert.equal(second.suggestions.length, 0)
+  f.service.ignore(access, { id: first.suggestions[0].id }); f.tick(POLICY.cooldownMs + 1)
+  assert.equal((await f.service.analyze(access, request('proactive'))).suggestions.length, 1)
+  f.service.consent(access, { enabled: false }); f.tick()
+  await assert.rejects(f.service.analyze(access, request('proactive')), { code: 'PROACTIVE_DISABLED' })
+  assert.equal(f.count(), 3)
+})
+
+test('chat and proactive throttle on the server and enforce trusted application binding', async () => {
+  const f = fixture(); await f.service.analyze(access, request())
+  await assert.rejects(f.service.analyze(access, request()), { code: 'THROTTLED' })
+  await assert.rejects(f.service.analyze({ ...access, appId: 'other' }, request()), { code: 'CONTEXT_MISMATCH' })
+  await assert.rejects(f.service.analyze(null, request()), { code: 'UNAUTHORIZED' })
+  assert.equal(f.count(), 1)
+})
+
+test('global call/token budgets reserve before requests and failures are charged without retries', async () => {
+  for (const approval of [{ ...grant(1000), maxCalls: 1 }, { ...grant(1000), maxTotalTokens: 1 }]) {
+    const f = fixture({ approval })
+    if (approval.maxCalls === 1) { await f.service.analyze(access, request()); f.tick() }
+    await assert.rejects(f.service.analyze(access, request()), { code: 'BUDGET_EXHAUSTED' })
+    assert.equal(f.count(), approval.maxCalls === 1 ? 1 : 0)
+  }
+  const f = fixture({ provider: { configured: true, analyze: async () => { throw new Error('offline') } }, approval: { ...grant(1000), maxCalls: 1 } })
+  await assert.rejects(f.service.analyze(access, request())); f.tick()
+  await assert.rejects(f.service.analyze({ ...access, sessionId: 'new' }, request()), { code: 'BUDGET_EXHAUSTED' })
+  assert.equal(f.service.usage().calls, 1); assert.equal(f.service.usage().inFlight, 0)
+})
+
+test('session budget shared across projects; per-session/global concurrency bounded', async () => {
+  const f = fixture()
+  for (let i = 0; i < POLICY.sessionCalls; i++) { await f.service.analyze(access, request()); f.tick() }
+  await assert.rejects(f.service.analyze(access, request()), { code: 'BUDGET_EXHAUSTED' })
+  const releases = []
+  const concurrent = fixture({ provider: { configured: true, analyze: () => new Promise(resolve => releases.push(() => resolve(advice()))) } })
+  const a = concurrent.service.analyze(access, request())
+  await assert.rejects(concurrent.service.analyze(access, request()), { code: 'AI_BUSY' })
+  const b = concurrent.service.analyze({ ...access, sessionId: 'two' }, request())
+  await assert.rejects(concurrent.service.analyze({ ...access, sessionId: 'three' }, request()), { code: 'AI_BUSY' })
+  releases.forEach(release => release()); await Promise.all([a,b]); assert.equal(concurrent.service.usage().inFlight, 0)
+})
+
+test('revoking proactive consent aborts and discards an outstanding response', async () => {
+  let release, signal
+  const f = fixture({ provider: { configured: true, analyze: (_input, options) => { signal = options.signal; return new Promise(resolve => { release = resolve }) } } })
+  f.service.consent(access, { enabled: true }); const pending = f.service.analyze(access, request('proactive'))
+  f.service.consent(access, { enabled: false }); assert(signal.aborted); release(advice())
+  await assert.rejects(pending, { code: 'CANCELLED' }); assert.equal(f.service.usage().inFlight, 0)
+})
+
+test('approval is snapshotted so caller mutation cannot increase the grant', async () => {
+  const approval = { ...grant(1000), maxCalls: 1 }, f = fixture({ approval })
+  approval.maxCalls = 100
+  await f.service.analyze(access, request()); f.tick()
+  await assert.rejects(f.service.analyze(access, request()), { code: 'BUDGET_EXHAUSTED' })
+  assert.equal(f.count(), 1)
+})

@@ -1,0 +1,11 @@
+.mochi-conversation { border: 1px solid #ddd5ee; border-radius: 16px; padding: 16px; background: #faf8ff; color: #30253f; font: 14px/1.5 system-ui, sans-serif; }
+.mochi-conversation header { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.mochi-conversation header span, .mochi-conversation small, .mochi-conversation__privacy { color: #6a5d7b; font-size: 12px; }
+.mochi-conversation [role="log"] { max-height: 240px; overflow-y: auto; overflow-wrap: anywhere; }
+.mochi-conversation ul { list-style: none; padding: 0; }
+.mochi-conversation li { background: white; border: 1px solid #e6dff0; border-radius: 10px; padding: 10px; margin-block: 10px; overflow-wrap: anywhere; }
+.mochi-conversation li p { margin-block: 6px; }
+.mochi-conversation button { margin: 6px 6px 0 0; padding: 5px 9px; border: 1px solid #b5a6ce; border-radius: 7px; background: white; color: inherit; cursor: pointer; }
+.mochi-conversation button:disabled { opacity: .5; cursor: default; }
+.mochi-conversation textarea { box-sizing: border-box; display: block; width: 100%; min-height: 70px; padding: 8px; border: 1px solid #b5a6ce; border-radius: 8px; font: inherit; resize: vertical; }
+.mochi-conversation :focus-visible { outline: 2px solid #7857ac; outline-offset: 2px; }

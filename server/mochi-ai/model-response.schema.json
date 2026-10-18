@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mochi model advice v1",
+  "type": "object", "additionalProperties": false, "required": ["message", "suggestions"],
+  "properties": {
+    "message": {"type": "string", "minLength": 1, "maxLength": 1200},
+    "suggestions": {"type": "array", "maxItems": 5, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["text", "reason", "blockId", "priority", "requiresUserAction", "kind"],
+      "properties": {
+        "text": {"type": "string", "minLength": 1, "maxLength": 240},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 400},
+        "blockId": {"type": ["string", "null"], "description": "Non-null IDs must exist in the submitted structure; the trusted host rechecks current existence before navigation."},
+        "priority": {"enum": ["low", "medium", "high"]},
+        "requiresUserAction": {"type": "boolean"},
+        "kind": {"enum": ["explain", "design-change"]}
+      },
+      "allOf": [{"if": {"properties": {"kind": {"const": "design-change"}}}, "then": {"properties": {"requiresUserAction": {"const": true}}}}]
+    }}
+  }
+}
