@@ -110,13 +110,21 @@ async function run() {
       await expect(panel.getByRole('checkbox', { name: '主动建议', exact: true })).toBeChecked()
       const beforeEvent = call
       await card('builtin:registration-form').click()
+      // Retire this pending settled event, then grant consent again before its
+      // original deadline. Regranting must not revive the old selection work.
+      await panel.getByRole('checkbox', { name: '主动建议', exact: true }).click()
+      await expect(panel.getByRole('checkbox', { name: '主动建议', exact: true })).not.toBeChecked()
+      await panel.getByRole('checkbox', { name: '主动建议', exact: true }).click()
+      await expect(panel.getByRole('checkbox', { name: '主动建议', exact: true })).toBeChecked()
+      await page.waitForTimeout(900); assert.equal(call, beforeEvent)
+      await card('custom:custom-1').click()
       await expect.poll(() => call).toBe(beforeEvent + 1)
       assert.equal(inputs.at(-1).kind, 'proactive')
       await expect(panel.getByRole('button', { name: '定位积木', exact: true })).toBeVisible()
       await panel.scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(output, `chat-${width}.png`), fullPage: true }); await panel.screenshot({ path: path.join(output, `panel-${width}.png`) })
       await panel.getByRole('checkbox', { name: '主动建议', exact: true }).click()
       await expect(panel.getByRole('checkbox', { name: '主动建议', exact: true })).not.toBeChecked()
-      await card('custom:custom-1').click(); await page.waitForTimeout(900); assert.equal(call, beforeEvent + 1)
+      await card('builtin:registration-form').click(); await page.waitForTimeout(900); assert.equal(call, beforeEvent + 1)
       // Fee adapter denies: UI reports budget error; provider never runs.
       denyBudget = true; await page.waitForTimeout(2100)
       await panel.getByLabel('向 Mochi 提问', { exact: true }).fill('费用保护验证')
@@ -130,7 +138,7 @@ async function run() {
       await expect(page.getByRole('textbox', { name: '给 Mochi 发消息' })).toBeDisabled()
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false)
       assert.equal(await page.locator('iframe').count(), 0)
-      report.cases.push({ width, mobile: width === 390 ? 'Chromium mobile viewport and touch emulation; not a physical phone' : false, passed: true, analyzeRequests: requests.filter(p => p.endsWith('/analyze')).length, checks: ['status failure and retry recovery', 'production disabled reason persists', 'one Mochi Host UI', 'mixed immutable metadata privacy', 'no unconsented selection/layout/mode egress', 'manual chat through real server/provider/schema/client', 'trusted focus', 'continue and ignore', 'explicit opt-in event', 'opt-out', 'durable fee rejection zero provider calls', 'provider failure visible', 'modification composer remains disabled', 'no overflow or iframe'] })
+      report.cases.push({ width, mobile: width === 390 ? 'Chromium mobile viewport and touch emulation; not a physical phone' : false, passed: true, analyzeRequests: requests.filter(p => p.endsWith('/analyze')).length, checks: ['status failure and retry recovery', 'production disabled reason persists', 'one Mochi Host UI', 'mixed immutable metadata privacy', 'no unconsented selection/layout/mode egress', 'manual chat through real server/provider/schema/client', 'trusted focus', 'continue and ignore', 'revoked settled event cannot revive after regrant', 'new explicit opt-in event', 'opt-out', 'durable fee rejection zero provider calls', 'provider failure visible', 'modification composer remains disabled', 'no overflow or iframe'] })
       await page.close()
       // Test-session isolation for the second browser: discard in-memory fixture session.
       if (width === 1366) await new Promise(resolve => setTimeout(resolve, 2100))
