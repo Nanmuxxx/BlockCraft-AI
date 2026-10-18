@@ -466,5 +466,17 @@
     "remote": "0a1e7c98f05aba5bf21118a7a3cf1cb01c1957f8",
     "tree": "b99cccf80ef18a80d8b8d53f4a1449a2e4b15c2d",
     "message": "docs(ai-core): archive consent timer and ingress evidence"
+  },
+  {
+    "local": "122eb1c1c3a259735045827c63be00c2e37effa0",
+    "remote": "17c41f240feaf1b82b219e9a44a7928d97ef2155",
+    "tree": "5abdfc7476de7144661f10b22b930259b98a7e97",
+    "message": "docs(ai-core): record verified remote commit mapping"
+  },
+  {
+    "local": "74d4893d84b8b27c8d532f2091faf8744528e7f2",
+    "remote": "b59b5414594a92791e336ad4d0b56fb780e75357",
+    "tree": "ab73e50298ed7444f62b5aff7dcb54d01a6889be",
+    "message": "docs(ai-core): record final ingress and runtime regression evidence"
   }
 ]

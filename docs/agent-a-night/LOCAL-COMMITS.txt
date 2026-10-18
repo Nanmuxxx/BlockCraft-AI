@@ -75,3 +75,5 @@ a3c2b0ba68c0680e6b08843948a793a39fee107c fix(mochi): retire focused actions afte
 0845361fb4cda524af4f78ea63ce4832c2165229 fix(mochi): preserve lifecycle cleanup for nonstandard adapter failures
 80c32a3c56c84ac9f0e2ac3ae86b0450da5adb08 fix(mochi): retire scheduled analysis when proactive consent is revoked
 ff61d487719fdacf72ca9c6ea290710680e6967a test(generation): cover input deadline and rate-limited incomplete uploads
+122eb1c1c3a259735045827c63be00c2e37effa0 docs(ai-core): record verified remote commit mapping
+74d4893d84b8b27c8d532f2091faf8744528e7f2 docs(ai-core): record final ingress and runtime regression evidence
