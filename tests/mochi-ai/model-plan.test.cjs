@@ -8,12 +8,63 @@ const candidate = request => ({ request: { requestId: request.requestId, baseRev
   { type: 'addField', entityId: request.entity.id, field: { id: 'offline-note', name: '离线备注', type: 'text', required: false } },
   { type: 'configureBlockFields', blockId: request.block.id, fieldIds: [...request.block.fieldIds, 'offline-note'] },
 ] }, capabilityIds: [] })
-function setup(t, complete) {
+function setup(t, complete, options) {
   const runtime = createAppRuntime(createClubRegistrationExample())
-  const host = createMochiHost(runtime, createModelPlanProvider(complete))
+  const host = createMochiHost(runtime, createModelPlanProvider(complete, options))
   t.after(() => host.dispose()); host.setSelection('registration-form')
   return { runtime, host }
 }
+
+test('AppSpec model plan deadline releases Host without a preview and late output cannot overwrite a newer confirmation', async t => {
+  let calls = 0, oldRequest, oldSignal
+  const old = defer()
+  const { runtime, host } = setup(t, async ({ request, signal }) => {
+    if (++calls === 1) { oldRequest = request; oldSignal = signal; return old.promise }
+    return JSON.stringify(candidate(request))
+  }, { timeoutMs: 15 })
+  const before = runtime.getSnapshot()
+  let guard
+  try {
+    await assert.rejects(Promise.race([
+      host.callbacks.onRequestPlan('超时修改'),
+      new Promise(resolve => { guard = setTimeout(resolve, 150) }),
+    ]), { code: 'MODEL_TIMEOUT' })
+    assert.equal(oldSignal.aborted, true)
+    assert.equal(runtime.getSnapshot(), before)
+    assert.equal(host.getSnapshot().preview, null)
+    assert.equal(host.getSnapshot().error.code, 'MODEL_TIMEOUT')
+    await host.callbacks.onRequestPlan('新修改')
+    const latest = host.getSnapshot()
+    old.resolve(JSON.stringify(candidate(oldRequest)))
+    await new Promise(resolve => setImmediate(resolve))
+    assert.equal(host.getSnapshot(), latest)
+    await host.callbacks.onConfirm(latest.preview.planId)
+    assert.equal(runtime.getSnapshot().revision, before.revision + 1)
+    assert.equal(calls, 2)
+  } finally { clearTimeout(guard); old.resolve('{}') }
+})
+
+test('AppSpec model plan deadline configuration rejects unbounded or invalid values', () => {
+  for (const timeoutMs of [0, -1, 45001, Infinity, 1.5, '15', null]) {
+    assert.throws(() => createModelPlanProvider(async () => '{}', { timeoutMs }), { code: 'MODEL_CONFIGURATION' })
+  }
+})
+
+test('synchronous completion failure and abort cannot leak an unhandled rejection or mutate Runtime', async t => {
+  let host, captured
+  const f = setup(t, ({ signal }) => {
+    captured = signal
+    host.cancelRequest(host.getSnapshot().requestId)
+    throw Error('private transport detail')
+  })
+  host = f.host
+  const before = f.runtime.getSnapshot()
+  await assert.rejects(host.callbacks.onRequestPlan('同步取消修改'))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(captured.aborted, true)
+  assert.equal(f.runtime.getSnapshot(), before)
+  assert.equal(host.getSnapshot().preview, null)
+})
 
 test('completion only receives selected metadata, prompt and cancellation signal; preview requires explicit confirmation', async t => {
   const { runtime, host } = setup(t, async ({ instruction, request, signal }) => {

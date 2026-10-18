@@ -28,7 +28,10 @@ export type ModelPlanCompletion = (input: {
  * automatic call, fixture fallback or Runtime authority. The existing Host and
  * AppChangePlanner remain the only validation/confirmation path.
  */
-export function createModelPlanProvider(complete: ModelPlanCompletion): PlanProvider {
+export function createModelPlanProvider(complete: ModelPlanCompletion, { timeoutMs = 45000 }: { timeoutMs?: number } = {}): PlanProvider {
+  if (typeof complete !== 'function' || !Number.isSafeInteger(timeoutMs) || timeoutMs <= 0 || timeoutMs > 45000) {
+    throw new AppSpecError('MODEL_CONFIGURATION', '修改计划超时配置无效。')
+  }
   return async request => {
     request.signal.throwIfAborted()
     const input = toMinimalPlanInput(request)
@@ -38,24 +41,37 @@ export function createModelPlanProvider(complete: ModelPlanCompletion): PlanProv
     if (new TextEncoder().encode(JSON.stringify({ instruction: APP_SPEC_EDIT_INSTRUCTION, request: input })).byteLength > 64 * 1024) {
       throw new AppSpecError('MODEL_REQUEST_TOO_LARGE', '选中积木的修改上下文超出请求限制。')
     }
-    // A completion transport may ignore cancellation. Retire the Host await
-    // promptly, while still consuming a late rejection from that transport.
+    // Bound a completion even when its transport ignores abort. This signal
+    // carries both caller cancellation and a local deadline, never retry authority.
+    const controller = new AbortController()
+    const cancel = () => controller.abort(request.signal.reason)
+    request.signal.addEventListener('abort', cancel, { once: true })
+    if (request.signal.aborted) cancel()
+    const timer = setTimeout(() => controller.abort(new AppSpecError('MODEL_TIMEOUT', '修改计划生成超时，请重试。')), timeoutMs)
     let abort: () => void = () => {}
     const cancelled = new Promise<never>((_, reject) => {
-      abort = () => reject(request.signal.reason)
-      request.signal.addEventListener('abort', abort, { once: true })
+      abort = () => reject(controller.signal.reason)
+      controller.signal.addEventListener('abort', abort, { once: true })
     })
-    // Also consume cancellation if a completion throws synchronously before
-    // Promise.race can attach its handlers.
-    void cancelled.catch(() => {})
     let output: string
     try {
-      if (request.signal.aborted) abort()
+      controller.signal.throwIfAborted()
+      // Preserve immediate transport invocation, but turn a synchronous throw
+      // into a rejection before attaching both race handlers.
+      let completion: Promise<string>
+      try { completion = Promise.resolve(complete({ instruction: APP_SPEC_EDIT_INSTRUCTION, request: input, signal: controller.signal })) }
+      catch (error) { completion = Promise.reject(error) }
       output = await Promise.race([
         cancelled,
-        complete({ instruction: APP_SPEC_EDIT_INSTRUCTION, request: input, signal: request.signal }),
+        completion,
       ])
-    } finally { request.signal.removeEventListener('abort', abort) }
+      controller.signal.throwIfAborted()
+    } finally {
+      clearTimeout(timer)
+      request.signal.removeEventListener('abort', cancel)
+      controller.signal.removeEventListener('abort', abort)
+      controller.abort()
+    }
     request.signal.throwIfAborted()
     if (typeof output !== 'string' || new TextEncoder().encode(output).byteLength > 64 * 1024) throw new AppSpecError('INVALID_MODEL_RESPONSE', '修改计划超出响应限制。')
     try { return JSON.parse(output) as unknown }
