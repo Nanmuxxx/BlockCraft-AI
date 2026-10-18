@@ -84,30 +84,35 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   function emit(patch) { if (disposed) return; state = freeze({ ...state, ...patch }); listeners.forEach(fn => fn()) }
   function remember(map, key) { if (map.size >= 200) map.delete(map.keys().next().value); map.set(key, now() + COOLDOWN) }
   function purge() { for (const map of [seen, ignored, events]) for (const [k, expiry] of map) if (expiry <= now()) map.delete(k) }
-  function cancel() {
+  function retire(patch = {}) {
     epoch++
     const previous = pending
     pending = null
-    emit({ busy: false })
+    emit({ ...patch, busy: false })
     // Abort callbacks may synchronously start a new request. Detach the retired
     // controller and publish its idle state before invoking those callbacks.
     previous?.abort()
   }
+  function cancel() { retire() }
   function syncContext() {
     check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
     let context
     try { context = projectContext(readContext()) }
     catch (error) {
-      cancel(); signature = ''; emit({ contextAvailable: false, suggestions: [], error: { code: error.code || 'CONTEXT_UNAVAILABLE', message: errors[error.code] || errors.CONTEXT_UNAVAILABLE } }); throw error
+      const changed = signature !== '' || state.contextAvailable
+      signature = ''
+      if (changed) retire({ contextAvailable: false, suggestions: [], error: { code: error.code || 'CONTEXT_UNAVAILABLE', message: errors[error.code] || errors.CONTEXT_UNAVAILABLE } })
+      throw error
     }
-    if (!state.contextAvailable) emit({ contextAvailable: true, error: null })
     const nextIdentity = `${context.appId}:${context.instanceId}`, next = JSON.stringify(context)
     if (next !== signature) {
-      cancel(); signature = next
-      if (identity !== nextIdentity) { prompts = []; seen.clear(); ignored.clear(); events.clear(); lastProactive = -Infinity; emit({ messages: [], suggestions: [], error: null }) }
-      else emit({ suggestions: [], error: null })
-      identity = nextIdentity
-    }
+      const newProject = identity !== nextIdentity
+      // Publish a coherent identity/history before notifying or aborting. Both
+      // callbacks may synchronously synchronize or enter a newer project.
+      signature = next; identity = nextIdentity
+      if (newProject) { prompts = []; seen.clear(); ignored.clear(); events.clear(); lastProactive = -Infinity }
+      retire({ contextAvailable: true, ...(newProject ? { messages: [] } : {}), suggestions: [], error: null })
+    } else if (!state.contextAvailable) emit({ contextAvailable: true, error: null })
     return context
   }
   async function refreshStatus() {
@@ -141,6 +146,9 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   }
   async function run(kind, prompt, event) {
     const context = syncContext(); purge()
+    const requestSignature = JSON.stringify(context)
+    const contextCurrent = () => signature === requestSignature && JSON.stringify(projectContext(readContext())) === requestSignature
+    check(!disposed && contextCurrent(), 'CONTEXT_CHANGED', '项目已变化，请重新提问。', 409)
     check(context.mode === 'blocks', 'MODE_UNAVAILABLE', '请回到 B 模式再和 Mochi 聊聊。', 409)
     check(state.enabled, 'AI_DISABLED', errors.AI_DISABLED, 503)
     check(!pending, 'AI_BUSY', errors.AI_BUSY, 429)
@@ -163,9 +171,9 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       let messages = state.messages
       if (kind === 'chat') { prompts.push(input.prompt); prompts = prompts.slice(-LIMITS.history); messages = [...messages, { role: 'user', content: input.prompt }].slice(-40) }
       emit({ busy: true, error: null, messages })
-      check(!disposed && !controller.signal.aborted && pending === controller && owned === epoch, 'CONTEXT_CHANGED', '已丢弃过期请求。', 409)
+      check(!disposed && !controller.signal.aborted && pending === controller && owned === epoch && contextCurrent(), 'CONTEXT_CHANGED', '已丢弃过期请求。', 409)
       const reply = await abortable(Promise.resolve(api.analyze(input, { signal: controller.signal })), controller.signal)
-      check(!disposed && !controller.signal.aborted && owned === epoch && JSON.stringify(projectContext(readContext())) === signature, 'CONTEXT_CHANGED', '已丢弃过期回复。', 409)
+      check(!disposed && !controller.signal.aborted && owned === epoch && contextCurrent(), 'CONTEXT_CHANGED', '已丢弃过期回复。', 409)
       validateReply(reply, context)
       const suggestions = reply.suggestions.filter(s => {
         const key = fingerprint(s)

@@ -187,3 +187,77 @@ test('subscriber replacement at request publication keeps only the fresh analysi
   assert.equal(f.client.getSnapshot().busy, false)
   off(); f.client.dispose()
 })
+
+for (const trigger of ['abort', 'subscriber']) test(`project transition publishes the new identity before ${trigger} reentry`, async () => {
+  let fresh, release, calls = 0
+  const f = fixture((input, { signal }) => {
+    if (++calls === 1) {
+      if (trigger === 'abort') signal.addEventListener('abort', () => { fresh = f.client.chat('new project question') }, { once: true })
+      return new Promise(() => {})
+    }
+    return new Promise(resolve => { release = () => resolve(wire(input.context)) })
+  })
+  await f.client.refreshStatus()
+  const old = f.client.chat('old project question')
+  let armed = trigger === 'subscriber'
+  const off = f.client.subscribe(() => {
+    if (!armed) return
+    armed = false; fresh = f.client.chat('new project question')
+  })
+  f.change({ ...context(), appId: 'next-app', instanceId: 'next-instance' })
+  f.client.syncContext()
+  await assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.client.getSnapshot().busy, true)
+  assert.deepEqual(f.client.getSnapshot().messages.map(m => m.content), ['new project question'])
+  assert.deepEqual(f.calls[1].history, [])
+  assert.equal(f.calls[1].context.appId, 'next-app')
+  release(); await fresh
+  assert.deepEqual(f.client.getSnapshot().messages.map(m => m.role), ['user', 'assistant'])
+  off(); f.client.dispose()
+})
+
+test('context synchronization is idempotent inside a state subscriber', () => {
+  const f = fixture()
+  let notifications = 0
+  const off = f.client.subscribe(() => {
+    assert(++notifications <= 2, 'context publication recursively invalidated itself')
+    f.client.syncContext()
+  })
+  f.client.syncContext()
+  assert.equal(notifications, 1)
+  off(); f.client.dispose()
+})
+
+test('a newer project transition during notification cannot be overwritten by the older transition', async () => {
+  const f = fixture(); await f.client.refreshStatus(); f.client.syncContext()
+  let armed = true, fresh
+  const off = f.client.subscribe(() => {
+    if (!armed) return
+    armed = false
+    f.change({ ...context(), appId: 'third-app', instanceId: 'third-instance' })
+    f.client.syncContext(); fresh = f.client.chat('third project question')
+  })
+  f.change({ ...context(), appId: 'second-app', instanceId: 'second-instance' })
+  f.client.syncContext()
+  await fresh
+  assert.equal(f.calls[0].context.appId, 'third-app')
+  assert.deepEqual(f.calls[0].history, [])
+  assert.deepEqual(f.client.getSnapshot().messages.map(m => m.role), ['user', 'assistant'])
+  off(); f.client.dispose()
+})
+
+for (const trigger of ['context', 'busy']) test(`project changed during ${trigger} notification blocks stale-context egress`, async () => {
+  const f = fixture(); await f.client.refreshStatus()
+  if (trigger === 'busy') f.client.syncContext()
+  let armed = true
+  const off = f.client.subscribe(() => {
+    if (!armed || (trigger === 'busy' && !f.client.getSnapshot().busy)) return
+    armed = false
+    f.change({ ...context(), appId: 'replacement-app', instanceId: 'replacement-instance' })
+    if (trigger === 'context') f.client.syncContext()
+  })
+  await assert.rejects(f.client.chat('must remain in original project'), { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.count(), 0)
+  assert.equal(f.client.getSnapshot().busy, false)
+  off(); f.client.dispose()
+})
