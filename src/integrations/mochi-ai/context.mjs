@@ -7,7 +7,13 @@ import { LIMITS, MochiError, projectContext } from './protocol.mjs'
 export function createMochiContextProjection(host, { readReferences, registry }) {
   const listeners = new Set()
   let stopped = false, generation = 0, signature = '', metadata = new Map(), pending = false, failure = false
-  const notify = () => { if (!stopped) listeners.forEach(fn => fn()) }
+  const notify = () => {
+    if (stopped) return
+    for (const fn of [...listeners]) {
+      if (stopped) break
+      try { fn() } catch { /* An observer cannot reject metadata admission. */ }
+    }
+  }
   function update() {
     if (stopped) return
     let refs

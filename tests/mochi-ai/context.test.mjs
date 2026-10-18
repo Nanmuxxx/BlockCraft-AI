@@ -41,3 +41,15 @@ test('context bounds reject oversized metadata rather than silently inventing or
   const large = entry('v1'); large.artifact.manifest.propsSchema.properties = Object.fromEntries(Array.from({ length: 25 }, (_, i) => [`p${i}`, { type: 'string' }]))
   const f = fixture(() => large); await settle(); assert.throws(f.projection.read, { code: 'INVALID_INPUT' }); f.projection.dispose()
 })
+
+for (const succeeds of [true, false]) test(`metadata ${succeeds ? 'success' : 'failure'} isolates observer errors`, async () => {
+  let finish, notifications = 0
+  const f = fixture(() => new Promise((resolve, reject) => { finish = () => succeeds ? resolve(entry('v1')) : reject(new Error('registry unavailable')) }))
+  f.projection.subscribe(() => { throw new Error('render observer failed') })
+  f.projection.subscribe(() => { notifications++ })
+  finish(); await settle()
+  assert.equal(notifications, 1)
+  if (succeeds) assert.equal(f.projection.read().blocks.at(-1).name, '计时器')
+  else assert.throws(f.projection.read, { code: 'CONTEXT_UNAVAILABLE' })
+  f.projection.dispose()
+})
