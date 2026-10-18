@@ -81,7 +81,12 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   let consentTail = Promise.resolve()
   const listeners = new Set(), seen = new Map(), ignored = new Map(), events = new Map()
   const COOLDOWN = 600_000
-  function emit(patch) { if (disposed) return; state = freeze({ ...state, ...patch }); listeners.forEach(fn => fn()) }
+  function emit(patch) {
+    if (disposed) return
+    state = freeze({ ...state, ...patch })
+    // Observers cannot undo publication or prevent retired transports aborting.
+    listeners.forEach(fn => { try { fn() } catch { /* Isolate observer failures. */ } })
+  }
   function remember(map, key) { if (map.size >= 200) map.delete(map.keys().next().value); map.set(key, now() + COOLDOWN) }
   function purge() { for (const map of [seen, ignored, events]) for (const [k, expiry] of map) if (expiry <= now()) map.delete(k) }
   function retire(patch = {}) {

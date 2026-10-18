@@ -261,3 +261,19 @@ for (const trigger of ['context', 'busy']) test(`project changed during ${trigge
   assert.equal(f.client.getSnapshot().busy, false)
   off(); f.client.dispose()
 })
+
+test('a failing state observer cannot skip transport cancellation or later observers', async () => {
+  let signal
+  const f = fixture((_input, options) => { signal = options.signal; return new Promise(() => {}) })
+  await f.client.refreshStatus()
+  const old = f.client.chat('cancel this request')
+  const offBad = f.client.subscribe(() => { throw new Error('observer rendering failure') })
+  let notified = 0
+  const offGood = f.client.subscribe(() => { notified++ })
+  assert.doesNotThrow(() => f.client.cancel())
+  await assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  assert.equal(signal.aborted, true)
+  assert.equal(notified, 1)
+  assert.equal(f.client.getSnapshot().busy, false)
+  offBad(); offGood(); f.client.dispose()
+})
