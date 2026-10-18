@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { createAppRuntime, type AppRuntime } from '../../model/appRuntime'
 import { AppSpecWorkshop } from '../app-builder/AppSpecWorkshop'
+import { createGeneratedArtifactUI, type GeneratedArtifactUI } from '../../integrations/generated-artifact/ui'
 import { generateProject } from './generateApp'
 import { Logo } from '../Logo'
 import { MochiCat } from '../MochiCat'
@@ -11,21 +12,32 @@ export function AiCreate() {
   const [idea, setIdea] = useState('')
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
-  const [app, setApp] = useState<{ runtime: AppRuntime; generation: number } | null>(null)
+  const [app, setApp] = useState<{ runtime: AppRuntime; generation: number; installation: GeneratedArtifactUI } | null>(null)
+  const currentApp = useRef(app)
   const active = useRef<AbortController | null>(null)
   useEffect(() => () => { active.current?.abort(); active.current = null }, [])
 
   async function generate(event: FormEvent) {
     event.preventDefault()
     if (active.current) return
+    try { currentApp.current?.installation.beforeContextChange() }
+    catch (failure) { setError(failure instanceof Error ? failure.message : '正在确认添加，请稍后重试。'); return }
     const controller = new AbortController()
     active.current = controller
     setPending(true)
     setError('')
     try {
       const state = await generateProject(idea, controller.signal)
-      const runtime = createAppRuntime(state)
-      if (active.current === controller) setApp(current => ({ runtime, generation: (current?.generation ?? 0) + 1 }))
+      if (active.current === controller) {
+        // Recheck at async completion: an install may have started during generation.
+        // Never put a side effect in a React state updater (StrictMode can replay it).
+        currentApp.current?.installation.beforeContextChange()
+        const runtime = createAppRuntime(state)
+        currentApp.current?.installation.dispose()
+        const next = { runtime, generation: (currentApp.current?.generation ?? 0) + 1, installation: createGeneratedArtifactUI(runtime.customProject) }
+        currentApp.current = next
+        setApp(next)
+      }
     } catch (failure) {
       if (active.current === controller) setError(failure instanceof Error ? failure.message : '生成失败，请重试。')
     } finally {
@@ -47,7 +59,7 @@ export function AiCreate() {
     </div></div>}
     {pending && <p className="ai-create-status" role="status">AI 正在设计应用，请稍候。已有应用仍可使用。</p>}
     {error && <p role="alert" className="ai-create-error">{error}{app && ' 当前应用和数据已保留。'}</p>}
-    {app && <AppSpecWorkshop key={app.generation} runtime={app.runtime} />}
+    {app && <AppSpecWorkshop key={app.generation} runtime={app.runtime} installation={app.installation} />}
     {!app && <footer className="footer">BlockCraft AI · 把想法，搭成现实</footer>}
   </main>
 }
