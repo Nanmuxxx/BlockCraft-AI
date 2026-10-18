@@ -1,0 +1,44 @@
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (2.048083ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.359625ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.610833ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.225834ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.134667ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.132292ms)
+✖ cancel retires an ignored analysis promise without altering newer history (501.603417ms)
+✖ abort listener reentry retains ownership of the newer conversation request (0.608041ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.324416ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (21.95175ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.131541ms)
+✔ late status cannot re-enable consent after explicit off (0.073166ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.15225ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 11
+ℹ fail 1
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 569.192833
+
+✖ failing tests:
+
+test at tests/mochi-ai/client.test.mjs:77:1
+✖ cancel retires an ignored analysis promise without altering newer history (501.603417ms)
+  'test timed out after 500ms'
+
+test at tests/mochi-ai/client.test.mjs:93:1
+✖ abort listener reentry retains ownership of the newer conversation request (0.608041ms)
+  Error: Mochi 正在思考。
+      at check (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/protocol.mjs:8:18)
+      at run (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:138:5)
+      at Object.chat (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:180:21)
+      at signal.addEventListener.once (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client.test.mjs:97:65)
+      at [nodejs.internal.kHybridDispatch] (node:internal/event_target:869:20)
+      at AbortSignal.dispatchEvent (node:internal/event_target:810:26)
+      at runAbort (node:internal/abort_controller:561:10)
+      at abortSignal (node:internal/abort_controller:525:3)
+      at AbortController.abort (node:internal/abort_controller:580:5)
+      at Object.cancel (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:87:41) {
+    code: 'AI_BUSY',
+    status: 429
+  }

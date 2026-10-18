@@ -1,0 +1,38 @@
+✔ deadline retires ignored fetch abort (12.430333ms)
+✔ deadline retires ignored body abort (11.293375ms)
+✔ caller cancellation retires transport and cancels a late response body (0.321875ms)
+✖ reader cleanup cannot retain a completed response (0.2895ms)
+✔ reject malformed UTF-8 195-40 inside JSON (0.431ms)
+✔ reject malformed UTF-8 228-184 inside JSON (0.111875ms)
+✔ declared oversized response is cancelled before acquiring a reader (0.213166ms)
+✔ valid split multibyte UTF-8 remains accepted (0.470208ms)
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (1.863792ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.322917ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.573417ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.267584ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.152625ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.216ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.113125ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (21.49375ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.113958ms)
+✔ late status cannot re-enable consent after explicit off (0.107709ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.198542ms)
+✔ host bridge listens to settled structural events, ignores records/anchors/mode, and cleans up (51.35675ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 19
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82.162
+
+✖ failing tests:
+
+test at tests/mochi-ai/client-transport.test.mjs:21:1
+✖ reader cleanup cannot retain a completed response (0.2895ms)
+  TypeError [Error]: received.body.cancel is not a function
+      at request (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-ai/client.mjs:49:71)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client-transport.test.mjs:26:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

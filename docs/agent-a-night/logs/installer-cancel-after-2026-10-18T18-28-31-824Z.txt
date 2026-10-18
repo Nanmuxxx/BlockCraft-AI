@@ -1,0 +1,46 @@
+✔ real pending fixture: read + preview + cancel do not write; confirmed install only appends once (9.317125ms)
+✔ preview component shows exact identity/props/source and status; no source HTML or runtime (4.035125ms)
+✔ corrupt version, malformed envelope/JSON, executable status, props and existing ID all fail closed (2.760292ms)
+✔ late reads, cancellation and superseding requests never revive a preview (0.403ms)
+✔ owner revision and authorization changes invalidate loaded/preview candidates (2.393583ms)
+✔ confirmation locks parent switch/unmount synchronously before setter; double confirm invokes install once (1.665916ms)
+✔ concurrent commit or revoked authorization during install rejects without registry publication (2.171375ms)
+✔ context change while prepare awaits discards result; disposal and StrictMode empty replay clean subscriptions (0.4975ms)
+✔ unexpected session exception remains error; no success receipt or automatic retry (1.26075ms)
+✖ stalled prepare registry lookup retires on invalidate (1001.105416ms)
+✖ stalled prepare registry lookup retires on dispose (1002.632458ms)
+✖ stalled prepare registry lookup retires on supersede (1002.791125ms)
+✔ real archived DeepSeek record: private store -> exact export -> preview -> sole session CAS; source stays inert (78.006375ms)
+✔ export rejects missing/wrong reference, corrupt digest, invalid status/props and captures input (3.4755ms)
+✔ cancel is idempotent, foreign tickets cannot commit and no candidate is registered (1.2395ms)
+✔ malformed, stale digest, invalid props, extra execution permission and collisions fail before preview (3.453458ms)
+✔ project switch, revision change and revoke/regrant invalidate previews (2.375333ms)
+✔ confirmation rechecks revision/authorization even if host notifications were missed (1.423291ms)
+✔ context invalidation or disposal during prepare drops the late result without registering artifact (0.7875ms)
+✔ late prepare, superseding prepare, input mutation and dispose cannot revive a ticket (1.707375ms)
+✔ confirm lease synchronously blocks cancel/context switch/dispose and duplicate submission (1.475917ms)
+✔ permission changes or concurrent CAS during async install reject atomically and terminally (1.859125ms)
+✔ two installers using one owner commit at most once; no implicit replacement (1.863875ms)
+✔ unexpected install exception is terminal; capability escalation rejected (1.19875ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 3
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3286.4425
+
+✖ failing tests:
+
+test at tests/generated-artifact/install.test.cjs:18:62
+✖ stalled prepare registry lookup retires on invalidate (1001.105416ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact/install.test.cjs:18:62
+✖ stalled prepare registry lookup retires on dispose (1002.632458ms)
+  'test timed out after 1000ms'
+
+test at tests/generated-artifact/install.test.cjs:18:62
+✖ stalled prepare registry lookup retires on supersede (1002.791125ms)
+  'test timed out after 1000ms'

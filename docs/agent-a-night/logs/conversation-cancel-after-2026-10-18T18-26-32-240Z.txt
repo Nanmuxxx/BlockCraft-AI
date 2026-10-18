@@ -1,0 +1,33 @@
+✔ deadline retires ignored fetch abort (11.693625ms)
+✔ deadline retires ignored body abort (11.070958ms)
+✔ caller cancellation retires transport and cancels a late response body (0.4405ms)
+✔ reader cleanup cannot retain a completed response (0.427209ms)
+✔ reject malformed UTF-8 195-40 inside JSON (0.511125ms)
+✔ reject malformed UTF-8 228-184 inside JSON (0.127541ms)
+✔ declared oversized response is cancelled before acquiring a reader (0.233875ms)
+✔ valid split multibyte UTF-8 remains accepted (0.465875ms)
+✔ inherited error code constructor remains sanitized (0.207291ms)
+✔ inherited error code __proto__ remains sanitized (0.139625ms)
+✔ inherited error code toString remains sanitized (0.127208ms)
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (1.852125ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.355958ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.64475ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.242958ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.151959ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.151208ms)
+✔ cancel retires an ignored analysis promise without altering newer history (1.952667ms)
+✔ abort listener reentry retains ownership of the newer conversation request (0.326167ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.0845ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (20.970583ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.101083ms)
+✔ late status cannot re-enable consent after explicit off (0.067083ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.155416ms)
+✔ host bridge listens to settled structural events, ignores records/anchors/mode, and cleans up (49.78675ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 83.004291

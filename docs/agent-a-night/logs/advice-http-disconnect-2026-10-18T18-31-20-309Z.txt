@@ -1,0 +1,31 @@
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (18.140583ms)
+✔ HTTP rejects malformed UTF-8 before provider egress (6.847417ms)
+✔ ignored access resolver deadline retires HTTP admission with no model call (15.789625ms)
+✔ HTTP disconnect aborts pending access and consumes a late rejection without egress (2.772792ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (4.909625ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (3.501833ms)
+✔ HTTP production disabled remains explicit; no mock fallback (1.118ms)
+✔ missing deployment resolver fails closed even with client identity headers (0.952875ms)
+✔ client identity cannot authenticate or override trusted project scope (1.228083ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (1.744125ms)
+✔ production server mounts routes but requires trusted access and durable cost control (29.304ms)
+✔ default disabled, missing/expired/unverified grants make zero upstream calls (1.246292ms)
+✔ proactive requires explicit consent; events and suggestions deduplicate until cooldown (2.203958ms)
+✔ chat and proactive throttle on the server and enforce trusted application binding (0.881ms)
+✔ global call/token budgets reserve before requests and failures are charged without retries (0.522459ms)
+✔ session budget shared across projects; per-session/global concurrency bounded (0.966ms)
+✔ revoking proactive consent aborts and discards an outstanding response (4.310917ms)
+✔ approval is snapshotted so caller mutation cannot increase the grant (0.190416ms)
+✔ durable monetary adapter required, deny/error/abort never reach provider (0.745875ms)
+✔ C-mode requests are rejected before budget reservation or provider (0.290333ms)
+✔ durable ledger timeout is unavailable and releases concurrency without provider egress (0.37125ms)
+✔ caller cancellation releases service despite provider ignoring abort (0.709959ms)
+✔ consent revocation releases service despite provider ignoring abort (0.511875ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 141.126541

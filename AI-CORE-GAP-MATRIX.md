@@ -35,3 +35,12 @@
 - BLOCKED：真实模型验收（本任务无付费许可）；任意 TSX 安全运行；跨 Agent 的 ZIP/部署集成。
 
 - `core-complete` 568/568；`custom-workshop-browser` 桌面1366/手机390通过，含参数/重新安装/B-C/不可执行 Viewer。`model-request-bound-fixed` 14/14。未来生产接入见 `docs/agent-a-night/AI-CORE-INTERFACE-CONTRACT.md`。
+
+## 第二轮证据（02:32）
+
+- 源码请求所有可撤销await均可取消；`source-registry-after`39/39；注册表迟到拒绝不能覆盖新预览/历史。
+- Artifact `prepare` 增加内部取消代际，`installer-cancel-final`63/63（含源码）；确认安装租约不提前解除。
+- Mochi建议客户端：忽略abort的fetch/流、迟到body、永不完成cleanup、非法UTF-8、原型链错误码均有回归；会话取消及时结束，先detach再abort保留新请求所有权。`conversation-cancel-after`25/25。
+- `server/mochi-ai/http.mjs:createMochiHandler/read`：严格UTF-8、access默认五秒上限、请求/连接中止信号传给可信适配器；`advice-http-disconnect`23/23。
+- 最新较广核心回归`core-checkpoint`622/622，时间早于HTTP入口最后三项新增测试；不得把这些结果混为一次625项运行。
+- 正式Artifact桌面/移动通过；Mochi正式页面串行重跑通过，0外部请求/0真实模型调用。最新变更继续遵循PARTIAL/BLOCKED，未启用生产修改/Viewer。

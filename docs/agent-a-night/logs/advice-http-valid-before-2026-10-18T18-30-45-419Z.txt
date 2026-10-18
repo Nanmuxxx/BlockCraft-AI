@@ -1,0 +1,41 @@
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (13.967375ms)
+✖ HTTP rejects malformed UTF-8 before provider egress (3.875375ms)
+✖ ignored access resolver deadline retires HTTP admission with no model call (1001.841625ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (10.010042ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (7.996083ms)
+✔ HTTP production disabled remains explicit; no mock fallback (2.772833ms)
+✔ missing deployment resolver fails closed even with client identity headers (2.1165ms)
+✔ client identity cannot authenticate or override trusted project scope (2.817084ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (3.195125ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1090.522666
+
+✖ failing tests:
+
+test at tests/mochi-ai/http.test.mjs:30:1
+✖ HTTP rejects malformed UTF-8 before provider egress (3.875375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 400
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/http.test.mjs:36:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/http.test.mjs:41:1
+✖ ignored access resolver deadline retires HTTP admission with no model call (1001.841625ms)
+  'test timed out after 1000ms'

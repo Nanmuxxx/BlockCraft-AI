@@ -1,0 +1,28 @@
+✔ deadline retires ignored fetch abort (11.167833ms)
+✔ deadline retires ignored body abort (11.027667ms)
+✔ caller cancellation retires transport and cancels a late response body (0.324ms)
+✔ reader cleanup cannot retain a completed response (0.352166ms)
+✔ reject malformed UTF-8 195-40 inside JSON (0.432166ms)
+✔ reject malformed UTF-8 228-184 inside JSON (0.107875ms)
+✔ declared oversized response is cancelled before acquiring a reader (0.21175ms)
+✔ valid split multibyte UTF-8 remains accepted (0.36525ms)
+✔ manual chat, suggestion navigation, continued conversation and modification disabled (1.922334ms)
+✔ no polling, proactive opt-in, event throttle and duplicate event suppression (0.330667ms)
+✔ dedup and ignored suggestion cooldown, including normalized punctuation (0.602083ms)
+✔ trusted host validates unknown/removed target IDs and refuses forged suggestion handles (0.271917ms)
+✔ context change aborts pending analysis and discards delayed replies without leaking chat across apps (0.133834ms)
+✔ cancel and dispose suppress late output; disabled status never falls back (0.128583ms)
+✔ rapid consent on/off is serialized and ends off at the server (0.088625ms)
+✔ independent API uses same-origin credentials, limits output, sanitizes errors, times out and cancels (21.971292ms)
+✔ standalone API client rejects Runtime/records before any HTTP request (0.111ms)
+✔ late status cannot re-enable consent after explicit off (0.102416ms)
+✔ disabled reason survives selection and mode changes; C mode never sends chat (0.190291ms)
+✔ host bridge listens to settled structural events, ignores records/anchors/mode, and cleans up (53.719833ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 84.463542

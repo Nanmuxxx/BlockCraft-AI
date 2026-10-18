@@ -1,0 +1,128 @@
+[
+  {
+    "local": "4ad8e5844e69bc3ded03266771fa85d75e03d24b",
+    "remote": "b9f1ad1a9b2b3bf9a2efb768ccff2646eb9cf659",
+    "tree": "abeae2dd5f113bcb842eee19fcdb818d6cd79daf",
+    "message": "docs(ai-core): inventory night baseline and development queue"
+  },
+  {
+    "local": "fd861f929006bff8461981ee3eb88289b8cad67f",
+    "remote": "4d9645a6476ee25072db410a05d84b5e3a08f5f1",
+    "tree": "2c393a41aa3246f8199ea6731b3d29b951f66fb3",
+    "message": "fix(generation): bound responses and reject cancelled or wrong-protocol results"
+  },
+  {
+    "local": "b4c8c422767bef2cfa740600a0bac9919729c2b0",
+    "remote": "ef2a7be9df1c97f640d512089a4d0ec9e0e6d4d9",
+    "tree": "875b4d8e8a56625b92ec402ec9cc6f36af0385fe",
+    "message": "feat(mochi): adapt bounded model plans through existing host validation"
+  },
+  {
+    "local": "dce2212ee1369e3915c95bf23a82f940a0a5fb22",
+    "remote": "362d88af87292cc32933721585c11ee596231479",
+    "tree": "bece55b5bb8ef133f9e064aa5d7844649711f985",
+    "message": "fix(generation): reject ambiguous completions and invalid UTF-8"
+  },
+  {
+    "local": "40f9db5d261e056f5bc162bc240dd81ce8c6f1b7",
+    "remote": "5eb59924fa6ae8114d83543c5e0ffd82e9692464",
+    "tree": "6a8b9c69832d760d3f5ee4b14e69d506bb74c678",
+    "message": "fix(ai): enforce deadlines when transports ignore cancellation"
+  },
+  {
+    "local": "0544d74906b261ec9253713b35464bc12125c2f3",
+    "remote": "3dd0261157dac28732e428e35ea0bd8661433ce2",
+    "tree": "9e49eebfaebc5ef1339101b4fd8bfd6a344cd74a",
+    "message": "test(mochi): exercise bounded JSON plans through workshop browser flow"
+  },
+  {
+    "local": "c73edba5825a2b3bc09c33790b3654bc9e9b140d",
+    "remote": "49322795326a41ebd368c94930b5de41071a3711",
+    "tree": "cf0314c64976c7bd47a4b3d6e0be2b6b840b8410",
+    "message": "fix(qa): keep business quality evaluation scoped to AppSpec v1"
+  },
+  {
+    "local": "98865feccdb121ffe7c6a0827f5ff7ffe0b8c06f",
+    "remote": "0a1e60258e6fa0cf1a9160aee2c08cfa0de79172",
+    "tree": "86300e322ad3eed65af9190041d63a977e365190",
+    "message": "fix(ai): cancel unused response bodies on rejection and late arrival"
+  },
+  {
+    "local": "e7feadcdcec8495149742395a3c69990d23a45a2",
+    "remote": "4c7251a27cee052e74acfc85eb1f731ec06c1a13",
+    "tree": "867b7c98adb9ae72506fee2c670801c4a6145c6c",
+    "message": "fix(mochi): retire model plan waits promptly on cancellation"
+  },
+  {
+    "local": "ad36214da50928de86c324eeb709afa830edfe41",
+    "remote": "84c1d449ef2c030c218c6cee2b7eb554fda1e208",
+    "tree": "34820b9ee84f18de757df9fd84827ae0281e1424",
+    "message": "fix(custom-block): bound pending transport waits and reject mixed envelopes"
+  },
+  {
+    "local": "9f4296200099a3c9a4ac0b13d8d82d1ad8e613b3",
+    "remote": "c9c8c9de2e441f137ab038a3bf73452649725f7e",
+    "tree": "98173d3699003c68d0a2ef05cd753e7e52f71c76",
+    "message": "fix(mochi-source): detach cancelled requests before abort reentry"
+  },
+  {
+    "local": "4c40e940193234c71bf17189d857b29d9fafd983",
+    "remote": "fd4a1ec7bb4a599f0a754d71cc4460c2ee15e8eb",
+    "tree": "adc1ac82e3a6d082151fe3f5da4a36af98cb6550",
+    "message": "fix(mochi): bound selected metadata before model transport"
+  },
+  {
+    "local": "a3eec73c794ca97d20de9de6d1287d1f672cd00f",
+    "remote": "3d0df4a4d058f12c6521c4e1bc54b9995e1112a1",
+    "tree": "41a0fa2f33fafc9e7874ef3376f5d171543e34e0",
+    "message": "docs(ai-core): record verified gaps and production integration contract"
+  },
+  {
+    "local": "f7267c2b30da1af73875ec3a54b90da7cfc86ded",
+    "remote": "95eb06e40e4a473a9389699cf2062733fa3428e8",
+    "tree": "a062f394afb36af1cb8e1ea137a56be6d585a0ea",
+    "message": "fix(mochi): release service concurrency on ignored cancellation"
+  },
+  {
+    "local": "12515887d659d6b0f352ffe337eee6fa428ae6b8",
+    "remote": "495f0b6f97b39126928e0418ff14f85dd15ec691",
+    "tree": "1e4bfae819b2947d2982f790820b8da2a5ad4768",
+    "message": "fix(ai): bound interactive admission and retire disconnected gates"
+  },
+  {
+    "local": "ed51567d6676cc28a850167f7c62bde0225b9974",
+    "remote": "d912dddcf327ab930386f76e6f151c11a984b717",
+    "tree": "ac7e7bf43d61bd8a343eb039ac1aee952e54471a",
+    "message": "docs(ai-core): preserve command ledger and browser acceptance evidence"
+  },
+  {
+    "local": "5ac2d225611f6e8e86204c641b90f043804eca40",
+    "remote": "b053ff798255bcb05d28d5ad04f194c30ebd103f",
+    "tree": "f656e864b342dd5ca59643fb800abcb58e3806ce",
+    "message": "fix(mochi-source): retire cancelled registry admission waits"
+  },
+  {
+    "local": "49627e8117ffdeb62abde9bbaaf786cda83e2c62",
+    "remote": "b547ac73e0275488c5d4c00148126524ac339fa5",
+    "tree": "17ca7c3ed5ce50e0e4cf12d1c193ef2c73f1736b",
+    "message": "fix(mochi-ai): bound client transport and decode strict UTF-8"
+  },
+  {
+    "local": "baeffb128b657bb1f68f8017f7982d7737d3cbc1",
+    "remote": "9bbbfaafc89be09b2ba4200fd67eb66e832f30f4",
+    "tree": "aa799048aec4d477047c45efd1456f69b6236084",
+    "message": "fix(mochi-ai): preserve conversation ownership during abort reentry"
+  },
+  {
+    "local": "a0c8eecb7111a06a3095ee2178d5ec46c4ce2428",
+    "remote": "e891260d99f03b41d3573fc9f6fecf716a75ea3b",
+    "tree": "00b1782d8a66425b35c0a395bd42d85087de133a",
+    "message": "fix(artifact): retire superseded installation preparation"
+  },
+  {
+    "local": "031eac6b301292bc8379106916eaf715af2a4f80",
+    "remote": "a638a31df15ccde8562807682244959380843ed9",
+    "tree": "dea84c657f92973c2acfdd6db7455f9898362290",
+    "message": "fix(mochi-ai): bound trusted access admission and reject invalid request bytes"
+  }
+]

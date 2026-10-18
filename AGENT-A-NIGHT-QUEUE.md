@@ -7,7 +7,7 @@
 - Agent B：`agent-b/react-zip-night-20261019`，正在修改 `tools/project-zip-export/templates.mjs`。本分支禁止编辑导出器、模板、部署及冻结材料。
 - REAL_MODEL_CALLS=0。服务测试显式注入固定 Fixture；不读取 `.env`、生产密钥或私人材料。
 
-## 当前任务（2026-10-19 02:08）
+## 当前任务（2026-10-19 02:32）
 
 已完成第一轮链路恢复、生成/协议/取消修复和离线端到端验证；继续接口审计、核心回归、生产浏览器盲区与 Draft PR 准备。六小时窗口尚未结束，不声称已工作六小时。
 
@@ -49,3 +49,13 @@
 - 最新完整核心回归 core-complete：568/568；正式 CustomBlock Workshop 桌面/手机均通过。
 - `4c40e94`：Mochi instruction+选中上下文 UTF-8 64 KiB 出站限制；model-request-bound-fixed 14/14（首次测试使用错 fixture 层级，已保留失败）。
 - 接口契约已写入 `docs/agent-a-night/AI-CORE-INTERFACE-CONTRACT.md`；生产修改传输及 Viewer 仍待独立验收。
+
+## 第二轮进展（02:32）
+
+- Draft PR #40 已创建并关联；通过 GitHub Git-data API 发布21个提交，逐一验证blob/tree SHA。远端HEAD `a638a31df15ccde8562807682244959380843ed9`；本地HEAD `031eac6`，文件树相同。
+- `5ac2d22` 源码注册表取消39/39；`49627e8` 建议客户端传输/严格UTF-8；`baeffb1` 会话取消/同步重入25/25。
+- `a0c8eec` Artifact prepare取消/替换/关闭，安装及源码相关63/63；首次夹具同摘要未触发目标查询，修正后旧代码3项超时、新代码通过，日志均保留。
+- `031eac6` Mochi HTTP严格UTF-8、可信access五秒上限、断连取消；23/23。
+- core-checkpoint622/622，构建0，正式Artifact桌面/移动通过。Mochi页面并发Vite时初始输入框超时；串行重跑通过（浏览器缓存冲突为待确认原因）。
+- 阶段报告 `NIGHT-AGENT-A-REPORT.md` 已建立，仍持续开发；不得声称六小时已过。
+- 当前：同步报告/测试账本并复核服务入口边界。下一步：审计项目文件读取与参数持久化边界，保留租约/CAS和execution denied。

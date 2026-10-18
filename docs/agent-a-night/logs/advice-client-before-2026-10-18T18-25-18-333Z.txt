@@ -1,0 +1,79 @@
+✖ deadline retires ignored fetch abort (502.334667ms)
+✖ deadline retires ignored body abort (502.31575ms)
+✖ caller cancellation retires transport and cancels a late response body (501.522709ms)
+✖ reader cleanup cannot retain a completed response (501.973833ms)
+✖ reject malformed UTF-8 195-40 inside JSON (3.550792ms)
+✖ reject malformed UTF-8 228-184 inside JSON (0.299334ms)
+✖ declared oversized response is cancelled before acquiring a reader (1.126625ms)
+✔ valid split multibyte UTF-8 remains accepted (0.934834ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 1
+ℹ fail 3
+ℹ cancelled 4
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26537.315917
+
+✖ failing tests:
+
+test at tests/mochi-ai/client-transport.test.mjs:5:40
+✖ deadline retires ignored fetch abort (502.334667ms)
+  'test timed out after 500ms'
+
+test at tests/mochi-ai/client-transport.test.mjs:5:40
+✖ deadline retires ignored body abort (502.31575ms)
+  'test timed out after 500ms'
+
+test at tests/mochi-ai/client-transport.test.mjs:10:1
+✖ caller cancellation retires transport and cancels a late response body (501.522709ms)
+  'test timed out after 500ms'
+
+test at tests/mochi-ai/client-transport.test.mjs:21:1
+✖ reader cleanup cannot retain a completed response (501.973833ms)
+  'test timed out after 500ms'
+
+test at tests/mochi-ai/client-transport.test.mjs:29:51
+✖ reject malformed UTF-8 195-40 inside JSON (3.550792ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client-transport.test.mjs:31:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'AI_INVALID_RESPONSE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/client-transport.test.mjs:29:51
+✖ reject malformed UTF-8 228-184 inside JSON (0.299334ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client-transport.test.mjs:31:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'AI_INVALID_RESPONSE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/mochi-ai/client-transport.test.mjs:34:1
+✖ declared oversized response is cancelled before acquiring a reader (1.126625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/client-transport.test.mjs:37:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

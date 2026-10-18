@@ -1,0 +1,30 @@
+✔ full offline HTTP user chat -> provider -> schema -> structured suggestion (15.214708ms)
+✔ HTTP rejects malformed UTF-8 before provider egress (4.098875ms)
+✔ ignored access resolver deadline retires HTTP admission with no model call (14.834167ms)
+✔ full offline HTTP opt-in -> event -> ignore -> opt-out -> rejected event (4.323917ms)
+✔ HTTP denies cross-origin, unauthenticated, invalid media/body/size/method with zero egress (3.072167ms)
+✔ HTTP production disabled remains explicit; no mock fallback (0.779166ms)
+✔ missing deployment resolver fails closed even with client identity headers (0.71375ms)
+✔ client identity cannot authenticate or override trusted project scope (1.083292ms)
+✔ assembled integration stays disabled by default and cannot bypass a missing resolver (1.655833ms)
+✔ production server mounts routes but requires trusted access and durable cost control (22.810917ms)
+✔ default disabled, missing/expired/unverified grants make zero upstream calls (1.53575ms)
+✔ proactive requires explicit consent; events and suggestions deduplicate until cooldown (1.67025ms)
+✔ chat and proactive throttle on the server and enforce trusted application binding (0.266834ms)
+✔ global call/token budgets reserve before requests and failures are charged without retries (0.422333ms)
+✔ session budget shared across projects; per-session/global concurrency bounded (0.732208ms)
+✔ revoking proactive consent aborts and discards an outstanding response (1.830875ms)
+✔ approval is snapshotted so caller mutation cannot increase the grant (0.238292ms)
+✔ durable monetary adapter required, deny/error/abort never reach provider (0.761416ms)
+✔ C-mode requests are rejected before budget reservation or provider (0.1355ms)
+✔ durable ledger timeout is unavailable and releases concurrency without provider egress (0.328ms)
+✔ caller cancellation releases service despite provider ignoring abort (0.513958ms)
+✔ consent revocation releases service despite provider ignoring abort (0.216166ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 86.710209
