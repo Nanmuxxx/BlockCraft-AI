@@ -1,0 +1,34 @@
+✔ experiment is disabled by default before touching provider or store (0.609792ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (32.708792ms)
+✔ invalid output never reaches storage, never evaluates source side effects (6.077416ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (7.320292ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (7.351084ms)
+✔ private store permissions, quotas and references fail closed (6.144459ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (5.246167ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (5.595542ms)
+✔ all JSON files are inert source artifacts, not generated source module files (6.317167ms)
+✔ paid provider construction and future CLI fail closed without explicit gates (123.927875ms)
+✔ mock transport receives fixed HTTPS endpoint, no redirects, bounded JSON request, server-only key (10.942833ms)
+✔ provider rejects no choices (0.230084ms)
+✔ provider rejects too many choices (0.205792ms)
+✔ provider rejects truncated (0.163125ms)
+✔ provider rejects refusal (0.1585ms)
+✔ provider rejects tool call (0.1365ms)
+✔ provider rejects not text (0.135083ms)
+✔ provider rejects wrong role (0.128125ms)
+✔ provider rejects mixed error and content (0.152292ms)
+✔ provider rejects false refusal (0.189875ms)
+✔ provider rejects null tool call (0.11625ms)
+✔ HTTP errors and transport failures are redacted and never retried (0.186959ms)
+✔ declared, streamed and content byte limits are independently enforced (1.092416ms)
+✔ invalid UTF8 and malformed envelope JSON fail closed (0.175542ms)
+✔ timeout bounds both connection and response body; aborts transport (34.495208ms)
+✔ timeout releases late and hanging response bodies; early HTTP/size rejection also cancels (24.643167ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 323.973875

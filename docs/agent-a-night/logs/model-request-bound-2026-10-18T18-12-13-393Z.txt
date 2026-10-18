@@ -1,0 +1,35 @@
+✔ offline HTTP service -> strict client -> selected Mochi plan -> confirmation -> shared B/C runtime (29.827583ms)
+✔ completion only receives selected metadata, prompt and cancellation signal; preview requires explicit confirmation (4.601833ms)
+✔ malformed JSON: Phase A rejects model data and preserves project (0.517625ms)
+✔ oversized response: Phase A rejects model data and preserves project (0.397417ms)
+✔ forged request ID: Phase A rejects model data and preserves project (0.556625ms)
+✔ stale revision: Phase A rejects model data and preserves project (0.423084ms)
+✔ record command: Phase A rejects model data and preserves project (0.331917ms)
+✔ unselected removal: Phase A rejects model data and preserves project (0.317666ms)
+✔ invented TSX: Phase A rejects model data and preserves project (0.284208ms)
+✔ unsupported button style: Phase A rejects model data and preserves project (0.287291ms)
+✔ cancelled late completion cannot replace newer preview or apply receipt/history (0.768333ms)
+✔ authorization ABA and concurrent revision invalidate exact preview without implicit reauthorization (2.331125ms)
+✔ cancel retires Host await even when completion never settles; late failures stay obsolete (2.541292ms)
+✖ large valid selected metadata is rejected by UTF-8 bytes before completion, without truncation or mutation (0.145ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 13
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 227.956375
+
+✖ failing tests:
+
+test at tests/mochi-ai/model-plan.test.cjs:105:1
+✖ large valid selected metadata is rejected by UTF-8 bytes before completion, without truncation or mutation (0.145ms)
+  TypeError [Error]: Cannot read properties of undefined (reading '0')
+      at TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-ai/model-plan.test.cjs:107:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

@@ -1,0 +1,898 @@
+{
+  "startedAt": "2026-10-18T17:56:57.213Z",
+  "command": [
+    "/usr/local/bin/node",
+    "/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi/browser.cjs"
+  ],
+  "baseline": "b4c8c422767bef2cfa740600a0bac9919729c2b0",
+  "sourceBefore": {
+    "src/App.tsx": "ee947f72440e3dfa6a69f2edd18f5c3839784a6941eaa4ac6fae2575a744ba16",
+    "src/assets/mochi.png": "7210fd52b49be455c5451eed20a5530cb6179832392050f3ec6701a0b41f8d33",
+    "src/components/BlockCanvas.tsx": "ac11968c3b88657c2ea9b3eec0371995e827e00b8ef67d28eddeb9e5160c2544",
+    "src/components/ClarificationStep.tsx": "0d53ddcda8d41d6cb3ccd5d7efc8ef87c2fb26d9d48af10b1e66a911e682a47b",
+    "src/components/Home.tsx": "1ec2464b4c2bc3394783498545154533ab78fd9e32ebd92b6f09da8e07af9845",
+    "src/components/Logo.tsx": "ac2801bd9e491fccbcb63f5b4efe9feee03e7cf4cf1ee5679fd4187c83c95675",
+    "src/components/MochiCat.tsx": "fe1fb7e5e8ab14cb436cc3961d230bbf585c5ed26145a0c6d0bf8bd6b26ae4f7",
+    "src/components/MochiPanel.tsx": "77d5383ea85be633f6cdf5614420b7d81e6b5511f0c1f30ab53d2206e802e7c0",
+    "src/components/Pending.tsx": "9037a98992c1661cc2b7fc5edf0fc923e24da641b5434f74057408b16a5231a0",
+    "src/components/Workshop.tsx": "2a9880fb3518c08acb95396c73316eb8274717a87638d5701c9721a0aa8a3fad",
+    "src/components/ai-create/AiCreate.tsx": "07f11bf060eee2f000d34d104ab239500c11d62af611feeeab7ef3c0237074d3",
+    "src/components/ai-create/ai-create.css": "e1003c8ef3ca88f48d85ee855f61179b18ab87e1414a2b695acff29387094eb4",
+    "src/components/ai-create/generateApp.test.cjs": "6a29dd99247bb688c2d7f2a9c4e316040e7ee64f7828545ee1b54778596304c4",
+    "src/components/ai-create/generateApp.ts": "3535ef006cc6dbc7762f6c1a8f2ca0a8c07af117a13f9f15681948dc9b2d905b",
+    "src/components/ai-create/trustedPomodoroFixture.ts": "6486663552b7f639413a03ebfe9929fab4b7ce04ee40790a162422b720b2a7d7",
+    "src/components/app-builder/AppSpecCanvas.browser.html": "1c35ce1828b2abdff336f5439911de36d1394f1b4bd1ccfe19957a1ad04e745a",
+    "src/components/app-builder/AppSpecCanvas.browser.tsx": "dc7057450d9181f4b313e62db97804b7e1a68d7323551fd766d8b57b822ed1ac",
+    "src/components/app-builder/AppSpecCanvas.test.cjs": "6682498d81f65aefe1087bd3125eb2c840780d899b7fc87f7a2e649f8e51dbff",
+    "src/components/app-builder/AppSpecCanvas.tsx": "95fba1986bd96f9e363f52a1ccfbad76b5432f034d9fdb912d9c2124afbdb55f",
+    "src/components/app-builder/AppSpecInspector.tsx": "e65958b52b8869a7cf5b979d02c134d43f0c5703042cb40cab1177b0fb462a20",
+    "src/components/app-builder/AppSpecMochiPanel.tsx": "ed01e2905f3759b04988838bbbd03e48a1502c15568393269e11e06909691cbf",
+    "src/components/app-builder/AppSpecWorkshop.tsx": "b3bea6444c18eb5b34415c43e7f192207b3f5d08f2a4c6427b66ae0bd6a9809e",
+    "src/components/app-builder/app-spec-canvas.css": "0158a668d8b95989b9b155c23af562601e3a5b737b2a3cb919dd2d2ac7e22762",
+    "src/components/app-builder/app-spec-inspector.css": "dbbde82c35ba0ecb86929dbc11cf205b74001feddf542107ebc4f701c9695f0e",
+    "src/components/app-builder/app-spec-workshop.css": "ba1f945d985f61b6a9bd29839affc3acd3406f6ba5a2321eda234f9fc0d610a6",
+    "src/components/app-renderer/AppRenderer.tsx": "7c9aac7ecc58d65619c6eebc9c7d4dd1cc1629fcfb486fd2b717c77a240305cb",
+    "src/components/app-renderer/AppRendererDemo.tsx": "bba20439bedf1b6f932c6eb785bf9185ea6ed3e9376c2f0530707127772bc0dd",
+    "src/components/app-renderer/Pomodoro.tsx": "c134336031c80ad0eb05d4949bf3f34841c8b103b277c7668562bb2ff337ac94",
+    "src/components/app-renderer/app-renderer.css": "c792550d0d8a1c7f4ac1ffaa65b8b834c89656809c77e49c4dfddf1a816a3e85",
+    "src/components/block-canvas.css": "c6332e727ea03fc560d6e827defdee5b010380bfa152eac7e3d5d8e1f6afb659",
+    "src/components/blocks/BlockInspector.tsx": "6bd89b812802deea42e88e92d8a202c677f85f519e32b1354a8ce15903e6fa5a",
+    "src/components/blocks/app-canvas.ts": "6331d659ab2fe36a452c0420e731cad53cb6d37f4e190eb0b8f98f733025a850",
+    "src/components/blocks/blocks.test.cjs": "10a5f3e0b64e493417b7c4af663e2e36d0678280d72149de30e8b546fc722e50",
+    "src/components/blocks/contract.ts": "deeb46dfd6afa2bb6994569e1e7fd0802feea2e2c60a58250fceffeaf173675b",
+    "src/components/blocks/examples.ts": "b5e4153921d838a7ff3712fd8dedb22fca89452ad144cc083d20fce1dbda5f37",
+    "src/components/blocks/rules.ts": "2ffe7feaabd05bbb6b276df8af08da409a4228c4c633e7a3725132398b5d508b",
+    "src/components/blocks/snap-layout.ts": "f19aa0dc7d94660eda432de2ceca6c9b5695a59ae86cbe76939c8c018939d5aa",
+    "src/components/blocks/useSnapCanvas.ts": "5d2048739d4805e8807d12da0b896dac604dcc0c7788a8aad31e5b6fdfa42344",
+    "src/components/clarification-step.css": "1f1f958bcdb55fa5a9e9dd90012814d1d5317eb167b908b4e8ea9591c5ba9b29",
+    "src/components/ideas.ts": "814943c3cef44387ff44d4f729ddb2a1382d64c397ad0367471e1683f35df35f",
+    "src/components/mochi-ai/MochiAiAssistant.tsx": "27f80cbbcf1edee04b43a3d460ae36728dd311f4ed2b641e49cdf3e42e43edb4",
+    "src/components/mochi-ai/MochiAssistant.tsx": "7bd9112bf0b3e34c3b456b8010b0e0fda2b84f29153ad87ccde6ac5fae38a06d",
+    "src/components/mochi-ai/MochiChat.tsx": "8fc5397fda9d90b0cef80250f82387dd3ed56645fc1aca20867b9d993ba20eb7",
+    "src/components/mochi-ai/MochiEmotion.tsx": "fee43f9ebd68a206c6e1c0908f3bd3e37de628aac1c23d0bbcf9932157fa3a53",
+    "src/components/mochi-ai/MochiOverlay.tsx": "ab68744f44c35ee8b1296ec57cb2d27739a20fd0ede234dfba38c2cfe4ed9219",
+    "src/components/mochi-ai/MochiSuggestions.ts": "e743e8b68a20410373f4462639e74f748e6bc3655c638b5588b36774e0bb0b8c",
+    "src/components/mochi-ai/MochiTypes.ts": "52e8497b91aac76ebb204bca663143b48b64aec4c4bf5a0ca99f38eadc11ecc5",
+    "src/components/mochi-ai/mochi-ai-v2.test.cjs": "d5b409f95f16146649b06fa1da5853adcd249a80fbfec8d6e93bc75698f913e6",
+    "src/components/mochi-ai/mochi-ai.css": "00ac5a00cf08d51f2c1962469f46f824ecccfe2f964ff82b2c1ecc6a9640460b",
+    "src/components/mochi-ai/mochi-ai.test.cjs": "737b4f1d78e931b089f38b4895665431c573a3b4a8981812b5c038c7a63549fe",
+    "src/components/mochi-ai/mochi-motion.css": "325ebdb692baaf42a514c30f57c208915ba92dfdf412d84f25db962e4305672b",
+    "src/components/mochi-ai/motion/controller.ts": "c45517b80d569dfab27864262c65c0704889cc59927813be0818f3f8c3a7f552",
+    "src/components/mochi-ai/motion/geometry.ts": "97c7238ac54c8326add3cb040e3354a6b3072d72ae02ef8c95d28dcb063c4f53",
+    "src/components/mochi-ai/types.ts": "72d29860d2348fd2d74f03e80d07e61ec833b5d45bd9f8e98a3f55f0de62641e",
+    "src/components/mochi-panel.css": "aeb69bd653bc322759589f7b5b6c96c2707465421e8b8375291c8f56b98dee93",
+    "src/components/workshop.css": "6a2a83b793c3f0bd2c5c330cf34ba18bbf7b43956276adf9d0e1669910c15774",
+    "src/custom-block/artifacts.ts": "e5fa134d04f8230f212d6171e46386d20b608145b7d77b78c2be7065e4de3227",
+    "src/custom-block/index.ts": "279e3c33fec16dcc8770f378ac24807f5879709b40c684d4ec0cf20d1b493bdd",
+    "src/custom-block/json.ts": "4c94a48b87311ddeec59ffda340c46df9701d62e196432d983ff49d2c6431eac",
+    "src/custom-block/messages.ts": "d183bac6afba54f95f129287effc89461fad8a61735bf174b01f09e69f07f421",
+    "src/custom-block/project.ts": "98cfa63bd22614849f663c02df13221eeba5f64e9b7776bf0380470241b04780",
+    "src/custom-block/schema.ts": "0a140ab1a95e66270cbc6ad4739598b0c2b4a14e280a86f318a85e78dbf75d64",
+    "src/custom-block/types.ts": "b043a343eea40e76d129b4ddf11979155c3bcd736be4505da598f7673a21df1e",
+    "src/integrations/custom-block-bc/CustomBlockCanvas.tsx": "637053a734624fee27608dbcc98a18014e31500e3b30ba8a5b85eb2e649b9c0d",
+    "src/integrations/custom-block-bc/CustomBlockImport.tsx": "9b88a116b58ce16d824a73b692765378bba6517a50cd6df19a649cbca7b67cb8",
+    "src/integrations/custom-block-bc/CustomBlockInspector.tsx": "7871d890feec0d473b338e6e9064d18e0f31955312e275e8b328b059fc897431",
+    "src/integrations/custom-block-bc/CustomBlockViewer.tsx": "d2b86af8db7f21cb2f9ca02f049bde4b48e1cff6c7ab138e196204fdf4da2f34",
+    "src/integrations/custom-block-bc/adapter.ts": "a759b097e33c5f0aa101b474cf0c8347bf7883053fad41468198641fd503b5f9",
+    "src/integrations/custom-block-bc/custom-block-bc.css": "a794ff1a061d10cbaf28dea92867ef37f4c890df711eccac552d1451603a622e",
+    "src/integrations/custom-block-bc/index.ts": "0d2cf11fe6514fe06b0cea663b6d823535f519f0e7c51bbf8eaf5e54c8e4628a",
+    "src/integrations/custom-block-bc/metadata.ts": "96b6c695e1b8e6bde67cc867b9162a1b5262bf6ab2ac702ff486908d7cd6022e",
+    "src/integrations/custom-block-bc/owner.ts": "ba05fecacfdaeca79a1c5415962f5b7023299f77c51e8c4e79de29545f6bcfe2",
+    "src/integrations/custom-block-bc/useWorkshopAdapter.ts": "fbea3fa690af712a093f97248e7d9e60caae049b2ef8c69914dbd10455768efe",
+    "src/integrations/custom-block-bc/viewer.ts": "b72340904138f4bea15b3cc35637636ff0cfcc3714c997276b67dbcb89d55b34",
+    "src/integrations/generated-artifact/install.ts": "158c20628c1662becc99a53d400c282e6b1965feef649c8b0977599a1e4ebcb1",
+    "src/integrations/generated-artifact/ui.css": "a1b1cdb9d9aef9214b6c534c3e7cd20eb0d9f098b35cc01d7969292eb61c32a0",
+    "src/integrations/generated-artifact/ui.ts": "105bc00f0ac36f9e0bd55a181323740174c153b36f08559f4bae047612d0efa6",
+    "src/integrations/generated-artifact/useInstallLifecycle.ts": "2a2af736148fc99adfcd94cd6d41968c72923432bc630d4e9c1b66ac8d2c6901",
+    "src/integrations/mochi-ai/MochiConversationPanel.tsx": "f7efaf0029511c8ed7346188e63c16040cb81508de19a08f23bda92e4b15c011",
+    "src/integrations/mochi-ai/client.d.mts": "71219a89135d2b9e02543ff36e3ab027fe881f6fb11fb60532c82ae8af59c369",
+    "src/integrations/mochi-ai/client.mjs": "28b48258645689c68923062d4043bf68373f041b7314d8199514b9b7d8aaea65",
+    "src/integrations/mochi-ai/context.d.mts": "880d25c5a4b5a644d8e3f8711d6586cdb5a46e658667238fb68290b2491a5e1b",
+    "src/integrations/mochi-ai/context.mjs": "812313139a47773d51e348878b020953361a8535fcd85fbececba04674256e96",
+    "src/integrations/mochi-ai/conversation.css": "f3c2fb1a1a4ebc90583776717a584100504580be7e6181691ddf1ef54383e18e",
+    "src/integrations/mochi-ai/protocol.mjs": "5a83b8a045f10ab69d112f6288c05c215d67911b2182103996edb1263050638b",
+    "src/integrations/mochi-ai/workshop.d.mts": "84586f44ec9e258b995dc965e9a0f588db9a8f2ce2790f2d9cb110f7b6b8d1d2",
+    "src/integrations/mochi-ai/workshop.mjs": "2218287559342c327f0f5bd1f0c53d14dd8ff56fd4a204242a7cb8c8c44a41d5",
+    "src/integrations/mochi-source/index.ts": "e574f50b30f2f1a13d9e4f7ddcd045568a746d16423c0f5d98dc032f1ae26567",
+    "src/integrations/mochi-source/planning.ts": "757575b24ed7be4884374e04048569c68338af858d4c7222e3e95c8fe369fc89",
+    "src/integrations/mochi-source/providers.ts": "9b648068423632cb0df0c3b6fa8e91f60d95ad72ab58e3cb2ea619cf04d9f6f6",
+    "src/integrations/mochi/WorkshopMochi.tsx": "8f5488fe876630878ca1caf2a05188115c53c2446aff6de3adcd1f06c0bb38bc",
+    "src/integrations/mochi/host.test.cjs": "f474b3e62dc100e4fa0280f0c0665bce31d5043ada267ad953eb632ba881217f",
+    "src/integrations/mochi/host.ts": "6481fb881b7e4e6d75076b06e1e8837960001344c197fdea5d11a5a48c83053d",
+    "src/integrations/mochi/mockPlanner.ts": "7d5e1699a8de278b1adc275a6d29c047c4f324a8d1e47637ca0819eb4819dac0",
+    "src/integrations/mochi/modelPlanProvider.ts": "24216b2125650d17dd48f235f787ba247b0f6fe00d3df6475deba828a667ab9c",
+    "src/integrations/mochi/planning.test.cjs": "b11bdb93cac8a5e1b2b8622dde7e9a844fd013e8163cb756c276c4016a507751",
+    "src/integrations/mochi/planning.ts": "708c3a48d0cacd0e9d57ec959e230659d3f3457c9c3ab1ead35bad49874bd984",
+    "src/integrations/project-export/ExportProjectButton.tsx": "fb3ce5b18ee4f82a30988a1e6dabe12a50d9c7b73b0ba2263fcf891a282d5264",
+    "src/integrations/project-export/capture.ts": "999336c6592d52e43e95ffb8d3960e4403e3f3cb8e088d0b5c287cbfcee1ae93",
+    "src/integrations/project-export/local-export.d.ts": "00dbcc3d43e3b28ffa703c1f51f051113f668a1eeb940a5de236b3e82751ce43",
+    "src/main.tsx": "c5f485d2078558248aa0f95b900c54c2e118d93313b2808c85b09d5c88791aef",
+    "src/model/appCapabilities.ts": "2bf09be8be0eb5f1f37a0bbedc28885cdcc9f7a15d74d604b70b14cdde5b88fe",
+    "src/model/appChangePlan.test.cjs": "ed93d311daf1a96041b7ed615344ffd8b94b54b70fb6f9cd4f3a4422cca06d9d",
+    "src/model/appChangePlan.ts": "40dfd873e3f61bcffb7118d50a8e83edda51ee4f78b3b18fc4e683aa22117840",
+    "src/model/appCommands.ts": "0c9039ca618525f203c9178cd13f9bec91f4249ad1238fa0f446c9958e353331",
+    "src/model/appConfig.ts": "8ff8bd13ef681081c9b05508bca3598f8d046baafea3d817249ea5047e90c37c",
+    "src/model/appRuntime.test.cjs": "8c17ab30a9194374c22bf49ba5f6b03bb59a0b1c408ba8e7c0319d1d1e109b00",
+    "src/model/appRuntime.ts": "72b0e422e3f8903f62c084ea2b7be108e53b03a635e10c1f95d98e4ef466c903",
+    "src/model/appSpec.test.cjs": "697302de5b2d4745eb10e249b136d6120a4cb2afa9fe97565deba2559cf52733",
+    "src/model/appSpec.ts": "898b82e1af234b76abba2ac42c56274bb4b455d001a961497a6743d4870a605c",
+    "src/model/appSpecExamples.ts": "65ec5897f19a40153a249603e8c1d732f638f1abc7d02f62e4fc5fb86b19e2b8",
+    "src/model/appSpecValidation.ts": "6237af7efb8544995ff8bea58949dce980dfb520be060ddd2a5a33b6ec0e58b1",
+    "src/model/customProjectSession.ts": "43b3854624985af4804785ef22621e61e70c8b034f026940e04549cf81cd3b67",
+    "src/model/trustedInteractive.schema.json": "6676a17d6776216bc5fcf91fa141a42c5193e9b8e46ab5ac81f5320c63c173cd",
+    "src/styles.css": "4c7cf91c1cdaf57a348612bfbc1497df2062b77da0c283d5437670c5049a9da2",
+    "src/vite-env.d.ts": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+    "tests/ai-quality/README.md": "cfcfd1068d73f36215a9687cee22a8e27723d9cfac572b45bcab693be7ffa6c7",
+    "tests/ai-quality/business.test.cjs": "faa35cc3dcfc024ba519c4b477b7351d94504d416d80d43a8d99cd5ba2fd42bf",
+    "tests/ai-quality/cases.cjs": "ff9dd128d2f3141bf2e77a0040957c5ba431536103140c0f6b4f862fe47da6dc",
+    "tests/ai-quality/check.cjs": "b4240f21783cc66bf6d226520586559dffa6d37ee84966531775c980ec2bdd01",
+    "tests/ai-quality/evaluate.cjs": "dfc48acbed9787cd8c9582364ee118f07c44efe018ef0c0a3870e46bdf1a4270",
+    "tests/ai-quality/fixtures/club-registration.json": "d5a74bef5cc50a30738b7f8a0fba79d4ad9c6482b499e901ddc8f4f2ffc96cdf",
+    "tests/ai-quality/fixtures/event-registration.json": "edc4a81ece4674cb90097af53c439719ae2ce5a2e641e6df9660ba19d9499ed1",
+    "tests/ai-quality/fixtures/fitness-plan.json": "b63f098e540a11d5405006297aae8120c608b719a4798fd0800216b0c65b5599",
+    "tests/ai-quality/fixtures/personal-tasks.json": "00f2e6e05a48273875fe2a8f23c52a2d9a5f418c91102c63b9a7cb648d5fc38f",
+    "tests/ai-quality/fixtures/reading-log.json": "a5348db351d890ae00c73ee0d1b4942769842c69a01922e304ffbab19b1491ae",
+    "tests/ai-quality/model.cjs": "037e03a202c8bb81f4f9e470d18204bf9126b6d02111255b9067db67022555d0",
+    "tests/ai-quality/quality.test.cjs": "3e0504f936a40352680bf6688a2793286a6d20b1780b859c7c4cea3c9f4feaf6",
+    "tests/custom-block-bc/adapter.test.cjs": "20438f9e11931c7702c61b8b1ced30fe2c63c60d394dc5c88dff592674b2165b",
+    "tests/custom-block-bc/authorization.test.cjs": "b89fe3e4211da524af7d2faa45e4120c038b95c5254bd366ec7ddf1a15cacf23",
+    "tests/custom-block-bc/browser.check.cjs": "571fa98b37c3b151a8816126e582e038b3ddcc83bb335600afa4b417748823f5",
+    "tests/custom-block-bc/browser/index.html": "40cda2d74cc0d01579b723b2e9d91ba17e9b677c6ae058389136d57f50d8f150",
+    "tests/custom-block-bc/browser/main.tsx": "3c3eaab902149333448716c059510dda6b1afed6539f1dd1b946f71289bf5429",
+    "tests/custom-block-bc/helpers.cjs": "9cd3722835d7e9770e2f2ee2a5dfa767ee5b384bc3b240d84138bb23968bf5bd",
+    "tests/custom-block-bc/owner.test.cjs": "400816e0eb96e57654fdf25bddf9d6947dcf086084e88f769a36f32bdf3ddb5f",
+    "tests/custom-block-bc/viewer.test.cjs": "930503b9f962ac310ce60cd056988faa005edff5a3d11c3db61868e3c5ea88f8",
+    "tests/custom-block-compiler/compiler.test.mjs": "7b49af923a3a644605486f9cfeec0c2e984872f02d335d3ca0477948466cd451",
+    "tests/custom-block-compiler/fixtures/Counter.tsx": "48d763725c9291a75f31a265fd5d5820b7361307cf6ab6fe926cbf84f0c42dfd",
+    "tests/custom-block-compiler/fixtures/Temperature.tsx": "3705ab5b4743d90025fa9b42d6f17ef72fc7ee02928929321cd76cfa04687ab9",
+    "tests/custom-block-compiler/fixtures/convert.ts": "9a5935036afd962d43819b93d78d826b6da965595bd298300540acd36a4702dc",
+    "tests/custom-block-generation/contract.test.mjs": "c0452ed1d79536a500ddaa842c52ace23e06fa8c4052b1e841fa3a5f5b0ccd0c",
+    "tests/custom-block-generation/fixtures.mjs": "9181cfb6e7b156d8be27510dcbb8acc59e95e8830717a1bd728bcc9e39e80363",
+    "tests/custom-block-generation/pipeline.test.mjs": "61063069f030624d94f57d34b3ddd139966c6b990dc93a615763224bad9a0652",
+    "tests/custom-block-generation/provider.test.mjs": "68dfc6f13fa4ae5b4ea0324e56a2faf57b0cc0491f61e643f79c24aa1327bb75",
+    "tests/custom-block-sandbox/environment.test.mjs": "51c1d11b6989e8c58a21962d0d67b84ca1c760a4d61475e568b40400279279a6",
+    "tests/custom-block-workshop/authorization.test.cjs": "015db1b1b0f39fdc72840de65ce630f59aa212a12aa5257b5e18ee890e37c6ed",
+    "tests/custom-block-workshop/browser.cjs": "149e7b4372e21c5fa1f08f6ebff54eb74c2f0e5863f4e38104e227ae46786a4e",
+    "tests/custom-block-workshop/owner.test.cjs": "2d534d3dc1490b420826d68158c185b0f666afb762892864fbbfe03c211a07a2",
+    "tests/custom-block/artifacts.test.cjs": "1dd0454fc7ea511471876a32a17ab345e900984cdc52b91be0259996bf793dc2",
+    "tests/custom-block/fixtures.cjs": "f378fd54fb5606ac4b7968b2b228c683400a220d0e0c93db4401d5aaf98e17f8",
+    "tests/custom-block/messages.test.cjs": "dd75a6d0d11a3b7515959b60d4920dd822d7bc4c0c748b66cf02e8844e41bc74",
+    "tests/custom-block/project.test.cjs": "e79125739f8d6f2b1751296be5f6a84581b5eca892e1b600846103133bf44563",
+    "tests/custom-block/schema-json.test.cjs": "58c19788da216331a5e538ac2f39ba1673de34d37228a8c02f67d53ad3220790",
+    "tests/generated-artifact-ui/browser.cjs": "4e0fc90d009110358c58b73be07627fb541bed40ac3a281f840b16e9326b8d15",
+    "tests/generated-artifact-ui/offline-export.mjs": "b2ecfb3f08870af164695c966833adb813141f49783caacbb44bafc20537001a",
+    "tests/generated-artifact-ui/production-browser.cjs": "64be8ba0e0bc46c0791025ae4ad6b5198251e6fbdfebd36e6c7ecf7e615d17c6",
+    "tests/generated-artifact-ui/ui.test.cjs": "0ffc76fc5227eb05c0eb26ab7b4618aee75add3bc0a6c2f0c8fa0031e0b6d902",
+    "tests/generated-artifact/fixtures/pomodoro.pending.json": "c20f74f0ef3c92824f817cce10f1a24c9266174502129d4b705f0f2185f386c1",
+    "tests/generated-artifact/install.test.cjs": "a3f40bc4f033ed720b58bc9eb49f06513bba59fe1be3a123ace49425a4dc7e82",
+    "tests/generation/browser.cjs": "9f8b79bf6ad220479a8b42a7c4cfe2e601baae708eaa235aceb44356648dfa8e",
+    "tests/generation/client-boundary.test.cjs": "9138f337cf93599b40f570b31b3fa5136e25b9c4cbfd4e31abfb202b6a8f48ec",
+    "tests/generation/compatibility.test.mjs": "bb6e0bc48e74cc8999c47c7c4ca5124ab2337de8582d21f06af2abbbe73786d0",
+    "tests/generation/fixtures.mjs": "1191ad2f8d23747e862e934e2a9f776491cf3308842e9aac70379123bea11801",
+    "tests/generation/generation.test.mjs": "69288d65df832f8931c79a3506b82ae40d469a7ef4347e525d284522af311d2c",
+    "tests/generation/service-runtime.test.cjs": "6c6dcb40f28e3cd26db8af6777f55061f8e621d52c0bc79eded9c4f674bfcafc",
+    "tests/mochi-ai/browser-server.mjs": "463c0732381844e5d66b266780a6f735c83fabe2e2a4b10267eb49babaed5564",
+    "tests/mochi-ai/client.test.mjs": "78b99223fd3da4a282112ec5a1cd8695b8aeb3a4f1693ff3cd8f44ba088cb68a",
+    "tests/mochi-ai/context.test.mjs": "13b5394fa81c4ad988b262e6945d5d8fe6157796d8608581836687efeb6e896c",
+    "tests/mochi-ai/fixtures.mjs": "2aba6670e4388e746cd9ceda59e9ecf270bf97cc7938533772cd394a0b413b4b",
+    "tests/mochi-ai/harness.html": "75ce2c85428b41887927d9b86523ae2b72cb39281e784c4adda60e0bc26caf73",
+    "tests/mochi-ai/host-compatibility.test.mjs": "afd31433a3609d1360aa3d6bb2f47bd6051e5e6780c0c7927d74aff9246c6e8e",
+    "tests/mochi-ai/http.test.mjs": "61eaaf80685cc30a3df5cb4066cf5a6444d430ea69707d5b53a31587742163f5",
+    "tests/mochi-ai/model-plan.test.cjs": "0d1e5ae293e81291641fc78d292235e8ac49e334affb83317204ac09492d2284",
+    "tests/mochi-ai/provider.test.mjs": "f7094933bcc5a697c6406563f7f8f8c0339acec434aaa1304174c195cdeae494",
+    "tests/mochi-ai/server-routing.test.mjs": "a2e2978a5d58719a6de2b8efc89b711fa5670b935c4f2458a3fb9d099bd834ec",
+    "tests/mochi-ai/service.test.mjs": "85ed17b5c00510b8f89105272076034335642f7d043b0bd344cf34acfbffe17d",
+    "tests/mochi-ai/workshop-browser.cjs": "dc1c785f6c546c73ba87dfd0b5d9920e012a808a25b68036c04c91a68f26357b",
+    "tests/mochi-ai/workshop.test.mjs": "9e91a30908816cabc688b6cf458d9908a5722df266fa5973fabf09b47f4bc28a",
+    "tests/mochi-motion/browser.cjs": "bef0caff51623c3252c293a43cf0352c6b464771e66d1ec7f4265c08910c29ce",
+    "tests/mochi-motion/fixture.tsx": "38ee8e6f6671227bb9c54f66d355020f2fa60bf3c57454a683b7996a04e8cd16",
+    "tests/mochi-motion/geometry.test.cjs": "3524e39f4f7788ff99eccb51e02111a27504d4d3ac8cdcdff1e6564f0a56c42c",
+    "tests/mochi-source/planning.test.cjs": "5bb0f42e7c9f78b3990d63139c075c124c19ebb254258f5a836fccdca6ffb29f",
+    "tests/mochi/browser.cjs": "9110abf76d352441de88f104f98757666c3062604946d5358662b2c6e780fe9e",
+    "tests/mochi/fixture.tsx": "4a88868528976144168216d6ea9acc75d25624ee40d4e5a480efe60c9c44604e",
+    "tests/project-zip-export/accept-trusted.mjs": "6fb58fc4773da214b46555606c2aea7383a98e6c8ceb58bce183896121eae9cb",
+    "tests/project-zip-export/export.test.mjs": "f63952898cced1a94388fde0b8a64ee526c089f66c8fcfa8a1be9d705638d955",
+    "tests/project-zip-export/fixtures.mjs": "3730e760e888e7f6b10782ab9aee24bac9c659f49c9a5e47f7bb36a6eb3903cb",
+    "tests/trusted-interactive/browser.cjs": "336aaa1792c24a48327e60b4e5367bf6a4bf99f23b76810c030e654994f3e14b",
+    "tests/trusted-interactive/client.test.cjs": "74ea49ad6bbac1535913ce99297bd57294c575163af356f4b68e19faadab5602",
+    "tests/trusted-interactive/export.test.mjs": "6b3cb83581cc432ed72f5984bd0ff74eb8afb0092eb352876392acc461842307",
+    "tests/trusted-interactive/index.html": "9a91f7cd332639d8e95fe0c66e2bdff932b8cf13e8074642db4816ed6573e003",
+    "tests/trusted-interactive/inspector.test.cjs": "794aa945e995552440c1886b3387c07d010ae5569d170fd25f9582a5d9fd652e",
+    "tests/trusted-interactive/main.tsx": "d543bf8831ba4deda3703a2bdfa5345c78f0328fd549639308c621815dcad10b",
+    "tests/trusted-interactive/pomodoro.json": "e8c49c2027bc633c7d67bddc682c100075ce89d77f0dd1993ca84ad05941f47c",
+    "tests/trusted-interactive/reliability.browser.cjs": "cd8e29d4db8baf74ed9ffbce93fe568a9386cb650a8c6b08a8777ebad229c962",
+    "tests/trusted-interactive/reliability.html": "af6ff4a5a84b772c3019f9b13a55e748901dfbd7f1b2ea655fbd6343e7cfcc1a",
+    "tests/trusted-interactive/reliability.tsx": "adae2245bb769534002369224931415b4ebf51239813903a6bc15d94567a990f",
+    "tests/trusted-interactive/runtime.test.cjs": "23ad7c239b271910766b4eb8b8d4f3c302f4b8f01980412f4d0e198e766059c3",
+    "tests/trusted-interactive/serve.mjs": "dc19c4bbe370c9aa86300b10d3c66c42c7362dd191976c7c0293fb00cd6a67a3",
+    "tests/trusted-interactive/server.test.mjs": "e9e81359567d2a4357f406d7efdedc7797443066bf8a796fe87e2919c8177085",
+    "tests/trusted-pomodoro-ui/browser.cjs": "f80065a1aa52f1a19497981eb103cfba8e0d2f0dc2f21fc34981852279d9d596",
+    "tests/trusted-pomodoro-ui/fixture.test.cjs": "7079e9ce9f608ce1affb058dd539014785eeab91baa268246d5b097b03d6e258",
+    "tests/trusted-pomodoro-ui/races.browser.cjs": "3b15cd840f7190b5bb6807bc9f0c78adbe5a2c7d948dcd7a9e1496d698302c99",
+    "tests/workshop-export/boundary.test.mjs": "a0a92aff9ff4a3862fe94c9b343959651b9ff10015e2e585b4273c5fde04f99f",
+    "tests/workshop-export/browser.cjs": "0e8e528fc3b51f0abf0b6208dfb060e1187eaad2bc7ff97d5fcfbb804bec27cc",
+    "tests/workshop-export/capture.test.cjs": "ddd544ebfd745f22c3964c9cb8575794215fce0138e9a62b268a794f5ddcbb29",
+    "tests/workshop-export/http.test.mjs": "cfe37938abd1da611038f5f6dde2d26fbdf90ac50ffd098989ec07f2b3c21848",
+    "tests/workshop.browser.cjs": "1e59f12fbafac99822140f5e26eda62c9da48846c5332508a548b3d9a263d808"
+  },
+  "browser": "Chromium",
+  "browserVersion": "151.0.7922.34",
+  "touchDevice": false,
+  "planProvider": "bounded JSON completion fixture (zero model calls)",
+  "cases": [
+    {
+      "width": 1366,
+      "height": 768,
+      "passed": true,
+      "confirmedRevision": 1,
+      "finalRevision": 4,
+      "networkCalls": 0,
+      "checks": [
+        "production disabled",
+        "single host/UI",
+        "StrictMode cleanup",
+        "preview zero writes",
+        "cancel/reselect invalidation",
+        "B/C preserves plan",
+        "request cancel/late resolve/reject isolation",
+        "host replacement isolation",
+        "late failure after unmount",
+        "explicit commit failure",
+        "post-write subscriber exception is UNKNOWN",
+        "duplicate confirmation",
+        "real receipt",
+        "B/C records",
+        "ignore suggestion",
+        "chat drag isolation",
+        "canvas drag",
+        "error retains committed app/draft",
+        "history scroll anchor",
+        "overlay scroll anchor",
+        "reduced motion",
+        "no horizontal overflow"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "passed": true,
+      "confirmedRevision": 1,
+      "finalRevision": 4,
+      "networkCalls": 0,
+      "checks": [
+        "production disabled",
+        "single host/UI",
+        "StrictMode cleanup",
+        "preview zero writes",
+        "cancel/reselect invalidation",
+        "B/C preserves plan",
+        "request cancel/late resolve/reject isolation",
+        "host replacement isolation",
+        "late failure after unmount",
+        "explicit commit failure",
+        "post-write subscriber exception is UNKNOWN",
+        "duplicate confirmation",
+        "real receipt",
+        "B/C records",
+        "ignore suggestion",
+        "chat drag isolation",
+        "canvas drag",
+        "error retains committed app/draft",
+        "history scroll anchor",
+        "overlay scroll anchor",
+        "reduced motion",
+        "no horizontal overflow"
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "F1-late-success",
+      "width": 1366,
+      "result": "PASS",
+      "newerRequestId": "mochi-cb92e322-0fe6-4af5-a890-580b278d4a56-2",
+      "providerCalls": 2
+    },
+    {
+      "id": "F1-late-failure",
+      "width": 1366,
+      "result": "PASS",
+      "newerRequestId": "mochi-cb92e322-0fe6-4af5-a890-580b278d4a56-4",
+      "providerCalls": 4
+    },
+    {
+      "id": "F1-invalid-input-and-retry",
+      "width": 1366,
+      "result": "PASS",
+      "preservedPlanId": "mochi-b0cca38e-20ec-434b-9b7d-0e2ac0ded40e-3-plan",
+      "correctedPlanId": "mochi-b0cca38e-20ec-434b-9b7d-0e2ac0ded40e-4-plan",
+      "revision": 0
+    },
+    {
+      "id": "F2-missed-notification",
+      "width": 1366,
+      "result": {
+        "ok": true,
+        "duplicate": false,
+        "committedRevision": 4
+      },
+      "missed": true,
+      "beforeRevision": 3,
+      "snapshot": {
+        "revision": 4,
+        "spec": {
+          "version": 1,
+          "id": "club-registration",
+          "name": "社团迎新报名",
+          "entities": [
+            {
+              "id": "applicants",
+              "name": "报名者",
+              "fields": [
+                {
+                  "id": "applicant-name",
+                  "name": "姓名",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "id": "department",
+                  "name": "意向部门",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                    "宣传部",
+                    "策划部",
+                    "技术部"
+                  ]
+                },
+                {
+                  "id": "available",
+                  "name": "可参加面试",
+                  "type": "boolean",
+                  "required": false
+                },
+                {
+                  "id": "mochi-b0cca38e-20ec-434b-9b7d-0e2ac0ded40e-4-field",
+                  "name": "Mock 备注",
+                  "type": "text",
+                  "required": false
+                },
+                {
+                  "id": "mochi-b0cca38e-20ec-434b-9b7d-0e2ac0ded40e-16-field",
+                  "name": "Mock 备注",
+                  "type": "text",
+                  "required": false
+                }
+              ]
+            }
+          ],
+          "blocks": [
+            {
+              "id": "registration-form",
+              "name": "报名表",
+              "type": "form",
+              "fieldIds": [
+                "applicant-name",
+                "department",
+                "available",
+                "mochi-b0cca38e-20ec-434b-9b7d-0e2ac0ded40e-4-field",
+                "mochi-b0cca38e-20ec-434b-9b7d-0e2ac0ded40e-16-field"
+              ]
+            },
+            {
+              "id": "applicant-list",
+              "name": "报名名单",
+              "type": "list",
+              "fieldIds": [
+                "applicant-name",
+                "department"
+              ]
+            },
+            {
+              "id": "applicant-total",
+              "name": "报名人数",
+              "type": "metric",
+              "aggregation": "count"
+            }
+          ],
+          "relations": [
+            {
+              "id": "registration-binding",
+              "type": "dataBinding",
+              "blockId": "registration-form",
+              "entityId": "applicants"
+            },
+            {
+              "id": "applicant-list-binding",
+              "type": "dataBinding",
+              "blockId": "applicant-list",
+              "entityId": "applicants"
+            },
+            {
+              "id": "applicant-total-binding",
+              "type": "dataBinding",
+              "blockId": "applicant-total",
+              "entityId": "applicants"
+            }
+          ]
+        },
+        "records": {
+          "applicants": [
+            {
+              "id": "applicant-001",
+              "values": {
+                "applicant-name": "小林",
+                "department": "技术部",
+                "available": true
+              }
+            }
+          ]
+        },
+        "blockPositions": {
+          "registration-form": {
+            "x": 0.20022371364653244,
+            "y": 0.5777777777777777
+          },
+          "applicant-list": {
+            "x": 0.31,
+            "y": 0.41
+          }
+        }
+      }
+    },
+    {
+      "id": "legacy-demo-cancel",
+      "width": 1366,
+      "result": "PASS",
+      "beforeTasks": [
+        {
+          "checked": false,
+          "title": "完成线性代数第三章习题"
+        },
+        {
+          "checked": true,
+          "title": "整理英语听力错题"
+        },
+        {
+          "checked": false,
+          "title": "复习 Python 函数与列表"
+        }
+      ],
+      "statsBefore": "任务总数\n3 项\n已经完成\n1 项\n任务完成率\n33%",
+      "expectedPrioritySelectors": 0
+    },
+    {
+      "id": "legacy-demo-confirm",
+      "width": 1366,
+      "result": "PASS",
+      "beforeTasks": [
+        {
+          "checked": false,
+          "title": "完成线性代数第三章习题"
+        },
+        {
+          "checked": true,
+          "title": "整理英语听力错题"
+        },
+        {
+          "checked": false,
+          "title": "复习 Python 函数与列表"
+        }
+      ],
+      "statsBefore": "任务总数\n3 项\n已经完成\n1 项\n任务完成率\n33%",
+      "expectedPrioritySelectors": 3
+    },
+    {
+      "id": "F1-late-success",
+      "width": 390,
+      "result": "PASS",
+      "newerRequestId": "mochi-ccafc518-4d2c-43dc-af07-4272a84f1ca2-2",
+      "providerCalls": 2
+    },
+    {
+      "id": "F1-late-failure",
+      "width": 390,
+      "result": "PASS",
+      "newerRequestId": "mochi-ccafc518-4d2c-43dc-af07-4272a84f1ca2-4",
+      "providerCalls": 4
+    },
+    {
+      "id": "F1-invalid-input-and-retry",
+      "width": 390,
+      "result": "PASS",
+      "preservedPlanId": "mochi-a842469d-fb82-4e9a-80d4-85303dfd8231-3-plan",
+      "correctedPlanId": "mochi-a842469d-fb82-4e9a-80d4-85303dfd8231-4-plan",
+      "revision": 0
+    },
+    {
+      "id": "F2-missed-notification",
+      "width": 390,
+      "result": {
+        "ok": true,
+        "duplicate": false,
+        "committedRevision": 4
+      },
+      "missed": true,
+      "beforeRevision": 3,
+      "snapshot": {
+        "revision": 4,
+        "spec": {
+          "version": 1,
+          "id": "club-registration",
+          "name": "社团迎新报名",
+          "entities": [
+            {
+              "id": "applicants",
+              "name": "报名者",
+              "fields": [
+                {
+                  "id": "applicant-name",
+                  "name": "姓名",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "id": "department",
+                  "name": "意向部门",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                    "宣传部",
+                    "策划部",
+                    "技术部"
+                  ]
+                },
+                {
+                  "id": "available",
+                  "name": "可参加面试",
+                  "type": "boolean",
+                  "required": false
+                },
+                {
+                  "id": "mochi-a842469d-fb82-4e9a-80d4-85303dfd8231-4-field",
+                  "name": "Mock 备注",
+                  "type": "text",
+                  "required": false
+                },
+                {
+                  "id": "mochi-a842469d-fb82-4e9a-80d4-85303dfd8231-16-field",
+                  "name": "Mock 备注",
+                  "type": "text",
+                  "required": false
+                }
+              ]
+            }
+          ],
+          "blocks": [
+            {
+              "id": "registration-form",
+              "name": "报名表",
+              "type": "form",
+              "fieldIds": [
+                "applicant-name",
+                "department",
+                "available",
+                "mochi-a842469d-fb82-4e9a-80d4-85303dfd8231-4-field",
+                "mochi-a842469d-fb82-4e9a-80d4-85303dfd8231-16-field"
+              ]
+            },
+            {
+              "id": "applicant-list",
+              "name": "报名名单",
+              "type": "list",
+              "fieldIds": [
+                "applicant-name",
+                "department"
+              ]
+            },
+            {
+              "id": "applicant-total",
+              "name": "报名人数",
+              "type": "metric",
+              "aggregation": "count"
+            }
+          ],
+          "relations": [
+            {
+              "id": "registration-binding",
+              "type": "dataBinding",
+              "blockId": "registration-form",
+              "entityId": "applicants"
+            },
+            {
+              "id": "applicant-list-binding",
+              "type": "dataBinding",
+              "blockId": "applicant-list",
+              "entityId": "applicants"
+            },
+            {
+              "id": "applicant-total-binding",
+              "type": "dataBinding",
+              "blockId": "applicant-total",
+              "entityId": "applicants"
+            }
+          ]
+        },
+        "records": {
+          "applicants": [
+            {
+              "id": "applicant-001",
+              "values": {
+                "applicant-name": "小林",
+                "department": "技术部",
+                "available": true
+              }
+            }
+          ]
+        },
+        "blockPositions": {
+          "registration-form": {
+            "x": 0.5887573964497042,
+            "y": 0.16111111111111112
+          },
+          "applicant-list": {
+            "x": 0.31,
+            "y": 0.41
+          }
+        }
+      }
+    },
+    {
+      "id": "legacy-demo-cancel",
+      "width": 390,
+      "result": "PASS",
+      "beforeTasks": [
+        {
+          "checked": false,
+          "title": "完成线性代数第三章习题"
+        },
+        {
+          "checked": true,
+          "title": "整理英语听力错题"
+        },
+        {
+          "checked": false,
+          "title": "复习 Python 函数与列表"
+        }
+      ],
+      "statsBefore": "任务总数\n3 项\n已经完成\n1 项\n任务完成率\n33%",
+      "expectedPrioritySelectors": 0
+    },
+    {
+      "id": "legacy-demo-confirm",
+      "width": 390,
+      "result": "PASS",
+      "beforeTasks": [
+        {
+          "checked": false,
+          "title": "完成线性代数第三章习题"
+        },
+        {
+          "checked": true,
+          "title": "整理英语听力错题"
+        },
+        {
+          "checked": false,
+          "title": "复习 Python 函数与列表"
+        }
+      ],
+      "statsBefore": "任务总数\n3 项\n已经完成\n1 项\n任务完成率\n33%",
+      "expectedPrioritySelectors": 3
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [],
+  "blockedRequests": [],
+  "sourceAfter": {
+    "src/App.tsx": "ee947f72440e3dfa6a69f2edd18f5c3839784a6941eaa4ac6fae2575a744ba16",
+    "src/assets/mochi.png": "7210fd52b49be455c5451eed20a5530cb6179832392050f3ec6701a0b41f8d33",
+    "src/components/BlockCanvas.tsx": "ac11968c3b88657c2ea9b3eec0371995e827e00b8ef67d28eddeb9e5160c2544",
+    "src/components/ClarificationStep.tsx": "0d53ddcda8d41d6cb3ccd5d7efc8ef87c2fb26d9d48af10b1e66a911e682a47b",
+    "src/components/Home.tsx": "1ec2464b4c2bc3394783498545154533ab78fd9e32ebd92b6f09da8e07af9845",
+    "src/components/Logo.tsx": "ac2801bd9e491fccbcb63f5b4efe9feee03e7cf4cf1ee5679fd4187c83c95675",
+    "src/components/MochiCat.tsx": "fe1fb7e5e8ab14cb436cc3961d230bbf585c5ed26145a0c6d0bf8bd6b26ae4f7",
+    "src/components/MochiPanel.tsx": "77d5383ea85be633f6cdf5614420b7d81e6b5511f0c1f30ab53d2206e802e7c0",
+    "src/components/Pending.tsx": "9037a98992c1661cc2b7fc5edf0fc923e24da641b5434f74057408b16a5231a0",
+    "src/components/Workshop.tsx": "2a9880fb3518c08acb95396c73316eb8274717a87638d5701c9721a0aa8a3fad",
+    "src/components/ai-create/AiCreate.tsx": "07f11bf060eee2f000d34d104ab239500c11d62af611feeeab7ef3c0237074d3",
+    "src/components/ai-create/ai-create.css": "e1003c8ef3ca88f48d85ee855f61179b18ab87e1414a2b695acff29387094eb4",
+    "src/components/ai-create/generateApp.test.cjs": "6a29dd99247bb688c2d7f2a9c4e316040e7ee64f7828545ee1b54778596304c4",
+    "src/components/ai-create/generateApp.ts": "3535ef006cc6dbc7762f6c1a8f2ca0a8c07af117a13f9f15681948dc9b2d905b",
+    "src/components/ai-create/trustedPomodoroFixture.ts": "6486663552b7f639413a03ebfe9929fab4b7ce04ee40790a162422b720b2a7d7",
+    "src/components/app-builder/AppSpecCanvas.browser.html": "1c35ce1828b2abdff336f5439911de36d1394f1b4bd1ccfe19957a1ad04e745a",
+    "src/components/app-builder/AppSpecCanvas.browser.tsx": "dc7057450d9181f4b313e62db97804b7e1a68d7323551fd766d8b57b822ed1ac",
+    "src/components/app-builder/AppSpecCanvas.test.cjs": "6682498d81f65aefe1087bd3125eb2c840780d899b7fc87f7a2e649f8e51dbff",
+    "src/components/app-builder/AppSpecCanvas.tsx": "95fba1986bd96f9e363f52a1ccfbad76b5432f034d9fdb912d9c2124afbdb55f",
+    "src/components/app-builder/AppSpecInspector.tsx": "e65958b52b8869a7cf5b979d02c134d43f0c5703042cb40cab1177b0fb462a20",
+    "src/components/app-builder/AppSpecMochiPanel.tsx": "ed01e2905f3759b04988838bbbd03e48a1502c15568393269e11e06909691cbf",
+    "src/components/app-builder/AppSpecWorkshop.tsx": "b3bea6444c18eb5b34415c43e7f192207b3f5d08f2a4c6427b66ae0bd6a9809e",
+    "src/components/app-builder/app-spec-canvas.css": "0158a668d8b95989b9b155c23af562601e3a5b737b2a3cb919dd2d2ac7e22762",
+    "src/components/app-builder/app-spec-inspector.css": "dbbde82c35ba0ecb86929dbc11cf205b74001feddf542107ebc4f701c9695f0e",
+    "src/components/app-builder/app-spec-workshop.css": "ba1f945d985f61b6a9bd29839affc3acd3406f6ba5a2321eda234f9fc0d610a6",
+    "src/components/app-renderer/AppRenderer.tsx": "7c9aac7ecc58d65619c6eebc9c7d4dd1cc1629fcfb486fd2b717c77a240305cb",
+    "src/components/app-renderer/AppRendererDemo.tsx": "bba20439bedf1b6f932c6eb785bf9185ea6ed3e9376c2f0530707127772bc0dd",
+    "src/components/app-renderer/Pomodoro.tsx": "c134336031c80ad0eb05d4949bf3f34841c8b103b277c7668562bb2ff337ac94",
+    "src/components/app-renderer/app-renderer.css": "c792550d0d8a1c7f4ac1ffaa65b8b834c89656809c77e49c4dfddf1a816a3e85",
+    "src/components/block-canvas.css": "c6332e727ea03fc560d6e827defdee5b010380bfa152eac7e3d5d8e1f6afb659",
+    "src/components/blocks/BlockInspector.tsx": "6bd89b812802deea42e88e92d8a202c677f85f519e32b1354a8ce15903e6fa5a",
+    "src/components/blocks/app-canvas.ts": "6331d659ab2fe36a452c0420e731cad53cb6d37f4e190eb0b8f98f733025a850",
+    "src/components/blocks/blocks.test.cjs": "10a5f3e0b64e493417b7c4af663e2e36d0678280d72149de30e8b546fc722e50",
+    "src/components/blocks/contract.ts": "deeb46dfd6afa2bb6994569e1e7fd0802feea2e2c60a58250fceffeaf173675b",
+    "src/components/blocks/examples.ts": "b5e4153921d838a7ff3712fd8dedb22fca89452ad144cc083d20fce1dbda5f37",
+    "src/components/blocks/rules.ts": "2ffe7feaabd05bbb6b276df8af08da409a4228c4c633e7a3725132398b5d508b",
+    "src/components/blocks/snap-layout.ts": "f19aa0dc7d94660eda432de2ceca6c9b5695a59ae86cbe76939c8c018939d5aa",
+    "src/components/blocks/useSnapCanvas.ts": "5d2048739d4805e8807d12da0b896dac604dcc0c7788a8aad31e5b6fdfa42344",
+    "src/components/clarification-step.css": "1f1f958bcdb55fa5a9e9dd90012814d1d5317eb167b908b4e8ea9591c5ba9b29",
+    "src/components/ideas.ts": "814943c3cef44387ff44d4f729ddb2a1382d64c397ad0367471e1683f35df35f",
+    "src/components/mochi-ai/MochiAiAssistant.tsx": "27f80cbbcf1edee04b43a3d460ae36728dd311f4ed2b641e49cdf3e42e43edb4",
+    "src/components/mochi-ai/MochiAssistant.tsx": "7bd9112bf0b3e34c3b456b8010b0e0fda2b84f29153ad87ccde6ac5fae38a06d",
+    "src/components/mochi-ai/MochiChat.tsx": "8fc5397fda9d90b0cef80250f82387dd3ed56645fc1aca20867b9d993ba20eb7",
+    "src/components/mochi-ai/MochiEmotion.tsx": "fee43f9ebd68a206c6e1c0908f3bd3e37de628aac1c23d0bbcf9932157fa3a53",
+    "src/components/mochi-ai/MochiOverlay.tsx": "ab68744f44c35ee8b1296ec57cb2d27739a20fd0ede234dfba38c2cfe4ed9219",
+    "src/components/mochi-ai/MochiSuggestions.ts": "e743e8b68a20410373f4462639e74f748e6bc3655c638b5588b36774e0bb0b8c",
+    "src/components/mochi-ai/MochiTypes.ts": "52e8497b91aac76ebb204bca663143b48b64aec4c4bf5a0ca99f38eadc11ecc5",
+    "src/components/mochi-ai/mochi-ai-v2.test.cjs": "d5b409f95f16146649b06fa1da5853adcd249a80fbfec8d6e93bc75698f913e6",
+    "src/components/mochi-ai/mochi-ai.css": "00ac5a00cf08d51f2c1962469f46f824ecccfe2f964ff82b2c1ecc6a9640460b",
+    "src/components/mochi-ai/mochi-ai.test.cjs": "737b4f1d78e931b089f38b4895665431c573a3b4a8981812b5c038c7a63549fe",
+    "src/components/mochi-ai/mochi-motion.css": "325ebdb692baaf42a514c30f57c208915ba92dfdf412d84f25db962e4305672b",
+    "src/components/mochi-ai/motion/controller.ts": "c45517b80d569dfab27864262c65c0704889cc59927813be0818f3f8c3a7f552",
+    "src/components/mochi-ai/motion/geometry.ts": "97c7238ac54c8326add3cb040e3354a6b3072d72ae02ef8c95d28dcb063c4f53",
+    "src/components/mochi-ai/types.ts": "72d29860d2348fd2d74f03e80d07e61ec833b5d45bd9f8e98a3f55f0de62641e",
+    "src/components/mochi-panel.css": "aeb69bd653bc322759589f7b5b6c96c2707465421e8b8375291c8f56b98dee93",
+    "src/components/workshop.css": "6a2a83b793c3f0bd2c5c330cf34ba18bbf7b43956276adf9d0e1669910c15774",
+    "src/custom-block/artifacts.ts": "e5fa134d04f8230f212d6171e46386d20b608145b7d77b78c2be7065e4de3227",
+    "src/custom-block/index.ts": "279e3c33fec16dcc8770f378ac24807f5879709b40c684d4ec0cf20d1b493bdd",
+    "src/custom-block/json.ts": "4c94a48b87311ddeec59ffda340c46df9701d62e196432d983ff49d2c6431eac",
+    "src/custom-block/messages.ts": "d183bac6afba54f95f129287effc89461fad8a61735bf174b01f09e69f07f421",
+    "src/custom-block/project.ts": "98cfa63bd22614849f663c02df13221eeba5f64e9b7776bf0380470241b04780",
+    "src/custom-block/schema.ts": "0a140ab1a95e66270cbc6ad4739598b0c2b4a14e280a86f318a85e78dbf75d64",
+    "src/custom-block/types.ts": "b043a343eea40e76d129b4ddf11979155c3bcd736be4505da598f7673a21df1e",
+    "src/integrations/custom-block-bc/CustomBlockCanvas.tsx": "637053a734624fee27608dbcc98a18014e31500e3b30ba8a5b85eb2e649b9c0d",
+    "src/integrations/custom-block-bc/CustomBlockImport.tsx": "9b88a116b58ce16d824a73b692765378bba6517a50cd6df19a649cbca7b67cb8",
+    "src/integrations/custom-block-bc/CustomBlockInspector.tsx": "7871d890feec0d473b338e6e9064d18e0f31955312e275e8b328b059fc897431",
+    "src/integrations/custom-block-bc/CustomBlockViewer.tsx": "d2b86af8db7f21cb2f9ca02f049bde4b48e1cff6c7ab138e196204fdf4da2f34",
+    "src/integrations/custom-block-bc/adapter.ts": "a759b097e33c5f0aa101b474cf0c8347bf7883053fad41468198641fd503b5f9",
+    "src/integrations/custom-block-bc/custom-block-bc.css": "a794ff1a061d10cbaf28dea92867ef37f4c890df711eccac552d1451603a622e",
+    "src/integrations/custom-block-bc/index.ts": "0d2cf11fe6514fe06b0cea663b6d823535f519f0e7c51bbf8eaf5e54c8e4628a",
+    "src/integrations/custom-block-bc/metadata.ts": "96b6c695e1b8e6bde67cc867b9162a1b5262bf6ab2ac702ff486908d7cd6022e",
+    "src/integrations/custom-block-bc/owner.ts": "ba05fecacfdaeca79a1c5415962f5b7023299f77c51e8c4e79de29545f6bcfe2",
+    "src/integrations/custom-block-bc/useWorkshopAdapter.ts": "fbea3fa690af712a093f97248e7d9e60caae049b2ef8c69914dbd10455768efe",
+    "src/integrations/custom-block-bc/viewer.ts": "b72340904138f4bea15b3cc35637636ff0cfcc3714c997276b67dbcb89d55b34",
+    "src/integrations/generated-artifact/install.ts": "158c20628c1662becc99a53d400c282e6b1965feef649c8b0977599a1e4ebcb1",
+    "src/integrations/generated-artifact/ui.css": "a1b1cdb9d9aef9214b6c534c3e7cd20eb0d9f098b35cc01d7969292eb61c32a0",
+    "src/integrations/generated-artifact/ui.ts": "105bc00f0ac36f9e0bd55a181323740174c153b36f08559f4bae047612d0efa6",
+    "src/integrations/generated-artifact/useInstallLifecycle.ts": "2a2af736148fc99adfcd94cd6d41968c72923432bc630d4e9c1b66ac8d2c6901",
+    "src/integrations/mochi-ai/MochiConversationPanel.tsx": "f7efaf0029511c8ed7346188e63c16040cb81508de19a08f23bda92e4b15c011",
+    "src/integrations/mochi-ai/client.d.mts": "71219a89135d2b9e02543ff36e3ab027fe881f6fb11fb60532c82ae8af59c369",
+    "src/integrations/mochi-ai/client.mjs": "28b48258645689c68923062d4043bf68373f041b7314d8199514b9b7d8aaea65",
+    "src/integrations/mochi-ai/context.d.mts": "880d25c5a4b5a644d8e3f8711d6586cdb5a46e658667238fb68290b2491a5e1b",
+    "src/integrations/mochi-ai/context.mjs": "812313139a47773d51e348878b020953361a8535fcd85fbececba04674256e96",
+    "src/integrations/mochi-ai/conversation.css": "f3c2fb1a1a4ebc90583776717a584100504580be7e6181691ddf1ef54383e18e",
+    "src/integrations/mochi-ai/protocol.mjs": "5a83b8a045f10ab69d112f6288c05c215d67911b2182103996edb1263050638b",
+    "src/integrations/mochi-ai/workshop.d.mts": "84586f44ec9e258b995dc965e9a0f588db9a8f2ce2790f2d9cb110f7b6b8d1d2",
+    "src/integrations/mochi-ai/workshop.mjs": "2218287559342c327f0f5bd1f0c53d14dd8ff56fd4a204242a7cb8c8c44a41d5",
+    "src/integrations/mochi-source/index.ts": "e574f50b30f2f1a13d9e4f7ddcd045568a746d16423c0f5d98dc032f1ae26567",
+    "src/integrations/mochi-source/planning.ts": "757575b24ed7be4884374e04048569c68338af858d4c7222e3e95c8fe369fc89",
+    "src/integrations/mochi-source/providers.ts": "9b648068423632cb0df0c3b6fa8e91f60d95ad72ab58e3cb2ea619cf04d9f6f6",
+    "src/integrations/mochi/WorkshopMochi.tsx": "8f5488fe876630878ca1caf2a05188115c53c2446aff6de3adcd1f06c0bb38bc",
+    "src/integrations/mochi/host.test.cjs": "f474b3e62dc100e4fa0280f0c0665bce31d5043ada267ad953eb632ba881217f",
+    "src/integrations/mochi/host.ts": "6481fb881b7e4e6d75076b06e1e8837960001344c197fdea5d11a5a48c83053d",
+    "src/integrations/mochi/mockPlanner.ts": "7d5e1699a8de278b1adc275a6d29c047c4f324a8d1e47637ca0819eb4819dac0",
+    "src/integrations/mochi/modelPlanProvider.ts": "24216b2125650d17dd48f235f787ba247b0f6fe00d3df6475deba828a667ab9c",
+    "src/integrations/mochi/planning.test.cjs": "b11bdb93cac8a5e1b2b8622dde7e9a844fd013e8163cb756c276c4016a507751",
+    "src/integrations/mochi/planning.ts": "708c3a48d0cacd0e9d57ec959e230659d3f3457c9c3ab1ead35bad49874bd984",
+    "src/integrations/project-export/ExportProjectButton.tsx": "fb3ce5b18ee4f82a30988a1e6dabe12a50d9c7b73b0ba2263fcf891a282d5264",
+    "src/integrations/project-export/capture.ts": "999336c6592d52e43e95ffb8d3960e4403e3f3cb8e088d0b5c287cbfcee1ae93",
+    "src/integrations/project-export/local-export.d.ts": "00dbcc3d43e3b28ffa703c1f51f051113f668a1eeb940a5de236b3e82751ce43",
+    "src/main.tsx": "c5f485d2078558248aa0f95b900c54c2e118d93313b2808c85b09d5c88791aef",
+    "src/model/appCapabilities.ts": "2bf09be8be0eb5f1f37a0bbedc28885cdcc9f7a15d74d604b70b14cdde5b88fe",
+    "src/model/appChangePlan.test.cjs": "ed93d311daf1a96041b7ed615344ffd8b94b54b70fb6f9cd4f3a4422cca06d9d",
+    "src/model/appChangePlan.ts": "40dfd873e3f61bcffb7118d50a8e83edda51ee4f78b3b18fc4e683aa22117840",
+    "src/model/appCommands.ts": "0c9039ca618525f203c9178cd13f9bec91f4249ad1238fa0f446c9958e353331",
+    "src/model/appConfig.ts": "8ff8bd13ef681081c9b05508bca3598f8d046baafea3d817249ea5047e90c37c",
+    "src/model/appRuntime.test.cjs": "8c17ab30a9194374c22bf49ba5f6b03bb59a0b1c408ba8e7c0319d1d1e109b00",
+    "src/model/appRuntime.ts": "72b0e422e3f8903f62c084ea2b7be108e53b03a635e10c1f95d98e4ef466c903",
+    "src/model/appSpec.test.cjs": "697302de5b2d4745eb10e249b136d6120a4cb2afa9fe97565deba2559cf52733",
+    "src/model/appSpec.ts": "898b82e1af234b76abba2ac42c56274bb4b455d001a961497a6743d4870a605c",
+    "src/model/appSpecExamples.ts": "65ec5897f19a40153a249603e8c1d732f638f1abc7d02f62e4fc5fb86b19e2b8",
+    "src/model/appSpecValidation.ts": "6237af7efb8544995ff8bea58949dce980dfb520be060ddd2a5a33b6ec0e58b1",
+    "src/model/customProjectSession.ts": "43b3854624985af4804785ef22621e61e70c8b034f026940e04549cf81cd3b67",
+    "src/model/trustedInteractive.schema.json": "6676a17d6776216bc5fcf91fa141a42c5193e9b8e46ab5ac81f5320c63c173cd",
+    "src/styles.css": "4c7cf91c1cdaf57a348612bfbc1497df2062b77da0c283d5437670c5049a9da2",
+    "src/vite-env.d.ts": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+    "tests/ai-quality/README.md": "cfcfd1068d73f36215a9687cee22a8e27723d9cfac572b45bcab693be7ffa6c7",
+    "tests/ai-quality/business.test.cjs": "faa35cc3dcfc024ba519c4b477b7351d94504d416d80d43a8d99cd5ba2fd42bf",
+    "tests/ai-quality/cases.cjs": "ff9dd128d2f3141bf2e77a0040957c5ba431536103140c0f6b4f862fe47da6dc",
+    "tests/ai-quality/check.cjs": "b4240f21783cc66bf6d226520586559dffa6d37ee84966531775c980ec2bdd01",
+    "tests/ai-quality/evaluate.cjs": "dfc48acbed9787cd8c9582364ee118f07c44efe018ef0c0a3870e46bdf1a4270",
+    "tests/ai-quality/fixtures/club-registration.json": "d5a74bef5cc50a30738b7f8a0fba79d4ad9c6482b499e901ddc8f4f2ffc96cdf",
+    "tests/ai-quality/fixtures/event-registration.json": "edc4a81ece4674cb90097af53c439719ae2ce5a2e641e6df9660ba19d9499ed1",
+    "tests/ai-quality/fixtures/fitness-plan.json": "b63f098e540a11d5405006297aae8120c608b719a4798fd0800216b0c65b5599",
+    "tests/ai-quality/fixtures/personal-tasks.json": "00f2e6e05a48273875fe2a8f23c52a2d9a5f418c91102c63b9a7cb648d5fc38f",
+    "tests/ai-quality/fixtures/reading-log.json": "a5348db351d890ae00c73ee0d1b4942769842c69a01922e304ffbab19b1491ae",
+    "tests/ai-quality/model.cjs": "037e03a202c8bb81f4f9e470d18204bf9126b6d02111255b9067db67022555d0",
+    "tests/ai-quality/quality.test.cjs": "3e0504f936a40352680bf6688a2793286a6d20b1780b859c7c4cea3c9f4feaf6",
+    "tests/custom-block-bc/adapter.test.cjs": "20438f9e11931c7702c61b8b1ced30fe2c63c60d394dc5c88dff592674b2165b",
+    "tests/custom-block-bc/authorization.test.cjs": "b89fe3e4211da524af7d2faa45e4120c038b95c5254bd366ec7ddf1a15cacf23",
+    "tests/custom-block-bc/browser.check.cjs": "571fa98b37c3b151a8816126e582e038b3ddcc83bb335600afa4b417748823f5",
+    "tests/custom-block-bc/browser/index.html": "40cda2d74cc0d01579b723b2e9d91ba17e9b677c6ae058389136d57f50d8f150",
+    "tests/custom-block-bc/browser/main.tsx": "3c3eaab902149333448716c059510dda6b1afed6539f1dd1b946f71289bf5429",
+    "tests/custom-block-bc/helpers.cjs": "9cd3722835d7e9770e2f2ee2a5dfa767ee5b384bc3b240d84138bb23968bf5bd",
+    "tests/custom-block-bc/owner.test.cjs": "400816e0eb96e57654fdf25bddf9d6947dcf086084e88f769a36f32bdf3ddb5f",
+    "tests/custom-block-bc/viewer.test.cjs": "930503b9f962ac310ce60cd056988faa005edff5a3d11c3db61868e3c5ea88f8",
+    "tests/custom-block-compiler/compiler.test.mjs": "7b49af923a3a644605486f9cfeec0c2e984872f02d335d3ca0477948466cd451",
+    "tests/custom-block-compiler/fixtures/Counter.tsx": "48d763725c9291a75f31a265fd5d5820b7361307cf6ab6fe926cbf84f0c42dfd",
+    "tests/custom-block-compiler/fixtures/Temperature.tsx": "3705ab5b4743d90025fa9b42d6f17ef72fc7ee02928929321cd76cfa04687ab9",
+    "tests/custom-block-compiler/fixtures/convert.ts": "9a5935036afd962d43819b93d78d826b6da965595bd298300540acd36a4702dc",
+    "tests/custom-block-generation/contract.test.mjs": "c0452ed1d79536a500ddaa842c52ace23e06fa8c4052b1e841fa3a5f5b0ccd0c",
+    "tests/custom-block-generation/fixtures.mjs": "9181cfb6e7b156d8be27510dcbb8acc59e95e8830717a1bd728bcc9e39e80363",
+    "tests/custom-block-generation/pipeline.test.mjs": "61063069f030624d94f57d34b3ddd139966c6b990dc93a615763224bad9a0652",
+    "tests/custom-block-generation/provider.test.mjs": "68dfc6f13fa4ae5b4ea0324e56a2faf57b0cc0491f61e643f79c24aa1327bb75",
+    "tests/custom-block-sandbox/environment.test.mjs": "51c1d11b6989e8c58a21962d0d67b84ca1c760a4d61475e568b40400279279a6",
+    "tests/custom-block-workshop/authorization.test.cjs": "015db1b1b0f39fdc72840de65ce630f59aa212a12aa5257b5e18ee890e37c6ed",
+    "tests/custom-block-workshop/browser.cjs": "149e7b4372e21c5fa1f08f6ebff54eb74c2f0e5863f4e38104e227ae46786a4e",
+    "tests/custom-block-workshop/owner.test.cjs": "2d534d3dc1490b420826d68158c185b0f666afb762892864fbbfe03c211a07a2",
+    "tests/custom-block/artifacts.test.cjs": "1dd0454fc7ea511471876a32a17ab345e900984cdc52b91be0259996bf793dc2",
+    "tests/custom-block/fixtures.cjs": "f378fd54fb5606ac4b7968b2b228c683400a220d0e0c93db4401d5aaf98e17f8",
+    "tests/custom-block/messages.test.cjs": "dd75a6d0d11a3b7515959b60d4920dd822d7bc4c0c748b66cf02e8844e41bc74",
+    "tests/custom-block/project.test.cjs": "e79125739f8d6f2b1751296be5f6a84581b5eca892e1b600846103133bf44563",
+    "tests/custom-block/schema-json.test.cjs": "58c19788da216331a5e538ac2f39ba1673de34d37228a8c02f67d53ad3220790",
+    "tests/generated-artifact-ui/browser.cjs": "4e0fc90d009110358c58b73be07627fb541bed40ac3a281f840b16e9326b8d15",
+    "tests/generated-artifact-ui/offline-export.mjs": "b2ecfb3f08870af164695c966833adb813141f49783caacbb44bafc20537001a",
+    "tests/generated-artifact-ui/production-browser.cjs": "64be8ba0e0bc46c0791025ae4ad6b5198251e6fbdfebd36e6c7ecf7e615d17c6",
+    "tests/generated-artifact-ui/ui.test.cjs": "0ffc76fc5227eb05c0eb26ab7b4618aee75add3bc0a6c2f0c8fa0031e0b6d902",
+    "tests/generated-artifact/fixtures/pomodoro.pending.json": "c20f74f0ef3c92824f817cce10f1a24c9266174502129d4b705f0f2185f386c1",
+    "tests/generated-artifact/install.test.cjs": "a3f40bc4f033ed720b58bc9eb49f06513bba59fe1be3a123ace49425a4dc7e82",
+    "tests/generation/browser.cjs": "9f8b79bf6ad220479a8b42a7c4cfe2e601baae708eaa235aceb44356648dfa8e",
+    "tests/generation/client-boundary.test.cjs": "9138f337cf93599b40f570b31b3fa5136e25b9c4cbfd4e31abfb202b6a8f48ec",
+    "tests/generation/compatibility.test.mjs": "bb6e0bc48e74cc8999c47c7c4ca5124ab2337de8582d21f06af2abbbe73786d0",
+    "tests/generation/fixtures.mjs": "1191ad2f8d23747e862e934e2a9f776491cf3308842e9aac70379123bea11801",
+    "tests/generation/generation.test.mjs": "69288d65df832f8931c79a3506b82ae40d469a7ef4347e525d284522af311d2c",
+    "tests/generation/service-runtime.test.cjs": "6c6dcb40f28e3cd26db8af6777f55061f8e621d52c0bc79eded9c4f674bfcafc",
+    "tests/mochi-ai/browser-server.mjs": "463c0732381844e5d66b266780a6f735c83fabe2e2a4b10267eb49babaed5564",
+    "tests/mochi-ai/client.test.mjs": "78b99223fd3da4a282112ec5a1cd8695b8aeb3a4f1693ff3cd8f44ba088cb68a",
+    "tests/mochi-ai/context.test.mjs": "13b5394fa81c4ad988b262e6945d5d8fe6157796d8608581836687efeb6e896c",
+    "tests/mochi-ai/fixtures.mjs": "2aba6670e4388e746cd9ceda59e9ecf270bf97cc7938533772cd394a0b413b4b",
+    "tests/mochi-ai/harness.html": "75ce2c85428b41887927d9b86523ae2b72cb39281e784c4adda60e0bc26caf73",
+    "tests/mochi-ai/host-compatibility.test.mjs": "afd31433a3609d1360aa3d6bb2f47bd6051e5e6780c0c7927d74aff9246c6e8e",
+    "tests/mochi-ai/http.test.mjs": "61eaaf80685cc30a3df5cb4066cf5a6444d430ea69707d5b53a31587742163f5",
+    "tests/mochi-ai/model-plan.test.cjs": "0d1e5ae293e81291641fc78d292235e8ac49e334affb83317204ac09492d2284",
+    "tests/mochi-ai/provider.test.mjs": "f7094933bcc5a697c6406563f7f8f8c0339acec434aaa1304174c195cdeae494",
+    "tests/mochi-ai/server-routing.test.mjs": "a2e2978a5d58719a6de2b8efc89b711fa5670b935c4f2458a3fb9d099bd834ec",
+    "tests/mochi-ai/service.test.mjs": "85ed17b5c00510b8f89105272076034335642f7d043b0bd344cf34acfbffe17d",
+    "tests/mochi-ai/workshop-browser.cjs": "dc1c785f6c546c73ba87dfd0b5d9920e012a808a25b68036c04c91a68f26357b",
+    "tests/mochi-ai/workshop.test.mjs": "9e91a30908816cabc688b6cf458d9908a5722df266fa5973fabf09b47f4bc28a",
+    "tests/mochi-motion/browser.cjs": "bef0caff51623c3252c293a43cf0352c6b464771e66d1ec7f4265c08910c29ce",
+    "tests/mochi-motion/fixture.tsx": "38ee8e6f6671227bb9c54f66d355020f2fa60bf3c57454a683b7996a04e8cd16",
+    "tests/mochi-motion/geometry.test.cjs": "3524e39f4f7788ff99eccb51e02111a27504d4d3ac8cdcdff1e6564f0a56c42c",
+    "tests/mochi-source/planning.test.cjs": "5bb0f42e7c9f78b3990d63139c075c124c19ebb254258f5a836fccdca6ffb29f",
+    "tests/mochi/browser.cjs": "9110abf76d352441de88f104f98757666c3062604946d5358662b2c6e780fe9e",
+    "tests/mochi/fixture.tsx": "4a88868528976144168216d6ea9acc75d25624ee40d4e5a480efe60c9c44604e",
+    "tests/project-zip-export/accept-trusted.mjs": "6fb58fc4773da214b46555606c2aea7383a98e6c8ceb58bce183896121eae9cb",
+    "tests/project-zip-export/export.test.mjs": "f63952898cced1a94388fde0b8a64ee526c089f66c8fcfa8a1be9d705638d955",
+    "tests/project-zip-export/fixtures.mjs": "3730e760e888e7f6b10782ab9aee24bac9c659f49c9a5e47f7bb36a6eb3903cb",
+    "tests/trusted-interactive/browser.cjs": "336aaa1792c24a48327e60b4e5367bf6a4bf99f23b76810c030e654994f3e14b",
+    "tests/trusted-interactive/client.test.cjs": "74ea49ad6bbac1535913ce99297bd57294c575163af356f4b68e19faadab5602",
+    "tests/trusted-interactive/export.test.mjs": "6b3cb83581cc432ed72f5984bd0ff74eb8afb0092eb352876392acc461842307",
+    "tests/trusted-interactive/index.html": "9a91f7cd332639d8e95fe0c66e2bdff932b8cf13e8074642db4816ed6573e003",
+    "tests/trusted-interactive/inspector.test.cjs": "794aa945e995552440c1886b3387c07d010ae5569d170fd25f9582a5d9fd652e",
+    "tests/trusted-interactive/main.tsx": "d543bf8831ba4deda3703a2bdfa5345c78f0328fd549639308c621815dcad10b",
+    "tests/trusted-interactive/pomodoro.json": "e8c49c2027bc633c7d67bddc682c100075ce89d77f0dd1993ca84ad05941f47c",
+    "tests/trusted-interactive/reliability.browser.cjs": "cd8e29d4db8baf74ed9ffbce93fe568a9386cb650a8c6b08a8777ebad229c962",
+    "tests/trusted-interactive/reliability.html": "af6ff4a5a84b772c3019f9b13a55e748901dfbd7f1b2ea655fbd6343e7cfcc1a",
+    "tests/trusted-interactive/reliability.tsx": "adae2245bb769534002369224931415b4ebf51239813903a6bc15d94567a990f",
+    "tests/trusted-interactive/runtime.test.cjs": "23ad7c239b271910766b4eb8b8d4f3c302f4b8f01980412f4d0e198e766059c3",
+    "tests/trusted-interactive/serve.mjs": "dc19c4bbe370c9aa86300b10d3c66c42c7362dd191976c7c0293fb00cd6a67a3",
+    "tests/trusted-interactive/server.test.mjs": "e9e81359567d2a4357f406d7efdedc7797443066bf8a796fe87e2919c8177085",
+    "tests/trusted-pomodoro-ui/browser.cjs": "f80065a1aa52f1a19497981eb103cfba8e0d2f0dc2f21fc34981852279d9d596",
+    "tests/trusted-pomodoro-ui/fixture.test.cjs": "7079e9ce9f608ce1affb058dd539014785eeab91baa268246d5b097b03d6e258",
+    "tests/trusted-pomodoro-ui/races.browser.cjs": "3b15cd840f7190b5bb6807bc9f0c78adbe5a2c7d948dcd7a9e1496d698302c99",
+    "tests/workshop-export/boundary.test.mjs": "a0a92aff9ff4a3862fe94c9b343959651b9ff10015e2e585b4273c5fde04f99f",
+    "tests/workshop-export/browser.cjs": "0e8e528fc3b51f0abf0b6208dfb060e1187eaad2bc7ff97d5fcfbb804bec27cc",
+    "tests/workshop-export/capture.test.cjs": "ddd544ebfd745f22c3964c9cb8575794215fce0138e9a62b268a794f5ddcbb29",
+    "tests/workshop-export/http.test.mjs": "cfe37938abd1da611038f5f6dde2d26fbdf90ac50ffd098989ec07f2b3c21848",
+    "tests/workshop.browser.cjs": "1e59f12fbafac99822140f5e26eda62c9da48846c5332508a548b3d9a263d808"
+  },
+  "finishedAt": "2026-10-18T17:57:10.403Z"
+}

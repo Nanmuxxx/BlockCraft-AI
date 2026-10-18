@@ -1,0 +1,61 @@
+✔ preview is inert; one real install/CAS changes only selected version/props/state; old version and state remain traceable (10.258833ms)
+✔ minimum provider context includes selected source/props and excludes records, other instances, authority and state values (2.511958ms)
+✔ cancel is idempotent and does not install; copied/foreign plan ids do not authorize (3.573708ms)
+✔ reject invalid candidate: request id (1.842167ms)
+✔ reject invalid candidate: revision (1.766125ms)
+✔ reject invalid candidate: target (1.46875ms)
+✔ reject invalid candidate: parent version (1.421208ms)
+✔ reject invalid candidate: extra execution permit (1.395042ms)
+✔ reject invalid candidate: empty summary (1.492333ms)
+✔ reject invalid candidate: missing steps (1.966333ms)
+✔ reject invalid candidate: incorrect diff (1.730042ms)
+✔ reject invalid candidate: digest (1.431541ms)
+✔ reject invalid candidate: manifest (1.38375ms)
+✔ reject invalid candidate: definition (1.243084ms)
+✔ reject invalid candidate: unknown props (1.454791ms)
+✔ reject invalid candidate: invalid props (1.755ms)
+✔ rehash does not authorize unchanged source (1.398167ms)
+✔ rehash does not authorize capability escalation (1.421417ms)
+✔ rehash does not authorize schema migration (1.323208ms)
+✔ rehash does not authorize props only (1.479041ms)
+✔ stale confirmation fails after selection A-B-A (1.877916ms)
+✔ stale confirmation fails after mode/context (1.503834ms)
+✔ stale confirmation fails after project revision (1.821458ms)
+✔ stale confirmation fails after authorization revoke/regrant (1.813541ms)
+✔ late provider response ignoring abort cannot revive old plan or supersede newer request (2.441333ms)
+✔ context cancellation retires a never-settling source provider before it can return (2.161084ms)
+✖ synchronous abort reentry cannot share a source request epoch with its superseder (2.67625ms)
+✔ readonly and explicit stale input reject before provider; no untrusted getters execute (1.264291ms)
+✔ confirm lease blocks selection/cancel/dispose/reentrant confirm while real install is awaiting; competing write wins CAS (2.574625ms)
+✔ revocation during real admission reaches final CAS and refuses stale authorization (2.009375ms)
+✔ two planners compete on one real session; at most one version commit (3.696708ms)
+✔ concurrent explicit replacement invalidates an older preview, keeps both registered versions (2.316667ms)
+✔ model seam forwards structured source task without template/fallback; malformed model text and provider failure leave project untouched (1.301083ms)
+✔ dispose aborts in-flight provider and permanently closes planner without a write (1.426334ms)
+✔ caller input and returned provider JSON are captured before asynchronous validation (2.040916ms)
+✔ model seam preserves completion-supplied TSX bytes and uses the same validation, without network (2.20075ms)
+✔ install rejection is terminal and cannot be retried as a fresh implicit authorization (1.459125ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 36
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 263.734166
+
+✖ failing tests:
+
+test at tests/mochi-source/planning.test.cjs:142:1
+✖ synchronous abort reentry cannot share a source request epoch with its superseder (2.67625ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-source/planning.test.cjs:153:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { code: 'CONTEXT_CHANGED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

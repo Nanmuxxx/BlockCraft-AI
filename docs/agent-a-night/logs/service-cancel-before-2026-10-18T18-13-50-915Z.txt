@@ -1,0 +1,30 @@
+✔ default disabled, missing/expired/unverified grants make zero upstream calls (0.772292ms)
+✔ proactive requires explicit consent; events and suggestions deduplicate until cooldown (1.418667ms)
+✔ chat and proactive throttle on the server and enforce trusted application binding (0.217291ms)
+✔ global call/token budgets reserve before requests and failures are charged without retries (0.343417ms)
+✔ session budget shared across projects; per-session/global concurrency bounded (0.678167ms)
+✔ revoking proactive consent aborts and discards an outstanding response (1.571292ms)
+✔ approval is snapshotted so caller mutation cannot increase the grant (0.131791ms)
+✔ durable monetary adapter required, deny/error/abort never reach provider (0.598458ms)
+✔ C-mode requests are rejected before budget reservation or provider (0.174167ms)
+✔ durable ledger timeout is unavailable and releases concurrency without provider egress (0.324875ms)
+✖ caller cancellation releases service despite provider ignoring abort (1002.977792ms)
+✖ consent revocation releases service despite provider ignoring abort (1002.724041ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 2
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2049.851959
+
+✖ failing tests:
+
+test at tests/mochi-ai/service.test.mjs:125:40
+✖ caller cancellation releases service despite provider ignoring abort (1002.977792ms)
+  'test timed out after 1000ms'
+
+test at tests/mochi-ai/service.test.mjs:125:40
+✖ consent revocation releases service despite provider ignoring abort (1002.724041ms)
+  'test timed out after 1000ms'

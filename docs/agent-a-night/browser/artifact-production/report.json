@@ -1,0 +1,46 @@
+{
+  "browser": "151.0.7922.34",
+  "scope": "unmodified production /ai-create components; no QA bridge; initial AppSpec HTTP intercepted offline",
+  "cases": [
+    {
+      "width": 1366,
+      "passed": true,
+      "checks": [
+        "production route without QA decoration",
+        "archived export load",
+        "preview with exact version/props/source/pending",
+        "preview/cancel no added card",
+        "explicit confirm adds one",
+        "B selects and inspects parameters",
+        "C unavailable without iframe",
+        "no QA bridge",
+        "no external/API egress",
+        "no horizontal overflow"
+      ],
+      "video": "/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/docs/agent-a-night/browser/artifact-production/video/page@c362050035790ca36d1341a108a498d9.webm",
+      "errors": [],
+      "external": []
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "checks": [
+        "production route without QA decoration",
+        "archived export load",
+        "preview with exact version/props/source/pending",
+        "preview/cancel no added card",
+        "explicit confirm adds one",
+        "B selects and inspects parameters",
+        "C unavailable without iframe",
+        "no QA bridge",
+        "no external/API egress",
+        "no horizontal overflow"
+      ],
+      "video": "/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/docs/agent-a-night/browser/artifact-production/video/page@2214e1b1fa82a4c7784e2fe3661e68e8.webm",
+      "errors": [],
+      "external": []
+    }
+  ],
+  "errors": [],
+  "paidCalls": 0
+}

@@ -1,0 +1,74 @@
+✔ preview is inert; one real install/CAS changes only selected version/props/state; old version and state remain traceable (10.729292ms)
+✔ minimum provider context includes selected source/props and excludes records, other instances, authority and state values (2.520292ms)
+✔ cancel is idempotent and does not install; copied/foreign plan ids do not authorize (3.65375ms)
+✔ reject invalid candidate: request id (1.8415ms)
+✔ reject invalid candidate: revision (1.667792ms)
+✔ reject invalid candidate: target (1.602666ms)
+✔ reject invalid candidate: parent version (1.425ms)
+✔ reject invalid candidate: extra execution permit (1.421166ms)
+✔ reject invalid candidate: empty summary (1.539709ms)
+✔ reject invalid candidate: missing steps (1.780958ms)
+✔ reject invalid candidate: incorrect diff (1.6895ms)
+✔ reject invalid candidate: digest (1.43425ms)
+✔ reject invalid candidate: manifest (1.557708ms)
+✔ reject invalid candidate: definition (1.263708ms)
+✔ reject invalid candidate: unknown props (1.586792ms)
+✔ reject invalid candidate: invalid props (1.81325ms)
+✔ rehash does not authorize unchanged source (1.576125ms)
+✔ rehash does not authorize capability escalation (1.402209ms)
+✔ rehash does not authorize schema migration (1.252167ms)
+✔ rehash does not authorize props only (1.406875ms)
+✔ stale confirmation fails after selection A-B-A (1.997333ms)
+✔ stale confirmation fails after mode/context (1.624792ms)
+✔ stale confirmation fails after project revision (1.812ms)
+✔ stale confirmation fails after authorization revoke/regrant (1.795667ms)
+✔ late provider response ignoring abort cannot revive old plan or supersede newer request (2.54375ms)
+✔ context cancellation retires a never-settling source provider before it can return (2.282416ms)
+✔ readonly and explicit stale input reject before provider; no untrusted getters execute (1.208375ms)
+✔ confirm lease blocks selection/cancel/dispose/reentrant confirm while real install is awaiting; competing write wins CAS (2.443833ms)
+✔ revocation during real admission reaches final CAS and refuses stale authorization (2.128125ms)
+✔ two planners compete on one real session; at most one version commit (2.833125ms)
+✔ concurrent explicit replacement invalidates an older preview, keeps both registered versions (1.939083ms)
+✔ model seam forwards structured source task without template/fallback; malformed model text and provider failure leave project untouched (2.283041ms)
+✖ dispose aborts in-flight provider and permanently closes planner without a write (10.265125ms)
+✔ caller input and returned provider JSON are captured before asynchronous validation (12.722167ms)
+✔ model seam preserves completion-supplied TSX bytes and uses the same validation, without network (2.47225ms)
+✔ install rejection is terminal and cannot be retried as a fresh implicit authorization (5.371542ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 35
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 268.967917
+
+✖ failing tests:
+
+test at tests/mochi-source/planning.test.cjs:209:1
+✖ dispose aborts in-flight provider and permanently closes planner without a write (10.265125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   code: 'CONTEXT_CHANGED'
+  -   code: 'PLANNER_DISPOSED'
+    }
+  
+      at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-source/planning.test.cjs:214:43)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: CustomBlockError: Request cancelled
+        at check (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/custom-block/json.ts:24:15)
+        at Object.request (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/src/integrations/mochi-source/planning.ts:138:42)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a/tests/mochi-source/planning.test.cjs:214:43)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: { code: 'PLANNER_DISPOSED' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

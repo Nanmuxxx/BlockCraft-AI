@@ -1,0 +1,21 @@
+✔ real archived DeepSeek record: private store -> exact export -> preview -> sole session CAS; source stays inert (55.136958ms)
+✔ export rejects missing/wrong reference, corrupt digest, invalid status/props and captures input (2.08225ms)
+✔ cancel is idempotent, foreign tickets cannot commit and no candidate is registered (1.224958ms)
+✔ malformed, stale digest, invalid props, extra execution permission and collisions fail before preview (3.386292ms)
+✔ project switch, revision change and revoke/regrant invalidate previews (2.106542ms)
+✔ confirmation rechecks revision/authorization even if host notifications were missed (1.458042ms)
+✔ context invalidation or disposal during prepare drops the late result without registering artifact (1.388458ms)
+✔ late prepare, superseding prepare, input mutation and dispose cannot revive a ticket (2.112375ms)
+✔ confirm lease synchronously blocks cancel/context switch/dispose and duplicate submission (1.218542ms)
+✔ permission changes or concurrent CAS during async install reject atomically and terminally (1.659084ms)
+✔ two installers using one owner commit at most once; no implicit replacement (1.675792ms)
+✔ unexpected install exception is terminal; capability escalation rejected (1.103958ms)
+✔ pure ZIP boundary explicitly rejects v2 even when caller bypasses UI capture (1.230375ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 243.142167
