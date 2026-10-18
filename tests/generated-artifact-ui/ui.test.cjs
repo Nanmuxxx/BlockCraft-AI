@@ -124,3 +124,50 @@ test('unexpected session exception remains error; no success receipt or automati
   await f.ui.readFile(input(file())); await f.ui.prepare(); await f.ui.confirm()
   assert.equal(f.ui.getSnapshot().phase, 'error'); await assert.rejects(f.ui.confirm()); assert.equal(calls, 1); assert.equal(f.owner.getSnapshot().custom.instances.length, 0); f.ui.dispose()
 })
+
+for (const cause of ['cancel', 'replace', 'dispose', 'revision', 'permission']) {
+  test(`stalled file read settles promptly after ${cause}; late rejection cannot overwrite new input`, { timeout: 1000 }, async () => {
+    const f = setup(); let rejectRead
+    const pending = f.ui.readFile({ size: 1, text: () => new Promise((_, reject) => { rejectRead = reject }) })
+    await Promise.resolve()
+    if (cause === 'cancel') f.ui.cancel()
+    if (cause === 'replace') f.ui.beforeContextChange()
+    if (cause === 'dispose') f.ui.dispose()
+    if (cause === 'permission') f.owner.setReadOnly(true)
+    if (cause === 'revision') {
+      const before = f.owner.getSnapshot(), next = copy(before); next.revision++
+      f.owner.compareAndSwap(before, next, f.owner.getAuthorization())
+    }
+    await pending
+    if (cause === 'dispose') f.ui.activate()
+    if (cause === 'permission') f.owner.setReadOnly(false)
+    await f.ui.readFile(input(envelope()))
+    rejectRead(Error('late read failure')); await new Promise(resolve => setImmediate(resolve))
+    assert.equal(f.ui.getSnapshot().phase, 'loaded')
+    assert.equal(f.owner.getSnapshot().custom.instances.length, 0)
+    f.ui.dispose()
+  })
+}
+
+test('a superseding file read settles the stalled caller without losing its own draft', { timeout: 1000 }, async () => {
+  const f = setup()
+  const pending = f.ui.readFile({ size: 1, text: () => new Promise(() => {}) })
+  await f.ui.readFile(input(envelope())); await pending
+  assert.equal(f.ui.getSnapshot().phase, 'loaded'); f.ui.dispose()
+})
+
+for (const phase of ['idle', 'reading']) {
+  test(`subscriber reentry during ${phase} publication keeps the newer read`, async () => {
+    const f = setup(); let newer, armed = true, staleReads = 0
+    const off = f.ui.subscribe(() => {
+      if (!armed || f.ui.getSnapshot().phase !== phase) return
+      armed = false
+      newer = f.ui.readFile(input(envelope()))
+    })
+    await f.ui.readFile({ size: 1, text: async () => { staleReads++; return '{' } })
+    await newer
+    assert.equal(staleReads, 0)
+    assert.equal(f.ui.getSnapshot().phase, 'loaded')
+    off(); f.ui.dispose()
+  })
+}
