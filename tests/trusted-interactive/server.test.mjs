@@ -114,3 +114,15 @@ for (const stage of ['access', 'budget']) test(`HTTP disconnect during ${stage} 
   assert.equal((await post()).status, 200)
   assert.equal(calls, 1)
 })
+
+test('adapter exception metadata cannot become public HTTP codes or invalid status', async t => {
+  for (const stage of ['resolveAccess', 'reserveBudget']) {
+    let calls = 0
+    const request = await harness(t, offlineOptions('http://offline.test', { [stage]: async () => { throw Object.assign(Error('private adapter diagnostic'), { code: 'PRIVATE_ADAPTER_CODE', status: 9999 }) } }), async () => { calls++; return output(fixture) })
+    const failed = await request()
+    assert.equal(failed.status, 503)
+    assert.equal(failed.body.error.code, 'BUDGET_UNAVAILABLE')
+    assert.ok(!JSON.stringify(failed).includes('PRIVATE')); assert.ok(!JSON.stringify(failed).includes('diagnostic'))
+    assert.equal(calls, 0)
+  }
+})
