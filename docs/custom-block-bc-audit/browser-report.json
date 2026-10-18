@@ -1,0 +1,72 @@
+{
+  "scope": "Offline static metadata only; no generated component compilation or execution; no production wiring",
+  "results": [
+    {
+      "viewport": {
+        "width": 1366,
+        "height": 900
+      },
+      "checks": [
+        "selection",
+        "draft-no-write",
+        "typed-enums",
+        "nested-optional-props",
+        "trusted-schema-rejection",
+        "stale-draft",
+        "pointer-drag",
+        "pointer-cancel",
+        "isolated-instance-props",
+        "mixed-render-order",
+        "exact-version-viewer",
+        "pending-build",
+        "unavailable",
+        "forged-runnable-denied",
+        "reload-persistence",
+        "no-horizontal-overflow",
+        "collision-no-write",
+        "mixed-snap",
+        "whole-stack-single-revision",
+        "detach-single-revision",
+        "arrange-single-revision",
+        "stale-drag-denied"
+      ],
+      "revision": 4,
+      "geometryRevision": 5
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "checks": [
+        "selection",
+        "draft-no-write",
+        "typed-enums",
+        "nested-optional-props",
+        "trusted-schema-rejection",
+        "stale-draft",
+        "pointer-drag",
+        "pointer-cancel",
+        "isolated-instance-props",
+        "mixed-render-order",
+        "exact-version-viewer",
+        "pending-build",
+        "unavailable",
+        "forged-runnable-denied",
+        "reload-persistence",
+        "no-horizontal-overflow",
+        "collision-no-write",
+        "mixed-snap",
+        "whole-stack-single-revision",
+        "detach-single-revision",
+        "arrange-single-revision",
+        "stale-drag-denied"
+      ],
+      "revision": 4,
+      "geometryRevision": 5
+    }
+  ],
+  "errors": [],
+  "assetErrors": [],
+  "externalRequests": []
+}
