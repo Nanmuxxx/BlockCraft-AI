@@ -210,10 +210,21 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
       publish({ phase: 'REQUESTING', requestId: attempt.requestId, preview: null, anchor: null, error: null, receipt: null })
       previous?.abort()
       let stage: HostPhase = 'REQUEST_FAILED'
+      let stopWaiting: () => void = () => {}
       try {
         ensure(ownsRequest(), 'Discarded obsolete plan request', 'CONTEXT_CHANGED')
         checkRequestContext()
-        const input = await provider(Object.freeze({ prompt: prompt.trim(), requestId: attempt.requestId, context: requestContext, snapshot: freeze(structuredClone(snapshot)), signal: attempt.controller.signal }))
+        const retired = new Promise<never>((_, reject) => {
+          stopWaiting = () => reject(new AppSpecError('CONTEXT_CHANGED', 'Discarded obsolete plan request'))
+          attempt.controller.signal.addEventListener('abort', stopWaiting, { once: true })
+          if (attempt.controller.signal.aborted) stopWaiting()
+        })
+        // Attach both handlers even if the provider synchronously aborts/throws.
+        // Cancellation retires this wait; late provider rejection stays consumed.
+        let operation: Promise<unknown>
+        try { operation = Promise.resolve(provider(Object.freeze({ prompt: prompt.trim(), requestId: attempt.requestId, context: requestContext, snapshot: freeze(structuredClone(snapshot)), signal: attempt.controller.signal }))) }
+        catch (error) { operation = Promise.reject(error) }
+        const input = await Promise.race([retired, operation])
         ensure(ownsRequest(), 'Discarded obsolete plan response', 'CONTEXT_CHANGED')
         checkRequestContext()
         stage = 'PREVIEW_REJECTED'
@@ -235,7 +246,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         const problem = failure(error, 'PLAN_PROVIDER_FAILED', '计划请求失败；尚未提交此请求。')
         publish({ phase: stage, preview: null, error: { code: problem.code, message: problem.message } })
         throw problem
-      }
+      } finally { attempt.controller.signal.removeEventListener('abort', stopWaiting) }
     },
     async onConfirm(planId: string): Promise<void> {
       const entry = entryFor(planId)
