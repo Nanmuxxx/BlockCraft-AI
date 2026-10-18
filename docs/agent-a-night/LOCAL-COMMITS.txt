@@ -26,3 +26,11 @@ b7f47f4c77cf500a2ae8d66a2eaba854b0f86379 fix(ai-server): reject disconnected req
 47c2fe53f17a3c37acd27bf511ea6c3af52aa160 fix(mochi-source): bound completion egress and guard cancellation
 0bb57e3f43e7935bcf32a13eae8869c1326bd691 fix(mochi-client): retain request ownership across state publication
 dca5903e22ff51e781a165d255b4e6280bfa963c feat(custom-block): propagate caller cancellation before artifact storage
+6ed5c0c23cb2ed27c96b61e17e28af1a39172ce3 docs(ai-core): record 649 regressions and caller cancellation boundaries
+0fd3d19491c720ad925a806af04434db08a67cfd fix(trusted-ai): normalize access and budget adapter failures
+5597ebf4df164628d5b7e4aaf5b63124038cdfd3 test(trusted-ai): verify sanitized adapter failures over HTTP
+9ebce4bc79c73caf7cb77140d7ba6e12e38da0e2 test(ai-core): discover owned regression families and record prerequisites
+1e7205ac16942275d91a4354f166066c12bf0115 test(custom-block): verify same-version reinstall and state migration boundaries
+36025d2de9f7ce3cff140c9baef596df72bad4d3 test(custom-block): keep hazardous admitted source inert and execution denied
+6d700369bfe5c9715df3266e16a631643c49d136 test(ai-core): connect fixture generation installation and source edits
+d3a9c2f9aebf719311e8ee51b9485517687edce3 fix(custom-block): enforce pending store quota across writers

@@ -1,0 +1,9 @@
+✔ fixture HTTP envelope → pending export → installer → selected source edit shares one owner/CAS and stays non-executable (50.820541ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 231.0255

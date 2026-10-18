@@ -166,5 +166,47 @@
     "remote": "755480c7e5c2bc9aa29055be1083c6febb1f1b4f",
     "tree": "5bb8a738e9395b00e834fc7b41024adaf12560f4",
     "message": "feat(custom-block): propagate caller cancellation before artifact storage"
+  },
+  {
+    "local": "6ed5c0c23cb2ed27c96b61e17e28af1a39172ce3",
+    "remote": "f5b1ba1e87f1dc1e216330dffd1bc188c59a57ea",
+    "tree": "816b02029e2a135ceae113d4565750a6f9315d4f",
+    "message": "docs(ai-core): record 649 regressions and caller cancellation boundaries"
+  },
+  {
+    "local": "0fd3d19491c720ad925a806af04434db08a67cfd",
+    "remote": "fe4496f7350247b2cd58affba16fc938114575e8",
+    "tree": "bd7a0b17e8c7775ce4247ea12290c742805fbe7f",
+    "message": "fix(trusted-ai): normalize access and budget adapter failures"
+  },
+  {
+    "local": "5597ebf4df164628d5b7e4aaf5b63124038cdfd3",
+    "remote": "e0017d8b6f15f85258153aa27baa9bd92cea4923",
+    "tree": "9b753d91a3441010d71294a8ace4ae8a731cadf6",
+    "message": "test(trusted-ai): verify sanitized adapter failures over HTTP"
+  },
+  {
+    "local": "9ebce4bc79c73caf7cb77140d7ba6e12e38da0e2",
+    "remote": "9c6b8788df29f5a6c3f2a29ae6ae071e348bb516",
+    "tree": "5318983ec7fdd5d7ae81f7e9c78e05dfaa88353d",
+    "message": "test(ai-core): discover owned regression families and record prerequisites"
+  },
+  {
+    "local": "1e7205ac16942275d91a4354f166066c12bf0115",
+    "remote": "bbafb266779a9bbb578b7a123c7692335a51522d",
+    "tree": "2e81325a45d70cf9a407fa397483fb6818319043",
+    "message": "test(custom-block): verify same-version reinstall and state migration boundaries"
+  },
+  {
+    "local": "36025d2de9f7ce3cff140c9baef596df72bad4d3",
+    "remote": "3510b0876ede425a002ad8e2129d4792d0025937",
+    "tree": "b8aebaa7e434bead4a92898b7678025a45c0b3e7",
+    "message": "test(custom-block): keep hazardous admitted source inert and execution denied"
+  },
+  {
+    "local": "6d700369bfe5c9715df3266e16a631643c49d136",
+    "remote": "63d58fa503598c92636afa0f6f7942be683f069f",
+    "tree": "2b76a26c1202d2a645eaf0f6c8ea1f492cf134ad",
+    "message": "test(ai-core): connect fixture generation installation and source edits"
   }
 ]

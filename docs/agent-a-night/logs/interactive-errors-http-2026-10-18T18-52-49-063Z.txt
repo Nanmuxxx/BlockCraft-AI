@@ -1,0 +1,27 @@
+✔ access adapter ignoring abort cannot retain a cancelled gate (1.690625ms)
+✔ budget adapter ignoring abort cannot retain a cancelled gate (0.749916ms)
+✔ access adapter is bounded by admission deadline (0.53025ms)
+✔ budget adapter is bounded by admission deadline (0.335416ms)
+✔ already disconnected requests do not invoke access or budget adapters (0.12725ms)
+✔ access adapter failures are normalized without exposing arbitrary codes/status (0.083ms)
+✔ access adapter failures are normalized without exposing arbitrary codes/status (0.053833ms)
+✔ access adapter failures are normalized without exposing arbitrary codes/status (0.048167ms)
+✔ budget adapter failures are normalized without exposing arbitrary codes/status (0.061292ms)
+✔ budget adapter failures are normalized without exposing arbitrary codes/status (0.092334ms)
+✔ budget adapter failures are normalized without exposing arbitrary codes/status (0.061083ms)
+✔ real provider HTTP request shape is reused, paid fetch replaced by fixture, both ends validated (14.481666ms)
+✔ all authorization and budget gates reject before upstream; no body can grant approval (13.230958ms)
+✔ approved call cap and origin remain enforced (2.356625ms)
+✔ malformed, incompatible and executable model outputs fail closed; legacy route cannot admit v2 (3.133625ms)
+✔ provider errors, truncated completion and invalid JSON never become successful configurations (5.448583ms)
+✔ HTTP disconnect during access retires admission before model egress (3.154625ms)
+✔ HTTP disconnect during budget retires admission before model egress (3.997417ms)
+✔ adapter exception metadata cannot become public HTTP codes or invalid status (1.34075ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 88.314834

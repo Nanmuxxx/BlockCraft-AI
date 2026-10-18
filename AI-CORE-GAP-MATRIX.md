@@ -58,3 +58,16 @@
 | 存储开始后取消 | IMPLEMENTED | generator.mjs:store.put边界 | 已进入不可逆存储则等待实际结果；不虚构回滚，无新增执行权限 |
 
 core-caller-cancel最新649/649；REAL_MODEL_CALLS=0。上述VERIFIED仅指Fixture协议/取消行为，不是实际模型语义或任意TSX运行验收。
+
+## 第四轮边界证据（03:07，持续开发）
+
+| 项目 | 状态 | 函数/文件 | 验证 |
+|---|---|---|---|
+| 鉴权/预算异常净化 | VERIFIED | server/trusted-interactive.mjs:createInteractiveGate/AdmissionError | gate/server回归19/19：任意code/status/null异常不能泄露或变成非法HTTP状态；零模型调用 |
+| 会话重装与状态 | VERIFIED | customProjectSession.ts:install | reinstall.test.cjs：同版本保留状态/布局，新版本仅清除选中状态，非法替换原子失败；无跨刷新承诺 |
+| 组合安装/源码修改 | VERIFIED | createGenerator→exportPendingInstall→createGeneratedArtifactUI→createSourceEditPlanner | installation.test.cjs：受控按钮文字props/颜色源码版本替换、预览零写入、确认一次CAS、旧制品/历史保留；fixture HTTP/模型seam各1次 |
+| 源码执行边界 | VERIFIED | contract.mjs:admitOutput；viewer.ts:viewerState | 危险源码仅以数据存储，execution denied；伪造runnable/旧版本观察值均不执行；不是安全沙箱认证 |
+| 跨writer存储配额 | VERIFIED | store.mjs:createPendingStore/put | pipeline.test.mjs：旧代码maxArtifacts=1并发落盘2份；新目录租约覆盖独立handle和独立进程；未知/残留/符号链接锁不删除、不跟随 |
+| 独立测试发现 | IMPLEMENTED | tests/ai-core-night/regression.mjs | 自动发现Agent A测试族；构建可信协议而不构建生成源码。ZIP兼容测试需预备可信依赖，由Agent B负责准备 |
+
+组合案例只证明源码/props修改和共同项目元数据；C模式仍pending-build或unavailable，不声称按钮已运行。存储若崩溃留下.write-lock，需可信宿主人工检查恢复；没有隐式清锁逻辑。

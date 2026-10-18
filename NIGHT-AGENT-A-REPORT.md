@@ -1,72 +1,68 @@
 # NIGHT AGENT A — AI 核心阶段报告
 
-阶段检查点：2026-10-19 02:48 左右（Asia/Shanghai），持续开发中。约 01:48 开始；尚未经过六小时，不将本检查点称为完整六小时成果。
+阶段检查点：2026-10-19 03:08（Asia/Shanghai），约01:48开始，持续开发中。六小时窗口尚未结束，本报告不是六小时完成声明。
 
 ## 1. 实际完成的功能
 
-- 恢复并核对 v1 AppSpec、trusted-interactive v2、生成服务、Artifact Installer、CustomBlock、Mochi、Runtime owner/CAS 的真实状态，详见 [差距矩阵](AI-CORE-GAP-MATRIX.md)。
-- 生成客户端限制响应字节、严格 UTF-8、截止时间和主动取消；v1/v2 响应边界及来源分别验证，保留 #39 离线来源说明。
-- 生成、Mochi、CustomBlock Provider 拒绝错误/工具调用/截断等非预期 completion 包络；取消不再依赖上游遵守 AbortSignal，迟到响应体被释放。
-- 实际本机 HTTP 服务 Fixture → 客户端严格验证 → 原有 Runtime → Mochi 预览/确认/CAS → B/C 同一项目状态。编辑案例为受控表单增加可选备注字段；没有声称按钮任意样式或任意 TSX 编辑已完成。
-- 新增选中上下文模型计划适配器：限制出站 UTF-8 JSON，排除业务记录、完整快照与授权；保留现有 Host/Planner/确认/CAS。正式修改入口仍禁用，没有隐式联网。
-- Mochi 源码计划在 provider、注册表和全项目验证等待期间可及时取消；修复同步 abort 重入对新请求所有权的干扰，历史不被迟到请求覆盖。
-- Mochi 建议服务取消后释放并发；可信交互鉴权/费用准入有截止时间，并响应断连。客户端响应流、严格解码及会话取消/重入另有复现回归。
-- CustomBlock 参数、重新安装、布局与 B/C 往返经过正式页面桌面/移动视口验证；pending-build 和 execution denied 保留。
+- 恢复v1 AppSpec、trusted-interactive v2、Artifact Installer、CustomBlock、Mochi、owner/CAS状态，具体文件/函数/证据见[差距矩阵](AI-CORE-GAP-MATRIX.md)。
+- 生成客户端与服务端限制字节、严格UTF-8、completion包络、截止时间和主动取消；不服从AbortSignal的传输/响应体也可退休，迟到响应体被释放。保留#39离线可信来源说明。
+- 实际本机HTTP Fixture→客户端验证→原有Runtime→Mochi预览/确认/CAS→B/C共同项目，受控表单增加可选备注字段；没有另建Runtime或生成协议。
+- 既有Mochi模型计划/源码模型seam增加最小上下文与出站边界，修复provider/注册表/全项目校验取消和同步abort重入。正式Workshop修改入口仍未启用。
+- Artifact原生File使用字节/fatal解码；读取/prepare取消、项目切换、权限与revision变更不会复活旧草稿；确认租约保留。
+- Mochi会话发布user/busy之前取得请求所有权，订阅取消/替换不再发出旧分析；只读建议服务、可信鉴权/费用准入有截止时间及断连处理。外部适配器任意code/status异常不能泄露到HTTP。
+- CustomBlock调用方取消在不可逆store.put之前阻止写入；进入存储后报告实际结果。存储配额新增跨handle/进程目录租约，避免maxArtifacts=1并发保存两份。
+- 组合Fixture案例：DeepSeek HTTP envelope→pending store→exportPendingInstall→正式UI控制器→选中源码模型seam→确认CAS。按钮文字props与蓝色源码版本被验证、旧Artifact/历史保留，C只显示pending-build/unavailable，未运行生成按钮。
+- 同版本重装保留状态/布局，新版本仅重置选中状态，无效替换原子失败；危险源码Fixture始终惰性且execution denied。
 
 ## 2. Diff 与 Commit
 
-- 基线 main：`4044fb185a2720eead0dc6710b0d38a215439b98`。HTTPS fetch 已尝试但凭据不可用；通过连接的 GitHub 工具核对 main SHA，未声称 fetch 成功。
-- 分支：`agent-a/ai-core-night-20261019`；隔离 worktree：`/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a`。
-- 本地精确提交列表：[LOCAL-COMMITS.txt](docs/agent-a-night/LOCAL-COMMITS.txt)。运行 `git diff --stat 4044fb1...HEAD`、`git diff 4044fb1...HEAD` 审查代码变化。
-- 首次发布的 16 个远端提交与本地文件树逐一校验一致；Git-data API 创建导致提交 SHA 不同，[COMMIT-MAPPING.json](docs/agent-a-night/COMMIT-MAPPING.json) 保留对照。后续提交持续同步，不能把未同步的本地 HEAD 说成远端 HEAD。
-- 最近独立提交：`5ac2d22`（源码注册表取消）、`49627e8`（建议客户端传输/UTF-8）、`baeffb1`（会话取消与重入）。
+- 基线main：`4044fb185a2720eead0dc6710b0d38a215439b98`。HTTPS fetch凭据不可用；通过连接的GitHub工具核对main SHA，未声称fetch成功。
+- 分支`agent-a/ai-core-night-20261019`；worktree `/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-a`。
+- 精确提交：[LOCAL-COMMITS.txt](docs/agent-a-night/LOCAL-COMMITS.txt)；本地/远端SHA及逐一校验的同一文件树：[COMMIT-MAPPING.json](docs/agent-a-night/COMMIT-MAPPING.json)。Git-data API提交时间不同，不能将本地SHA当作远端SHA。
+- 审查命令：`git diff --stat 4044fb1...HEAD`和`git diff 4044fb1...HEAD`。
+- 本轮代码提交：`0fd3d19`可信适配器错误净化、`5597ebf`HTTP回归、`9ebce4b`测试发现、`1e7205a`重装边界、`36025d2`惰性危险源码、`6d70036`组合安装/编辑、`d3a9c2f`跨writer配额。最后一项及文档正在同步，未把本地HEAD冒充远端已发布。
 
 ## 3. Draft PR
 
-[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持 Draft。禁止合并与部署；本任务均未执行。
+[PR #40](https://github.com/Nanmuxxx/BlockCraft-AI/pull/40)，保持Draft、未合并、未部署。当前已发布代码至本地`6d70036`对应远端`63d58fa503598c92636afa0f6f7942be683f069f`，树一致；后续同步见映射。
 
 ## 4. 测试命令及退出码
 
-逐条命令、参数、退出码和原始日志见 [TEST-COMMANDS.md](docs/agent-a-night/TEST-COMMANDS.md) 与 [commands.jsonl](docs/agent-a-night/logs/commands.jsonl)。保留修复前失败，没有删除失败证据或关闭校验。
+每条命令、cwd、时间、退出码和原始日志见[TEST-COMMANDS.md](docs/agent-a-night/TEST-COMMANDS.md)与[commands.jsonl](docs/agent-a-night/logs/commands.jsonl)。修复前失败、前置产物缺失、一次启动参数错误和修正后重跑均保留。
 
-本检查点最近结果：源码规划 39/39；建议客户端/会话/Workshop 25/25；安装与源码 63/63；HTTP/服务 23/23；扩展核心回归 622/622；生产构建退出码 0。此前完整核心回归 568/568、安全/编译/质量 187/187、默认 npm test 192/192。它们覆盖的是各记录当时的代码，不能相加为最新一次全量通过数；后续修改仍按相关回归验证。
+- 最新`node tests/ai-core-night/regression.mjs`：**724/724，退出码0**，自动发现Agent A测试族并构建可信服务/CustomBlock协议；没有编译或执行生成源码。ZIP兼容测试依赖已准备的可信资源，准备责任在Agent B。
+- 组合安装/编辑1/1，重装相关26/26，惰性源码/Viewer25/25，鉴权异常HTTP19/19，跨进程存储/安装32/32，退出码均0；这些属于各次运行，不能相加成另一项全量结果。
+- 最近生产构建`build-source-publication`退出0；之后修改为服务mjs和测试，不将旧构建说成最新HEAD重新构建。
+- 历史较广核心649/649、622/622、568/568，安全/编译/质量187/187、默认npm test192/192；准确范围及当时提交以日志为准。
 
 ## 5. 真实模型调用
 
-**REAL_MODEL_CALLS=0**。所有本次服务测试显式注入固定离线 Fixture；归档 Artifact 的历史 deepseek 来源不是本次调用。未读取生产密钥，未执行付费模型调用。
+**REAL_MODEL_CALLS=0**。本轮HTTP传输和源码completion均为显式注入的离线Fixture；测试里的allowPaid配置只作用于注入的假transport，不发网络。归档Artifact的历史deepseek来源不是本次调用。未读取生产密钥或私人数据。
 
 ## 6. 浏览器证据
 
-[browser 目录](docs/agent-a-night/browser) 含各次报告；[文件大小及 SHA-256 清单](docs/agent-a-night/browser-inventory.json) 对应本地截图/报告。覆盖正式 `/ai-create`、可信离线入口、生成 Fixture、安装/替换竞态、CustomBlock Workshop、Mochi 模型计划 Fixture 与只读建议。桌面宽 1366、移动宽 390；移动为 Chromium 视口/触摸模拟，不冒充真机。
+[浏览器报告](docs/agent-a-night/browser)与[文件大小/SHA-256清单](docs/agent-a-night/browser-inventory.json)保留正式`/ai-create`、可信离线入口、生成Fixture、安装/替换竞态、CustomBlock参数/重装、Mochi计划/只读建议。桌面1366与移动390；移动为Chromium视口/触摸模拟，不冒充真机。
 
-`mochi-model-final` 和 `mochi-advice-final` 两次复跑退出码 0。建议客户端修改后正式页面首次并发运行在初始输入框超时，串行重跑通过（browser-advice-client-retry）；不能将缓存竞争猜测当作已确认根因。部分历史报告含脚本原有旧 baseline 字段，不能据此宣称最新 HEAD 已验证。
+最新`artifact-utf8`和`advice-publication`桌面/移动均通过，0外部请求、0真实模型调用。前者包含原生File损坏UTF-8拒绝后正常预览/安装，后者覆盖正式只读Mochi。一次并发运行初始输入框超时，串行重跑通过；缓存竞争尚非已确认根因。旧脚本报告中的固定baseline不能证明最新HEAD。新增组合源码案例为Node协议回归，未声称浏览器执行了生成TSX。
 
 ## 7. 新发现的问题
 
-- AbortSignal 不是取消完成保证：fetch、响应流、provider、注册表及费用/鉴权适配器可能忽略它。已对可撤销的请求等待补上竞态退出和迟到错误消费。
-- abort 监听器同步重入可损坏新请求所有权；已分别修复源码计划和建议会话，并保留失败复现。
-- 默认 UTF-8 替换解码会接受损坏 JSON 字符串；相关边界已改为 fatal 解码。
-- v1 质量评估曾因共用支持 v2 的 schema 接受 v2，现明确拒绝。
-- 确认安装期间的短租约仍需保持原子性；不以提前解锁规避 CAS。版本历史长期保留可能增长，需要另行设计保留策略。
+- AbortSignal不保证外部操作完成；所有可撤销等待需主动退休、消费迟到拒绝，确认租约/CAS不可提前解锁。
+- 同步abort/状态订阅重入可破坏请求所有权，已保留复现并修复。
+- UTF-8替换解码会静默改变JSON字符串；字节入口已严格解码。
+- 共享v1/v2 schema曾令v1质量评估误收v2，现明确分离。
+- 私有store的先读目录后写入配额有并发竞态，已用跨进程非等待目录租约修复。崩溃残留`.write-lock`需可信宿主检查后恢复；不自动删除未知锁。
+- 源码语法准入不是沙箱认证：危险DOM/网络/无限循环源码可作为数据保存，但不得执行；Viewer仍拒绝。
+- 会话历史长期保留可能增长，需持久化/保留策略，不随意删除回滚证据。
 
 ## 8. 下一阶段最有价值的工作
 
-Artifact prepare取消已在a0c8eec完成；继续审计文件读取与参数持久化边界，完善生产页面回归证据。随后按[接口契约](docs/agent-a-night/AI-CORE-INTERFACE-CONTRACT.md)接入具有可信鉴权、持久预算、明确用户确认的生产修改接口；真实模型语义验收须另获付费授权。
+继续独立边界审计、协议兼容/取消/持久化回归。生产接入需遵循[接口契约](docs/agent-a-night/AI-CORE-INTERFACE-CONTRACT.md)：可信鉴权、持久预算、明确确认、revision/owner/CAS；真实模型语义验收需另获付费授权。隔离Viewer和跨刷新项目持久化需独立设计验收。
 
 ## 9. 其他 Agent 配合
 
-- Agent B 负责 React ZIP 模板/导出器，本分支不修改其文件；参数/版本导出需按接口契约共同验收。
-- Viewer/隔离后端需要独立安全验收；本任务不执行不可信 TSX、不跳过 Viewer。
-- PR #35 Docker、#36 Mochi Host 测试文件均避开；部署、冻结视频与商业材料均未修改。
+Agent B负责React ZIP模板/导出器，本分支不修改其文件；需共同验收精确版本/props/state导出。Viewer隔离后端需独立安全验收。避开PR #35 Docker、#36 Mochi Host测试文件，未修改部署、冻结视频和商业材料。
 
 ## 10. 产品真实 AI 闭环判断
 
-受控 AppSpec 的服务协议、验证、项目创建、B 模式编辑和确认式修改已经有离线端到端证据。生产 DeepSeek 语义生成尚未在本次验证；正式 Mochi 修改接口未启用；任意 TSX 的安全隔离运行与独立 ZIP 闭环未完成。CustomBlock 只到受验证的 pending-build 数据安装。该判断以可观察行为划分，不给出主观完成百分比。
-
-最新同步：本地 `031eac6b301292bc8379106916eaf715af2a4f80` 与远端 `a638a31df15ccde8562807682244959380843ed9` 的树均为 `dea84c657f92973c2acfdd6db7455f9898362290`。本报告后续文档提交另行同步。
-
-## 第三轮补充
-
-新增独立提交e8816ff、a073fa2、b7f47f4、47c2fe5、0bb57e3、dca5903：Artifact文件读取取消/重入、原生文件严格UTF-8、生成发出前断连、源码模型出站限制、Mochi状态发布时取消、CustomBlock调用方取消。完整核心core-caller-cancel649/649；生产构建0；browser/artifact-utf8和browser/advice-publication桌面/移动均通过。存储前取消不会写入；进入store.put后返回真实结果，不声称回滚。
-
-最新代码本地dca5903与远端755480c7e5c2bc9aa29055be1083c6febb1f1b4f文件树相同。文档同步另列映射。约一小时已过，仍在六小时窗口中，继续推进；本报告为阶段成果。新增问题和复现失败见账本/原始日志。下一项继续审计持久化及重新安装边界，不越过Viewer、导出器或生产费用授权。
+受控AppSpec服务协议、验证、项目创建、B模式编辑和确认修改有离线端到端证据。CustomBlock源码/props版本修改已在同一owner/CAS完成，但只到受验证pending-build。生产DeepSeek语义生成未在本次验证；正式Mochi修改接口未启用；任意TSX安全运行和独立ZIP全链路尚未完成。按可观察行为判断，不给主观完成百分比。

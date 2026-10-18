@@ -1,0 +1,23 @@
+✔ fixture HTTP envelope → pending export → installer → selected source edit shares one owner/CAS and stays non-executable (52.557333ms)
+✔ experiment is disabled by default before touching provider or store (0.622375ms)
+✔ three MOCK-only end-to-end inputs persist distinct inspectable pending artifacts with execution denied (35.38175ms)
+✔ invalid output never reaches storage, never evaluates source side effects (7.127625ms)
+✔ immutable storage is idempotent, retains first provenance and does not overwrite changed content (8.087292ms)
+✔ read rejects tampering, mismatched reference, extra metadata, symlink and unknown status (8.771792ms)
+✔ private store permissions, quotas and references fail closed (7.638709ms)
+✔ caller mutation cannot change the artifact snapshot during asynchronous hashing (5.664042ms)
+✔ generator rejects concurrent work, recovers after provider failure and redacts unknown errors (6.048125ms)
+✔ all JSON files are inert source artifacts, not generated source module files (5.7205ms)
+✔ caller cancellation retires ignored provider work before any pending-store write (0.506333ms)
+✔ pre-cancelled generator performs no provider or storage calls (0.075083ms)
+✔ cancellation during output admission prevents storage; admitted storage retains an honest outcome (0.407333ms)
+✔ syntax admission is not sandbox certification: hazardous source stays inert and execution denied (6.173375ms)
+✔ independent store handles cannot race distinct artifacts past the shared directory quota (6.554542ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 237.455833

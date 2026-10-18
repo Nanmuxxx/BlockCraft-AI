@@ -71,3 +71,15 @@
 - 最新核心回归core-caller-cancel：649/649；build-source-publication退出0。修复前失败、一次回归启动命令漏掉node导致127均保留；修正命令后通过。
 - 上述代码已同步Draft #40；未合并、未部署、REAL_MODEL_CALLS=0。
 - 当前：同步证据；下一任务：核心持久化/重装及模型适配层剩余盲区，继续安全独立工作。
+
+## 第四轮进展（03:07，继续开发）
+
+- 0fd3d19、5597ebf：可信交互access/budget异常统一为安全BUDGET_UNAVAILABLE，HTTP不泄露任意code/status；修复前失败保留，19/19。
+- 9ebce4b：owned-family回归自动发现，首次716/716；新增组合测试后721/721。
+- 1e7205a：同版本重装保留状态/布局、新版本仅重置选中状态、无效替换原子失败；26/26相关测试。
+- 36025d2：危险源码语法准入保持惰性、未构建/不可执行；25/25边界回归。
+- 6d70036：fixture HTTP envelope→存储→导出→正式安装UI控制器→选中源码模型seam→确认/CAS→B/C投影一致；按钮文字/蓝色仅在惰性源码和props中验证，不执行TSX。
+- d3a9c2f：复现并修复共享目录配额竞态，独立handle/进程共用非等待目录租约；残留锁需人工检查，未知锁不删除。相关32/32，正在执行扩展核心回归。
+- 当前：归档证据并同步Draft #40；下一任务：审计当前生成协议/源码编辑/Artifact的剩余安全独立盲区。
+- 已修改文件按git diff --name-status和LOCAL-COMMITS.txt核对；未修改Agent B导出器、Docker、冻结视频或PR #36 Host测试。
+- 阻塞仍为真实付费语义验收、正式Mochi修改服务、实测Viewer隔离后端和跨刷新存储设计；REAL_MODEL_CALLS=0。
