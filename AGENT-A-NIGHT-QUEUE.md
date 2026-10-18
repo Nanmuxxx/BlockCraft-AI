@@ -7,25 +7,45 @@
 - Agent B：`agent-b/react-zip-night-20261019`，正在修改 `tools/project-zip-export/templates.mjs`。本分支禁止编辑导出器、模板、部署及冻结材料。
 - REAL_MODEL_CALLS=0。服务测试显式注入固定 Fixture；不读取 `.env`、生产密钥或私人材料。
 
-## 当前任务
+## 当前任务（2026-10-19 02:08）
 
-1. 核心链路恢复与矩阵：代码检查完成，测试待逐项复核。
-2. 生成客户端：统一有界响应读取、取消/超时、v1/v2 分离，补迟到响应回归。
+已完成第一轮链路恢复、生成/协议/取消修复和离线端到端验证；继续接口审计、核心回归、生产浏览器盲区与 Draft PR 准备。六小时窗口尚未结束，不声称已工作六小时。
 
-## 下一任务
+## 已完成与 Commit
 
-- 真实本地服务端协议 → 客户端 → Runtime → B/C 的离线垂直测试。
-- Mochi 受控 AppSpec 修改适配器与确认/CAS/取消端到端测试。
-- Artifact 安装/重新安装、参数持久化、v1/v2、安全审计与正式页面浏览器验收。
-- 小范围提交，发布独立分支与 Draft PR，完成报告。
+- `fd861f9`：生成客户端 128 KiB/fatal UTF-8、45 秒截止、取消、v1/v2 分离。
+- `b4c8c42`：最小选中上下文模型计划适配器；服务 HTTP→客户端→Runtime→Mochi 确认→B/C 离线案例。
+- `dce2212`：服务端严格 completion 包络、UTF-8；测试命令/退出码记录器。
+- `40f9db5`：不服从 AbortSignal 的传输/响应体仍按时释放服务并发。
+- `0544d74`：既有 Mochi 浏览器用例通过模型 JSON seam 重跑。
+- `c73edba`：v1 业务质量评估拒绝合法 v2，避免错误协议验收。
+- `98865fe`：客户端/服务端未使用及迟到响应体取消。
+- `e7feadc`：Mochi completion 不响应取消时立即退休；修正测试漏传 requestId。
+- `ad36214`：CustomBlock Provider 相同边界、混合 error/工具包络拒绝。
+- 源码计划：取消不再等待永不完成 provider；修复同步 abort 重入共享 epoch（9f42962）。
 
-## 已修改文件与证据
+修改文件精确清单使用 `git diff --name-status 4044fb1...HEAD`。未编辑 Docker、导出器模板、冻结视频、PR #36 Host 测试或 Agent B 文件。
 
-初始文档：本账本、`AI-CORE-GAP-MATRIX.md`。每次功能提交后追加结果。
+## 测试结论
 
-## 阻塞与可继续工作
+每个命令、参数、开始/结束时间、退出码见 `docs/agent-a-night/logs/commands.jsonl`，原始输出保留（含失败及修复后重跑）。早期命令见同目录 legacy 日志。
 
-- Git CLI HTTPS 无认证；可用已连接 GitHub 接口核对远端及发布独立分支，不能声称 fetch 成功。
-- 真实 DeepSeek 付费调用未获授权：继续 Fixture 协议与错误测试。
-- 任意 TSX 缺少隔离准入：保持 Viewer fail-closed，继续验证惰性 Artifact/源码版本与受控 AppSpec。
-- 不因以上阻塞停止独立测试或开发。
+- 生成/服务/响应体释放：56/56；模型计划与服务垂直：13/13。
+- 生成/质量/CustomBlock/隔离/可信样本编译：187/187；只编译仓库审核样本，未执行组件。
+- CustomBlock Provider+Pipeline：26/26；源码计划：37/37。
+- 桌面/手机：生成、正式离线可信番茄钟、番茄钟替换竞态、Artifact 正式入口、Artifact 安装竞态、Mochi 模型计划 fixture、Mochi 正式只读建议全部通过。
+- 生产构建通过，最新 build-after-source 退出码 0；后续源码变更仍需构建。
+- 曾失败：构建前置产物缺失、质量评估版本边界、测试计数设置、漏传取消 ID、dispose 错误优先级、新重入复现。均保存失败证据，已针对修复重跑。
+
+## 阻塞与下一任务
+
+- Git HTTPS 无本机凭据：通过已连接 GitHub Git-data API 发布独立分支/Draft PR；不能称 fetch 成功。
+- 真实 DeepSeek 付费调用未授权：REAL_MODEL_CALLS=0；继续已审核 fixture 通路。
+- 正式 Mochi 修改入口仍 unavailablePlanProvider；新 seam 不隐式启用付费或网络。需要独立服务鉴权/费用接口契约。
+- 任意 TSX Viewer 缺少验收隔离后端：保持 execution denied。
+- 会话内参数保存/重装已测，不提供跨刷新持久化。保留版本历史可能长期增长，需设计保留策略而非直接删除回滚证据。
+- 下一步：更新差距矩阵及跨模块契约；相关完整回归；浏览器覆盖剩余边界；发布 Draft；持续推进安全独立队列。
+
+- 最新完整核心回归 core-complete：568/568；正式 CustomBlock Workshop 桌面/手机均通过。
+- `4c40e94`：Mochi instruction+选中上下文 UTF-8 64 KiB 出站限制；model-request-bound-fixed 14/14（首次测试使用错 fixture 层级，已保留失败）。
+- 接口契约已写入 `docs/agent-a-night/AI-CORE-INTERFACE-CONTRACT.md`；生产修改传输及 Viewer 仍待独立验收。
