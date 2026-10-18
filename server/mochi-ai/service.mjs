@@ -76,14 +76,18 @@ export function createMochiService({ provider, enabled = false, approval, reserv
       const reservation = tokenReservation(input)
       if (calls >= approval.maxCalls || tokens + reservation > approval.maxTotalTokens || state.calls >= POLICY.sessionCalls || state.tokens + reservation > POLICY.sessionTokens) denied('BUDGET_EXHAUSTED', '本次 AI 预算已用完。')
       signal?.throwIfAborted()
+      const epoch = state.consentEpoch
       state.calls++; calls++; state.tokens += reservation; tokens += reservation
       state[timeKey] = now(); state.busy = true; inFlight++
       if (proactive) remember(state.events, eventKey)
-      const epoch = state.consentEpoch
       const controller = new AbortController(); state.controller = proactive ? controller : undefined
       const abort = () => controller.abort(); signal?.addEventListener('abort', abort, { once: true })
+      // Trusted synchronous adapters can cancel between the early check and
+      // listener registration. A missed event must not authorize ledger egress.
+      if (signal?.aborted) abort()
       let budgetTimer, budgetAbort, budgetTimedOut = false
       try {
+        if (controller.signal.aborted || (proactive && (!state.consent || epoch !== state.consentEpoch))) denied('CANCELLED', '已取消本次请求。', 499)
         // Deployment adapter atomically reserves a monetary allowance in its
         // durable shared ledger, using approved model pricing. No prompt/data.
         // Memory counters above are additional limits, never a currency cap.
@@ -106,6 +110,7 @@ export function createMochiService({ provider, enabled = false, approval, reserv
         if (admitted !== true) denied('BUDGET_EXHAUSTED', '费用额度不足，未调用模型。')
         if (controller.signal.aborted) denied('CANCELLED', '已取消本次请求。', 499)
         gate()
+        if (controller.signal.aborted || (proactive && (!state.consent || epoch !== state.consentEpoch))) denied('CANCELLED', '已取消本次请求。', 499)
         let output
         try { output = await abortable(provider.analyze(input, { signal: controller.signal }), controller.signal) }
         catch (error) {
