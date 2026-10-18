@@ -219,7 +219,17 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     syncContext, refreshStatus, setProactive, cancel,
     chat: prompt => run('chat', prompt), onEvent: event => run('proactive', undefined, event),
     focusSuggestion(id) { const item = suggestion(id); if (item.blockId !== null) focusBlock(item.blockId); return item },
-    async continueSuggestion(id, question) { const item = suggestion(id); if (item.blockId !== null) focusBlock(item.blockId); return run('chat', question || `请解释这条建议：${item.text}`) },
+    async continueSuggestion(id, question) {
+      const item = suggestion(id), before = projectContext(readContext())
+      if (item.blockId !== null) focusBlock(item.blockId)
+      // Focusing can synchronously publish a new selection, edit or project.
+      // Only this action's target selection may change before sending its text.
+      check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
+      const after = projectContext(readContext())
+      check(JSON.stringify({ ...before, selectedBlockId: after.selectedBlockId }) === JSON.stringify(after)
+        && (after.selectedBlockId === before.selectedBlockId || after.selectedBlockId === item.blockId), 'CONTEXT_CHANGED', '项目已变化，请重新提问。', 409)
+      return run('chat', question || `请解释这条建议：${item.text}`)
+    },
     async ignore(id) {
       const item = suggestion(id), owned = signature
       remember(ignored, fingerprint(item))
