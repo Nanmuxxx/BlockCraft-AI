@@ -1,6 +1,26 @@
-name: Docker acceptance (manual)
+name: Docker acceptance
 
 on:
+  pull_request:
+    paths:
+      - .github/workflows/docker-acceptance.yml
+      - Dockerfile
+      - .dockerignore
+      - ms_deploy.json
+      - package.json
+      - package-lock.json
+      - index.html
+      - vite.config.ts
+      - tsconfig.json
+      - src/**
+      - public/**
+      - server/index.mjs
+      - server/package.json
+      - server/tsconfig.json
+      - server/aiGenerationPrompt.mjs
+      - server/aiGenerationQuality.mjs
+      - server/mochi-ai/**
+      - server/project-export/**
   workflow_dispatch:
 
 permissions:
@@ -9,15 +29,18 @@ permissions:
 jobs:
   docker-acceptance:
     name: Build and smoke-test the production container
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Prepare evidence files
         shell: bash
+        timeout-minutes: 5
         run: |
           set -euo pipefail
           mkdir -p artifacts/docker-acceptance
@@ -30,6 +53,7 @@ jobs:
 
       - name: Build image
         shell: bash
+        timeout-minutes: 15
         run: |
           set -euo pipefail
           docker version 2>&1 | tee artifacts/docker-acceptance/docker-version.log
@@ -39,6 +63,7 @@ jobs:
 
       - name: Start container and run bounded smoke tests
         shell: bash
+        timeout-minutes: 12
         run: |
           set -euo pipefail
           container="blockcraft-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
@@ -192,7 +217,7 @@ jobs:
           assert.deepEqual(await health.json(), { status: 'ok' })
           log('GET /api/health -> 200 application/json {status:"ok"}')
 
-          for (const path of ['/unknown', '/api/unknown', '/assets/missing.js']) {
+          for (const path of ['/unknown', '/api/unknown', '/assets/missing.js', '/api/local-project-export']) {
             const response = await localFetch(path)
             assert.equal(response.status, 404, path)
             assert.match(response.headers.get('content-type') || '', /^application\/json/, path)
@@ -224,9 +249,31 @@ jobs:
             "$container" | tee -a artifacts/docker-acceptance/container-health.log
           grep -q 'health=healthy' artifacts/docker-acceptance/container-health.log
 
+      - name: Write workflow summary
+        if: always()
+        shell: bash
+        timeout-minutes: 2
+        run: |
+          set -u
+          mkdir -p artifacts/docker-acceptance
+          {
+            echo "commit=$GITHUB_SHA"
+            echo "event=$GITHUB_EVENT_NAME"
+            echo "ref=$GITHUB_REF"
+            echo "image=${IMAGE_NAME:-not-created}"
+            echo "container=${CONTAINER_NAME:-not-created}"
+            echo "docker_version=see docker-version.log"
+            echo "build_log_bytes=$(wc -c < artifacts/docker-acceptance/build.log 2>/dev/null || echo 0)"
+            echo "health_log_tail:"
+            tail -n 20 artifacts/docker-acceptance/container-health.log 2>/dev/null || true
+            echo "http_smoke_tail:"
+            tail -n 20 artifacts/docker-acceptance/http-smoke.log 2>/dev/null || true
+          } > artifacts/docker-acceptance/summary.txt
+
       - name: Upload acceptance evidence
         if: always()
         uses: actions/upload-artifact@v4
+        timeout-minutes: 5
         with:
           name: docker-acceptance-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/docker-acceptance

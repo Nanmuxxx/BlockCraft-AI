@@ -10,6 +10,7 @@ COPY public ./public
 COPY server/package.json server/tsconfig.json server/index.mjs \
   server/aiGenerationPrompt.mjs server/aiGenerationQuality.mjs ./server/
 COPY server/mochi-ai ./server/mochi-ai
+COPY server/project-export ./server/project-export
 
 RUN npm run build && npm --prefix server run build
 

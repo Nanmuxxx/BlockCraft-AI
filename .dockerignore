@@ -16,6 +16,8 @@
 !server/aiGenerationQuality.mjs
 !server/mochi-ai/
 !server/mochi-ai/**
+!server/project-export/
+!server/project-export/**
 **/node_modules
 **/dist
 **/.generated
