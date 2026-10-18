@@ -508,5 +508,17 @@
     "remote": "16d8920b0de1bccf847af3f01426d1deb59ce21b",
     "tree": "b56d512dccadcac6abf7742e6791a52f22fdef26",
     "message": "docs(ai-core): record browser verification state"
+  },
+  {
+    "local": "96f6f21ff81b5986cee0141d65d1c9da9bc25c01",
+    "remote": "39138d19e5c1c36d4c4ccdd91474a418fa9b519b",
+    "tree": "f2523ceecf1c466174076721423431ca840d8b3b",
+    "message": "docs(ai-core): finalize PR convergence decision"
+  },
+  {
+    "local": "fcb0aa387e5ae0ba808b4c8e669d58e7846ca310",
+    "remote": "1cecc1bb6f338c0d148c807ae9a3c8b2d6616ec0",
+    "tree": "1f098297ccaac677d371423930a962db9a5d205e",
+    "message": "docs(ai-core): clarify functional commit baseline"
   }
 ]
