@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+import { abortable } from './ai-abort.mjs'
 import { buildInteractiveMessages, assertInteractiveSpec, createInteractiveGate } from './trusted-interactive.mjs'
 import { createMochiIntegration } from './mochi-ai/index.mjs'
 import { createServer } from 'node:http'
@@ -73,7 +74,7 @@ async function readUpstream(response, controller) {
   let size = 0
   try {
     while (true) {
-      const { done, value } = await reader.read()
+      const { done, value } = await abortable(reader.read(), controller.signal)
       if (done) break
       size += value.byteLength
       if (size > LIMITS.upstreamBytes) {
@@ -83,7 +84,7 @@ async function readUpstream(response, controller) {
       chunks.push(Buffer.from(value))
     }
     return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))
-  } finally { reader.releaseLock() }
+  } finally { void reader.cancel().catch(() => {}); reader.releaseLock() }
 }
 
 async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interactive = false }, res) {
@@ -93,7 +94,8 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
   const onClose = () => { if (!res.writableEnded) controller.abort() }
   res.on('close', onClose)
   try {
-    const response = await fetchImpl(ENDPOINT, {
+    controller.signal.throwIfAborted()
+    const fetching = Promise.resolve(fetchImpl(ENDPOINT, {
       method: 'POST',
       redirect: 'error',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -105,7 +107,10 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
         stream: false,
         max_tokens: 8192,
       }),
-    })
+    }))
+    // A late response after timeout/disconnect must release its unused body.
+    void fetching.then(response => { if (controller.signal.aborted) void response.body?.cancel().catch(() => {}) }, () => {})
+    const response = await abortable(fetching, controller.signal)
     if (!response.ok) throw fail(502, 'AI_UNAVAILABLE', 'AI 服务暂时不可用，请稍后重试。')
     const envelope = await readUpstream(response, controller)
     const choice = envelope?.choices?.[0]

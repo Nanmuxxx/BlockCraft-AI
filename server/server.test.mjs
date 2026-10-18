@@ -211,3 +211,46 @@ test('cross-origin requests and wrong methods/paths never call upstream', async 
   await errorIs(await fetch(`${s.base}/unknown`), 404, 'NOT_FOUND')
   assert.equal(s.calls(), 0)
 })
+
+test('deadline releases ignored-abort transport and cancels its late response body', async t => {
+  let resolve, cancelled = 0
+  const s = await setup(t, { aiTimeoutMs: 10, fetchImpl: () => new Promise(r => { resolve = r }) })
+  await errorIs(await s.post(), 504, 'AI_TIMEOUT')
+  resolve(new Response(new ReadableStream({ cancel() { cancelled++ } })))
+  await new Promise(r => setImmediate(r))
+  assert.equal(cancelled, 1)
+})
+test('deadline releases ignored-abort body, including nonsettling cancel', async t => {
+  let cancelled = 0
+  const s = await setup(t, { aiTimeoutMs: 10, fetchImpl: async () => new Response(new ReadableStream({
+    cancel() { cancelled++; return new Promise(() => {}) },
+  })) })
+  await errorIs(await s.post(), 504, 'AI_TIMEOUT')
+  assert.equal(cancelled, 1)
+})
+test('timed-out requests do not retain concurrency slots', async t => {
+  let calls = 0
+  const s = await setup(t, { aiTimeoutMs: 10, fetchImpl: () => { calls++; return new Promise(() => {}) } })
+  const first = await Promise.all(Array.from({ length: LIMITS.concurrentRequests }, () => s.post()))
+  for (const response of first) await errorIs(response, 504, 'AI_TIMEOUT')
+  await errorIs(await s.post(), 504, 'AI_TIMEOUT')
+  assert.equal(calls, LIMITS.concurrentRequests + 1)
+})
+
+test('HTTP disconnect aborts upstream and releases admission even when transport ignores cancellation', async t => {
+  let begin, firstSignal, late, calls = 0
+  const started = new Promise(resolve => { begin = resolve })
+  const s = await setup(t, { fetchImpl: (_url, { signal }) => {
+    if (++calls > 1) return Promise.resolve(completion())
+    firstSignal = signal; begin()
+    return new Promise(resolve => { late = resolve })
+  } })
+  const controller = new AbortController()
+  const operation = s.post({ idea: '取消的请求' }, { signal: controller.signal })
+  const rejection = assert.rejects(operation)
+  await started; controller.abort(); await rejection
+  if (!firstSignal.aborted) await once(firstSignal, 'abort')
+  assert.equal(firstSignal.aborted, true)
+  assert.equal((await s.post()).status, 200)
+  late(completion())
+})
