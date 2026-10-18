@@ -3,9 +3,11 @@
 ## Verified upstream and review sequence
 
 - 2026-10-18: PR #18 merged at 08:38:11 UTC. The independent worktree starts from main `65e1f813949ceb1bc74064d338a04f99351c244e`.
+- Final refresh found PR #19 merged during this task. Integrated latest main `c039fe9533a868425a493ed7d581774aa042a20f` without conflicts and reran tests/build/Chromium acceptance. Its 16 upstream CustomBlock paths are retained byte-for-byte; this task adds no CustomBlock changes.
 - PR #17 was open/unmerged at verification, head `e6f94fa591aea3111bbc811c7b20c98a74f45cdf`. Its exact Git commit was integrated locally; no other Agent working directory was read or copied.
 - [PR #20](https://github.com/Nanmuxxx/BlockCraft-AI/pull/20) targets #17's branch with the formal component contract and browser-discovered corrections. Review #20 into #17 first, then #17 into main; this integration is dependent and must be reconciled/retested against that merged main. This integration branch includes the committed dependency so the result can be reviewed now.
 - No GitHub PR was merged and nothing was deployed by this task.
+- [Integration draft PR #21](https://github.com/Nanmuxxx/BlockCraft-AI/pull/21) targets main and contains the dependent reviewable implementation. #17 and #20 remain unmerged.
 
 ## Ownership and lifecycle
 
