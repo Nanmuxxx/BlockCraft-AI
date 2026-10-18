@@ -3,6 +3,21 @@
 }
 
 .app-spec-canvas__error {
+  grid-column: 1;
   color: #c00000;
   margin: 0.75rem 0;
+}
+.app-spec-canvas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
+  gap: 20px;
+}
+
+.app-spec-canvas > .block-canvas-stage { min-width: 0; grid-column: 1; grid-row: 1; }
+.app-spec-canvas > .app-spec-inspector { grid-column: 2; grid-row: 1 / span 2; }
+
+@media (max-width: 900px) {
+  .app-spec-canvas { grid-template-columns: minmax(0, 1fr); }
+  .app-spec-canvas > .app-spec-inspector { grid-column: 1; grid-row: 3; }
 }
