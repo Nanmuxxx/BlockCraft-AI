@@ -206,6 +206,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     } finally { if (pending === controller) { pending = null; emit({ busy: false }) } }
   }
   function suggestion(id) {
+    check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
     const item = state.suggestions.find(s => s.id === id)
     check(item, 'SUGGESTION_EXPIRED', '建议已过期。', 409)
     const context = projectContext(readContext())
@@ -219,7 +220,16 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     chat: prompt => run('chat', prompt), onEvent: event => run('proactive', undefined, event),
     focusSuggestion(id) { const item = suggestion(id); if (item.blockId !== null) focusBlock(item.blockId); return item },
     async continueSuggestion(id, question) { const item = suggestion(id); if (item.blockId !== null) focusBlock(item.blockId); return run('chat', question || `请解释这条建议：${item.text}`) },
-    async ignore(id) { const item = suggestion(id); remember(ignored, fingerprint(item)); emit({ suggestions: state.suggestions.filter(s => s.id !== id) }); await api.ignore(id) },
+    async ignore(id) {
+      const item = suggestion(id), owned = signature
+      remember(ignored, fingerprint(item))
+      emit({ suggestions: state.suggestions.filter(s => s.id !== id) })
+      // Publication can synchronously close the panel or replace its project.
+      // Do not dispatch the retired action into the host's new access scope.
+      check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
+      check(signature === owned && JSON.stringify(projectContext(readContext())) === owned, 'CONTEXT_CHANGED', '项目已变化，请重新提问。', 409)
+      await api.ignore(id)
+    },
     requestModification(id) { suggestion(id); throw new MochiError('AI_MODIFICATION_DISABLED', errors.AI_MODIFICATION_DISABLED, 503) },
     dispose() { disposed = true; cancel(); listeners.clear() },
   }
