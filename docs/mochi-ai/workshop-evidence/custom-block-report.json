@@ -1,0 +1,76 @@
+{
+  "browser": "Chromium",
+  "route": "/ai-create",
+  "generation": "offline HTTP response, no paid API",
+  "cases": [
+    {
+      "width": 1366,
+      "passed": true,
+      "customInstances": 2,
+      "builtinRenders": 3,
+      "dragInput": "mouse",
+      "reference": {
+        "id": "custom-1",
+        "definitionId": "test-countdown",
+        "versionDigest": "sha256:5a00391acc66078473fce840a79288e2e60ce1690883194e889512f4109dcbd7",
+        "props": {
+          "label": "新版参数"
+        }
+      },
+      "checks": [
+        "real product route",
+        "mixed selection/drag/layout persistence",
+        "trusted props save/Schema rejection",
+        "stale custom draft",
+        "invalid digest atomic rejection",
+        "concurrent import rejects",
+        "new definition admission",
+        "same-definition version/Schema re-admission",
+        "builtin Inspector field editing",
+        "builtin form/list CRUD and live metric",
+        "B/C state retention",
+        "exact unavailable viewer",
+        "no iframe or generated module execution",
+        "Logo/Pixelify/Mochi",
+        "no horizontal overflow",
+        "legacy Home/clarification/Demo task roundtrip"
+      ],
+      "paidCalls": 0
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "customInstances": 2,
+      "builtinRenders": 3,
+      "dragInput": "Chromium touch events",
+      "reference": {
+        "id": "custom-1",
+        "definitionId": "test-countdown",
+        "versionDigest": "sha256:5a00391acc66078473fce840a79288e2e60ce1690883194e889512f4109dcbd7",
+        "props": {
+          "label": "新版参数"
+        }
+      },
+      "checks": [
+        "real product route",
+        "mixed selection/drag/layout persistence",
+        "trusted props save/Schema rejection",
+        "stale custom draft",
+        "invalid digest atomic rejection",
+        "concurrent import rejects",
+        "new definition admission",
+        "same-definition version/Schema re-admission",
+        "builtin Inspector field editing",
+        "builtin form/list CRUD and live metric",
+        "B/C state retention",
+        "exact unavailable viewer",
+        "no iframe or generated module execution",
+        "Logo/Pixelify/Mochi",
+        "no horizontal overflow",
+        "legacy Home/clarification/Demo task roundtrip"
+      ],
+      "paidCalls": 0
+    }
+  ],
+  "errors": []
+}

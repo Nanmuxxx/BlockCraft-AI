@@ -1,39 +1,31 @@
 # Mochi DeepSeek Intelligence — 集成交接
 
-当前交付是真实 DeepSeek HTTP Provider、独立浏览器客户端、可信宿主桥接和可选聊天面板。正式服务器与 Workshop **尚未接线**，生产默认禁用。没有运行真实 API，没有合并或部署。离线 fixture 仅存在于 tests；生产没有 Mock fallback。
+当前正式 `/ai-create` Workshop 已挂载聊天面板，复用现有唯一 Mochi Host 与 `runtime.customProject` owner。服务端四个路由已接入原 `createAppServer`，沿用现有 DeepSeek key/model 配置。**接线不代表付费启用**：默认禁用；当前部署缺少可信认证/项目 ACL 与持久费用账本。界面明确显示禁用原因，没有生产 Mock fallback，修改能力始终关闭。
 
 ## 完整接线方案
 
-用户输入 / 主动事件 → `MochiConversationPanel` → `createWorkshopMochiConversation(host)` → `createMochiConversation` → 同源 `/api/mochi-ai/analyze` → HTTP 权限与请求验证 → service 预算/并发/同意检查 → `createDeepSeekProvider` → 现有官方 DeepSeek endpoint → Schema 与 blockId 验证 → 带上下文 binding 的建议 → 客户端拒绝过期回复 → 点击时再次读取可信 host → `host.setSelection(blockId)`。
+用户输入 / 明确 opt-in 后的事件 → `MochiConversationPanel` → `createWorkshopMochiConversation(existingHost, {customContext})` → 只读结构投影 → 独立同源客户端 → `/api/mochi-ai/analyze` → 可信 resolveAccess/项目绑定 → 同意/限频/并发/内存准入 → 持久费用预留 → 真实 Provider 接口 → Schema/blockId 校验 → 绑定版本的建议 → 客户端丢弃过期回复 → 点击时重读宿主 → `host.setSelection(blockId)`。
 
-当前只保留服务端路由的参考 Patch（未应用，也未获正式接线批准）：
-
-```sh
-git apply --check docs/mochi-ai/patches/server.patch
-# 仅检查；正式接线仍须 Tech Lead 复核批准。
-```
-
-- `server.patch`：只给 `createAppServer` 增加受信任的 `mochi` 配置和路由委托。沿用现有 `DEEPSEEK_API_KEY`、`DEEPSEEK_MODEL`、fetch；不新增密钥存储。不传配置即禁用，Patch 本身不启用付费请求。
-- 旧 `workshop.patch` 已移除，禁止沿用覆盖生产页面。动画与 v2 接线的兼容检查、唯一 host 接口及待办见 [COMPATIBILITY.md](COMPATIBILITY.md)。可选面板仍未挂载，由主集成负责人在获批后确定产品呈现位置。
-- 未修改 `WorkshopMochi.tsx`、`MochiEmotion.tsx`、`MochiOverlay.tsx`、Canvas、Inspector、CustomBlock 或 Runtime。
-- `createWorkshopMochiConversation` 只需要 `getSnapshot / subscribe / setSelection`，不接受 Runtime、PlanProvider、confirm handle 或完整快照。
-- 已同步 #24/#25 后的 main；接口仍匹配，但含 custom 实例的混合上下文因缺少实体 relation 在请求前拒绝（`INVALID_INPUT`）。当前可选面板不能直接接入该上下文；详见兼容报告，不能据此宣称正式 v2 AI 已可用。
-
-将来经批准完成接线后，需在正式 Workshop 补充浏览器验收。本 PR 的浏览器证据来自独立离线验收页，不能证明正式产品已经接通。
+- 原 Mochi 动画、情绪、固定建议、Phase A 预览/确认 UI 保留，原修改 composer 继续禁用；聊天面板置于同一侧栏，B 模式可用。
+- 不创建第二套 Host、Runtime 或 CustomProjectV2 owner；不修改 Canvas、Inspector、CustomBlock 执行器或原 Mochi 组件。
+- 旧 Workshop Patch 不恢复，已落地的服务端参考 Patch 也移除，避免重复应用。
+- 混合项目使用现 owner 的精确已登记引用与不可变 registry，仅提取 custom 名称和顶层参数的 name/type/required。没有虚构实体关联，不发送 manifest、源码、props/state 值或业务记录。内置积木仍要求合法实体关联。详见 [COMPATIBILITY.md](COMPATIBILITY.md)。
+- 正式产品路由的离线桌面/手机模拟浏览器证据见 [WORKSHOP-INTEGRATION.md](WORKSHOP-INTEGRATION.md)，不同于早期独立 harness。真实 DeepSeek 请求为 0。
 
 ## 启用权限与费用边界
 
-`createMochiIntegration({ enabled, approval, resolveAccess, allowedOrigin, apiKey, model })` 全部由可信服务端传入。不得把请求体、浏览器 Header 或环境变量字符串直接当作授权对象。
+`createMochiIntegration({ enabled, approval, resolveAccess, allowedOrigin, reserveBudget, apiKey, model })` 全部由可信服务端传入。不得把请求体、浏览器 Header 或环境变量字符串直接当作授权对象。
 
 - 默认 `enabled=false`。密钥存在也不启用。
 - `approval` 必须包含 Tech Lead 单独批准的 `reference`、正整数 `maxCalls / maxTotalTokens`、未来毫秒时间戳 `expiresAt`，且 `providerVerified=true / permissionsVerified=true`。服务创建时拷贝冻结；每次请求复核过期。撤销时应停用实例并中止相关请求，不仅修改原始配置对象。
 - 本 PR 没有真实授权对象。测试 grant 只配合注入的离线 fetch 使用。
 - `resolveAccess(req)` 必须先认证会话、验证该用户有权访问目标应用，再返回 `{sessionId, appId}`；会话 ID 必须由服务端决定，跨项目保持稳定。不能使用 body 或调用方自报 sessionId。实例/版本 binding 用于过期检查，不是授权凭据。
-- 当前 `server/index.mjs` 没有会话认证或项目 ACL，项目在浏览器持有；Vite `/api` 代理只解决路由，不提供权限。现部署无法直接实现可信 resolver，保持未接线/禁用。不得添加固定返回授权、信任任意 Cookie 或客户端权限头的生产替代实现。部署依赖见兼容报告。
+- 当前 `server/index.mjs` 没有会话认证或项目 ACL，项目在浏览器持有；Vite `/api` 代理只解决路由，不提供权限。现部署无法直接实现可信 resolver，保持禁用。不得添加固定返回授权、信任任意 Cookie 或客户端权限头的生产替代实现。部署依赖见兼容报告。
 - `allowedOrigin` 是部署配置的准确 origin（支持 HTTPS）；不从 Host / X-Forwarded-* 推导。无 CORS，POST 仅 JSON。反向代理应保留严格认证与同源策略。
 - 每会话每小时最多 8 次、保守预留 100,000 token；全局同时最多 2 次、单会话 1 次。聊天间隔 2 秒，主动间隔 30 秒。全局授权的调用数和 token 预算同时生效；失败、取消与无效回复也计费，不重试、不退预算。
 - 预留值为 UTF-8 请求消息字节数 + 1,024 输出 token + 256 消息开销；这是准入上限估计，不是实际账单。Tech Lead 仍需按批准的模型价格确定调用数和金额预算，不在代码里臆造价格。
-- **内存 token 准入预算不等于持久人民币费用上限。** 当前计数器仅驻留单进程内存，重启会重置；不保存人民币额度、模型价格、缓存计价或实际账单。受控真实验收也须另获明确调用次数及金额授权。常规生产、多实例或自动重启部署必须先接持久化原子预算账本、共享同意状态与共享并发限制，并由部署方落实金额硬上限及账单核对。不可在多个 worker 重复使用一份 grant。本轮不启用任何真实请求。
+- **内存 token 准入预算不等于持久人民币费用上限。** 内存计数器仅驻留单进程内存，重启会重置；不保存人民币额度、模型价格、缓存计价或实际账单。受控真实验收也须另获明确调用次数及金额授权。常规生产、多实例或自动重启部署必须先接持久化原子预算账本、共享同意状态与共享并发限制，并由部署方落实金额硬上限及账单核对。不可在多个 worker 重复使用一份 grant。本轮不启用任何真实请求。
+- 新增强制 `reserveBudget` 服务端适配器：没有函数则状态为 `BUDGET_UNAVAILABLE`；每次 egress 前等待原子预留返回严格 `true`。false、异常、5 秒超时或取消均不调用模型。输入仅为 `{requestId,sessionId,appId,approvalReference,model,maxTokens,signal}`，不含 prompt 或项目结构。部署实现必须以批准模型的保守最坏价格预留持久金额、幂等处理 requestId、跨实例共享并覆盖失败/取消，不得用 `() => true` 或内存计数代替。当前仓库没有该生产实现。
 - 现有应用生成接口与本模块共享 Provider 配置，但不共享本模块预算。部署方必须把二者纳入同一总费用批准范围，不能把 Mochi grant 视作全站费用上限。
 
 真实 Provider 的模型可用性、网络和质量尚未验证，`providerVerified` 不能因离线测试通过而设为 true。真实调用的次数及预算必须另获 Tech Lead 批准后，才能在受控验收中验证。
@@ -91,7 +83,7 @@ git apply --check docs/mochi-ai/patches/server.patch
 
 ## 隐私、事件与失败行为
 
-浏览器和服务端都重新投影白名单：应用/实例 ID、revision、选择、模式、积木名称和类型、字段 ID/名称/类型、积木与实体关联。最多 20 积木、10 实体、每实体 24 字段、上下文 10 KB、请求 16 KB。过大直接拒绝，不偷偷截断。仅发送最近 4 条用户明确输入，各最多 1,200 字；不发送助手历史、记录值、选项值、字段默认值、完整 spec、坐标、Runtime 或 Phase A 快照。
+浏览器和服务端都重新投影白名单：应用/实例 ID、revision、选择、模式、积木名称和类型、字段 ID/名称/类型、积木与实体关联；custom 附带至多 24 个顶层参数 name/type/required（不发送嵌套结构或枚举/默认值）。最多 20 积木、10 实体、每实体 24 字段、上下文 10 KB、请求 16 KB。过大直接拒绝，不偷偷截断。仅发送最近 4 条用户明确输入，各最多 1,200 字；不发送助手历史、记录值、选项值、字段默认值、完整 spec、坐标、Runtime 或 Phase A 快照。
 
 常见 sk-/Bearer/credential assignment/私钥格式在投影和 egress 脱敏；这不是任意敏感文本分类器。用户明确输入和结构名称本身可能含敏感语义，面板提示不要输入业务记录或密钥。服务不记录请求、上游正文或密钥；usage 只有计数且不作为公开路由。
 
@@ -116,4 +108,4 @@ node tests/mochi-ai/browser-server.mjs
 
 最后一条输出 localhost URL；手动打开独立验收页。它注入离线 fetch，不读取 .env，展示 `OFFLINE ACCEPTANCE / 真实调用 0`。流程：检查连接 → 输入问题 → 发送 → 定位积木 → 继续交流 → 开启主动建议 → 点击结构事件按钮 → 查看新建议 → 忽略 → 关闭主动建议 → 模拟错误 → 禁用。
 
-`evidence/chat.png / proactive.png / disabled.png` 展示浏览器状态；`evidence/browser.json` 保存 fixture 调用、脱敏后的 egress 与预算计数。测试业务记录/密钥哨兵没有进入 egress。该测试证明真实 Provider 代码的请求/校验链路可运行，不证明真实 DeepSeek 质量、真实授权或正式 Workshop 接线。
+`evidence/chat.png / proactive.png / disabled.png` 展示浏览器状态；`evidence/browser.json` 保存 fixture 调用、脱敏后的 egress 与预算计数。测试业务记录/密钥哨兵没有进入 egress。该测试证明真实 Provider 代码的请求/校验链路可运行，不证明真实 DeepSeek 质量或真实授权；正式 Workshop 的新证据另见上方集成报告。

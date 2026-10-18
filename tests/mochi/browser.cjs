@@ -42,6 +42,8 @@ async function run() {
       activePage = page
       await page.route('**/*', route => {
         const request = route.request(), target = new URL(request.url())
+        // The production #32 panel checks status on mount; keep it offline and disabled.
+        if (target.origin === 'http://127.0.0.1:5197' && target.pathname === '/api/mochi-ai/status' && request.method() === 'GET') return route.fulfill({ json: { enabled: false, proactiveEnabled: false, modificationsEnabled: false, reason: 'ACCESS_UNAVAILABLE' } })
         if (target.origin === 'http://127.0.0.1:5197' && request.method() === 'GET' && !target.pathname.startsWith('/api')) return route.continue()
         report.blockedRequests.push({ url: target.href, method: request.method() })
         return route.abort('blockedbyclient')
@@ -56,7 +58,7 @@ async function run() {
       const c = page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true })
       const block = page.locator('[data-block-key="builtin:registration-form"]')
       const input = page.getByRole('textbox', { name: '给 Mochi 发消息' })
-      const send = page.getByRole('button', { name: '发送', exact: true })
+      const send = page.locator('.mochi-ai').getByRole('button', { name: '发送', exact: true })
       const preview = page.getByRole('region', { name: '修改计划预览' })
       const state = () => page.evaluate(() => ({ snapshot: window.mochiQA.runtime.getSnapshot(), subscriptions: window.mochiQA.subscriptions, calls: window.mochiQA.calls, instance: window.mochiQA.host?.getSnapshot().context.instanceId }))
       const request = async (text = '固定测试计划') => { await input.fill(text); await send.click() }

@@ -28,7 +28,12 @@ export function createMochiHandler({ service, resolveAccess, allowedOrigin } = {
     const controller = new AbortController()
     const close = () => { if (!res.writableEnded) controller.abort() }; res.on('close', close)
     try {
-      if (!allowedOrigin || !resolveAccess) throw new MochiError('AI_DISABLED', 'Mochi AI 尚未配置可信访问权限。', 503)
+      // Public disabled status contains no session/project or authorization data.
+      // It lets the real Workshop explain deployment blockers without fake auth.
+      if (req.url.endsWith('/status') && req.method === 'GET' && (!allowedOrigin || typeof resolveAccess !== 'function')) {
+        send(res, 200, { enabled: false, proactiveEnabled: false, modificationsEnabled: false, reason: 'ACCESS_UNAVAILABLE' }); return true
+      }
+      if (!allowedOrigin || typeof resolveAccess !== 'function') throw new MochiError('AI_DISABLED', 'Mochi AI 尚未配置可信访问权限。', 503)
       if (req.headers.origin && req.headers.origin !== allowedOrigin) throw new MochiError('ORIGIN_REJECTED', '不允许跨来源请求。', 403)
       const expectedMethod = req.url.endsWith('/status') ? 'GET' : 'POST'
       if (req.method !== expectedMethod) throw new MochiError('METHOD_NOT_ALLOWED', '请求方法无效。', 405)

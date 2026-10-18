@@ -1,3 +1,4 @@
+import { createMochiIntegration } from './mochi-ai/index.mjs'
 import { createServer } from 'node:http'
 import { pathToFileURL } from 'node:url'
 import { assertAppSpec } from './.generated/appSpecValidation.js'
@@ -138,11 +139,16 @@ export function createAppServer({
   model = process.env.DEEPSEEK_MODEL?.trim() || 'deepseek-v4-flash',
   fetchImpl = globalThis.fetch,
   aiTimeoutMs = LIMITS.aiTimeoutMs,
+  mochi,
 } = {}) {
+  // Trusted deployment injection only; CLI/env cannot manufacture access or
+  // money authorization. Shared existing key/model/fetch; disabled by default.
+  const mochiAi = createMochiIntegration({ ...mochi, apiKey, model, fetchImpl, timeoutMs: aiTimeoutMs })
   const clients = new Map()
   let inFlight = 0
   const server = createServer(async (req, res) => {
     try {
+      if (await mochiAi.handle(req, res)) return
       if (req.url === '/api/health' && req.method === 'GET') {
         send(res, 200, { status: 'ok' }); return
       }
