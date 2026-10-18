@@ -79,6 +79,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   let state = freeze({ contextAvailable: true, enabled: false, disabledReason: '正在检查 Mochi AI 状态…', proactiveEnabled: false, busy: false, modificationsEnabled: false, messages: [], suggestions: [], error: null })
   let disposed = false, pending = null, epoch = 0, signature = '', identity = '', prompts = [], lastProactive = -Infinity, consentSequence = 0, statusSequence = 0
   let consentTail = Promise.resolve()
+  const messageFor = (code, fallback) => typeof code === 'string' && Object.hasOwn(errors, code) ? errors[code] : fallback
   const listeners = new Set(), seen = new Map(), ignored = new Map(), events = new Map()
   const COOLDOWN = 600_000
   function emit(patch) {
@@ -126,15 +127,19 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     await consentTail.catch(() => {})
     if (disposed || sequence !== statusSequence) return state
     let result
-    try { result = await api.status() }
+    try {
+      result = await api.status()
+      if (disposed || sequence !== statusSequence) return state
+      check(result && typeof result === 'object' && !Array.isArray(result) && typeof result.enabled === 'boolean' && typeof result.proactiveEnabled === 'boolean' && result.modificationsEnabled === false, 'AI_INVALID_RESPONSE')
+    }
     catch (error) {
-      if (!disposed && sequence === statusSequence) { cancel(); emit({ enabled: false, proactiveEnabled: false, disabledReason: errors[error.code] || 'Mochi 暂时无法连接，请稍后检查连接。' }) }
+      if (!disposed && sequence === statusSequence) retire({ enabled: false, proactiveEnabled: false, disabledReason: messageFor(error?.code, 'Mochi 暂时无法连接，请稍后检查连接。') })
       throw error
     }
     if (disposed || sequence !== statusSequence) return state
-    check(typeof result.enabled === 'boolean' && typeof result.proactiveEnabled === 'boolean' && result.modificationsEnabled === false, 'AI_INVALID_RESPONSE')
-    if (!result.enabled) cancel()
-    emit({ enabled: result.enabled, disabledReason: result.enabled ? null : errors[result.reason] || errors.AI_DISABLED, proactiveEnabled: result.enabled && (consentAtStart === consentSequence ? result.proactiveEnabled : state.proactiveEnabled) })
+    const patch = { enabled: result.enabled, disabledReason: result.enabled ? null : messageFor(result.reason, errors.AI_DISABLED), proactiveEnabled: result.enabled && (consentAtStart === consentSequence ? result.proactiveEnabled : state.proactiveEnabled) }
+    if (!result.enabled) retire(patch)
+    else emit(patch)
     return state
   }
   async function setProactive(enabled) {
