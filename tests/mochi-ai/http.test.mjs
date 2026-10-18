@@ -29,6 +29,23 @@ test('full offline HTTP user chat -> provider -> schema -> structured suggestion
   assert.equal(response.headers.get('cache-control'), 'no-store')
 })
 
+test('resolved access scope is captured before asynchronous body admission', async t => {
+  const trusted = { ...access }
+  let reservation
+  const f = await fixture(t, { reserveBudget: input => { reservation = input; return true } }, {
+    resolveAccess: req => {
+      req.once('end', () => { trusted.appId = 'foreign-project'; trusted.sessionId = 'foreign-session' })
+      return trusted
+    },
+  })
+  const response = await f.post('analyze', request())
+  assert.equal(response.status, 200)
+  assert.equal((await response.json()).binding.appId, access.appId)
+  assert.equal(reservation.sessionId, access.sessionId)
+  assert.equal(reservation.appId, access.appId)
+  assert.equal(f.count(), 1)
+})
+
 test('HTTP rejects malformed UTF-8 before provider egress', async t => {
   const f = await fixture(t)
   const input = { ...request(), prompt: 'MARKER' }

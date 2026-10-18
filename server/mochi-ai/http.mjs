@@ -63,6 +63,9 @@ export function createMochiHandler({ service, resolveAccess, allowedOrigin, acce
       }
       finally { clearTimeout(deadline) }
       if (!access) throw new MochiError('UNAUTHORIZED', '请先建立可信应用会话。', 401)
+      // A resolver may reuse its own mutable object. Body upload awaits must
+      // not move this request into another authenticated session/project.
+      access = Object.freeze({ sessionId: access.sessionId, appId: access.appId })
       controller.signal.throwIfAborted()
       if (expectedMethod === 'GET') { send(res, 200, service.status(access)); return true }
       if (!/^application\/json(?:\s*;|$)/i.test(req.headers['content-type'] || '')) throw new MochiError('UNSUPPORTED_MEDIA_TYPE', '请使用 JSON。', 415)
