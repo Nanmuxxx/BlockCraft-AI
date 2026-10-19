@@ -2,10 +2,22 @@
 
 2026-10-19
 
+## 0. 最新主线复验
+
+- 最新已确认 `main`：`b56a26a9803718d806bac3ddbd7fbe19e0c495c6`
+- PR #43 rebase 后 head：`753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd`
+- PR #43 base：`main`；相对新 main 为 ahead 4 / behind 0，mergeable `CLEAN`
+- 复验源码：GitHub PR head tarball（不是旧基线工作树）
+- 复验结果：`npm ci`、safe-viewer 服务端 6/6、真实 Chromium 14/14、原有测试 194/194、`npm run build` 全部通过
+- GitHub Actions 生产容器构建与 smoke test：通过（1m16s，run `39188777134`）
+
+新 main 的增量集中在 Docker/部署文件和 `server/index.mjs`，与本分支新增文件无重叠；PR 分支已通过 GitHub update-branch 以 rebase 方式更新，未合并 PR、未修改 main。
+
 ## 1. 基线与工作树
 
 - 仓库：`Nanmuxxx/BlockCraft-AI`
 - 基线 `main`：`25773e6d65e4e5a2b29d125baa2510f4a10aa343`
+- 最新主线（本轮通知）：`b56a26a9803718d806bac3ddbd7fbe19e0c495c6`
 - PR #40：Draft、未合入，HEAD `692b7f56e1df094f4db95e35cc3be1fc72cc3dfc`，当前 base ref 为 `main`
 - 分支：`phase2/safe-tsx-viewer`
 - 工作树：`F:\BlockCraft-AI\phase2-safe-tsx-viewer`
@@ -90,7 +102,7 @@ npm run test:safe-viewer:browser
 - Todo List：输入、添加、切换完成、删除。
 - Pomodoro：开始、倒计时、暂停、重置。
 - 渲染错误：返回 `RENDER_ERROR`，宿主继续响应。
-- 死循环：iframe 被 watchdog 移除，宿主 ping 耗时 1ms，状态 `RUNTIME_TIMEOUT`，源站被 quarantine。
+- 死循环：iframe 被 watchdog 移除，宿主 ping 耗时约 2ms，状态 `RUNTIME_TIMEOUT`，源站被 quarantine。
 - 宿主攻击：父 DOM、Cookie、LocalStorage、fetch、WebSocket、sendBeacon、window.open 均被拒绝；外部图片被 CSP 拦截。
 - 伪造消息：从宿主窗口伪造 ready/boot，rejected 计数增加，accepted 不变。
 - 非法输入：`INVALID_PROTOCOL`、`IMPORT_REJECTED`、`SOURCE_CAPABILITY_REJECTED`、`DIGEST_MISMATCH`、`BUNDLE_LIMIT`。
@@ -117,6 +129,21 @@ npm ci              # 全新安装，通过
 ```
 
 依赖说明：为保持既有 Artifact 策略的 esbuild `0.25.12`，同时避开 Vite 8 对原生 esbuild `^0.27 || ^0.28` 的可选 peer 冲突，本分支使用同版本 `esbuild-wasm`。裸 `npm ci`、`npm test`、安全 Viewer 测试和 `npm run build` 均已通过。若后续升级 esbuild/Vite，必须同步更新 Artifact 工具链策略并重新跑安全验收。
+
+### 4.4 新 main / 新 PR head 复验
+
+复验对象为 PR #43 head `753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd` 的 GitHub tarball，其 base 为 `b56a26a9803718d806bac3ddbd7fbe19e0c495c6`。结果：
+
+| 检查 | 结果 |
+| --- | --- |
+| `npm ci` | 通过，29 packages，0 vulnerabilities |
+| `npm run test:safe-viewer` | 6/6 通过 |
+| `npm run test:safe-viewer:browser` | 14/14 通过；Chromium `153.0.8010.12` |
+| `npm test` | 194/194 通过 |
+| `npm run build` | 通过 |
+| GitHub Actions docker acceptance | 通过，1m16s |
+
+浏览器报告已写入 `testedMain` 和 `prHead` 字段；机器可读汇总见 `docs/acceptance/safe-viewer/verification.json`。
 
 ## 5. 开发中发现并修复的问题
 

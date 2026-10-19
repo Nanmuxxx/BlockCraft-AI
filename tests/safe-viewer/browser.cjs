@@ -3,6 +3,8 @@ const { writeFile, mkdir } = require('node:fs/promises')
 const path = require('node:path')
 const { chromium } = require('playwright')
 
+const testedMain = process.env.SAFE_VIEWER_MAIN_SHA ?? 'b56a26a9803718d806bac3ddbd7fbe19e0c495c6'
+const prHead = process.env.SAFE_VIEWER_PR_HEAD ?? '753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd'
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 async function frameFor(page) {
@@ -293,6 +295,8 @@ async function run() {
     await mkdir(output, { recursive: true })
     const report = {
       generatedAt: new Date().toISOString(),
+      testedMain,
+      prHead,
       browser: await browser.version(),
       hostOrigin: running.hostOrigin,
       runnerOrigins: running.runnerOrigins,

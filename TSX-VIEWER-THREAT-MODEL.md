@@ -1,6 +1,6 @@
 # TSX Viewer 安全威胁模型
 
-2026-10-19；基线 `main = 25773e6d65e4e5a2b29d125baa2510f4a10aa343`；参考 PR #40（未合入）HEAD `692b7f56e1df094f4db95e35cc3be1fc72cc3dfc`。本文描述的是 `phase2/safe-tsx-viewer` 分支中的实验模块，不代表正式 C 模式已经放行。
+2026-10-19；初始审计基线 `main = 25773e6d65e4e5a2b29d125baa2510f4a10aa343`；本轮最新 `main = b56a26a9803718d806bac3ddbd7fbe19e0c495c6`；PR #43 rebase 后 head `753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd`；参考 PR #40（未合入）HEAD `692b7f56e1df094f4db95e35cc3be1fc72cc3dfc`。本文描述的是 `phase2/safe-tsx-viewer` 分支中的实验模块，不代表正式 C 模式已经放行。
 
 本文取代远端分支早期 `5b5ed00` 的初始状态报告，并保留其信任边界与 launch gates；新增内容只反映本分支实际实现和已执行的真实 Chromium 测试。
 
@@ -178,7 +178,7 @@ frame-ancestors <exact-parent-origin>
 - 浏览器：`npm run test:safe-viewer:browser`，真实 Chromium 153.0.8010.12，14/14 场景通过。
 - 构建：`npm run build` 通过；原有默认测试 `npm test` 194/194 通过。
 - 证据：[`docs/acceptance/safe-viewer/browser-report.json`](docs/acceptance/safe-viewer/browser-report.json)。
-- 关键证据：死循环时宿主 ping 1ms；外部图片请求被 CSP 拦截且无外部响应；runner Cookie 头为 0；伪造消息 rejected 计数增加；死循环源站进入 quarantine。
+- 关键证据：死循环时宿主 ping 约 1–2ms；外部图片请求被 CSP 拦截且无外部响应；runner Cookie 头为 0；伪造消息 rejected 计数增加；死循环源站进入 quarantine。
 
 ## 9. 残余风险与放行条件
 
