@@ -171,6 +171,35 @@ in the input state file is irrelevant; MAC computation rebuilds fixed order.
 There is no implicit initial state, recovery, grant rotation or budget migration
 endpoint. Tests provision synthetic initial state only in temporary directories.
 
+### Independent byte-level known-answer vector
+
+The complete domain bytes are hex
+`626c6f636b63726166742d73747564696f2d6973737565722d76310a`.
+Implementation and fixture append explicit `Buffer.from([0x0a])` after the ASCII
+domain; a literal backslash+n suffix (`5c6e`) is invalid. The source at historical
+PR76 `20aa026` and PR75 `7bc5aeb` already contained one JavaScript source escape
+`\n`, which evaluates to LF, as confirmed from raw Git blob bytes and JS runtime.
+The explicit byte form removes display-escaping ambiguity; no existing-state
+migration or compatibility reset is introduced or authorized.
+
+`studio-mac-vector.json` fixes a synthetic key `00..1f`, grant and canonical
+state bytes. Expected digests were calculated with Python stdlib HMAC/SHA256
+and independently cross-checked using OpenSSL, without importing JS fixtures:
+
+- Initial actual-LF MAC:
+  `38f416ffacc3ad7d2b0a68b832dbb02bdec0c2dde2111756780ef419eb66c207`.
+- Alternate literal-backslash+n MAC (must reject before listen):
+  `0b92fe915842d165a13f2bdfd542ed199c04c6b485978c7f10c8a05c9a888776`.
+- Actual-LF attempt1 MAC written by production transition:
+  `8e79dea0f446a341c39b616f73bb494e397644214a991df7d81f81acc0d2df21`.
+
+Run `python3 tests/generation/studio-mac-vector.verify.py` to reproduce the
+independent Python/OpenSSL checks using only these synthetic public vectors.
+JS tests load the fixed grant/state/key and digests directly: correct state
+starts, a failed credential writes exactly the known attempt1 state, and the
+alternate MAC rejects with zero calls to `net.Server.listen`, no state change,
+no remaining Gateway lock and no provider call. No MAC compatibility fallback.
+
 Both attempt and consumption commits write a same-directory exclusive0600
 random temp file, loop on short writes, fsync it, close, rename, fsync parent.
 Any injected/actual commit failure halts the issuer in that process and emits
