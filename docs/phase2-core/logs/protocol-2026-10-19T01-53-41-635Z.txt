@@ -1,0 +1,47 @@
+
+> blockcraft-ai@0.1.0 test:trusted-interactive
+> npm --prefix server run build && node tools/project-zip-export/prepare.mjs && node --test tests/trusted-interactive/*.test.*
+
+
+> build
+> tsc -p tsconfig.json
+
+✔ client validates complete v2 envelope and rejects permissions, invalid schemas and fake successful errors (19.207541ms)
+✔ pure ZIP boundary explicitly rejects v2 even when caller bypasses UI capture (1.288083ms)
+✔ access adapter ignoring abort cannot retain a cancelled gate (1.901333ms)
+✔ budget adapter ignoring abort cannot retain a cancelled gate (1.00625ms)
+✔ access adapter is bounded by admission deadline (1.103083ms)
+✔ budget adapter is bounded by admission deadline (0.838667ms)
+✔ already disconnected requests do not invoke access or budget adapters (0.320541ms)
+✔ access adapter failures are normalized without exposing arbitrary codes/status (0.22975ms)
+✔ access adapter failures are normalized without exposing arbitrary codes/status (0.120708ms)
+✔ access adapter failures are normalized without exposing arbitrary codes/status (0.154125ms)
+✔ budget adapter failures are normalized without exposing arbitrary codes/status (0.155792ms)
+✔ budget adapter failures are normalized without exposing arbitrary codes/status (0.206083ms)
+✔ budget adapter failures are normalized without exposing arbitrary codes/status (0.161708ms)
+✔ pomodoro details accurately declare no data binding and expose no CRUD editor (3.547ms)
+✔ CRUD details preserve valid entity and warn on missing or ambiguous binding (1.196458ms)
+✔ strict v2 config accepts boundaries and rejects executable/unknown/malformed fields (0.777042ms)
+✔ timer anchors survive mode-like remounts, pause/resume/reset, completion and backwards wall clock (1.7505ms)
+✔ same owner preserves CRUD, custom state and layout; read-only and stale CAS fail atomically (1.51325ms)
+✔ state schema rejects dangling/invalid timers; removing timer cleans state and undo restores it (0.597292ms)
+✔ timer commits preserve admitted custom props/state and exact render order (6.425708ms)
+✔ Mochi can select/read timer metadata but cannot grant timer modification authority (19.876167ms)
+✔ duplicate actions and rapid switching never extend a running deadline or subtract twice (5.717041ms)
+✔ completion is a stable read-only derived state until an explicit reset (0.727083ms)
+✔ real provider HTTP request shape is reused, paid fetch replaced by fixture, both ends validated (21.609458ms)
+✔ all authorization and budget gates reject before upstream; no body can grant approval (17.629958ms)
+✔ approved call cap and origin remain enforced (5.465125ms)
+✔ malformed, incompatible and executable model outputs fail closed; legacy route cannot admit v2 (7.112084ms)
+✔ provider errors, truncated completion and invalid JSON never become successful configurations (8.590667ms)
+✔ HTTP disconnect during access retires admission before model egress (5.099917ms)
+✔ HTTP disconnect during budget retires admission before model egress (5.105291ms)
+✔ adapter exception metadata cannot become public HTTP codes or invalid status (1.266417ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 261.765958

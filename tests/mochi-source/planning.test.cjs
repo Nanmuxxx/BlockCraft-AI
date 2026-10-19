@@ -24,6 +24,31 @@ async function setup(generate = candidate, wrapSession = value => value) {
   const input = { blockId: 'target', definitionId: source.manifest.definitionId, versionDigest, intent: '按意图修改现有功能源代码' }
   return { runtime, owner, planner, input, registered, request: () => planner.request(input) }
 }
+test('model deadline leaves no preview/history/write; a later request owns the only confirmation', async () => {
+  const f = await setup(), waiting = deferred()
+  let calls = 0, expiredRequest, expiredSignal
+  const provider = createModelSourcePlanProvider(async ({ request, signal }) => {
+    if (++calls === 1) { expiredRequest = request; expiredSignal = signal; return waiting.promise }
+    return JSON.stringify(await candidate(request))
+  }, { timeoutMs: 30 })
+  const planner = createSourceEditPlanner(f.owner, provider)
+  planner.setSelection('target')
+  const before = f.owner.getSnapshot()
+  try {
+    await assert.rejects(planner.request(f.input), { code: 'MODEL_TIMEOUT' })
+    assert.equal(expiredSignal.aborted, true)
+    assert.equal(f.owner.getSnapshot(), before); assert.deepEqual(planner.getHistory(), [])
+    const latest = await planner.request(f.input)
+    waiting.resolve(JSON.stringify(await candidate(expiredRequest)))
+    await new Promise(resolve => setImmediate(resolve))
+    assert.equal(planner.getStatus(latest.planId), 'pending')
+    assert.equal(f.owner.getSnapshot(), before)
+    assert.equal((await planner.confirm(latest.planId)).ok, true)
+    assert.equal(f.owner.getSnapshot().revision, before.revision + 1)
+    assert.deepEqual(planner.getHistory().map(item => item.planId), [latest.planId])
+    assert.equal(calls, 2)
+  } finally { planner.dispose(); f.planner.dispose() }
+})
 test('preview is inert; one real install/CAS changes only selected version/props/state; old version and state remain traceable', async () => {
   const f = await setup(), before = f.owner.getSnapshot()
   let notifications = 0; f.owner.subscribe(() => notifications++)
@@ -119,6 +144,45 @@ test('late provider response ignoring abort cannot revive old plan or supersede 
   assert.equal(f.planner.getStatus(next.planId), 'pending')
   assert.equal((await f.planner.confirm(next.planId)).ok, true)
 })
+test('context cancellation retires a never-settling source provider before it can return', { timeout: 1000 }, async () => {
+  const started = deferred(); let rejectOld, calls = 0
+  const f = await setup((r) => {
+    if (++calls > 1) return candidate(r)
+    started.resolve()
+    return new Promise((_, reject) => { rejectOld = reject })
+  })
+  const old = f.request(), rejected = assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  await started.promise
+  f.planner.invalidate(); await rejected
+  const before = f.owner.getSnapshot(), next = await f.request()
+  rejectOld(new Error('late provider failure'))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(f.owner.getSnapshot(), before)
+  assert.equal(f.planner.getStatus(next.planId), 'pending')
+  assert.equal(f.planner.getHistory().length, 0)
+  assert.equal((await f.planner.confirm(next.planId)).ok, true)
+  assert.equal(f.planner.getHistory().length, 1)
+  f.planner.dispose()
+})
+test('synchronous abort reentry cannot share a source request epoch with its superseder', async () => {
+  const started = deferred(); let calls = 0, reentered, f
+  f = await setup((r, signal) => {
+    if (++calls !== 1) return candidate(r)
+    signal.addEventListener('abort', () => { reentered = f.request() }, { once: true })
+    started.resolve()
+    return new Promise(() => {})
+  })
+  const old = f.request(), oldRejected = assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  await started.promise
+  const superseder = f.request()
+  await assert.rejects(superseder, { code: 'CONTEXT_CHANGED' })
+  await oldRejected
+  const newest = await reentered
+  assert.equal(f.planner.getStatus(newest.planId), 'pending')
+  assert.equal((await f.planner.confirm(newest.planId)).ok, true)
+  assert.equal(f.planner.getHistory().length, 1)
+  f.planner.dispose()
+})
 test('readonly and explicit stale input reject before provider; no untrusted getters execute', async () => {
   let calls = 0, getterCalls = 0
   const f = await setup(r => { calls++; return candidate(r) })
@@ -208,6 +272,29 @@ test('caller input and returned provider JSON are captured before asynchronous v
   assert.equal(plan.proposal.props.durationSeconds, 600)
   assert.equal((await f.planner.confirm(plan.planId)).ok, true)
   assert.notEqual((await f.owner.registry.resolve({ definitionId: f.input.definitionId, versionDigest: plan.proposal.candidate.versionDigest })).artifact.sources[raw.candidate.artifact.manifest.entry], 'late replacement')
+})
+
+for (const stage of ['initial artifact', 'replacement project']) test(`cancel retires a stalled ${stage} registry lookup without changing history`, { timeout: 1000 }, async () => {
+  const started = deferred(); let rejectLate, lookups = 0
+  const f = await setup(candidate, owner => ({ ...owner, registry: { resolve(reference) {
+    if (++lookups === (stage === 'initial artifact' ? 1 : 2)) {
+      started.resolve()
+      return new Promise((_, reject) => { rejectLate = reject })
+    }
+    return owner.registry.resolve(reference)
+  } } }))
+  const before = f.owner.getSnapshot(), pending = f.request()
+  const rejected = assert.rejects(pending, { code: 'CONTEXT_CHANGED' })
+  await started.promise; f.planner.invalidate(); await rejected
+  assert.equal(f.owner.getSnapshot(), before)
+  assert.equal(f.planner.getHistory().length, 0)
+  const fresh = await f.request()
+  rejectLate(new Error('obsolete registry failure'))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(f.planner.getStatus(fresh.planId), 'pending')
+  assert.equal((await f.planner.confirm(fresh.planId)).ok, true)
+  assert.equal(f.planner.getHistory().length, 1)
+  f.planner.dispose()
 })
 test('model seam preserves completion-supplied TSX bytes and uses the same validation, without network', async () => {
   const f = await setup(), sourceText = 'export default function DifferentFixture() { throw new Error("do not execute this completion fixture"); return <aside data-test="separate-source">distinct fixture</aside> }'

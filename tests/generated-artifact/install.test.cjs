@@ -15,6 +15,38 @@ const setup = wrap => {
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r }); return { promise, resolve } }
 globalThis.fetch = () => { throw Error('NETWORK_FORBIDDEN') }
 
+for (const reason of ['invalidate', 'dispose', 'supersede']) test(`stalled prepare registry lookup retires on ${reason}`, { timeout: 1000 }, async () => {
+  const { runtime, owner } = setup()
+  const sibling = file('sibling')
+  sibling.artifact.artifact.manifest.name = 'Distinct sibling fixture'
+  sibling.artifact.versionDigest = await api.computeVersionDigest(sibling.artifact.artifact)
+  sibling.instance.versionDigest = sibling.artifact.versionDigest
+  assert.equal((await owner.install({ ...sibling, baseRevision: 0, expectedReference: null })).ok, true)
+  const started = deferred(); let rejectOld, stall = true
+  const registry = { resolve(ref) {
+    if (stall) { stall = false; started.resolve(); return new Promise((_, reject) => { rejectOld = reject }) }
+    return owner.registry.resolve(ref)
+  } }
+  const installer = createGeneratedArtifactInstaller({ ...owner, registry })
+  const before = owner.getSnapshot()
+  const old = installer.prepare(file())
+  await started.promise
+  let fresh
+  if (reason === 'supersede') fresh = installer.prepare(file())
+  else installer[reason]()
+  await assert.rejects(old, { code: reason === 'dispose' ? 'INSTALLER_DISPOSED' : 'CONTEXT_CHANGED' })
+  assert.equal(owner.getSnapshot(), before)
+  rejectOld(new Error('late registry rejection'))
+  if (fresh) {
+    const preview = await fresh
+    await new Promise(resolve => setImmediate(resolve))
+    assert.equal(installer.getStatus(preview.ticketId), 'pending')
+    assert.equal((await installer.confirm(preview.ticketId)).ok, true)
+    assert.equal(owner.getSnapshot().revision, before.revision + 1)
+  }
+  assert.equal(runtime.getSnapshot().spec.id, before.base.spec.id)
+})
+
 test('real archived DeepSeek record: private store -> exact export -> preview -> sole session CAS; source stays inert', async t => {
   const { createPendingStore } = await import('../../server/custom-block/store.mjs')
   const { exportPendingInstall } = await import('../../server/custom-block/install-export.mjs')
