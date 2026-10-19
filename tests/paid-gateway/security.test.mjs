@@ -117,7 +117,7 @@ test('missing or over-bound usage halts automatic calls permanently; no refund',
     store.close(); const again = openLedger(path); t.after(() => again.close()); assert.equal(again.snapshot().halted, true)
   }
 })
-test('unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt', async t => {
+test('sent failures retain reservation/halt; cancellation before fetch invocation releases money only', async t => {
   for (const kind of ['failure', 'invalid-json', 'oversize', 'timeout', 'cancel']) {
     const { store } = ledger(t); let calls = 0; const c = new AbortController()
     const transport = createPaidTransport({ apiKey: key, ledger: store, timeoutMs: 15, fetchImpl: async () => {
@@ -130,8 +130,15 @@ test('unknown upstream failures, bounded body, timeout, cancel and late results 
     const promise = transport(endpoint, { ...init(), signal: c.signal }); if (kind === 'cancel') c.abort()
     await assert.rejects(promise)
     await new Promise(r => setTimeout(r, 70))
-    assert.equal(store.snapshot().halted, true); assert.equal(store.snapshot().entries[0].status, 'uncertain'); assert.ok(calls <= 1)
-    await assert.rejects(transport(endpoint, init()), { code: 'BUDGET_HALTED' })
+    const entry = store.snapshot().entries[0]
+    if (kind === 'cancel' && calls === 0) {
+      assert.equal(entry.status, 'not-sent'); assert.equal(entry.releasedNano, entry.reserveNano)
+      assert.equal(store.snapshot().halted, false); assert.equal(store.snapshot().entries.length, 1)
+    } else {
+      assert.equal(calls, 1); assert.equal(entry.status, 'uncertain'); assert.equal(entry.releasedNano, undefined)
+      assert.equal(store.snapshot().halted, true)
+      await assert.rejects(transport(endpoint, init()), { code: 'BUDGET_HALTED' })
+    }
   }
 })
 test('exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed', t => {
