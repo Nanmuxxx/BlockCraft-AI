@@ -1,6 +1,6 @@
 import test, { beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, writeFileSync, rmSync, chmodSync, existsSync } from 'node:fs'
+import { readFileSync, writeFileSync, rmSync, chmodSync, existsSync, readdirSync, linkSync, symlinkSync, mkdirSync } from 'node:fs'
 import { request } from 'node:http'
 import { startStudioServer } from '../../server/studio-launcher.mjs'
 import { PRICING } from '../../server/paid-gateway/pricing.mjs'
@@ -9,6 +9,33 @@ import { issuerFixture, baseURL, exchange, generate, hash } from './studio-issue
 beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: PRICING.expiresAt - 3600_000 }))
 function fixture(t) { const f = issuerFixture(); t.after(() => f.cleanup()); return f }
 const cookieOf = r => r.headers.get('set-cookie')?.split(';')[0]
+
+test('all Studio launches refuse missing ledger before creating ledger, issuer state or authorization', async t => {
+  for (const withIssuer of [true, false]) {
+    const f = fixture(t)
+    if (!withIssuer) { delete f.approval.issuer; f.save() }
+    rmSync(f.ledgerPath); rmSync(f.statePath)
+    const before = readdirSync(f.dir).sort(), approval = readFileSync(f.path)
+    await assert.rejects(f.start())
+    assert.deepEqual(readdirSync(f.dir).sort(), before)
+    assert.deepEqual(readFileSync(f.path), approval)
+    assert.equal(existsSync(f.ledgerPath), false)
+    assert.equal(existsSync(f.statePath), false)
+    assert.equal(f.calls, 0)
+  }
+})
+
+test('Studio ledger metadata preflight rejects unsafe mode, hardlink, symlink and nonregular file', async t => {
+  const f = fixture(t), bytes = readFileSync(f.ledgerPath), state = readFileSync(f.statePath)
+  chmodSync(f.ledgerPath, 0o644); await assert.rejects(f.start()); chmodSync(f.ledgerPath, 0o600)
+  const alias = f.ledgerPath + '.alias'
+  linkSync(f.ledgerPath, alias); await assert.rejects(f.start()); rmSync(alias)
+  rmSync(f.ledgerPath); writeFileSync(alias, bytes, { mode: 0o600 })
+  symlinkSync(alias, f.ledgerPath); await assert.rejects(f.start()); rmSync(f.ledgerPath); rmSync(alias)
+  mkdirSync(f.ledgerPath, { mode: 0o700 }); await assert.rejects(f.start()); rmSync(f.ledgerPath, { recursive: true })
+  assert.deepEqual(readFileSync(f.statePath), state); assert.equal(f.calls, 0)
+  assert.equal(existsSync(f.ledgerPath + '.lock'), false)
+})
 
 test('issuer commits consume+hash before exact Secure cookie, then actual v2 Mock works across restart', async t => {
   const f = fixture(t); let s = await f.start()
