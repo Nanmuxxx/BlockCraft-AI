@@ -1,5 +1,3 @@
-Warning: fs was declared with const; use let for reassignable variables.
-Warning: b was declared with const; use let for reassignable variables.
 {
   "scope": "LOCAL runtime simulation of exact Docker COPY instructions, not an actual Docker image or public ModelScope instance",
   "source_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",

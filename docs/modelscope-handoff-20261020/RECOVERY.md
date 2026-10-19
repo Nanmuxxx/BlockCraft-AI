@@ -1,6 +1,6 @@
 # ModelScope Handoff Evidence Recovery
 
-This directory preserves non-sensitive evidence for the proposed source-only package. The package ZIP itself is not stored in this evidence directory; its expected SHA-256 is recorded in `PACKAGE-SHA256SUMS` and `MANIFEST.json`.
+This directory preserves the non-sensitive source-only package ZIP and its verification evidence. `initial-modelscope-backup.zip` is the original package; its byte count and SHA-256 are recorded in `PACKAGE-SHA256SUMS` and `MANIFEST.json`.
 
 ## Source identity
 
@@ -33,4 +33,4 @@ Compare the output to `PACKAGE-SHA256SUMS`. To verify the source files from the 
 shasum -a 256 -c /path/to/SOURCE-SHA256SUMS
 ```
 
-The source-only ZIP is intentionally not reconstructed from the manifest here because archive metadata/compression can change the ZIP hash. The manifest and per-file checksums identify its contents. These steps only restore/verify documentation and files; they do not upload, push to ModelScope, build, deploy, configure secrets, or call a model.
+The ZIP is preserved byte-for-byte rather than reconstructed from the manifest, because archive metadata/compression can change its hash. The manifest and per-file checksums identify its contents. These steps only restore/verify documentation and files; they do not upload, push to ModelScope, build, deploy, configure secrets, or call a model.
