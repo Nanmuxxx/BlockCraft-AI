@@ -3,7 +3,7 @@ import { abortable } from './ai-abort.mjs'
 import { authorizeGeneration } from './paid-gateway/access.mjs'
 import { requireControlledEgress } from './paid-gateway/egress.mjs'
 import { isPaidTransport, defaultModelForTransport } from './paid-gateway/provider.mjs'
-import { createPaidGenerationRuntime } from './paid-gateway/runtime.mjs'
+import * as paidRuntimeModule from './paid-gateway/runtime.mjs'
 import { buildInteractiveMessages, assertInteractiveSpec, createInteractiveGate } from './trusted-interactive.mjs'
 import { createServer } from 'node:http'
 import { readFile, realpath, stat } from 'node:fs/promises'
@@ -168,7 +168,7 @@ async function readUpstream(response, controller) {
   } finally { void reader.cancel().catch(() => {}); reader.releaseLock() }
 }
 
-async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interactive = false }, res) {
+async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interactive = false, principalMode = false }, res) {
   const controller = new AbortController()
   let timedOut = false
   const timer = setTimeout(() => { timedOut = true; controller.abort() }, aiTimeoutMs)
@@ -224,6 +224,7 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
   } catch (error) {
     if (error instanceof HttpError) throw error
     if (timedOut) throw fail(504, 'AI_TIMEOUT', 'AI 服务响应超时，请稍后重试。')
+    if (principalMode) throw principalGatewayError(error)
     // The paid transport uses this code when its own bounded timer wins. A
     // client disconnect still destroys the response, so send() remains a no-op.
     if (error?.code === 'UPSTREAM_CANCELLED' || error?.code === 'UPSTREAM_TIMEOUT') {
@@ -241,6 +242,40 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
   }
 }
 
+// Identity comes exclusively from a server-owned adapter, never headers or IP.
+export async function resolveGenerationPrincipal(req, res, resolver, timeoutMs = 2000) {
+  if (typeof resolver !== 'function') return null
+  const controller = new AbortController()
+  const abort = () => controller.abort()
+  const timer = setTimeout(abort, timeoutMs)
+  res.once('close', abort)
+  try {
+    if (res.destroyed) return null
+    const value = await abortable(Promise.resolve().then(() => resolver(req, { signal: controller.signal })), controller.signal)
+    return !controller.signal.aborted && !res.destroyed && typeof value === 'string'
+      && value.trim().length > 0 && Buffer.byteLength(value, 'utf8') <= 256
+      && !/[\u0000-\u001f\u007f]/.test(value) ? value : null
+  } catch { return null }
+  finally { clearTimeout(timer); res.off('close', abort); controller.abort() }
+}
+
+function requestIdempotencyKey(req) {
+  const values = []
+  for (let i = 0; i < req.rawHeaders.length; i += 2) {
+    if (req.rawHeaders[i].toLowerCase() === 'idempotency-key') values.push(req.rawHeaders[i + 1])
+  }
+  if (values.length !== 1 || !/^[A-Za-z0-9_-]{32,128}$/.test(values[0])) {
+    throw fail(400, 'IDEMPOTENCY_KEY_INVALID', '请提供有效的生成请求标识。')
+  }
+  return values[0]
+}
+
+function principalGatewayError(error) {
+  const status = paidRuntimeModule.paidGatewayHttpStatus?.(error) ?? 503
+  const safeStatus = [400, 401, 409, 504].includes(status) ? status : 503
+  return fail(safeStatus, safeStatus === 409 ? 'GENERATION_CONFLICT' : safeStatus === 401 ? 'UNAUTHORIZED' : safeStatus === 400 ? 'INVALID_INPUT' : safeStatus === 504 ? 'AI_TIMEOUT' : 'AI_UNAVAILABLE', '生成请求未完成，请检查授权或稍后重试。')
+}
+
 /** Dependency injection is for offline tests; the executable always uses official fetch. */
 export function createAppServer({
   apiKey = process.env.DEEPSEEK_API_KEY?.trim(),
@@ -253,6 +288,8 @@ export function createAppServer({
   mochi,
   interactive,
   generationAccess,
+  resolvePrincipal,
+  principalRuntime,
 } = {}) {
   if (publicOrigin) {
     const origin = new URL(publicOrigin)
@@ -289,7 +326,10 @@ export function createAppServer({
       if (req.method !== 'POST') throw fail(405, 'METHOD_NOT_ALLOWED', '此接口仅接受 POST。')
       // Identity is checked for BOTH v1 and v2, before parsing or Provider work.
       // Origin remains defense in depth; it never grants authorization.
-      if (!await authorizeGeneration(req, res, generationAccess)) throw fail(401, 'UNAUTHORIZED', '生成接口需要服务端授权。')
+      const principalMode = principalRuntime !== undefined
+      const principal = principalMode ? await resolveGenerationPrincipal(req, res, resolvePrincipal) : null
+      if (principalMode ? principal === null : !await authorizeGeneration(req, res, generationAccess)) throw fail(401, 'UNAUTHORIZED', '生成接口需要服务端授权。')
+      const idempotencyKey = principalMode ? requestIdempotencyKey(req) : null
       // No CORS; reject browser cross-origin attempts even when they skip preflight.
       if (req.headers.origin && req.headers.origin !== (publicOrigin || `http://${req.headers.host}`)) {
         throw fail(403, 'ORIGIN_REJECTED', '不允许跨来源请求。')
@@ -333,8 +373,14 @@ export function createAppServer({
           finally { res.off('close', cancelAdmission) }
           if (res.destroyed) return
         }
-        if (!apiKey) throw fail(503, 'AI_NOT_CONFIGURED', 'AI 服务尚未配置。')
-        const spec = await generate(input.idea.trim(), { apiKey, model, fetchImpl, aiTimeoutMs, interactive: isInteractive }, res)
+        let requestOptions = { apiKey, model, fetchImpl }
+        if (principalMode) {
+          try {
+            requestOptions = principalRuntime.forRequest({ principal, idempotencyKey, payload: { idea: input.idea.trim(), ...(isInteractive ? { protocol: input.protocol } : {}) } })
+          } catch (error) { throw principalGatewayError(error) }
+        }
+        if (!requestOptions.apiKey) throw fail(503, 'AI_NOT_CONFIGURED', 'AI 服务尚未配置。')
+        const spec = await generate(input.idea.trim(), { ...requestOptions, aiTimeoutMs, interactive: isInteractive, principalMode }, res)
         send(res, 200, isInteractive ? { protocol: 'trusted-interactive/1', spec, provenance: { source: isPaidTransport(fetchImpl) ? 'deepseek' : 'offline-fixture', model } } : spec)
       } finally { inFlight-- }
     } catch (error) {
@@ -381,7 +427,10 @@ export async function startServer({
   port = 3001,
   env = process.env,
   resolveIdentity,
-  paidRuntimeFactory = createPaidGenerationRuntime,
+  resolvePrincipal,
+  bindingKey,
+  principalRuntimeFactory = paidRuntimeModule.createPrincipalPaidGenerationRuntime,
+  paidRuntimeFactory,
   appServerFactory = createAppServer,
   drainTimeoutMs = LIMITS.aiTimeoutMs + LIMITS.inputTimeoutMs + 5_000,
 } = {}) {
@@ -392,7 +441,13 @@ export async function startServer({
   let server
   try {
     let appServerOptions
-    if (typeof resolveIdentity === 'function') {
+    if (typeof resolvePrincipal === 'function') {
+      if (typeof principalRuntimeFactory !== 'function') throw new Error('Principal runtime unavailable')
+      paidRuntime = principalRuntimeFactory({ env, bindingKey })
+      appServerOptions = { resolvePrincipal, principalRuntime: paidRuntime }
+    } else if (typeof resolveIdentity === 'function' && typeof paidRuntimeFactory === 'function') {
+      // Compatibility injection for existing offline lifecycle tests only.
+      // A boolean resolver alone never selects a production runtime.
       paidRuntime = paidRuntimeFactory({ env, resolveIdentity })
       appServerOptions = paidRuntime.appServerOptions
     }

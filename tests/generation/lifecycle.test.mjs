@@ -1,4 +1,4 @@
-import test from 'node:test'
+import test, { beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { once } from 'node:events'
 import { EventEmitter } from 'node:events'
@@ -12,6 +12,13 @@ import { openLedger } from '../../server/paid-gateway/ledger.mjs'
 import { startServer, installShutdownHandlers } from '../../server/index.mjs'
 
 const key = 'offline-lifecycle-key-1234'
+const nativeNow = Date.now.bind(Date)
+// Only historical Mock settlement paths use this clock. Production policy is unchanged.
+beforeEach(t => {
+  if (t.name === 'native-clock expired pricing denies before model egress') return
+  const start = performance.now()
+  t.mock.method(Date, 'now', () => Date.parse('2026-10-19T12:00:00Z') + performance.now() - start)
+})
 const spec = {
   version: 1, id: 'lifecycle-app', name: '生命周期回归',
   entities: [{ id: 'tasks', name: '任务', fields: [{ id: 'title', name: '名称', type: 'text', required: true }] }],
@@ -67,7 +74,7 @@ test('key and ledger configuration cannot activate generation without trusted id
   ledger.close()
 })
 
-test('explicit paid runtime keeps the ledger lock until an in-flight request is aborted', async t => {
+test('explicit paid runtime keeps the ledger lock until an in-flight request is aborted', { timeout: 5000 }, async t => {
   const env = await tempEnvironment(t)
   let upstreamStarted
   const upstream = new Promise(resolve => { upstreamStarted = resolve })
@@ -169,6 +176,8 @@ test('real process signals do not interrupt request drain or release the ledger 
   const childSource = `
     import { startServer, installShutdownHandlers } from ${JSON.stringify(moduleUrl)}
     import { createPaidGenerationRuntime } from ${JSON.stringify(runtimeUrl)}
+    const testClockStart = performance.now()
+    Date.now = () => Date.parse('2026-10-19T12:00:00Z') + performance.now() - testClockStart
     const started = await startServer({
       port: 0,
       env: process.env,
@@ -255,4 +264,20 @@ test('real process signals do not interrupt request drain or release the ledger 
   releasedPort.listen(port, '127.0.0.1')
   await once(releasedPort, 'listening')
   await new Promise(resolve => releasedPort.close(resolve))
+})
+
+test('native-clock expired pricing denies before model egress', async t => {
+  assert.equal(Date.now(), nativeNow())
+  const env = await tempEnvironment(t)
+  let calls = 0
+  const started = await startServer({ port: 0, env, resolveIdentity: () => true, paidRuntimeFactory: options => createPaidGenerationRuntime({ ...options, fetchImpl: async () => { calls++; throw new Error('must not egress') } }) })
+  t.after(() => started.shutdown())
+  const response = await fetch(`http://127.0.0.1:${started.server.address().port}/api/ai/generate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: '任务工具' }) })
+  assert.equal(response.status, 503)
+  assert.equal((await response.json()).error.code, 'PRICING_EXPIRED')
+  assert.equal(calls, 0)
+  await started.shutdown()
+  const ledger = openLedger(env.DEEPSEEK_BUDGET_LEDGER_PATH)
+  assert.equal(ledger.snapshot().entries.length, 0)
+  ledger.close()
 })
