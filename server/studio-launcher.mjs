@@ -6,6 +6,7 @@ import { createPrincipalPaidGenerationRuntime } from './paid-gateway/runtime.mjs
 import { POLICY, PRICING } from './paid-gateway/pricing.mjs'
 
 const refuse = () => { throw new Error('STUDIO_CONFIGURATION_REFUSED') }
+const STUDIO_APP_ID = 'pomodoro'
 const exactKeys = (value, keys) => value && typeof value === 'object' && !Array.isArray(value)
   && Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value, key))
 
@@ -39,7 +40,7 @@ function readApproval(path, publicOrigin) {
   for (const s of value.sessions) {
     if (!exactKeys(s, ['sessionHash', 'principal', 'expiresAt', 'revoked', 'appId']) ||
         typeof s.principal !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(s.principal) ||
-        typeof s.appId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(s.appId) || s.expiresAt > a.expiresAt) refuse()
+        s.appId !== STUDIO_APP_ID || s.expiresAt > a.expiresAt) refuse()
   }
   if (new Set(value.sessions.map(s => s.principal)).size !== value.sessions.length) refuse()
   // The existing resolver validates hashes, expiry shape, revocation and duplicates.
@@ -69,7 +70,7 @@ export async function startStudioServer({ env = process.env, host = '127.0.0.1',
       const principal = config.resolver(req)
       if (!principal) return null
       const session = config.sessions.find(s => s.principal === principal && !s.revoked && s.expiresAt > Date.now())
-      return session ? { principal, appId: session.appId } : null
+      return session ? { principal, appId: STUDIO_APP_ID } : null
     } catch { return null }
   }
   const started = await startServer({ host, port,

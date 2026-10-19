@@ -155,6 +155,22 @@ test('live approval revocation/change or unsafe permissions close active authori
   assert.equal(f.egress, 0)
 })
 
+test('Studio accepts only fixed pomodoro app scope, including live config reload', async t => {
+  const f = fixture(t)
+  for (const appId of ['tasks', 'Pomodoro', 'pomodoro-other', ['pomodoro'], ['pomodoro', 'tasks']]) {
+    f.approval.sessions[0].appId = appId; f.save()
+    await assert.rejects(f.start())
+  }
+  f.approval.sessions[0].appId = 'pomodoro'
+  f.approval.sessions.push({ ...f.approval.sessions[0], sessionHash: hash('second-mock-session-0000000000000000'), principal: 'second-owner', appId: 'tasks' })
+  f.save(); await assert.rejects(f.start())
+  f.approval.sessions.pop(); f.save()
+  const s = await f.start()
+  f.approval.sessions[0].appId = 'tasks'; f.save()
+  assert.equal((await post(s)).status, 401)
+  assert.equal(f.egress, 0)
+})
+
 test('encoded generation path cannot bypass strict Origin and approval expiry is live', async t => {
   const f = fixture(t), s = await f.start()
   const response = await fetch(`http://127.0.0.1:${s.server.address().port}/api/ai/%67enerate`, {
