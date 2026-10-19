@@ -2,6 +2,7 @@ import { useState, useSyncExternalStore } from 'react'
 import type { BlockSpec, EntityRecord, FieldSpec } from '../../model/appSpec'
 import { metricValue, parseFieldDraft, type AppRuntime, type FieldDraft } from '../../model/appRuntime'
 import './app-renderer.css'
+import { readBlockPresentation, blockCardStyle } from '../blocks/presentation'
 import { Pomodoro } from './Pomodoro'
 
 function RecordEditor({ fields, initial, onSave, onCancel, buttonText }: {
@@ -86,11 +87,12 @@ export function BuiltinBlockRenderer({ runtime, blockId }: { runtime: AppRuntime
   const entity = state.spec.entities.find(entity => entity.id === binding?.entityId)
   if (block?.type === 'pomodoro') return <Pomodoro runtime={runtime} block={block} />
   if (!block || !entity) return null
-  return <section className={`renderer-block renderer-block--${block.type}`} aria-label={block.name} style={{ backgroundColor: block.presentation?.backgroundColor, color: block.presentation?.textColor, borderRadius: block.presentation?.borderRadius }}>
+  const presentation = readBlockPresentation(block)
+  return <section className={`renderer-block renderer-block--${block.type}`} aria-label={block.name} style={blockCardStyle(presentation)}>
     <h2>{block.name}</h2>
     {block.type === 'metric' ? <output className="renderer-metric" aria-live="polite">{metricValue(state, block).toLocaleString('zh-CN', { maximumFractionDigits: 2 })}</output>
       : block.type === 'list' ? <RecordList runtime={runtime} entityId={entity.id} fieldIds={block.fieldIds} />
-        : <RecordEditor buttonText={block.presentation?.buttonText} fields={block.fieldIds.map(id => entity.fields.find(field => field.id === id)!)} onSave={values => runtime.dispatch({ type: 'create', entityId: entity.id, record: { id: `record-${crypto.randomUUID()}`, values } })} />}
+        : <RecordEditor buttonText={presentation.buttonText} fields={block.fieldIds.map(id => entity.fields.find(field => field.id === id)!)} onSave={values => runtime.dispatch({ type: 'create', entityId: entity.id, record: { id: `record-${crypto.randomUUID()}`, values } })} />}
   </section>
 }
 
