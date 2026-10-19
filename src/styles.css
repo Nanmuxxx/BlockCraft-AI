@@ -126,6 +126,10 @@ button {
   border-radius: 999px;
 }
 
+.topbar__actions { display: flex; align-items: center; gap: 10px; }
+.topbar__gallery-link { padding: 6px 11px; border: 1px solid var(--line); border-radius: 9px; color: var(--brand-deep); background: rgba(255, 255, 255, .65); font-size: 12px; text-decoration: none; }
+.topbar__gallery-link:hover { border-color: var(--brand); background: #fff0e4; }
+
 .pixel-dot {
   width: 8px;
   height: 8px;
@@ -783,6 +787,10 @@ button {
     padding-left: 18px;
     padding-right: 18px;
   }
+
+  .topbar__actions { gap: 6px; }
+  .topbar__gallery-link { padding: 5px 7px; font-size: 11px; }
+  .topbar__tag { padding: 5px 8px; font-size: 11px; }
 
   .stage {
     flex-direction: column;

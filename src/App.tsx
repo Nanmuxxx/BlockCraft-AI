@@ -33,10 +33,10 @@ export default function App() {
       <div className="app__bg" aria-hidden="true" />
       <header className="topbar">
         <Logo />
-        <span className="topbar__tag">
+        <div className="topbar__actions"><a className="topbar__gallery-link" href="/ai-create?gallery=1">探索应用案例</a><span className="topbar__tag">
           <span className="pixel-dot" aria-hidden="true" />
           Demo 预览版
-        </span>
+        </span></div>
       </header>
       <main className="main">
         <Home
