@@ -96,3 +96,15 @@ Core integration uses a separate exact patch `docs/acceptance/phase2-deepseek/co
 Shared-entry ownership and exact patch/dependency paths were handed to the Core Lead. Native-egress hunks in CustomBlock and Mochi Provider must be combined with Core cancellation improvements, never replaced with an older whole file.
 
 **Integration remains BLOCKED / merge NO-GO:** #35's `.dockerignore` and Dockerfile build/runtime COPY lists omit `server/paid-gateway/`; Core also reports omitted `ai-abort.mjs`. The deployment owner must package and validate these imports. This task does not edit Docker configuration or deploy. Public-site generation intentionally stays disabled until an authenticated, budgeted production integration is independently approved. No new real calls were made during latest-main/Core composition work.
+
+## Published Delivery
+
+Draft PR: https://github.com/Nanmuxxx/BlockCraft-AI/pull/44 (not merged). Initial published HEAD: `da16bb8652e10d9da8d58b20b20a7d95b0030021`; subsequent handoff-only documentation/test-patch commit does not change production code. Exact local → GitHub commit content-tree mappings:
+
+- `68ab4564b13a5f4b94b5d0c75a1f6d6eac66d356` → `af528cc1317a4806d541e5f55903158af4bb338e` (gateway/identity/security baseline).
+- `bdf67032232df701a2808fe28c45eff75c3ed539` → `178627758b0d2fe4602b6b72f45bd93db639b3d8` (evaluator).
+- `4e333d5199cf9271e8552de257ec39e685aa391b` → `e07eceedbc55f48707808383bfb7958a6df704e2` (real evidence and eleventh monetary-cap security test).
+- `252365e3ec07a2ab8843c7cc8718127fba22106a` → `7689d8893e8353364ce63a280f26265aef3e738b` (latest-main merge).
+- `daa3328e34cb8cf0bdb0026486a2cce3d8489543` → `da16bb8652e10d9da8d58b20b20a7d95b0030021` (Core entry patch/latest-main evidence).
+
+Core Lead independently reports byte-identical hunk composition into isolated candidate `63197299ab85330a63dc9af8525d5c5e8d78b48c`, with Core 812 / baseline security 10 / CAS 57 / ZIP 63 / Workshop 9 passing and QA handoff. These are Core Lead-reported results, not additional tests run by this evaluator. `security-money-cap-test.patch` adds only the eleventh security test to the original ten-test baseline, with no live sample dependency; this evaluator has verified all eleven in its 66-test composition run. Docker packaging remains BLOCKED. No further paid calls authorized or needed for QA.
