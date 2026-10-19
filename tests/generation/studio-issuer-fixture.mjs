@@ -24,7 +24,7 @@ export function issuerFixture({ origin = 'https://studio.example' } = {}) {
   // Initialization exists ONLY in this synthetic fixture, never in the issuer.
   openLedger(ledgerPath).close()
   const payload = JSON.stringify({ version: 1, grantDigest: hash(JSON.stringify(grant)), attempts: 0, consumed: false, sessionHash: null, sessionExpiresAt: null })
-  const mac = createHmac('sha256', bindingKey).update('blockcraft-studio-issuer-v1\n').update(payload).digest('hex')
+  const mac = createHmac('sha256', bindingKey).update(Buffer.from('blockcraft-studio-issuer-v1', 'ascii')).update(Buffer.from([0x0a])).update(payload).digest('hex')
   writeFileSync(statePath, JSON.stringify({ ...JSON.parse(payload), mac }), { mode: 0o600 })
   const spec = JSON.parse(readFileSync(new URL('../trusted-interactive/pomodoro.json', import.meta.url)))
   let calls = 0
