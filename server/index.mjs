@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID, timingSafeEqual } from 'node:crypto'
 import { abortable } from './ai-abort.mjs'
 import { authorizeGeneration } from './paid-gateway/access.mjs'
 import { requireControlledEgress } from './paid-gateway/egress.mjs'
@@ -270,6 +270,53 @@ function requestIdempotencyKey(req) {
   return values[0]
 }
 
+const SESSION_COOKIE = '__Host-bc_session'
+export const OPAQUE_SESSION_COOKIE_POLICY = Object.freeze({ httpOnly: true, secure: true, sameSite: 'Strict', path: '/' })
+
+function opaqueSessionDigest(value) {
+  return createHash('sha256').update(value, 'utf8').digest()
+}
+
+/** Resolve only server-provisioned bearer sessions; this module never mints them. */
+export function createOpaqueSessionPrincipalResolver({ sessions, now = Date.now } = {}) {
+  if (!Array.isArray(sessions) || sessions.length < 1 || sessions.length > 256) throw new Error('Invalid opaque session allowlist')
+  const entries = sessions.map(entry => {
+    if (!entry || typeof entry !== 'object' || !/^[a-f0-9]{64}$/.test(entry.sessionHash) ||
+        typeof entry.principal !== 'string' || Buffer.byteLength(entry.principal, 'utf8') < 1 || Buffer.byteLength(entry.principal, 'utf8') > 256 ||
+        !Number.isSafeInteger(entry.expiresAt) || typeof entry.revoked !== 'boolean') throw new Error('Invalid opaque session entry')
+    return Object.freeze({ digest: Buffer.from(entry.sessionHash, 'hex'), principal: entry.principal, expiresAt: entry.expiresAt, revoked: entry.revoked })
+  })
+  if (new Set(sessions.map(entry => entry.sessionHash)).size !== entries.length) throw new Error('Duplicate opaque session hash')
+  return req => {
+    const cookies = []
+    for (let index = 0; index < req.rawHeaders.length; index += 2) {
+      if (req.rawHeaders[index].toLowerCase() === 'cookie') cookies.push(req.rawHeaders[index + 1])
+    }
+    if (cookies.length !== 1) return null
+    const values = cookies[0].split(';').map(part => part.trim()).filter(part => part.startsWith(`${SESSION_COOKIE}=`))
+    if (values.length !== 1) return null
+    const token = values[0].slice(SESSION_COOKIE.length + 1)
+    if (!/^[A-Za-z0-9_-]{32,128}$/.test(token)) return null
+    const supplied = opaqueSessionDigest(token)
+    const match = entries.find(entry => timingSafeEqual(entry.digest, supplied))
+    if (!match || match.revoked || match.expiresAt <= now()) return null
+    return match.principal
+  }
+}
+
+async function cliPrincipalResolver(env) {
+  const mode = env.AI_GENERATION_IDENTITY_MODE?.trim()
+  if (!mode || mode === 'disabled') return undefined
+  if (mode !== 'opaque-session') throw new Error('Unsupported AI_GENERATION_IDENTITY_MODE')
+  const path = env.AI_GENERATION_SESSION_ALLOWLIST_PATH?.trim()
+  if (!path || !isAbsolute(path)) throw new Error('Opaque session allowlist must use an absolute path')
+  const info = await stat(path)
+  if (!info.isFile() || (info.mode & 0o077) !== 0 || info.size > 64 * 1024) throw new Error('Opaque session allowlist must be a private file (0600 or stricter)')
+  const parsed = JSON.parse(await readFile(path, 'utf8'))
+  if (!parsed || !Array.isArray(parsed.sessions)) throw new Error('Invalid opaque session allowlist')
+  return createOpaqueSessionPrincipalResolver({ sessions: parsed.sessions })
+}
+
 function principalGatewayError(error) {
   const status = paidRuntimeModule.paidGatewayHttpStatus?.(error) ?? 503
   const safeStatus = [400, 401, 409, 504].includes(status) ? status : 503
@@ -381,7 +428,11 @@ export function createAppServer({
         }
         if (!requestOptions.apiKey) throw fail(503, 'AI_NOT_CONFIGURED', 'AI 服务尚未配置。')
         const spec = await generate(input.idea.trim(), { ...requestOptions, aiTimeoutMs, interactive: isInteractive, principalMode }, res)
-        send(res, 200, isInteractive ? { protocol: 'trusted-interactive/1', spec, provenance: { source: isPaidTransport(fetchImpl) ? 'deepseek' : 'offline-fixture', model } } : spec)
+        const provenance = {
+          source: isPaidTransport(requestOptions.fetchImpl) ? 'deepseek' : 'offline-fixture',
+          model: requestOptions.model,
+        }
+        send(res, 200, isInteractive ? { protocol: 'trusted-interactive/1', spec, provenance } : spec)
       } finally { inFlight-- }
     } catch (error) {
       const safe = error instanceof HttpError ? error : fail(500, 'INTERNAL_ERROR', '服务暂时不可用。')
@@ -441,10 +492,11 @@ export async function startServer({
   let server
   try {
     let appServerOptions
-    if (typeof resolvePrincipal === 'function') {
+    const principalResolver = resolvePrincipal ?? await cliPrincipalResolver(env)
+    if (typeof principalResolver === 'function') {
       if (typeof principalRuntimeFactory !== 'function') throw new Error('Principal runtime unavailable')
       paidRuntime = principalRuntimeFactory({ env, bindingKey })
-      appServerOptions = { resolvePrincipal, principalRuntime: paidRuntime }
+      appServerOptions = { resolvePrincipal: principalResolver, principalRuntime: paidRuntime }
     } else if (typeof resolveIdentity === 'function' && typeof paidRuntimeFactory === 'function') {
       // Compatibility injection for existing offline lifecycle tests only.
       // A boolean resolver alone never selects a production runtime.

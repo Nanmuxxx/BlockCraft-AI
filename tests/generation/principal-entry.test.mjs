@@ -1,8 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { EventEmitter } from 'node:events'
+import { mkdtemp, chmod, writeFile, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { request } from 'node:http'
-import { createAppServer, startServer, resolveGenerationPrincipal } from '../../server/index.mjs'
+import { createAppServer, startServer, resolveGenerationPrincipal, createOpaqueSessionPrincipalResolver, OPAQUE_SESSION_COOKIE_POLICY } from '../../server/index.mjs'
 import { cases } from './fixtures.mjs'
 
 const spec = cases.find(c => c.id === 'fitness-log').spec
@@ -93,4 +97,81 @@ test('request context errors return a fixed sanitized response', async t => {
   assert.equal(response.status, 503)
   const body = await response.text()
   assert.equal(body.includes('private'), false)
+})
+
+test('opaque cookie adapter rejects absent, expired, revoked, unknown and forged-header identities before runtime work', async t => {
+  const token = 'a'.repeat(40)
+  const digest = value => createHash('sha256').update(value).digest('hex')
+  let calls = 0
+  const resolver = createOpaqueSessionPrincipalResolver({ now: () => 10_000, sessions: [
+    { sessionHash: digest(token), principal: 'stable-owner', expiresAt: 20_000, revoked: false },
+    { sessionHash: digest('b'.repeat(40)), principal: 'expired-owner', expiresAt: 9_999, revoked: false },
+    { sessionHash: digest('c'.repeat(40)), principal: 'revoked-owner', expiresAt: 20_000, revoked: true },
+  ] })
+  const url = await serve(t, { resolvePrincipal: resolver, principalRuntime: { forRequest() { calls++; throw new Error('must not run') } } })
+  const denied = [
+    {},
+    { Cookie: `__Host-bc_session=${'b'.repeat(40)}` },
+    { Cookie: `__Host-bc_session=${'c'.repeat(40)}` },
+    { Cookie: `__Host-bc_session=${'d'.repeat(40)}` },
+    { 'X-Principal': 'forged-owner' },
+    { Origin: 'https://trusted.example', 'X-Forwarded-For': '127.0.0.1', 'X-Principal': 'forged-owner' },
+    { Cookie: `__Host-bc_session=${token}; __Host-bc_session=${token}` },
+  ]
+  for (const headers of denied) assert.equal((await post(url, '健身', headers)).status, 401)
+  assert.equal(calls, 0)
+  assert.deepEqual(OPAQUE_SESSION_COOKIE_POLICY, { httpOnly: true, secure: true, sameSite: 'Strict', path: '/' })
+})
+
+test('opaque cookie hashes resolve stable principals and isolate identical keys across principals', async t => {
+  const one = 'e'.repeat(40), two = 'f'.repeat(40)
+  const digest = value => createHash('sha256').update(value).digest('hex')
+  const contexts = []
+  const resolver = createOpaqueSessionPrincipalResolver({ sessions: [
+    { sessionHash: digest(one), principal: 'principal-one', expiresAt: Date.now() + 60_000, revoked: false },
+    { sessionHash: digest(two), principal: 'principal-two', expiresAt: Date.now() + 60_000, revoked: false },
+  ] })
+  const url = await serve(t, { resolvePrincipal: resolver, principalRuntime: { forRequest(context) {
+    contexts.push(context)
+    return { apiKey: 'synthetic', model: 'mock', fetchImpl: async () => Response.json({ choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: JSON.stringify(spec) } }] }) }
+  } } })
+  for (const token of [one, two]) {
+    const response = await post(url, '健身记录', { Cookie: `__Host-bc_session=${token}` })
+    assert.equal(response.status, 200)
+  }
+  assert.deepEqual(contexts.map(context => context.principal).sort(), ['principal-one', 'principal-two'])
+  assert.deepEqual(contexts.map(context => context.idempotencyKey), [key, key])
+})
+
+test('CLI identity mode stays closed by default and requires a private explicit allowlist', async t => {
+  let factoryCalls = 0
+  const closed = await startServer({ port: 0, env: {}, principalRuntimeFactory: () => { factoryCalls++; throw new Error('must remain closed') } })
+  const denied = await post(`http://127.0.0.1:${closed.server.address().port}/api/ai/generate`)
+  assert.equal(denied.status, 401)
+  await closed.shutdown()
+  assert.equal(factoryCalls, 0)
+
+  const directory = await mkdtemp(join(tmpdir(), 'bc-session-'))
+  t.after(() => rm(directory, { recursive: true, force: true }))
+  const token = 'g'.repeat(40)
+  const path = join(directory, 'allowlist.json')
+  await writeFile(path, JSON.stringify({ sessions: [{ sessionHash: createHash('sha256').update(token).digest('hex'), principal: 'cli-owner', expiresAt: Date.now() + 60_000, revoked: false }] }), { mode: 0o600 })
+  await chmod(path, 0o600)
+  await chmod(path, 0o644)
+  await assert.rejects(startServer({ port: 0, env: { AI_GENERATION_IDENTITY_MODE: 'opaque-session', AI_GENERATION_SESSION_ALLOWLIST_PATH: path } }), /private file/)
+  await chmod(path, 0o600)
+  const started = await startServer({ port: 0, env: { AI_GENERATION_IDENTITY_MODE: 'opaque-session', AI_GENERATION_SESSION_ALLOWLIST_PATH: path }, principalRuntimeFactory: () => {
+    factoryCalls++
+    return { forRequest: ({ principal }) => ({
+      apiKey: 'synthetic', model: 'mock', fetchImpl: async () => Response.json({ choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: JSON.stringify(spec) } }] }),
+      principal,
+    }), close() {} }
+  } })
+  t.after(() => started.shutdown())
+  const explicitDenied = await post(`http://127.0.0.1:${started.server.address().port}/api/ai/generate`)
+  assert.equal(explicitDenied.status, 401)
+  const explicitMock = await post(`http://127.0.0.1:${started.server.address().port}/api/ai/generate`, 'CLI mock session', { Cookie: `__Host-bc_session=${token}` })
+  assert.equal(explicitMock.status, 200)
+  assert.deepEqual(await explicitMock.json(), spec)
+  assert.equal(factoryCalls, 1)
 })
