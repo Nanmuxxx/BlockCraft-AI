@@ -1,0 +1,30 @@
+[
+  {
+    "name": "current-frontend-build",
+    "exit": 0
+  },
+  {
+    "name": "current-server-build",
+    "exit": 0
+  },
+  {
+    "name": "current-protocol-build",
+    "exit": 0
+  },
+  {
+    "name": "current-targeted",
+    "exit": 0
+  },
+  {
+    "name": "current-gateway-full",
+    "exit": 1
+  },
+  {
+    "name": "desktop",
+    "exit": 0
+  },
+  {
+    "name": "mobile",
+    "exit": 0
+  }
+]

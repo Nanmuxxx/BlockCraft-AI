@@ -1,0 +1,1 @@
+const nativeFetch=globalThis.fetch; globalThis.fetch=(url,options)=>{ const u=new URL(url); if(!['127.0.0.1','localhost','[::1]'].includes(u.hostname)) throw new Error('QA_BLOCKED_EXTERNAL_FETCH'); return nativeFetch(url,options) };

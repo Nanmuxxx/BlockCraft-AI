@@ -1,0 +1,32 @@
+✔ local paid startup refuses expired and over-cap Gateway profiles before touching runtime inputs (0.396167ms)
+✔ owner launcher requires explicit approval and rejects an explicitly expired profile (0.218333ms)
+✔ private identity state persists across startup without replacing the binding key (33.459208ms)
+✔ one claim and reservation, canonical request replay/conflict, restart, single use (206.122459ms)
+✔ request closures cannot cross principals; shared gate rejects concurrent distinct request (228.420792ms)
+✔ invalid identity, payload, key and missing binding configuration are rejected without claim/reserve/egress (109.989625ms)
+✔ timeout preserves claim and unknown outcome halt across restart (227.280917ms)
+✔ disconnect preserves claim and unknown outcome halt across restart (187.66875ms)
+✔ throw preserves claim and unknown outcome halt across restart (151.038542ms)
+✔ sidecar persist failure, lock and exhausted durable budget deny before egress (241.103083ms)
+✔ native clock is never extended: expiry denies real ledger and composed runtime with zero reserve/egress (97.90825ms)
+✔ HTTP mapping is explicit and unknown/storage/config/pricing errors default503 (0.157916ms)
+✔ principal runtime honors explicit local-smoke profile and rejects mismatched profiles (201.034542ms)
+✔ principal-scoped idempotency claims and budget survive runtime reopen (233.064792ms)
+✔ invalid identity fails before a durable reservation or provider egress (95.917167ms)
+✔ three-call cap is shared across principals and denies call four before egress (345.238208ms)
+✔ concurrent principals share one in-flight gate and only the admitted call reserves (123.817542ms)
+✔ timeout and disconnect mark reservations uncertain and halt after restart (322.679458ms)
+✔ smoke runtime loads only the synthetic environment key and binds the isolated 3-call policy (205.186292ms)
+✔ smoke cap persists across process restart and cannot be bypassed with the production ledger profile (234.801917ms)
+✔ smoke output hard limit and profile mismatch reject before mock egress (123.310125ms)
+✔ smoke concurrency remains one and rejects a second in-flight call before reservation (101.70725ms)
+✔ smoke timeout, connection failure, and unresolved reservation fail closed without retry (213.781083ms)
+✔ new price snapshot is short lived and the worst-case three-request reserve fits ¥0.50 (0.135417ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1491.044959
