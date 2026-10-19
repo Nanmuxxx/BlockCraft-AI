@@ -1,0 +1,363 @@
+name: Docker acceptance
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/docker-acceptance.yml
+      - Dockerfile
+      - .dockerignore
+      - ms_deploy.json
+      - package.json
+      - package-lock.json
+      - index.html
+      - vite.config.ts
+      - tsconfig.json
+      - src/**
+      - public/**
+      - server/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-acceptance:
+    name: Build and smoke-test the production container
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Prepare evidence files
+        shell: bash
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/docker-acceptance
+          : > artifacts/docker-acceptance/build.log
+          : > artifacts/docker-acceptance/container-health.log
+          : > artifacts/docker-acceptance/http-smoke.log
+          : > artifacts/docker-acceptance/container.log
+          : > artifacts/docker-acceptance/container-inspect.txt
+          : > artifacts/docker-acceptance/docker-version.log
+          : > artifacts/docker-acceptance/zip-isolation.log
+          : > artifacts/docker-acceptance/test-results.log
+
+      - name: Run regressions
+        shell: bash
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          log=artifacts/docker-acceptance/test-results.log
+          {
+            echo "started=$(date -Iseconds)"
+            echo "command=npm ci"
+          } | tee -a "$log"
+          npm ci 2>&1 | tee -a "$log"
+          {
+            echo "command=npm test"
+          } | tee -a "$log"
+          npm test 2>&1 | tee -a "$log"
+          {
+            echo "command=npm run build"
+          } | tee -a "$log"
+          npm run build 2>&1 | tee -a "$log"
+          {
+            echo "command=npm --prefix server test"
+          } | tee -a "$log"
+          npm --prefix server test 2>&1 | tee -a "$log"
+          {
+            echo "command=npm run test:generation"
+          } | tee -a "$log"
+          npm run test:generation 2>&1 | tee -a "$log"
+          {
+            echo "command=npm run test:mochi-host"
+          } | tee -a "$log"
+          npm run test:mochi-host 2>&1 | tee -a "$log"
+          {
+            echo "command=npm run test:trusted-interactive"
+          } | tee -a "$log"
+          npm run test:trusted-interactive 2>&1 | tee -a "$log"
+          {
+            echo "command=npm run test:trusted-pomodoro-ui"
+          } | tee -a "$log"
+          npm run test:trusted-pomodoro-ui 2>&1 | tee -a "$log"
+          {
+            echo "command=npm run test:workshop-export"
+          } | tee -a "$log"
+          npm run test:workshop-export 2>&1 | tee -a "$log"
+          {
+            echo "NOT RUN test:generation:browser: Playwright is not declared by this repository"
+            echo "NOT RUN test:mochi:browser: Playwright is not declared by this repository"
+            echo "NOT RUN test:workshop-export:browser: Playwright is not declared by this repository"
+            echo "finished=$(date -Iseconds)"
+          } | tee -a "$log"
+
+      - name: Build image
+        shell: bash
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          docker version 2>&1 | tee artifacts/docker-acceptance/docker-version.log
+          image="blockcraft-ci:${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          echo "IMAGE_NAME=$image" >> "$GITHUB_ENV"
+          docker build --tag "$image" . 2>&1 | tee artifacts/docker-acceptance/build.log
+
+      - name: Start container and run bounded smoke tests
+        shell: bash
+        timeout-minutes: 12
+        run: |
+          set -euo pipefail
+          container="blockcraft-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          echo "CONTAINER_NAME=$container" >> "$GITHUB_ENV"
+          cleanup() {
+            status=$?
+            set +e
+            docker logs "$container" > artifacts/docker-acceptance/container.log 2>&1 || true
+            docker inspect --format 'status={{.State.Status}} exit={{.State.ExitCode}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' \
+              "$container" > artifacts/docker-acceptance/container-inspect.txt 2>&1 || true
+            if docker inspect "$container" > /dev/null 2>&1; then
+              owned=$(docker inspect --format '{{index .Config.Labels "blockcraft-ai.acceptance"}}' "$container" 2>/dev/null || true)
+              if [ "$owned" = "true" ]; then
+                docker rm -f "$container" > /dev/null 2>&1 || true
+              fi
+            fi
+            exit "$status"
+          }
+          trap cleanup EXIT
+
+          docker run --detach --name "$container" \
+            --label blockcraft-ai.acceptance=true \
+            --publish 127.0.0.1:7860:7860 \
+            --env NODE_ENV=production \
+            --env PORT=7860 \
+            --env "DEEPSEEK_API_KEY=" \
+            --env "PUBLIC_ORIGIN=" \
+            "$IMAGE_NAME" > artifacts/docker-acceptance/container-id.txt
+
+          healthy=false
+          for attempt in $(seq 1 90); do
+            running=$(docker inspect --format '{{.State.Running}}' "$container" 2>/dev/null || true)
+            health=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$container" 2>/dev/null || true)
+            echo "attempt=$attempt running=$running health=$health" | tee -a artifacts/docker-acceptance/container-health.log
+            if [ "$health" = "healthy" ]; then
+              healthy=true
+              break
+            fi
+            if [ "$running" != "true" ]; then
+              echo "container exited before becoming healthy" | tee -a artifacts/docker-acceptance/container-health.log
+              exit 1
+            fi
+            sleep 2
+          done
+          if [ "$healthy" != "true" ]; then
+            echo "health check timed out" | tee -a artifacts/docker-acceptance/container-health.log
+            exit 1
+          fi
+          docker inspect --format 'status={{.State.Status}} exit={{.State.ExitCode}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' \
+            "$container" | tee -a artifacts/docker-acceptance/container-health.log
+
+          BASE_URL=http://127.0.0.1:7860 node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict'
+          import fs from 'node:fs'
+          import http from 'node:http'
+
+          const base = 'http://127.0.0.1:7860'
+          const origin = new URL(base).origin
+          const evidence = 'artifacts/docker-acceptance/http-smoke.log'
+          const zipEvidence = 'artifacts/docker-acceptance/zip-isolation.log'
+          const log = line => {
+            fs.appendFileSync(evidence, `${line}\n`)
+            console.log(line)
+          }
+          const zipLog = line => {
+            fs.appendFileSync(zipEvidence, `${line}\n`)
+            console.log(line)
+          }
+          const localFetch = async (path, options = {}) => {
+            const response = await fetch(new URL(path, base), {
+              redirect: 'error',
+              signal: AbortSignal.timeout(5000),
+              ...options,
+            })
+            return response
+          }
+          const rawGet = path => new Promise((resolve, reject) => {
+            const request = http.request({ hostname: '127.0.0.1', port: 7860, path, method: 'GET' }, response => {
+              const chunks = []
+              response.on('data', chunk => chunks.push(chunk))
+              response.on('end', () => resolve({
+                status: response.statusCode,
+                headers: response.headers,
+                body: Buffer.concat(chunks).toString('utf8'),
+              }))
+            })
+            request.setTimeout(5000, () => request.destroy(new Error('raw HTTP request timeout')))
+            request.on('error', reject)
+            request.end()
+          })
+
+          const indexResponse = await localFetch('/')
+          assert.equal(indexResponse.status, 200)
+          assert.match(indexResponse.headers.get('content-type') || '', /^text\/html/)
+          const indexHtml = await indexResponse.text()
+          assert.ok(indexHtml.includes('root'))
+          log('GET / -> 200 text/html')
+
+          for (const path of ['/ai-create', '/app-renderer']) {
+            for (let refresh = 0; refresh < 2; refresh++) {
+              const response = await localFetch(path)
+              assert.equal(response.status, 200, path)
+              assert.match(response.headers.get('content-type') || '', /^text\/html/, path)
+              assert.equal(await response.text(), indexHtml, path)
+              log(`GET ${path} refresh=${refresh + 1} -> 200 text/html (same entry document)`)
+            }
+          }
+
+          const mime = {
+            '.css': 'text/css',
+            '.js': 'text/javascript',
+            '.png': 'image/png',
+            '.svg': 'image/svg+xml',
+            '.woff': 'font/woff',
+            '.woff2': 'font/woff2',
+            '.ico': 'image/x-icon',
+            '.json': 'application/json',
+          }
+          const assets = []
+          const seen = new Set()
+          const enqueue = (reference, parent) => {
+            if (!reference || reference.startsWith('data:') || reference.startsWith('#')) return
+            const url = new URL(reference, parent)
+            assert.equal(url.origin, origin, `external resource: ${reference}`)
+            if (seen.has(url.href)) return
+            seen.add(url.href)
+            assets.push(url)
+          }
+          for (const tag of indexHtml.matchAll(/<(?:script|link|img|source)\b[^>]*>/gi)) {
+            for (const attribute of tag[0].matchAll(/\b(?:src|href)\s*=\s*["']([^"']+)["']/gi)) {
+              enqueue(attribute[1], `${base}/`)
+            }
+          }
+          assert.ok(assets.length > 0, 'entry document has no local assets')
+          for (let index = 0; index < assets.length; index++) {
+            const url = assets[index]
+            const response = await localFetch(url.pathname + url.search)
+            assert.equal(response.status, 200, url.pathname)
+            const extension = url.pathname.slice(url.pathname.lastIndexOf('.'))
+            assert.ok(mime[extension], `unexpected asset extension: ${url.pathname}`)
+            assert.equal((response.headers.get('content-type') || '').split(';')[0], mime[extension], url.pathname)
+            const body = Buffer.from(await response.arrayBuffer())
+            assert.ok(body.length > 0, url.pathname)
+            log(`GET ${url.pathname} -> 200 ${mime[extension]} ${body.length} bytes`)
+            if (extension === '.css') {
+              const source = body.toString('utf8')
+              for (const match of source.matchAll(/url\(\s*["']?([^\s"')]+)["']?\s*\)|@import\s+["']([^"']+)["']/g)) {
+                enqueue(match[1] || match[2], url)
+              }
+            }
+          }
+
+          const health = await localFetch('/api/health')
+          assert.equal(health.status, 200)
+          assert.match(health.headers.get('content-type') || '', /^application\/json/)
+          assert.deepEqual(await health.json(), { status: 'ok' })
+          log('GET /api/health -> 200 application/json {status:"ok"}')
+
+          for (const path of ['/unknown', '/api/unknown', '/assets/missing.js', '/api/local-project-export']) {
+            const response = await localFetch(path)
+            assert.equal(response.status, 404, path)
+            assert.match(response.headers.get('content-type') || '', /^application\/json/, path)
+            assert.equal((await response.json()).error.code, 'NOT_FOUND', path)
+            log(`GET ${path} -> 404 application/json {error.code:"NOT_FOUND"}`)
+          }
+
+          const zipInput = JSON.stringify({ project: { revision: 0 }, artifacts: [] })
+          for (const path of ['/api/local-project-export', '/api/local-project-export?probe=1']) {
+            const response = await localFetch(path, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer offline-fixture-not-a-real-token',
+              },
+              body: zipInput,
+            })
+            assert.equal(response.status, 404, path)
+            assert.match(response.headers.get('content-type') || '', /^application\/json/, path)
+            assert.equal((await response.json()).error.code, 'NOT_FOUND', path)
+            assert.notEqual(response.headers.get('content-type'), 'application/zip', path)
+            assert.equal(response.headers.get('content-disposition'), null, path)
+            zipLog(`PASS POST ${path} expected=404 actual=${response.status} content-type=${response.headers.get('content-type')} export=rejected`)
+          }
+
+          for (const path of ['/../server/index.mjs', '/%2e%2e/server/index.mjs', '/api%2Funknown', '/api//unknown', '/%252e%252e/private', '/api%2Flocal-project-export']) {
+            const response = await rawGet(path)
+            assert.equal(response.status, 400, path)
+            assert.match(response.headers['content-type'] || '', /^application\/json/, path)
+            assert.equal(JSON.parse(response.body).error.code, 'INVALID_PATH', path)
+            log(`GET ${path} -> 400 application/json {error.code:"INVALID_PATH"}`)
+            if (path.includes('local-project-export')) {
+              zipLog(`PASS GET ${path} expected=400 actual=${response.status} content-type=${response.headers['content-type']} export=rejected`)
+            }
+          }
+
+          const generation = await localFetch('/api/ai/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idea: 'docker acceptance smoke test' }),
+          })
+          assert.equal(generation.status, 503)
+          assert.match(generation.headers.get('content-type') || '', /^application\/json/)
+          assert.equal((await generation.json()).error.code, 'AI_NOT_CONFIGURED')
+          log('POST /api/ai/generate without key -> 503 application/json {error.code:"AI_NOT_CONFIGURED"}')
+          const trustedGeneration = await localFetch('/api/ai/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idea: 'offline trusted timer smoke test', protocol: 'trusted-interactive/1' }),
+          })
+          assert.equal(trustedGeneration.status, 503)
+          assert.match(trustedGeneration.headers.get('content-type') || '', /^application\/json/)
+          assert.equal((await trustedGeneration.json()).error.code, 'AI_DISABLED')
+          log('POST /api/ai/generate trusted-interactive/1 without server authorization -> 503 AI_DISABLED; no key, no upstream request')
+          zipLog('PASS production image has no successful local-project-export route')
+          log(`PASS ${assets.length} local resources, routes, health, traversal, and no-key degradation`)
+          NODE
+
+          docker inspect --format 'status={{.State.Status}} exit={{.State.ExitCode}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' \
+            "$container" | tee -a artifacts/docker-acceptance/container-health.log
+          grep -q 'health=healthy' artifacts/docker-acceptance/container-health.log
+
+      - name: Write workflow summary
+        if: always()
+        shell: bash
+        timeout-minutes: 2
+        run: |
+          set -u
+          mkdir -p artifacts/docker-acceptance
+          {
+            echo "commit=$GITHUB_SHA"
+            echo "event=$GITHUB_EVENT_NAME"
+            echo "ref=$GITHUB_REF"
+            echo "image=${IMAGE_NAME:-not-created}"
+            echo "container=${CONTAINER_NAME:-not-created}"
+            echo "docker_version=see docker-version.log"
+            echo "build_log_bytes=$(wc -c < artifacts/docker-acceptance/build.log 2>/dev/null || echo 0)"
+            echo "health_log_tail:"
+            tail -n 20 artifacts/docker-acceptance/container-health.log 2>/dev/null || true
+            echo "http_smoke_tail:"
+            tail -n 20 artifacts/docker-acceptance/http-smoke.log 2>/dev/null || true
+          } > artifacts/docker-acceptance/summary.txt
+
+      - name: Upload acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 5
+        with:
+          name: docker-acceptance-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/docker-acceptance
+          if-no-files-found: error
+          retention-days: 7

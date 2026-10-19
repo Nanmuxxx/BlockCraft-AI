@@ -3,9 +3,11 @@ import { authorizeGeneration } from './paid-gateway/access.mjs'
 import { requireControlledEgress } from './paid-gateway/egress.mjs'
 import { isPaidTransport } from './paid-gateway/provider.mjs'
 import { buildInteractiveMessages, assertInteractiveSpec, createInteractiveGate } from './trusted-interactive.mjs'
-import { createMochiIntegration } from './mochi-ai/index.mjs'
 import { createServer } from 'node:http'
-import { pathToFileURL } from 'node:url'
+import { readFile, realpath, stat } from 'node:fs/promises'
+import { extname, isAbsolute, relative, resolve, sep } from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { createMochiIntegration } from './mochi-ai/index.mjs'
 import { assertAppSpec } from './.generated/appSpecValidation.js'
 import { buildGenerationMessages } from './aiGenerationPrompt.mjs'
 import { checkGeneratedApplication } from './aiGenerationQuality.mjs'
@@ -38,6 +40,76 @@ function send(res, status, value, extra = {}) {
     ...extra,
   })
   res.end(JSON.stringify(value))
+}
+
+const MIME_TYPES = Object.freeze({
+  '.css': 'text/css; charset=utf-8',
+  '.html': 'text/html; charset=utf-8',
+  '.ico': 'image/x-icon',
+  '.js': 'text/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+})
+const PAGE_PATHS = new Set(['/', '/ai-create', '/app-renderer'])
+
+function requestPath(url) {
+  const pathname = (url || '/').split('?')[0]
+  let decoded
+  try { decoded = decodeURIComponent(pathname) }
+  catch { throw fail(400, 'INVALID_PATH', '资源路径无效。') }
+  if (/%2f|%5c/i.test(pathname) || !decoded.startsWith('/') || decoded.includes('//') ||
+      /[\\\x00-\x1f\x7f:%?#]/.test(decoded) ||
+      decoded.split('/').some(part => part.startsWith('.') || /[. ]$/.test(part))) {
+    throw fail(400, 'INVALID_PATH', '资源路径无效。')
+  }
+  return decoded
+}
+
+function staticPath(staticDir, pathname) {
+  const root = resolve(staticDir)
+  const candidate = resolve(root, `.${pathname}`)
+  if (candidate !== root && !candidate.startsWith(`${root}${sep}`)) return null
+  return candidate
+}
+
+async function serveStatic(req, res, staticDir, pathname) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return false
+  const candidate = staticPath(staticDir, pathname)
+  if (!candidate) {
+    send(res, 400, { error: { code: 'INVALID_PATH', message: '资源路径无效。' } })
+    return true
+  }
+  let filePath = candidate
+  let fileInfo, contents
+  try {
+    if (PAGE_PATHS.has(pathname)) filePath = resolve(staticDir, 'index.html')
+    const [root, target] = await Promise.all([realpath(staticDir), realpath(filePath)])
+    const inside = relative(root, target)
+    if (inside === '..' || inside.startsWith(`..${sep}`) || isAbsolute(inside)) {
+      throw fail(404, 'NOT_FOUND', '资源不存在。')
+    }
+    filePath = target
+    fileInfo = await stat(filePath)
+    if (!fileInfo.isFile()) throw fail(404, 'NOT_FOUND', '资源不存在。')
+    if (req.method === 'GET') contents = await readFile(filePath)
+  } catch (error) {
+    if (error.code === 'ENOENT' || error.code === 'ENOTDIR') throw fail(404, 'NOT_FOUND', '资源不存在。')
+    throw error
+  }
+  const contentType = MIME_TYPES[extname(filePath).toLowerCase()] || 'application/octet-stream'
+  const headers = {
+    'Content-Type': contentType,
+    'Content-Length': String(contents?.length ?? fileInfo.size),
+    'Cache-Control': 'no-cache',
+    'X-Content-Type-Options': 'nosniff',
+    'Connection': 'close',
+  }
+  res.writeHead(200, headers)
+  res.end(contents)
+  return true
 }
 
 function readInput(req) {
@@ -119,8 +191,12 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
     }
     if (Buffer.byteLength(content) > LIMITS.outputBytes) throw fail(502, 'AI_OUTPUT_TOO_LARGE', 'AI 结果超过大小限制。')
     let spec
-    try { spec = JSON.parse(content); assertAppSpec(spec); if (interactive) assertInteractiveSpec(spec); else if (spec.version !== 1) throw new Error('Legacy generation requires v1') }
-    catch { throw fail(502, 'AI_INVALID_SPEC', 'AI 结果不符合 AppSpec 协议，请重试。') }
+    try {
+      spec = JSON.parse(content)
+      assertAppSpec(spec)
+      if (interactive) assertInteractiveSpec(spec)
+      else if (spec.version !== 1) throw new Error('Legacy generation requires v1')
+    } catch { throw fail(502, 'AI_INVALID_SPEC', 'AI 结果不符合 AppSpec 协议，请重试。') }
     if (interactive) return spec
     const quality = checkGeneratedApplication(spec, { idea })
     if (!quality.completeness.valid) {
@@ -146,10 +222,18 @@ export function createAppServer({
   model = process.env.DEEPSEEK_MODEL?.trim() || 'deepseek-v4-flash',
   fetchImpl = globalThis.fetch,
   aiTimeoutMs = LIMITS.aiTimeoutMs,
+  staticDir = resolve(fileURLToPath(new URL('../dist/', import.meta.url))),
+  publicOrigin = process.env.PUBLIC_ORIGIN?.trim() || '',
   mochi,
   interactive,
   generationAccess,
 } = {}) {
+  if (publicOrigin) {
+    const origin = new URL(publicOrigin)
+    if (!['http:', 'https:'].includes(origin.protocol) || origin.origin !== publicOrigin) {
+      throw new Error('PUBLIC_ORIGIN must be an exact HTTP(S) origin without a path')
+    }
+  }
   // Trusted deployment injection only; CLI/env cannot manufacture access or
   // money authorization. Shared existing key/model/fetch; disabled by default.
   const mochiAi = createMochiIntegration({ ...mochi, apiKey, model, fetchImpl, timeoutMs: aiTimeoutMs })
@@ -159,16 +243,21 @@ export function createAppServer({
   const server = createServer(async (req, res) => {
     try {
       if (await mochiAi.handle(req, res)) return
-      if (req.url === '/api/health' && req.method === 'GET') {
+      const pathname = requestPath(req.url)
+      if (pathname === '/api/health' && req.method === 'GET') {
         send(res, 200, { status: 'ok' }); return
       }
-      if (req.url !== '/api/ai/generate') throw fail(404, 'NOT_FOUND', '接口不存在。')
+      if (pathname !== '/api/ai/generate') {
+        if (/^\/api(?:\/|$)/i.test(pathname)) throw fail(404, 'NOT_FOUND', '接口不存在。')
+        if (await serveStatic(req, res, staticDir, pathname)) return
+        throw fail(404, 'NOT_FOUND', '资源不存在。')
+      }
       if (req.method !== 'POST') throw fail(405, 'METHOD_NOT_ALLOWED', '此接口仅接受 POST。')
       // Identity is checked for BOTH v1 and v2, before parsing or Provider work.
       // Origin remains defense in depth; it never grants authorization.
       if (!await authorizeGeneration(req, res, generationAccess)) throw fail(401, 'UNAUTHORIZED', '生成接口需要服务端授权。')
       // No CORS; reject browser cross-origin attempts even when they skip preflight.
-      if (req.headers.origin && req.headers.origin !== `http://${req.headers.host}`) {
+      if (req.headers.origin && req.headers.origin !== (publicOrigin || `http://${req.headers.host}`)) {
         throw fail(403, 'ORIGIN_REJECTED', '不允许跨来源请求。')
       }
       const now = Date.now()
@@ -194,14 +283,17 @@ export function createAppServer({
         const input = await readInput(req)
         if (!input || Array.isArray(input) || typeof input !== 'object' ||
             !Object.keys(input).every(key => key === 'idea' || key === 'protocol') ||
-            (Object.hasOwn(input, 'protocol') && input.protocol !== 'trusted-interactive/1') || typeof input.idea !== 'string' ||
-            !input.idea.trim() || input.idea.length > LIMITS.ideaChars) {
+            (Object.hasOwn(input, 'protocol') && input.protocol !== 'trusted-interactive/1') ||
+            typeof input.idea !== 'string' || !input.idea.trim() || input.idea.length > LIMITS.ideaChars) {
           throw fail(400, 'INVALID_INPUT', `请提供 1–${LIMITS.ideaChars} 个字符的软件创意（idea）。`)
         }
         const isInteractive = input.protocol === 'trusted-interactive/1'
         if (isInteractive) {
-          try { await admitInteractive(req, { model, requestId: randomUUID(), maxTokens: Buffer.byteLength(JSON.stringify(buildInteractiveMessages(input.idea.trim()))) + 8192 }) }
-          catch (error) { throw fail(error.status ?? 503, error.code ?? 'AI_DISABLED', '可信交互生成未获授权或预算不可用。') }
+          try {
+            await admitInteractive(req, { model, requestId: randomUUID(), maxTokens: Buffer.byteLength(JSON.stringify(buildInteractiveMessages(input.idea.trim()))) + 8192 })
+          } catch (error) {
+            throw fail(error.status ?? 503, error.code ?? 'AI_DISABLED', '可信交互生成未获授权或预算不可用。')
+          }
           if (res.destroyed) return
         }
         if (!apiKey) throw fail(503, 'AI_NOT_CONFIGURED', 'AI 服务尚未配置。')
@@ -221,9 +313,11 @@ export function createAppServer({
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const port = Number(process.env.PORT || 3001)
+  const production = process.env.NODE_ENV === 'production'
+  const port = Number(process.env.PORT || (production ? 7860 : 3001))
+  const host = production ? '0.0.0.0' : '127.0.0.1'
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid PORT')
   const server = createAppServer()
   server.on('error', () => { console.error('Backend failed to listen.'); process.exitCode = 1 })
-  server.listen(port, '127.0.0.1', () => console.info(`BlockCraft AI backend: http://127.0.0.1:${port}`))
+  server.listen(port, host, () => console.info(`BlockCraft AI backend: http://${host}:${port}`))
 }
