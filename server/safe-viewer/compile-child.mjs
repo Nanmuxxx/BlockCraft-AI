@@ -1,7 +1,9 @@
 import childProcess from 'node:child_process'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { build, initialize, stop } from 'esbuild-wasm'
 
+const require = createRequire(import.meta.url)
 const children = new Set()
 const originalSpawn = childProcess.spawn
 let testFault = null
@@ -122,7 +124,9 @@ async function compile(task) {
       setup(context) {
         context.onResolve({ filter: /.*/ }, args => {
           if (args.path === '/__blockcraft_runtime__.js') return { path: '/__blockcraft_runtime__.js', namespace: 'blockcraft-runtime' }
-          if (args.path === 'react' || args.path === 'react/jsx-runtime' || args.path === 'react-dom/client') return undefined
+          if (args.path === 'react' || args.path === 'react/jsx-runtime' || args.path === 'react-dom/client') {
+            return { path: require.resolve(args.path) }
+          }
           if (/(^|\/)node_modules\//.test(args.importer.replaceAll('\\', '/'))) return undefined
           if (args.path.startsWith('./') || args.path.startsWith('../')) {
             const resolved = safePath(sources, args.importer.replace(/^\//, ''), args.path)
