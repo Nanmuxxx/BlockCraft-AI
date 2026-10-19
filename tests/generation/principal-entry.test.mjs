@@ -160,8 +160,21 @@ test('CLI identity mode stays closed by default and requires a private explicit 
   await chmod(path, 0o644)
   await assert.rejects(startServer({ port: 0, env: { AI_GENERATION_IDENTITY_MODE: 'opaque-session', AI_GENERATION_SESSION_ALLOWLIST_PATH: path } }), /private file/)
   await chmod(path, 0o600)
-  const started = await startServer({ port: 0, env: { AI_GENERATION_IDENTITY_MODE: 'opaque-session', AI_GENERATION_SESSION_ALLOWLIST_PATH: path }, principalRuntimeFactory: () => {
+  const cliEnv = {
+    AI_GENERATION_IDENTITY_MODE: 'opaque-session',
+    AI_GENERATION_SESSION_ALLOWLIST_PATH: path,
+    DEEPSEEK_API_KEY: 'synthetic-only-key',
+    DEEPSEEK_BUDGET_LEDGER_PATH: join(directory, 'ledger.json'),
+  }
+  await assert.rejects(startServer({ port: 0, env: cliEnv }), { code: 'IDEMPOTENCY_KEY_REQUIRED' })
+  cliEnv.AI_GENERATION_BINDING_KEY = 'not-base64'
+  await assert.rejects(startServer({ port: 0, env: cliEnv }), /must be canonical base64/)
+  const configuredKey = Buffer.alloc(32, 0x4b)
+  cliEnv.AI_GENERATION_BINDING_KEY = configuredKey.toString('base64')
+  let receivedBindingKey
+  const started = await startServer({ port: 0, env: cliEnv, principalRuntimeFactory: ({ bindingKey }) => {
     factoryCalls++
+    receivedBindingKey = Buffer.from(bindingKey)
     return { forRequest: ({ principal }) => ({
       apiKey: 'synthetic', model: 'mock', fetchImpl: async () => Response.json({ choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: JSON.stringify(spec) } }] }),
       principal,
@@ -174,4 +187,5 @@ test('CLI identity mode stays closed by default and requires a private explicit 
   assert.equal(explicitMock.status, 200)
   assert.deepEqual(await explicitMock.json(), spec)
   assert.equal(factoryCalls, 1)
+  assert.deepEqual(receivedBindingKey, configuredKey)
 })

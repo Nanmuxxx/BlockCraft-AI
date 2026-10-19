@@ -317,6 +317,20 @@ async function cliPrincipalResolver(env) {
   return createOpaqueSessionPrincipalResolver({ sessions: parsed.sessions })
 }
 
+function cliPrincipalBindingKey(env) {
+  const encoded = env.AI_GENERATION_BINDING_KEY?.trim()
+  if (!encoded) return undefined
+  if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(encoded)) {
+    throw new Error('AI_GENERATION_BINDING_KEY must be canonical base64')
+  }
+  const key = Buffer.from(encoded, 'base64')
+  if (key.length < 32 || key.toString('base64') !== encoded) {
+    key.fill(0)
+    throw new Error('AI_GENERATION_BINDING_KEY must encode at least 32 bytes')
+  }
+  return key
+}
+
 function principalGatewayError(error) {
   const status = paidRuntimeModule.paidGatewayHttpStatus?.(error) ?? 503
   const safeStatus = [400, 401, 409, 504].includes(status) ? status : 503
@@ -495,7 +509,7 @@ export async function startServer({
     const principalResolver = resolvePrincipal ?? await cliPrincipalResolver(env)
     if (typeof principalResolver === 'function') {
       if (typeof principalRuntimeFactory !== 'function') throw new Error('Principal runtime unavailable')
-      paidRuntime = principalRuntimeFactory({ env, bindingKey })
+      paidRuntime = principalRuntimeFactory({ env, bindingKey: bindingKey ?? cliPrincipalBindingKey(env) })
       appServerOptions = { resolvePrincipal: principalResolver, principalRuntime: paidRuntime }
     } else if (typeof resolveIdentity === 'function' && typeof paidRuntimeFactory === 'function') {
       // Compatibility injection for existing offline lifecycle tests only.
