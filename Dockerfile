@@ -7,25 +7,30 @@ RUN npm ci
 COPY index.html vite.config.ts tsconfig.json ./
 COPY src ./src
 COPY public ./public
-COPY server/package.json server/tsconfig.json server/index.mjs server/trusted-interactive.mjs \
-  server/aiGenerationPrompt.mjs server/aiGenerationQuality.mjs ./server/
-COPY server/mochi-ai ./server/mochi-ai
-COPY server/project-export ./server/project-export
+# The filtered Docker context includes only allowlisted server sources.
+# Copy the tree so PR-only runtime modules can be packaged when present.
+COPY server/ ./server/
 
 RUN npm run build && npm --prefix server run build
+# Build a curated runtime tree. Optional modules are copied only when the
+# tested source candidate contains them (PR #42/#44 composition).
+RUN set -eu; \
+    mkdir -p /app/runtime-server; \
+    cp server/index.mjs server/trusted-interactive.mjs server/aiGenerationPrompt.mjs server/aiGenerationQuality.mjs /app/runtime-server/; \
+    cp -R server/mochi-ai /app/runtime-server/mochi-ai; \
+    cp -R server/.generated /app/runtime-server/.generated; \
+    if [ -f server/ai-abort.mjs ]; then cp server/ai-abort.mjs /app/runtime-server/; fi; \
+    if [ -d server/custom-block ]; then mkdir -p /app/runtime-server/custom-block; cp server/custom-block/*.mjs /app/runtime-server/custom-block/; fi; \
+    if [ -d server/paid-gateway ]; then mkdir -p /app/runtime-server/paid-gateway; cp server/paid-gateway/*.mjs /app/runtime-server/paid-gateway/; fi
 
 FROM node:24-bookworm-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production PORT=7860
 
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/server/index.mjs /app/server/trusted-interactive.mjs \
-  /app/server/aiGenerationPrompt.mjs /app/server/aiGenerationQuality.mjs ./server/
-COPY --from=build /app/server/mochi-ai ./server/mochi-ai
-COPY --from=build /app/server/.generated ./server/.generated
+COPY --from=build /app/runtime-server/ ./server/
 COPY --from=build /app/src/model/appSpec.ts /app/src/model/trustedInteractive.schema.json ./src/model/
-COPY --from=build /app/src/integrations/mochi-ai/protocol.mjs \
-  ./src/integrations/mochi-ai/protocol.mjs
+COPY --from=build /app/src/integrations/mochi-ai/protocol.mjs ./src/integrations/mochi-ai/protocol.mjs
 
 USER node
 EXPOSE 7860
