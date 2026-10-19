@@ -1,8 +1,8 @@
 [
   {
     "path": "DELIVERY-CHECKLIST.md",
-    "bytes": 5127,
-    "sha256": "03f4fe9de3a2e7dd0822815a1f77a7e2ad7d50dc08594a4bd963e9b68e98ca74"
+    "bytes": 5510,
+    "sha256": "0d987e38d920a307a49f0b5efc1f80c2ec4cfe561af6a99da77a39880a2da8a6"
   },
   {
     "path": "BP-FOCUS-REVIEW.md",
@@ -193,5 +193,35 @@
     "path": "video-owner-r02/audio-volume.txt",
     "bytes": 2084,
     "sha256": "bb7c599b934caca8b6c383857ed1a9f29ff8b631c8d5c0d54b261055feaa8b3b"
+  },
+  {
+    "path": "prepare_package.py",
+    "bytes": 2305,
+    "sha256": "0fa38bede2f7a9f285a5f5c33504ed98c5ab52378f1da64b990a523a02981f59"
+  },
+  {
+    "path": "audit_received.py",
+    "bytes": 2999,
+    "sha256": "279053bed3f957738c805e459fb360576a72fee294bd0f1204c575b4c087f216"
+  },
+  {
+    "path": "visual_qa.py",
+    "bytes": 1154,
+    "sha256": "9a851e25f2643487a84c05505a422dfff0b1cd8c33077dccd71a3c7c5e6364fa"
+  },
+  {
+    "path": "verify_remote_transfer.py",
+    "bytes": 2485,
+    "sha256": "86c354d56d102b61e036d665854654ddf5340dcf3bbfc1857d24b07ea9bbc0a3"
+  },
+  {
+    "path": "REMOTE-TRANSFER-VERIFICATION.json",
+    "bytes": 8260,
+    "sha256": "f81e2b2b14704b8fcc23db7a318fbd919a0b70bab247dee7b86a62d4a963bba0"
+  },
+  {
+    "path": "POWER-LOSS-HANDOFF.md",
+    "bytes": 4108,
+    "sha256": "ed6f9df207e5b12df1670a3d60fb45d364837e17099b65a73196db30a712ce1e"
   }
 ]
