@@ -1,5 +1,15 @@
 # Phase 2 Mochi Editing Engine — 2026-10-19
 
+## PR #49 定向整改（2026-10-19，本节为最新状态）
+
+Tech Lead 的独立 QA NO-GO 保持有效。本轮以本地候选 `0c45cf5feebcb4d7778c51490cb97cc8aac5e0ad` 为父提交，仅修复旧四命令测试契约并补拒绝性回归；**没有修改生产白名单、Runtime、授权检查、Workshop UI 或 server**。原始 Commit、旧 Bundle 和原工作树未提交资料完整保留。
+
+新增第五条成员 `configureBlockPresentation` 的功能范围来自本会话明确批准的 AppSpec 按钮文字、受支持视觉属性和参数更新；该功能批准不等于正式 Provider 或写入 token 授权。旧测试的四成员精确断言已实际复现 AssertionError；修复为五成员精确字面量及冻结检查，原有 forbidden-command 拒绝断言全部保留。新增 10 项原生授权/顺序回归；Engine 19/19、安全 56/56、组合 **75/75 PASS**，无失败或跳过。
+
+根 npm test、Host CJS、Planner/Runtime CJS、TypeScript、Build 均实际尝试，因缺少隔离 TypeScript/tsc 而 BLOCKED；不能将原生测试写成根测试通过。生产入口仍使用 unavailablePlanProvider，Conversation 仍 advice-only；正式启用需要 Provider 安全批准和 Workshop 在唯一现有 Host 上协调接线。B 卡片映射和真实浏览器仍未验收。
+
+完整整改证据：`PR49-MOCHI-REMEDIATION-REPORT.md`；Workshop 边界/最小契约：`docs/mochi-pr49-entry-contract.md`；日志：`.cache/pr49-remediation/`。PR #49 远程 HEAD/base 因 GitHub DNS 未验证，本轮不盲推、不创建重复 PR；以新本地 Commit 和自包含 Bundle 交给发布负责人核对后更新原 PR。当前 **BLOCKED，等待完整环境、Workshop/Provider 协调及独立 re-QA**，未宣称 GO。
+
 ## 最新 main 集成候选（2026-10-19，本节覆盖下文历史阻塞状态）
 
 **main 基线迁移已实际完成；本地可供审查，PUBLISH BLOCKED，构建/产品 QA BLOCKED，MERGE BLOCKED。** 不再以 #42 为 PR base；#42/#40 Bundle 只可能用于历史恢复，本轮没有依赖 Bundle。本报告完整保留原工作树中的全部未提交历史记录，下文各轮“未创建候选”等描述是当时事实，不是当前状态。

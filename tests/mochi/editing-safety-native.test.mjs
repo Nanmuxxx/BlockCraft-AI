@@ -15,9 +15,10 @@ registerHooks({ resolve(specifier, context, next) {
 } })
 const { createAppRuntime } = await import('../../src/model/appRuntime.ts')
 const { createClubRegistrationExample, createReadingLogExample } = await import('../../src/model/appSpecExamples.ts')
-const { createAppChangePlanner } = await import('../../src/model/appChangePlan.ts')
+const { createAppChangePlanner, AI_CHANGE_COMMANDS } = await import('../../src/model/appChangePlan.ts')
 const { createMochiHost } = await import('../../src/integrations/mochi/host.ts')
 const { createModelPlanProvider } = await import('../../src/integrations/mochi/modelPlanProvider.ts')
+const { unavailablePlanProvider } = await import('../../src/integrations/mochi/planning.ts')
 
 const blockId = 'registration-form'
 const candidate = (id, revision, target, patch) => ({ request: {
@@ -276,4 +277,84 @@ test('Host failure from a real Runtime authorization check preserves state and p
   runtime.executeCommand = execute
   await host.callbacks.onConfirm(await preview(host, 'fresh'))
   applied(runtime, before, { buttonText: 'fresh' })
+})
+
+test('PR49: exact frozen five-command contract does not itself mutate application state', t => {
+  const { runtime } = setup(t), before = capture(runtime)
+  assert.deepEqual([...AI_CHANGE_COMMANDS], ['addField', 'configureBlockFields', 'configureBlockPresentation', 'addBlock', 'removeBlock'])
+  assert.equal(Object.isFrozen(AI_CHANGE_COMMANDS), true)
+  unchanged(runtime, before)
+})
+
+for (const [name, command, code] of [
+  ['updateField', { type: 'updateField', entityId: 'applicants', fieldId: 'applicant-name', field: { id: 'applicant-name', name: 'forbidden', type: 'text', required: true } }, 'AI_COMMAND_FORBIDDEN'],
+  ['removeField', { type: 'removeField', entityId: 'applicants', fieldId: 'applicant-name' }, 'AI_COMMAND_FORBIDDEN'],
+  ['undo', { type: 'undo' }, 'AI_COMMAND_FORBIDDEN'],
+  ['unknown', { type: 'executeJavaScript', code: 'alert(1)' }, 'VALIDATION'],
+]) test(`PR49: ${name} stays forbidden despite presentation command membership`, t => {
+  const { runtime } = setup(t), before = capture(runtime), planner = createAppChangePlanner(runtime)
+  const input = candidate(`forbidden-${name}`, 0, blockId, { buttonText: 'must not publish' })
+  input.request.commands = name === 'undo' ? [command] : [...input.request.commands, command]
+  const result = planner.preview(input, { selectedBlockId: blockId, allowedBlockIds: [blockId], allowedEntityIds: ['applicants'] })
+  assert.equal(result.ok, false); assert.equal(result.error.code, code)
+  unchanged(runtime, before)
+})
+
+test('PR49: Preview alone has no execution authority; Confirm forwards captured authorization exactly once', async t => {
+  const events = []
+  const { runtime, host } = setup(t, ({ request }) => { events.push('provider'); return answer(request) })
+  const before = capture(runtime), authorization = runtime.customProject.getAuthorization()
+  const execute = runtime.executeCommand.bind(runtime)
+  let executions = 0
+  runtime.executeCommand = (request, captured) => {
+    events.push('executeCommand'); executions++
+    assert.strictEqual(captured, authorization)
+    return execute(request, captured)
+  }
+  const unsubscribeHost = host.subscribe(() => events.push(host.getSnapshot().phase))
+  const unsubscribeRuntime = runtime.subscribe(() => events.push('runtime'))
+  t.after(() => { unsubscribeHost(); unsubscribeRuntime() })
+  const id = await preview(host, 'confirmed only')
+  assert.equal(executions, 0); assert.equal(host.getSnapshot().receipt, null)
+  unchanged(runtime, before)
+  await assert.rejects(host.callbacks.onConfirm(`${id}-forged`), e => e.code === 'PLAN_NOT_OWNED')
+  assert.equal(executions, 0); unchanged(runtime, before)
+  await host.callbacks.onConfirm(id)
+  assert.deepEqual(events, ['REQUESTING', 'provider', 'PREVIEW', 'CONFIRMING', 'executeCommand', 'runtime', 'APPLIED'])
+  assert.equal(executions, 1); applied(runtime, before, { buttonText: 'confirmed only' })
+  const committed = capture(runtime)
+  await host.callbacks.onConfirm(id)
+  assert.equal(executions, 1); unchanged(runtime, committed)
+})
+
+test('PR49: presentation command cannot escape trusted selected-block scope', t => {
+  const { runtime } = setup(t), before = capture(runtime), planner = createAppChangePlanner(runtime)
+  const result = planner.preview(candidate('scope-rejected', 0, 'applicant-list', { backgroundColor: '#abcdef' }), {
+    selectedBlockId: blockId, allowedBlockIds: [blockId], allowedEntityIds: ['applicants'],
+  })
+  assert.equal(result.ok, false); assert.equal(result.error.code, 'SCOPE_VIOLATION')
+  unchanged(runtime, before)
+})
+
+for (const reason of ['read-only', 'no-selection']) test(`PR49: ${reason} rejects before Provider invocation`, async t => {
+  let calls = 0
+  const { runtime, host } = setup(t, ({ request }) => { calls++; return answer(request) })
+  if (reason === 'read-only') runtime.customProject.setReadOnly(true)
+  else host.setSelection(null)
+  const before = capture(runtime)
+  await assert.rejects(host.callbacks.onRequestPlan('not authorized'), e => e.code === (reason === 'read-only' ? 'READ_ONLY' : 'SELECTION_REQUIRED'))
+  assert.equal(calls, 0); assert.equal(host.getSnapshot().preview, null)
+  unchanged(runtime, before)
+})
+
+test('PR49: production unavailable Provider remains disabled, with explicit feedback and no Runtime change', async t => {
+  const runtime = createAppRuntime(createClubRegistrationExample())
+  const host = createMochiHost(runtime, unavailablePlanProvider)
+  t.after(() => host.dispose()); host.setSelection(blockId)
+  const before = capture(runtime)
+  await assert.rejects(host.callbacks.onRequestPlan('change button'), e => e.code === 'AI_MODIFICATION_DISABLED')
+  const view = host.getSnapshot()
+  assert.equal(view.phase, 'REQUEST_FAILED'); assert.equal(view.error.code, 'AI_MODIFICATION_DISABLED')
+  assert.equal(view.preview, null); assert.equal(view.receipt, null)
+  unchanged(runtime, before)
 })
