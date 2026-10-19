@@ -1,8 +1,11 @@
-# Studio one-time issuer — proposal awaiting TL review
+# Studio one-time issuer — implemented candidate, Mock only
 
-Review base: PR75 `250a3bc649d0e007f4469c7b5479198e09dedb13`.
-This document adds no endpoint, cookie issuance, secret, approval or paid call.
-Implementation is pending TL cross-review as requested by Supervisor.
+Implementation base: PR75 `c29b134a34e47c247e9f48d1a5e1ec640acde9e9`.
+Technical design released for implementation by TL review #57 comment6275063739.
+The optional issuer is now implemented in studio-launcher.mjs. It remains
+default-closed without independently provisioned private grant AND state AND
+existing Gateway ledger. This patch provisions none of them in a real environment.
+Independent implementation review and production authorization remain pending.
 
 ## Unified budget / migration gate
 
@@ -45,16 +48,21 @@ and HTTPS/browser tests pass. Deployment approval material must disclose this.
    Path=/; Max-Age=<bounded remaining lifetime>`. No Domain attribute. Token is
    never returned in HTML/JSON, Location, error text or logs.
 
-Page/POST responses: Cache-Control:no-store, Referrer-Policy:no-referrer,
+Page/POST responses: Cache-Control:no-store,
 X-Content-Type-Options:nosniff, CSP denying scripts/external resources and
 restricting form-action to self and frame-ancestors to none. Serve only fixed
 markup; no reflected credentials/errors. Browser password input is cleared by
 navigation. Proxy/body/header logging and browser capture remain separate gates.
+Implementation/browser finding: Chromium native form POST under no-referrer
+sends Origin:null, so GET uses Referrer-Policy:same-origin to preserve the exact
+required Origin; no off-site Referer is sent. POST responses use no-referrer.
+There are no credentials in the fixed login URL or Referer. Origin validation
+was not relaxed. Local HTTPS browser acceptance covers this adjustment.
 
 ## Trust root and durable state
 
 Keep existing private Owner approval as mandatory root. Add one explicit issuer
-grant in it (schema change requires TL agreement): grant ID, credential SHA256,
+grant in it (reviewed schema): grant ID, credential SHA256,
 fixed principal, appId=`pomodoro`, issuedAt/expiresAt/revoked and session expiry.
 No plaintext credential/session token is stored. Credential lifetime at most
 10 minutes; session lifetime at most30 minutes and never beyond grant's explicit
@@ -115,13 +123,14 @@ resources acquired by this candidate and never deletes persistent state.
 
 ## Mock acceptance before any activation
 
-- Default closed; private grant/state missing, expired, wrong policy/app,
+- Default closed; private grant/state missing, wrong policy/app,
   unsafe permissions, symlink, HMAC/version mismatch: no issuer startup.
 - GET does not mint; wrong/missing/duplicate Origin, query, bad method/type,
   duplicate field, oversized/slow body fail without token disclosure.
 - Valid one-time exchange sets exact secure cookie attributes, fixed redirect,
   no token in URL/body/log; resulting cookie reaches actual Studio v2 Mock200.
-- Wrong/replayed/expired/revoked credential denies; five attempt cap survives
+- Wrong/replayed/expired/revoked credential denies (redemption expiry is distinct
+  from session expiry; it need not prevent restart); five attempt cap survives
   restart; simultaneous identical exchanges issue at most one cookie/session.
 - Restart resolves committed session; live revoke/expiry/duplicate cookie deny.
 - Fault injection before/after each write/fsync/rename: no uncommitted cookie;
@@ -132,14 +141,63 @@ resources acquired by this candidate and never deletes persistent state.
 - Actual browser form/cookie test uses local test HTTPS or reviewed TLS fixture;
   HTTP raw-header tests alone do not prove browsers accept Secure cookies.
 
+## Canonical v1 provisioning format (review contract, not activation approval)
+
+The optional approval `issuer` object has exactly these fields, with no extras:
+`id`, `credentialHash`, `principal`, `appId`, `issuedAt`, `expiresAt`,
+`sessionExpiresAt`, `revoked`. ID/principal are strings matching
+`[A-Za-z0-9_-]{1,128}`; credentialHash is lowercase SHA256 hex of the canonical
+43-character credential string (not its decoded bytes); appId is literal
+`pomodoro`; timestamps are safe integer Unix milliseconds; revoked is boolean.
+Principal must differ from all existing session principals; when issuer is
+present existing sessions are limited to255 so the merged allowlist stays<=256.
+
+Grant canonical bytes are UTF8 of JSON.stringify of a new object with properties
+in exactly the order above. Thus input JSON property ordering is irrelevant.
+`grantDigest = lowercase hex SHA256(grantCanonicalBytes)`.
+
+State canonical bytes are UTF8 of JSON.stringify over a new object in order:
+`version`, `grantDigest`, `attempts`, `consumed`, `sessionHash`,
+`sessionExpiresAt`. No whitespace/BOM/newline; version=1, attempts integer0..5,
+consumed boolean. Before consumption the two session fields are null; afterward
+hash is lowercase SHA256 hex of the opaque cookie string, expiry equals the
+grant's explicit sessionExpiresAt and attempts>=1.
+
+`mac = lowercase hex HMAC-SHA256(binding.key raw32 bytes,
+UTF8("blockcraft-studio-issuer-v1\n") || stateCanonicalBytes)`.
+The domain includes one actual LF byte. On disk the JSON has precisely those
+six state properties plus `mac` (seven total), all mandatory. Property ordering
+in the input state file is irrelevant; MAC computation rebuilds fixed order.
+There is no implicit initial state, recovery, grant rotation or budget migration
+endpoint. Tests provision synthetic initial state only in temporary directories.
+
+Both attempt and consumption commits write a same-directory exclusive0600
+random temp file, loop on short writes, fsync it, close, rename, fsync parent.
+Any injected/actual commit failure halts the issuer in that process and emits
+no cookie. Uncommitted temp files are left inert for owner review; they are
+never promoted or loaded. Restart reads only the canonical state path. If an
+attempt commit failed before rename, no comparison happened and no attempt is
+claimed as durable. If consumption rename occurred but final fsync/response
+failed, observed consumed state stays burned; corrupt/missing canonical state
+refuses startup. Hook tests model boundary exceptions, not physical power loss.
+
+Grant redemption expiry does not invalidate an already issued session: the
+distinct session expiry does. Startup may accept an expired/revoked redemption
+grant to resolve still-valid committed state or deny requests; it never mints
+from that grant. Live revocation denies session resolution. Explicit ownership
+startup is: private existing ledger precheck -> Gateway validates/acquires its
+lifetime lease -> issuer validates existing state -> listen. Never initialize
+a missing issuer ledger. Shutdown stops Core admission, stops/drains issuer
+reads/transitions, then invokes Core drain/settlement and releases Gateway lease.
+
 ## Outstanding review and platform gaps
 
-TL/Gateway should cross-review the trust root, single-record consumption,
+TL/Gateway must independently cross-review the implemented trust root, single-record consumption,
 five-attempt fail-closed tradeoff, startup state provisioning and combined drain
-before implementation. The launcher-only boundary permits fixed HTML/form
+before activation. The launcher-only boundary permits fixed HTML/form
 without a frontend account system, but requires a bounded durable writer inside
-the launcher; that writer needs crash/fault tests and cannot be represented by
-an in-memory consumed Set. No implementation PASS is claimed here.
+the launcher; boundary fault/restart tests and actual HTTPS browser Mock results
+are recorded in studio-issuer-acceptance.md. No production PASS is claimed.
 
 Owner credential delivery, Secret ACL, no request-body/Set-Cookie logging, TLS
 termination, backend isolation, one replica and persistent private POSIX fsync /
