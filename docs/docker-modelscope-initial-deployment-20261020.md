@@ -22,10 +22,34 @@
 | 对象 | 精确 SHA / 状态 | Docker 相关核对 | 部署含义 |
 | --- | --- | --- | --- |
 | 当前 main / PR #65 ZIP 来源 | `4a95cae50f772cd242d932cdbd93366381d1df74`；ZIP manifest 同源 | Dockerfile、`.dockerignore`、`ms_deploy.json` 静态检查绑定此 SHA | 历史无密钥 Docker 准备基线，不代表 ModelScope 已构建或运行 |
-| PR #65 文档分支 HEAD | `16744543c9aeacb279abae655d6a311865b7cc40`；OPEN/Draft | 仅部署文档/证据变动；没有因此触发 Docker acceptance workflow | 不能当成产品代码 SHA 或平台部署 revision |
+| PR #65 文档分支 HEAD | `16118857f112fccf2bda070f1533f9f0ea466b4a`；OPEN/Draft | 仅部署文档/证据变动；没有因此触发 Docker acceptance workflow | 不能当成产品代码 SHA 或平台部署 revision |
 | PR #68 冻结候选 | `d6f2cb4f110d22f665690e3af1d818249cc03b99`；OPEN/Draft | 相对历史 main 的 Dockerfile、`.dockerignore` 和 `ms_deploy.json` 无变化；包含服务端付费网关模块 | Docker 打包规则看起来可包含该模块，未对该 SHA 做镜像构建或平台验收 |
 | Core follow-up | `8aedff514dce3a2d2882a37bb29888892a0a376f`；独立 follow-up，未纳入冻结 PR #68 | 相对 PR #68 仅变更 `server/index.mjs`、`server/aiGenerationPrompt.mjs` 和两项测试；Docker 配置文件无变化 | 仍是未冻结候选；不得重打包或上传，需 Core/Gateway/QA 完成各自门禁后由负责人指定最终 SHA |
 | Gateway 限额复核 | PR #56 现有 HEAD `7d00712a2e11494eac9cd2e5bf83fb147d553d56`；新的候选 SHA 尚未提供 | 当前 PR #56 不能证明其与 Core follow-up 的组合验收 | 等 Gateway 提供精确组合 SHA 和 owner/QA 证据；不能据旧限额实现打开付费路径 |
+
+### P0 Pomodoro integration candidate (2026-10-20)
+
+The exact owner-local-smoke candidate checked for Docker packaging is `7fb98ffd401d08fcc4188a03619fb420860cc2eb` (tree `d37cad7cc4d9e8235484f959ebb76eee1c0d5e8f`), based on the unchanged `main` SHA above. This is a local integration candidate, not `main`, a merged PR, or deployment authorization. Relative to `main`, `Dockerfile`, `.dockerignore`, `ms_deploy.json`, `package.json`, `package-lock.json`, and `server/package.json` are byte-for-byte unchanged. ModelScope remains configured for Docker port `7860`; the candidate adds no platform deployment evidence.
+
+Static runtime review of this exact candidate found the production entry binds `0.0.0.0` and defaults to port `7860` (overridable by `PORT`). The Docker runtime copy rules include `server/index.mjs`, trusted-interactive sources, generated AppSpec validator output, the Mochi integration tree, and all `server/paid-gateway/*.mjs` modules imported by the entry. The build stage runs both frontend and server builds before copying generated validator output. The HTTP health route is `GET /api/health`; the Docker `HEALTHCHECK` probes it from `127.0.0.1` inside the container. `startServer()` does not construct a paid runtime unless an explicit trusted identity composition is supplied; the ordinary entry does not supply one. In the default configuration, both v1 and v2 generation requests are rejected with `401 UNAUTHORIZED` before provider access. These are source/configuration findings only, not a built-image or live-container result.
+
+Independent QA's latest report (#57 comment `6274257308`) records the integrated Gateway Mock UI flow as scoped evidence, but the full paid-gateway regression suite is `38/53 PASS` with 15 failures. This is a product/release blocker and does not change Docker packaging evidence into product or deployment GO. The local Docker command is unavailable (`docker: command not found`); no Docker build, image ESM import check, container health check, or HTTP smoke was run for `7fb98ffd…`. Preserve these as `NOT TESTED` until a Docker-capable environment runs them against the exact frozen candidate.
+
+### PR #75 Docker acceptance update (2026-10-20)
+
+This newer evidence is bound to PR #75, not to the older `7fb98ffd…` local candidate above:
+
+| Object | Exact SHA / status | Docker evidence | Boundary |
+| --- | --- | --- | --- |
+| Current `main` | `4a95cae50f772cd242d932cdbd93366381d1df74` | Still unchanged | PR #75 is not merged and is not `main` |
+| PR #75 HEAD | `d9ec5b36e633748e5be4d9657cb95ccfe2eb3d3c`, OPEN/Draft | Tree `4b31a7591bc98a2a978fb2f17c787700c1304d4e` | Local real Pomodoro result is LOCAL ONLY |
+| Actions Run `39303561834`, job `118234717724` | SUCCESS; actual checkout was merge commit `18babbe` on `main` + `d9ec5b3` | Regressions passed; image built; 18 final-image ESM imports resolved; container became `healthy`; 7 resource/route HTTP smoke checks passed; anonymous v1/v2 returned `401 UNAUTHORIZED` | No browser product flow, ModelScope deployment, HTTPS, or public generation was tested |
+
+The Run evidence is recorded in [GitHub Actions](https://github.com/Nanmuxxx/BlockCraft-AI/actions/runs/39303561834) and the latest applicable coordination decision, #57 comment `6274503083`. The CI checkout is an ephemeral PR merge commit; the tested PR tree matches exact HEAD `d9ec5b36…`, while `main` remains `4a95cae…`. These findings supersede the earlier Run `39302430003` failure (server 38/39, image/smoke skipped) and the earlier `39303561834` in-progress snapshot in comments `6274485524`/`6274499845`.
+
+The Core compatibility fix `8d54aeec810981f2afac1c07e176830d86037a13` and Gateway tests-only update `95eba6511755a2621ac131467b853b07bd9226d3` remain independent, unintegrated commits. Gateway reported 51/53 on its standalone tests candidate, retaining two CustomBlock 8192-vs-2048 contract failures until the Core fix is integrated; neither commit is represented by the PR #75 Docker run above. No new local Docker check or CI rerun was performed for this document update.
+
+Agent C independently accepted the Docker conclusion as **DOCKER GO, limited to tested scope** in `/Users/nanmuxun/BlockAI/BlockCraft-AI-pr49-r2-qa/DOCKER-HANDOFF-INDEPENDENT-REVIEW.md`; that review does not grant product or deployment approval. The ModelScope status remains `BLOCKED`: no upload/build/run, no HTTPS or target-space ACL/Secret boundary evidence, no verified single-instance persistent POSIX ledger volume, and no deployment authorization. The local Docker executable also remains unavailable, so the cloud Actions result must not be described as a ModelScope or local-container test.
 
 只读源码差异显示 Core follow-up 在 `startServer()` 中仍默认不构造 paid runtime；只有显式提供可信 principal resolver，或启用 `AI_GENERATION_IDENTITY_MODE=opaque-session` 并提供 allowlist，才进入该组合。可执行入口在 `NODE_ENV=production` 时绑定 `0.0.0.0`，端口取 `PORT`，默认 `7860`。这些是精确候选源码检查，不是构建或目标平台运行证据。该 follow-up 加入 `AI_GENERATION_BINDING_KEY` 的严格配置读取；opaque-session 模式还要求 `AI_GENERATION_SESSION_ALLOWLIST_PATH` 指向绝对路径、权限受限的文件。它们是付费组合的敏感运行配置，当前不应设置或注入。
 
@@ -158,7 +182,14 @@ ModelScope 官方 `modelscope-studio` 技能文档描述了 Studio Secret 接口
 
 | 检查 | 状态 | 证据/限制 |
 | --- | --- | --- |
+| PR #75 cloud Docker acceptance | PASS（限定 CI 范围） | Run `39303561834` / job `118234717724`；checkout merge commit `18babbe`，合入 PR #75 HEAD `d9ec5b36…`；不代表 main 或平台部署 |
+| PR #75 最终镜像 ESM / health / HTTP smoke / 匿名 v1/v2 | PASS（限定断言） | 18 imports、healthy、7 smoke checks、匿名 API 401；浏览器、完整对抗矩阵及公网流程 NOT TESTED |
+| PR #75 当前 GitHub main 覆盖 | NOT TESTED | PR #75 为 OPEN/Draft，未合并；main 仍 `4a95cae50f772cd242d932cdbd93366381d1df74` |
+| PR #75 Core/Gateway 离线回归补丁集成 | BLOCKED / NOT TESTED | Core `8d54aee…` 与 Gateway `95eba65…` 是分开的未集成提交；PR75 CI 不含这两个提交 |
 | main SHA/tree、Dockerfile、`.dockerignore`、`ms_deploy.json`、启动监听及默认匿名拒绝 | PASS（静态源码核查） | SHA `4a95cae…`，tree `b19a52f…`；不表示平台实际运行 |
+| owner-local-smoke `7fb98ffd…` Docker 文件/依赖清单比较 | PASS（静态 diff） | tree `d37cad7…`；Dockerfile、`.dockerignore`、`ms_deploy.json` 与 Node 依赖清单相对 main 未改；候选尚未冻结 |
+| `7fb98ffd…` Docker runtime import/copy 覆盖、端口绑定、health route、匿名 v1/v2 拒绝 | PASS（静态源码核查） | 运行时需要的 server 模块包含在现有复制规则中；生产入口 `0.0.0.0:$PORT`，默认 7860；不代表 ESM 在最终镜像内已执行 |
+| `7fb98ffd…` Docker image build、最终镜像 ESM import、容器 health、HTTP smoke | NOT TESTED | 本机无 Docker executable；未找到 Docker 兼容 runtime；需在 Docker-capable 环境对冻结 exact SHA 验证 |
 | Docker image build/本地容器 | NOT RUN | 当前环境没有 Docker/Podman/nerdctl；历史 CI 不等于 ModelScope 构建 |
 | ModelScope 网页目录/ZIP 上传与 `.dockerignore` 保留 | NOT TESTED | 必须由 Owner 登录目标 Space 后按实际 UI 验证；不得假定 ZIP 自动解包或隐藏文件保留 |
 | ModelScope 平台构建、运行状态、健康、页面与 API smoke | BLOCKED / NOT TESTED | 空间尚无部署内容，实际应用 origin 未提供；必须等单独部署授权 |
