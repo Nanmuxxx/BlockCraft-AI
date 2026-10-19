@@ -44,7 +44,7 @@
 - `props` 必须匹配 manifest `propsSchema`。
 - `requestedCapabilities` 必须为空，`events` 必须为空。
 - 只允许 `react`、`react/jsx-runtime` 和制品内相对源文件。
-- 不在宿主执行源码；编译在受限 worker 中完成。
+- 不在宿主执行源码；编译在专用子进程中完成，esbuild 服务进程随超时、取消或 dispose 一并终止。
 
 ### 成功响应
 
@@ -77,6 +77,9 @@
 | `SOURCE_CAPABILITY_REJECTED` | 422 | 源级危险能力 denylist |
 | `BUNDLE_LIMIT` | 422 | bundle 超限 |
 | `COMPILE_TIMEOUT` | 504 | 编译超时 |
+| `COMPILE_CANCELLED` | 499 | 调用方取消或宿主断开 |
+| `COMPILER_TERMINATION_FAILED` | 503 | 无法证明编译进程树已退出，Fail closed |
+| `COMPILER_CONFIGURATION` | 503 | 编译超时/并发配置无效 |
 | `COMPILER_BUSY` | 429 | 编译并发已满 |
 | `RUNNER_CAPACITY` | 503 | 没有健康 Viewer 源站 |
 | `SESSION_EXPIRED` | 404 | session 不存在/过期/不匹配 |

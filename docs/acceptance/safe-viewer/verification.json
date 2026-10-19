@@ -1,22 +1,51 @@
 {
-  "reportVersion": 1,
+  "reportVersion": 2,
   "testedMain": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
-  "prHead": "ae825974aaf92e5670a44813f4722e3025080d70",
-  "verifiedCodeHead": "753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd",
-  "testedAt": "2026-10-19T10:33:00+08:00",
-  "source": "GitHub PR head tarball",
+  "remotePrHead": "2a7688480d1859c87762b46224b6ec81fe28d370",
+  "prHead": "df8a5f91341ffb936400488375e30cc6c8e14b82",
+  "verifiedCodeHead": "df8a5f91341ffb936400488375e30cc6c8e14b82",
+  "testedAt": "2026-10-19T11:02:25+08:00",
+  "branch": "phase2/pr43-compile-isolation",
+  "worktree": "F:\\BlockCraft-AI\\pr43-compile-isolation",
+  "source": "local isolated worktree; code commit df8a5f9",
+  "environment": {
+    "os": "Windows 11 10.0.26300",
+    "node": "24.19.0",
+    "npm": "11.17.0",
+    "chromium": "153.0.8010.12",
+    "esbuild-wasm": "0.25.12",
+    "react": "19.3.1"
+  },
   "commands": [
-    { "command": "npm ci", "result": "pass" },
-    { "command": "npm run test:safe-viewer", "result": "6/6 pass" },
-    { "command": "npm run test:safe-viewer:browser", "result": "14/14 pass", "browser": "153.0.8010.12" },
-    { "command": "npm test", "result": "194/194 pass" },
-    { "command": "npm run build", "result": "pass" },
-    { "command": "GitHub Actions docker acceptance", "result": "pass", "duration": "1m16s" }
+    { "command": "npm ci", "result": "pass", "packages": 28, "vulnerabilities": 0 },
+    { "command": "npm run test:safe-viewer", "result": "12/12 pass", "exitCode": 0 },
+    { "command": "node --test tests/safe-viewer/compiler-process.test.mjs", "result": "6/6 pass in each of 3 consecutive runs", "exitCode": 0 },
+    { "command": "npm run test:safe-viewer:browser", "result": "14/14 pass", "exitCode": 0 },
+    { "command": "npm test", "result": "194/194 pass", "exitCode": 0 },
+    { "command": "npm run build", "result": "pass", "exitCode": 0 }
   ],
+  "processTerminationEvidence": {
+    "compilerProcessObserved": true,
+    "esbuildProcessObserved": true,
+    "successPidsGone": true,
+    "compileErrorPidsGone": true,
+    "cancellationPidsGone": true,
+    "timeoutObservedAfterEsbuildStart": true,
+    "timeoutPidsGone": true,
+    "repeatedCompileProcesses": 0,
+    "disposePidsGone": true,
+    "hostResponsive": true,
+    "consecutiveRuns": 3
+  },
   "browserEvidence": "browser-report.json",
   "notes": [
-    "The PR branch was rebased onto the latest main through GitHub update-branch; no PR merge or main modification was performed.",
     "The production C-mode remains unavailable; the safe viewer is default-off and not wired into Workshop.",
-    "Residual risks remain documented in TSX-VIEWER-THREAT-MODEL.md."
+    "No PR merge, main modification, deployment, real model call, or paid budget use occurred.",
+    "The local candidate commit has not been pushed, so no GitHub Actions result exists for df8a5f9."
+  ],
+  "residualRisks": [
+    "Windows process-tree termination depends on taskkill /T /F; failure is surfaced as COMPILER_TERMINATION_FAILED.",
+    "POSIX process-group termination is implemented but was not exercised on this Windows host.",
+    "Only Chromium 153.0.8010.12 was browser-tested."
   ]
 }
