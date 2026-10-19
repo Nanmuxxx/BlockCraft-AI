@@ -1,0 +1,22 @@
+{
+  "reportVersion": 1,
+  "testedMain": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
+  "prHead": "ae825974aaf92e5670a44813f4722e3025080d70",
+  "verifiedCodeHead": "753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd",
+  "testedAt": "2026-10-19T10:33:00+08:00",
+  "source": "GitHub PR head tarball",
+  "commands": [
+    { "command": "npm ci", "result": "pass" },
+    { "command": "npm run test:safe-viewer", "result": "6/6 pass" },
+    { "command": "npm run test:safe-viewer:browser", "result": "14/14 pass", "browser": "153.0.8010.12" },
+    { "command": "npm test", "result": "194/194 pass" },
+    { "command": "npm run build", "result": "pass" },
+    { "command": "GitHub Actions docker acceptance", "result": "pass", "duration": "1m16s" }
+  ],
+  "browserEvidence": "browser-report.json",
+  "notes": [
+    "The PR branch was rebased onto the latest main through GitHub update-branch; no PR merge or main modification was performed.",
+    "The production C-mode remains unavailable; the safe viewer is default-off and not wired into Workshop.",
+    "Residual risks remain documented in TSX-VIEWER-THREAT-MODEL.md."
+  ]
+}

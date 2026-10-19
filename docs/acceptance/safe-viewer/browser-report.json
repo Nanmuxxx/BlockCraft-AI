@@ -1,0 +1,111 @@
+{
+  "generatedAt": "2026-10-19T02:33:19.316Z",
+  "testedMain": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
+  "prHead": "ae825974aaf92e5670a44813f4722e3025080d70",
+  "verifiedCodeHead": "753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd",
+  "browser": "153.0.8010.12",
+  "hostOrigin": "http://127.0.0.1:52182",
+  "runnerOrigins": [
+    "http://127.0.0.2:52182",
+    "http://127.0.0.3:52182",
+    "http://127.0.0.4:52182",
+    "http://127.0.0.5:52182",
+    "http://127.0.0.6:52182",
+    "http://127.0.0.7:52182"
+  ],
+  "checks": [
+    {
+      "name": "host secrets initialized",
+      "passed": true
+    },
+    {
+      "name": "Counter renders and React state updates from real clicks",
+      "passed": true
+    },
+    {
+      "name": "Counter unmount removes iframe",
+      "passed": true
+    },
+    {
+      "name": "Todo List input, add, toggle and delete update React state",
+      "passed": true
+    },
+    {
+      "name": "Pomodoro timer runs, pauses and resets",
+      "passed": true
+    },
+    {
+      "name": "render error is contained and host stays alive",
+      "passed": true,
+      "code": "RENDER_ERROR"
+    },
+    {
+      "name": "infinite loop is process-isolated, timed out and removed",
+      "passed": true,
+      "pingDurationMs": 2
+    },
+    {
+      "name": "host DOM, storage and network are inaccessible; top navigation blocked",
+      "passed": true
+    },
+    {
+      "name": "forged postMessage from the host window is rejected",
+      "passed": true
+    },
+    {
+      "name": "illegal protocol, imports, capabilities, digest and bundle size are rejected",
+      "passed": true
+    },
+    {
+      "name": "repeated mount and unmount leave no iframe or host listener",
+      "passed": true,
+      "mounts": 9
+    },
+    {
+      "name": "page switching disposes the old iframe and keeps one live runner",
+      "passed": true
+    },
+    {
+      "name": "runner response carries strict CSP and origin-agent-cluster headers",
+      "passed": true
+    },
+    {
+      "name": "host state remains intact and CSP blocked the only external attempt",
+      "passed": true,
+      "cache": {
+        "entries": 6,
+        "bytes": 1374321,
+        "hits": 16,
+        "misses": 7,
+        "builds": 6,
+        "evictions": 0
+      }
+    }
+  ],
+  "externalRequests": [
+    "https://example.test/pixel"
+  ],
+  "externalResponses": [],
+  "blockedExternal": [
+    {
+      "url": "https://example.test/pixel",
+      "error": "csp"
+    }
+  ],
+  "runnerRequestCookies": [],
+  "pageErrors": [],
+  "cache": {
+    "entries": 6,
+    "bytes": 1374321,
+    "hits": 16,
+    "misses": 7,
+    "builds": 6,
+    "evictions": 0
+  },
+  "runnerPool": 6,
+  "quarantined": [
+    "http://127.0.0.6:52182"
+  ],
+  "runnerRetired": 1,
+  "note": "Real Chromium interactions; no screenshot substituted for execution."
+}
