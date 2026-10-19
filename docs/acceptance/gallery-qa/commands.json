@@ -1,0 +1,35 @@
+{
+  "codeSha": "a5392394b44c1d5702888af6f80e25195a3cc137",
+  "sourceTree": "e1c05c3f236590c43fe7997624fd9e9056e9b146",
+  "environment": {
+    "playwright": "1.64.1",
+    "node": "v24.22.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "commands": [
+    {
+      "command": "npm ci",
+      "exitCode": 0
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "log": "root.txt",
+      "passed": 206
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "log": "build.txt",
+      "includes": "tsc -b; vite build"
+    },
+    {
+      "command": "NODE_PATH=/Users/nanmuxun/BlockAI/BlockCraft-AI-agent-c/node_modules node tests/gallery-qa/browser.cjs",
+      "exitCode": 0,
+      "log": "browser.txt",
+      "passed": 12
+    }
+  ],
+  "finishedAt": "2026-10-19T14:10:04.351Z"
+}

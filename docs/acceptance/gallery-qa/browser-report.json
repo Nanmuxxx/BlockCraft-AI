@@ -1,0 +1,1404 @@
+{
+  "codeSha": "a5392394b44c1d5702888af6f80e25195a3cc137",
+  "baseSha": "8cfa37f5112adaab1e0adbb4cb4086240111d436",
+  "classification": "OFFLINE FIXTURES; real Gallery /ai-create production build; no model generation or replay",
+  "viewports": [
+    [
+      1440,
+      900
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "cases": [
+    {
+      "id": "club-registration-1440",
+      "width": 1440,
+      "height": 900,
+      "gallery": "社团报名",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 1,
+      "metricKinds": [
+        "count"
+      ],
+      "initialMetrics": [
+        {
+          "id": "applicant-total",
+          "value": 1
+        }
+      ],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "learning-log-1440",
+      "width": 1440,
+      "height": 900,
+      "gallery": "学习记录",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 1,
+      "metricKinds": [
+        "sum"
+      ],
+      "initialMetrics": [
+        {
+          "id": "study-total-minutes",
+          "value": 45
+        }
+      ],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "fitness-checkin-1440",
+      "width": 1440,
+      "height": 900,
+      "gallery": "健身打卡",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 1,
+      "metricKinds": [
+        "sum"
+      ],
+      "initialMetrics": [
+        {
+          "id": "workout-total-minutes",
+          "value": 45
+        }
+      ],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "expense-tracker-1440",
+      "width": 1440,
+      "height": 900,
+      "gallery": "个人记账",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 2,
+      "metricKinds": [
+        "sum"
+      ],
+      "initialMetrics": [
+        {
+          "id": "transaction-total",
+          "value": 528
+        }
+      ],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "task-manager-1440",
+      "width": 1440,
+      "height": 900,
+      "gallery": "任务管理",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 2,
+      "metricKinds": [],
+      "initialMetrics": [],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "habit-tracker-1440",
+      "width": 1440,
+      "height": 900,
+      "gallery": "习惯养成",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 1,
+      "metricKinds": [
+        "count"
+      ],
+      "initialMetrics": [
+        {
+          "id": "habit-total",
+          "value": 1
+        }
+      ],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "club-registration-390",
+      "width": 390,
+      "height": 844,
+      "gallery": "社团报名",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 1,
+      "metricKinds": [
+        "count"
+      ],
+      "initialMetrics": [
+        {
+          "id": "applicant-total",
+          "value": 1
+        }
+      ],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "learning-log-390",
+      "width": 390,
+      "height": 844,
+      "gallery": "学习记录",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 1,
+      "metricKinds": [
+        "sum"
+      ],
+      "initialMetrics": [
+        {
+          "id": "study-total-minutes",
+          "value": 45
+        }
+      ],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "fitness-checkin-390",
+      "width": 390,
+      "height": 844,
+      "gallery": "健身打卡",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 1,
+      "metricKinds": [
+        "sum"
+      ],
+      "initialMetrics": [
+        {
+          "id": "workout-total-minutes",
+          "value": 45
+        }
+      ],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "expense-tracker-390",
+      "width": 390,
+      "height": 844,
+      "gallery": "个人记账",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 2,
+      "metricKinds": [
+        "sum"
+      ],
+      "initialMetrics": [
+        {
+          "id": "transaction-total",
+          "value": 528
+        }
+      ],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "task-manager-390",
+      "width": 390,
+      "height": 844,
+      "gallery": "任务管理",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 2,
+      "metricKinds": [],
+      "initialMetrics": [],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    },
+    {
+      "id": "habit-tracker-390",
+      "width": 390,
+      "height": 844,
+      "gallery": "习惯养成",
+      "classification": "OFFLINE FIXTURE",
+      "initialRows": 1,
+      "metricKinds": [
+        "count"
+      ],
+      "initialMetrics": [
+        {
+          "id": "habit-total",
+          "value": 1
+        }
+      ],
+      "checks": [
+        "six cards/source labels",
+        "B add optional entity field",
+        "B configure form and list",
+        "C create/read/update/delete",
+        "count or sum updates where supported; task has no metric",
+        "three B/C round trips",
+        "Cancel preserves edited rows and project",
+        "explicit Confirm loads different project",
+        "fresh initial records/no old field leak",
+        "no horizontal overflow"
+      ],
+      "passed": true
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "network": [
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "club-registration-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "learning-log-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "task-manager-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/ai-create"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "method": "GET",
+      "path": "/api/mochi-ai/status"
+    }
+  ],
+  "unexpectedNetwork": [],
+  "httpErrors": [],
+  "screenshots": [
+    {
+      "caseId": "club-registration-1440",
+      "label": "gallery",
+      "path": "screenshots/club-registration-1440-gallery.png"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "label": "B-edited",
+      "path": "screenshots/club-registration-1440-B-edited.png"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "label": "C-updated",
+      "path": "screenshots/club-registration-1440-C-updated.png"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "label": "replace-dialog",
+      "path": "screenshots/club-registration-1440-replace-dialog.png"
+    },
+    {
+      "caseId": "club-registration-1440",
+      "label": "confirmed-switch",
+      "path": "screenshots/club-registration-1440-confirmed-switch.png"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "label": "B-edited",
+      "path": "screenshots/learning-log-1440-B-edited.png"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "label": "C-updated",
+      "path": "screenshots/learning-log-1440-C-updated.png"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "label": "replace-dialog",
+      "path": "screenshots/learning-log-1440-replace-dialog.png"
+    },
+    {
+      "caseId": "learning-log-1440",
+      "label": "confirmed-switch",
+      "path": "screenshots/learning-log-1440-confirmed-switch.png"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "label": "B-edited",
+      "path": "screenshots/fitness-checkin-1440-B-edited.png"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "label": "C-updated",
+      "path": "screenshots/fitness-checkin-1440-C-updated.png"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "label": "replace-dialog",
+      "path": "screenshots/fitness-checkin-1440-replace-dialog.png"
+    },
+    {
+      "caseId": "fitness-checkin-1440",
+      "label": "confirmed-switch",
+      "path": "screenshots/fitness-checkin-1440-confirmed-switch.png"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "label": "B-edited",
+      "path": "screenshots/expense-tracker-1440-B-edited.png"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "label": "C-updated",
+      "path": "screenshots/expense-tracker-1440-C-updated.png"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "label": "replace-dialog",
+      "path": "screenshots/expense-tracker-1440-replace-dialog.png"
+    },
+    {
+      "caseId": "expense-tracker-1440",
+      "label": "confirmed-switch",
+      "path": "screenshots/expense-tracker-1440-confirmed-switch.png"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "label": "B-edited",
+      "path": "screenshots/task-manager-1440-B-edited.png"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "label": "C-updated",
+      "path": "screenshots/task-manager-1440-C-updated.png"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "label": "replace-dialog",
+      "path": "screenshots/task-manager-1440-replace-dialog.png"
+    },
+    {
+      "caseId": "task-manager-1440",
+      "label": "confirmed-switch",
+      "path": "screenshots/task-manager-1440-confirmed-switch.png"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "label": "B-edited",
+      "path": "screenshots/habit-tracker-1440-B-edited.png"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "label": "C-updated",
+      "path": "screenshots/habit-tracker-1440-C-updated.png"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "label": "replace-dialog",
+      "path": "screenshots/habit-tracker-1440-replace-dialog.png"
+    },
+    {
+      "caseId": "habit-tracker-1440",
+      "label": "confirmed-switch",
+      "path": "screenshots/habit-tracker-1440-confirmed-switch.png"
+    },
+    {
+      "caseId": "club-registration-390",
+      "label": "gallery",
+      "path": "screenshots/club-registration-390-gallery.png"
+    },
+    {
+      "caseId": "club-registration-390",
+      "label": "B-edited",
+      "path": "screenshots/club-registration-390-B-edited.png"
+    },
+    {
+      "caseId": "club-registration-390",
+      "label": "C-updated",
+      "path": "screenshots/club-registration-390-C-updated.png"
+    },
+    {
+      "caseId": "club-registration-390",
+      "label": "replace-dialog",
+      "path": "screenshots/club-registration-390-replace-dialog.png"
+    },
+    {
+      "caseId": "club-registration-390",
+      "label": "confirmed-switch",
+      "path": "screenshots/club-registration-390-confirmed-switch.png"
+    },
+    {
+      "caseId": "learning-log-390",
+      "label": "B-edited",
+      "path": "screenshots/learning-log-390-B-edited.png"
+    },
+    {
+      "caseId": "learning-log-390",
+      "label": "C-updated",
+      "path": "screenshots/learning-log-390-C-updated.png"
+    },
+    {
+      "caseId": "learning-log-390",
+      "label": "replace-dialog",
+      "path": "screenshots/learning-log-390-replace-dialog.png"
+    },
+    {
+      "caseId": "learning-log-390",
+      "label": "confirmed-switch",
+      "path": "screenshots/learning-log-390-confirmed-switch.png"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "label": "B-edited",
+      "path": "screenshots/fitness-checkin-390-B-edited.png"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "label": "C-updated",
+      "path": "screenshots/fitness-checkin-390-C-updated.png"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "label": "replace-dialog",
+      "path": "screenshots/fitness-checkin-390-replace-dialog.png"
+    },
+    {
+      "caseId": "fitness-checkin-390",
+      "label": "confirmed-switch",
+      "path": "screenshots/fitness-checkin-390-confirmed-switch.png"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "label": "B-edited",
+      "path": "screenshots/expense-tracker-390-B-edited.png"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "label": "C-updated",
+      "path": "screenshots/expense-tracker-390-C-updated.png"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "label": "replace-dialog",
+      "path": "screenshots/expense-tracker-390-replace-dialog.png"
+    },
+    {
+      "caseId": "expense-tracker-390",
+      "label": "confirmed-switch",
+      "path": "screenshots/expense-tracker-390-confirmed-switch.png"
+    },
+    {
+      "caseId": "task-manager-390",
+      "label": "B-edited",
+      "path": "screenshots/task-manager-390-B-edited.png"
+    },
+    {
+      "caseId": "task-manager-390",
+      "label": "C-updated",
+      "path": "screenshots/task-manager-390-C-updated.png"
+    },
+    {
+      "caseId": "task-manager-390",
+      "label": "replace-dialog",
+      "path": "screenshots/task-manager-390-replace-dialog.png"
+    },
+    {
+      "caseId": "task-manager-390",
+      "label": "confirmed-switch",
+      "path": "screenshots/task-manager-390-confirmed-switch.png"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "label": "B-edited",
+      "path": "screenshots/habit-tracker-390-B-edited.png"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "label": "C-updated",
+      "path": "screenshots/habit-tracker-390-C-updated.png"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "label": "replace-dialog",
+      "path": "screenshots/habit-tracker-390-replace-dialog.png"
+    },
+    {
+      "caseId": "habit-tracker-390",
+      "label": "confirmed-switch",
+      "path": "screenshots/habit-tracker-390-confirmed-switch.png"
+    }
+  ],
+  "liveCalls": 0,
+  "chromium": "156.0.8078.4",
+  "finishedAt": "2026-10-19T14:10:04.351Z"
+}
