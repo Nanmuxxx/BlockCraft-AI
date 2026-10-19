@@ -1,9 +1,84 @@
 import { constants } from 'node:fs'
 import { open, mkdir, lstat, readdir, link, unlink, rmdir } from 'node:fs/promises'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { protocol, json, ensure, GenerationError, LIMITS } from './protocol.mjs'
 import { validatePendingEntry } from './contract.mjs'
+
+const execFileAsync = promisify(execFile)
+const WINDOWS_POWERSHELL = path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe')
+const WINDOWS_PRIVATE_SIDS = new Set(['S-1-5-18', 'S-1-5-32-544'])
+const WINDOWS_PS_MODULE_PATH = [
+  path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'WindowsPowerShell', 'v1.0', 'Modules'),
+  path.join(process.env.ProgramFiles || 'C:\\Program Files', 'WindowsPowerShell', 'Modules'),
+].join(path.delimiter)
+
+/**
+ * POSIX mode bits do not describe Windows ACL inheritance or identity. Replace
+ * inherited access on the private store root with an explicit ACL for the
+ * current user, SYSTEM and Administrators, then verify the resulting ACL.
+ * Keep this fail-closed when PowerShell/ACL inspection is unavailable.
+ */
+async function prepareWindowsAcl(root) {
+  const script = `
+$ErrorActionPreference = 'Stop'
+$path = $env:BLOCKCRAFT_STORE_ROOT
+$current = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+$acl = Get-Acl -LiteralPath $path
+$allowedSids = @($current, 'S-1-5-18', 'S-1-5-32-544')
+$initialAllow = @($acl.Access | Where-Object { $_.AccessControlType -eq 'Allow' } | ForEach-Object {
+  try { $_.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value }
+  catch { $_.IdentityReference.Value }
+})
+$alreadyPrivate = $acl.AreAccessRulesProtected -and $initialAllow.Count -gt 0 -and @($initialAllow | Where-Object { $allowedSids -notcontains $_ }).Count -eq 0
+if (-not $alreadyPrivate) {
+  try {
+    $acl.SetAccessRuleProtection($true, $false)
+    foreach ($rule in @($acl.Access)) { [void]$acl.RemoveAccessRule($rule) }
+    foreach ($sid in $allowedSids) {
+      $identity = New-Object System.Security.Principal.SecurityIdentifier($sid)
+      $inheritance = [System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor [System.Security.AccessControl.InheritanceFlags]::ObjectInherit
+      $rule = New-Object System.Security.AccessControl.FileSystemAccessRule($identity, [System.Security.AccessControl.FileSystemRights]::FullControl, $inheritance, [System.Security.AccessControl.PropagationFlags]::None, [System.Security.AccessControl.AccessControlType]::Allow)
+      [void]$acl.AddAccessRule($rule)
+    }
+    Set-Acl -LiteralPath $path -AclObject $acl
+  } catch {
+    # Another bounded writer may have normalized the same root concurrently.
+    # Verification below decides whether the resulting ACL is acceptable.
+  }
+}
+$verified = Get-Acl -LiteralPath $path
+$allow = @($verified.Access | Where-Object { $_.AccessControlType -eq 'Allow' } | ForEach-Object {
+  try { $_.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value }
+  catch { $_.IdentityReference.Value }
+})
+[pscustomobject]@{ Protected = $verified.AreAccessRulesProtected; CurrentSid = $current; Allow = $allow } | ConvertTo-Json -Compress
+`
+  let stdout
+  try {
+    stdout = (await execFileAsync(WINDOWS_POWERSHELL, [
+      '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-Command', script,
+    ], {
+      windowsHide: true,
+      timeout: 5000,
+      maxBuffer: 1024 * 1024,
+      // The host can inherit PowerShell 7 module directories. Windows
+      // PowerShell must not try to autoload Microsoft.PowerShell.Security from
+      // those incompatible module versions.
+      env: { ...process.env, PSModulePath: WINDOWS_PS_MODULE_PATH, BLOCKCRAFT_STORE_ROOT: root },
+    })).stdout
+  } catch {
+    throw new GenerationError('STORE_PRIVATE_DIRECTORY_ACL_UNVERIFIED')
+  }
+  let report
+  try { report = JSON.parse(stdout.trim()) } catch { throw new GenerationError('STORE_PRIVATE_DIRECTORY_ACL_UNVERIFIED') }
+  const allowed = new Set([report?.CurrentSid, ...WINDOWS_PRIVATE_SIDS])
+  ensure(report?.Protected === true && typeof report?.CurrentSid === 'string' &&
+    Array.isArray(report?.Allow) && report.Allow.length > 0 && report.Allow.every(sid => allowed.has(sid)),
+  'STORE_PRIVATE_DIRECTORY_ACL_UNVERIFIED')
+}
 
 async function readBounded(filename) {
   const handle = await open(filename, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK)
@@ -42,7 +117,9 @@ export function createPendingStore(directory, { maxArtifacts = 256 } = {}) {
   async function prepare() {
     await mkdir(root, { recursive: true, mode: 0o700 })
     const stat = await lstat(root)
-    ensure(stat.isDirectory() && !stat.isSymbolicLink() && (stat.mode & 0o077) === 0, 'STORE_PRIVATE_DIRECTORY_REQUIRED')
+    ensure(stat.isDirectory() && !stat.isSymbolicLink(), 'STORE_PRIVATE_DIRECTORY_REQUIRED')
+    if (process.platform === 'win32') await prepareWindowsAcl(root)
+    else ensure((stat.mode & 0o077) === 0, 'STORE_PRIVATE_DIRECTORY_REQUIRED')
   }
   function filename(reference) {
     protocol.assertArtifactReference(reference)

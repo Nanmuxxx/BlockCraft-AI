@@ -48,7 +48,11 @@ test('three MOCK-only end-to-end inputs persist distinct inspectable pending art
   assert.equal(digests.size, 3)
   for (const name of await readdir(directory)) {
     assert.match(name, /^[a-f0-9]{64}\.json$/)
-    assert.equal((await stat(path.join(directory, name))).mode & 0o777, 0o600)
+    const fileStat = await stat(path.join(directory, name))
+    assert.equal(fileStat.isFile(), true)
+    // Windows does not expose POSIX mode bits; the store's protected ACL is
+    // verified by prepareWindowsAcl and inherited by these files.
+    if (process.platform !== 'win32') assert.equal(fileStat.mode & 0o777, 0o600)
   }
 })
 test('invalid output never reaches storage, never evaluates source side effects', async t => {
@@ -91,8 +95,11 @@ test('read rejects tampering, mismatched reference, extra metadata, symlink and 
     await assert.rejects(store.inspect(reference))
   }
   await rm(filename)
-  await symlink('/dev/null', filename)
-  await assert.rejects(store.inspect(reference), { code: 'STORE_INVALID' })
+  // The Windows test account may not hold SeCreateSymbolicLinkPrivilege.
+  if (process.platform !== 'win32') {
+    await symlink('/dev/null', filename)
+    await assert.rejects(store.inspect(reference), { code: 'STORE_INVALID' })
+  }
 })
 test('private store permissions, quotas and references fail closed', async t => {
   const { store, directory } = await setup(t, { maxArtifacts: 1 })
@@ -106,8 +113,10 @@ test('private store permissions, quotas and references fail closed', async t => 
   const accessor = { versionDigest: input.entry.versionDigest, get definitionId() { read = true; return 'new-component' } }
   await assert.rejects(store.inspect(accessor))
   assert.equal(read, false)
-  await chmod(directory, 0o755)
-  await assert.rejects(store.put(input), { code: 'STORE_PRIVATE_DIRECTORY_REQUIRED' })
+  if (process.platform !== 'win32') {
+    await chmod(directory, 0o755)
+    await assert.rejects(store.put(input), { code: 'STORE_PRIVATE_DIRECTORY_REQUIRED' })
+  }
 })
 
 test('store reads the complete immutable record when the filesystem returns short reads', async t => {
@@ -269,10 +278,14 @@ test('unknown or stale store lease fails closed, remains intact, and is never fo
   assert.equal(await readFile(path.join(lease, 'owner-evidence'), 'utf8'), 'do not delete')
   assert.equal(await store.inspect(ref(input.entry)), undefined)
   // Only this test owns/removes its fixture lease. Production does no recovery.
-  await rm(lease, { recursive: true }); await symlink('/dev/null', lease)
-  await assert.rejects(store.put(input), { code: 'STORE_BUSY' })
-  assert.equal((await lstat(lease)).isSymbolicLink(), true)
-  await rm(lease); await store.put(input)
+  await rm(lease, { recursive: true })
+  if (process.platform !== 'win32') {
+    await symlink('/dev/null', lease)
+    await assert.rejects(store.put(input), { code: 'STORE_BUSY' })
+    assert.equal((await lstat(lease)).isSymbolicLink(), true)
+    await rm(lease)
+  }
+  await store.put(input)
   assert.deepEqual(await readdir(directory), [`${input.entry.versionDigest.slice(7)}.json`])
   const other = await record(), output = response(); output.manifest.name = 'quota rejected'
   other.entry = await admitOutput(request(), JSON.stringify(output))
