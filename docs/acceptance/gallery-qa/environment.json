@@ -1,0 +1,6 @@
+{
+  "playwright": "1.64.1",
+  "node": "v24.22.0",
+  "platform": "darwin",
+  "arch": "arm64"
+}
