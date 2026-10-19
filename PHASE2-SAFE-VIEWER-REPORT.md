@@ -6,12 +6,13 @@
 
 - 已实时核对 `main`：`b56a26a9803718d806bac3ddbd7fbe19e0c495c6`
 - PR #43 远端 Draft head：`2a7688480d1859c87762b46224b6ec81fe28d370`
-- 受测候选代码 head：`df8a5f91341ffb936400488375e30cc6c8e14b82`
-- 包含证据文档的受测/CI head：`f6c88a2bedddca255fd8711d1f2483046defd8dd`
-- 分支：`phase2/pr43-compile-isolation`；worktree：`F:\BlockCraft-AI\pr43-compile-isolation`
+- 受测候选代码 head：`8eecb9399667e9ec03cb48fa2221d09251f111b5`
+- 受测代码 tree：`c9a0d881f4806afec7e9860f31c36aaaca416dc9`
+- 本地等价代码提交：`5e81b9024b39c86149340cae0491c4634f1d5cf0`，tree 与远端 head 相同
+- 分支：`phase2/pr43-compile-isolation`；本轮 worktree：`F:\BlockCraft-AI\pr43-process-hardening`
 - 起始代码基线：`2a7688480d1859c87762b46224b6ec81fe28d370`；本地修改前工作树干净
-- 复验结果：`npm ci`、Safe Viewer 服务端 12/12、进程级 6/6（连续 3 轮）、真实 Chromium 14/14、原有测试 194/194、`npm run build` 全部通过
-- 代码提交 `df8a5f9` 已推送到堆叠 Draft PR #48；`f6c88a2` 的 Docker acceptance run `39192837775` 成功，耗时约 75 秒
+- 复验结果：`npm ci`、Safe Viewer 16/16、进程级 9/9（连续 3 轮）、真实 Chromium 14/14、原有测试 194/194、`npm run build` 全部通过
+- 远端 head `8eecb93` 的 Docker acceptance run `39195580090` 成功；实际 Linux job 通过修改后的 `npm test` 执行了 Safe Viewer 测试
 
 历史 `ae82597`/`753dfc5` 的浏览器和容器结果仍保留为历史证据，但不代表本候选 head 的编译子进程终止能力。
 
@@ -78,7 +79,7 @@
 npm run test:safe-viewer
 ```
 
-结果：12/12 通过。
+结果：16/16 通过。
 
 覆盖：
 
@@ -97,7 +98,7 @@ npm run test:safe-viewer
 node --test tests/safe-viewer/compiler-process.test.mjs
 ```
 
-结果：连续 3 轮均为 6/6 通过。
+结果：连续 3 轮均为 9/9 通过。
 
 覆盖：
 
@@ -107,6 +108,10 @@ node --test tests/safe-viewer/compiler-process.test.mjs
 - 450ms 超时发生在 esbuild 启动后；返回 `COMPILE_TIMEOUT` 前已验证两个 PID 不再存活。
 - 连续 3 个不同制品编译后无进程累积，`compiler.stats().processes === 0`。
 - `dispose()` 会终止进行中的编译进程树。
+- 编译子进程在 esbuild 启动后崩溃时，宿主按 PID、父 PID、启动时间身份直接清理孤儿服务进程。
+- Windows `taskkill /T /F` 故障注入后，直接 PID 清理仍成功，随后合法编译可恢复。
+- 已知进程清理失败时，编译器进入持久 `COMPILER_QUARANTINED`，后续编译不再启动新进程。
+- PID 身份不匹配时拒绝终止，验证了 PID 复用下的防误杀行为。
 
 ### 4.2 浏览器
 
@@ -154,19 +159,23 @@ npm ci              # 全新安装，通过
 
 ### 4.4 当前候选提交复验
 
-本轮候选 head 为 `df8a5f91341ffb936400488375e30cc6c8e14b82`，直接基于远端 PR #43 head `2a7688480d1859c87762b46224b6ec81fe28d370` 创建。结果：
+本轮远端候选 head 为 `8eecb9399667e9ec03cb48fa2221d09251f111b5`，tree 为 `c9a0d881f4806afec7e9860f31c36aaaca416dc9`。结果：
 
 | 检查 | 结果 |
 | --- | --- |
 | `npm ci` | 通过，29 packages，0 vulnerabilities |
-| `npm run test:safe-viewer` | 12/12 通过 |
-| `node --test tests/safe-viewer/compiler-process.test.mjs` | 6/6 通过，连续 3 轮 |
+| `npm run test:safe-viewer` | 16/16 通过 |
+| `node --test tests/safe-viewer/compiler-process.test.mjs` | 9/9 通过，连续 3 轮 |
 | `npm run test:safe-viewer:browser` | 14/14 通过；Chromium `153.0.8010.12` |
-| `npm test` | 194/194 通过 |
+| `npm test` | 默认 194/194 + Safe Viewer 16/16；Linux CI 中执行通过 |
 | `npm run build` | 通过 |
-| GitHub Actions docker acceptance | 成功；run `39192837775`，head `f6c88a2`，约 75 秒 |
+| GitHub Actions docker acceptance | 成功；run `39195580090`，head `8eecb93`，Linux Ubuntu 24.04 |
 
 浏览器报告已写入 `testedMain` 和 `prHead` 字段；机器可读汇总见 `docs/acceptance/safe-viewer/verification.json`。
+
+Git 凭据缺少 `workflow` scope，因此新增独立 Linux/Windows workflow job 的本地改动不能推送；当前 CI 覆盖通过把 Safe Viewer 测试接入既有 `npm test` 实现。Windows `taskkill` 故障注入由本地 Windows 11 实测，尚未进入 GitHub CI。
+
+Linux 首次真实运行暴露虚拟入口无法从 `/` 解析 React，run `39195085076` 失败；加入诊断后 run `39195237439` 确认根因。修复为通过 `createRequire` 解析固定白名单包后，最终 run `39195580090` 成功。失败记录保留，不把旧 run 当作通过。
 
 ## 5. 开发中发现并修复的问题
 
@@ -178,6 +187,8 @@ npm ci              # 全新安装，通过
 6. 测试宿主的 retire 路由未转发导致 404；补齐测试路由并验证 quarantine。
 7. 原超时逻辑只终止 Node `Worker`，而 esbuild-wasm 实际另起 `child_process` 服务进程；改为专用编译子进程，超时/取消/异常时按进程树终止，并验证 esbuild PID 退出。
 8. 编译子进程原先会继承宿主完整环境；改为最小环境白名单，避免认证秘密进入编译器。
+9. 新增进程身份核验与直接清理：Linux 使用 `/proc` 启动时间+boot ID，Windows 使用创建时间+父 PID；清理失败时编译服务持久熔断。
+10. Linux CI 首次失败暴露虚拟入口 `/` 无法解析 React 依赖；改为通过 `createRequire` 解析仓库内固定的三个白名单包，未扩大允许导入集合。
 
 跨源隔离的边界：本分支使用跨源 iframe、不透明 sandbox 源、独立源站池、COOP/OAC 响应头，并用死循环测试验证宿主响应性；因为 runner 需要被宿主嵌入，没有在宿主强制 COEP，因此不宣称完整的 COOP+COEP cross-origin isolated 上下文。生产部署应使用独立站点/源站池，并完成目标浏览器验收。
 

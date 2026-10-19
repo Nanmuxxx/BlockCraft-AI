@@ -2,12 +2,13 @@
   "reportVersion": 2,
   "testedMain": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
   "remotePrHead": "2a7688480d1859c87762b46224b6ec81fe28d370",
-  "prHead": "f6c88a2bedddca255fd8711d1f2483046defd8dd",
-  "verifiedCodeHead": "df8a5f91341ffb936400488375e30cc6c8e14b82",
-  "testedAt": "2026-10-19T11:02:25+08:00",
+  "prHead": "8eecb9399667e9ec03cb48fa2221d09251f111b5",
+  "verifiedCodeHead": "8eecb9399667e9ec03cb48fa2221d09251f111b5",
+  "verifiedTree": "c9a0d881f4806afec7e9860f31c36aaaca416dc9",
+  "testedAt": "2026-10-19T11:41:28+08:00",
   "branch": "phase2/pr43-compile-isolation",
-  "worktree": "F:\\BlockCraft-AI\\pr43-compile-isolation",
-  "source": "local isolated worktree; code commit df8a5f9",
+  "worktree": "F:\\BlockCraft-AI\\pr43-process-hardening",
+  "source": "local isolated worktree; local code commit 5e81b90 has the same tree as remote 8eecb93",
   "environment": {
     "os": "Windows 11 10.0.26300",
     "node": "24.19.0",
@@ -18,12 +19,12 @@
   },
   "commands": [
     { "command": "npm ci", "result": "pass", "packages": 28, "vulnerabilities": 0 },
-    { "command": "npm run test:safe-viewer", "result": "12/12 pass", "exitCode": 0 },
-    { "command": "node --test tests/safe-viewer/compiler-process.test.mjs", "result": "6/6 pass in each of 3 consecutive runs", "exitCode": 0 },
+    { "command": "npm run test:safe-viewer", "result": "16/16 pass", "exitCode": 0 },
+    { "command": "node --test tests/safe-viewer/compiler-process.test.mjs", "result": "9/9 pass in each of 3 consecutive runs", "exitCode": 0 },
     { "command": "npm run test:safe-viewer:browser", "result": "14/14 pass", "exitCode": 0 },
-    { "command": "npm test", "result": "194/194 pass", "exitCode": 0 },
+    { "command": "npm test", "result": "default 194/194 plus Safe Viewer 16/16 pass", "exitCode": 0 },
     { "command": "npm run build", "result": "pass", "exitCode": 0 },
-    { "command": "GitHub Actions docker acceptance", "result": "success", "head": "f6c88a2bedddca255fd8711d1f2483046defd8dd", "runId": 39192837775, "durationSeconds": 75 }
+    { "command": "GitHub Actions docker acceptance", "result": "success", "head": "8eecb9399667e9ec03cb48fa2221d09251f111b5", "runId": 39195580090, "jobId": 117877509549, "platform": "Ubuntu 24.04" }
   ],
   "processTerminationEvidence": {
     "compilerProcessObserved": true,
@@ -36,17 +37,30 @@
     "repeatedCompileProcesses": 0,
     "disposePidsGone": true,
     "hostResponsive": true,
-    "consecutiveRuns": 3
+    "consecutiveRuns": 3,
+    "crashAfterEsbuildPidsGone": true,
+    "taskkillFailureDirectCleanupPassed": true,
+    "cleanupFailureFused": true,
+    "quarantinedCompileSpawnedNoProcess": true,
+    "pidIdentityMismatchRefusedKill": true,
+    "linuxProcessGroupVerifiedInCi": true
   },
   "browserEvidence": "browser-report.json",
   "notes": [
     "The production C-mode remains unavailable; the safe viewer is default-off and not wired into Workshop.",
     "No PR merge, main modification, deployment, real model call, or paid budget use occurred.",
-    "The code commit df8a5f9 is included in evidence head f6c88a2; Docker acceptance run 39192837775 passed for that head."
+    "The remote code commit 8eecb93 and local commit 5e81b90 have identical tree c9a0d88.",
+    "Docker acceptance run 39195580090 passed for head 8eecb93 and executed Safe Viewer tests through the updated npm test script.",
+    "The separate Windows/Linux workflow jobs could not be published because the available Git credentials lack workflow scope."
   ],
   "residualRisks": [
-    "Windows process-tree termination depends on taskkill /T /F; failure is surfaced as COMPILER_TERMINATION_FAILED.",
-    "POSIX process-group termination is implemented but was not exercised on this Windows host.",
-    "Only Chromium 153.0.8010.12 was browser-tested."
+    "Windows taskkill failure and direct PID cleanup were exercised locally; a dedicated Windows GitHub CI job was not published because of missing workflow scope.",
+    "If both tree termination and identity-checked direct PID termination fail, the compiler stays persistently quarantined and rejects new compiles.",
+    "POSIX process-group cleanup was exercised by Linux CI run 39195580090.",
+    "Only Chromium 153.0.8010.12 was browser-tested; Firefox and Safari were not run."
+  ],
+  "failedCiEvidence": [
+    { "runId": 39195085076, "head": "01a06ab", "reason": "Linux could not resolve React from the virtual entry resolveDir and Safe Viewer tests failed" },
+    { "runId": 39195237439, "head": "213727f", "reason": "diagnostic run confirmed React resolution before the portable resolution fix" }
   ]
 }
