@@ -1,0 +1,30 @@
+name: Supervisor Coordination Monitor
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: supervisor-coordination-monitor
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    if: github.repository == 'Nanmuxxx/BlockCraft-AI'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Snapshot only (no AI execution, no merge, no deployment)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COORDINATION_ISSUE: "57"
+        run: python3 .github/scripts/supervisor_monitor.py
