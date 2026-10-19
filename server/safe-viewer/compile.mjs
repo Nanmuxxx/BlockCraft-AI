@@ -32,6 +32,76 @@ function copy(value) {
   return Buffer.from(value)
 }
 
+const PROCESS_RECORD_LIMIT = 256
+
+/**
+ * Process records survive a failed cleanup so a quarantined compiler can
+ * report and retry the exact identities it observed. The registry may be
+ * shared by trusted recovery code; a compiler created with a registry that
+ * still has unresolved records must not start a new compile.
+ */
+export function createProcessRegistry() {
+  const records = new Map()
+
+  function prune() {
+    if (records.size <= PROCESS_RECORD_LIMIT) return
+    const gone = [...records.entries()]
+      .filter(([, record]) => record.state === 'gone')
+      .sort(([, left], [, right]) => left.updatedAt - right.updatedAt)
+    while (records.size > PROCESS_RECORD_LIMIT && gone.length > 0) {
+      records.delete(gone.shift()[0])
+    }
+  }
+
+  function keyOf(pid, rootPid) {
+    return `${rootPid}:${pid}`
+  }
+
+  function track(pid, rootPid, owner) {
+    const key = keyOf(pid, rootPid)
+    const existing = records.get(key)
+    if (existing && existing.state !== 'gone') return existing
+    const record = {
+      pid,
+      rootPid,
+      owner,
+      identity: null,
+      parentPid: null,
+      state: 'identity-pending',
+      lastStatus: 'identity-pending',
+      updatedAt: Date.now(),
+    }
+    records.set(key, record)
+    prune()
+    return record
+  }
+
+  function mark(pid, rootPid, patch) {
+    const record = records.get(keyOf(pid, rootPid))
+    if (!record) return null
+    Object.assign(record, patch, { updatedAt: Date.now() })
+    return record
+  }
+
+  function get(pid, rootPid) {
+    const record = records.get(keyOf(pid, rootPid))
+    return record ? Object.freeze({ ...record }) : null
+  }
+
+  function snapshot() {
+    return [...records.values()].map(({ owner, ...record }) => Object.freeze({ ...record }))
+  }
+
+  function unresolved(owner) {
+    return [...records.values()]
+      .filter(record => record.state === 'unresolved' || record.state === 'identity-unknown')
+      .filter(record => owner === undefined || record.owner === owner)
+      .map(({ owner: ignored, ...record }) => Object.freeze({ ...record }))
+  }
+
+  return Object.freeze({ track, mark, get, snapshot, unresolved })
+}
+
 function compilerEnvironment({ testFaults = false } = {}) {
   const allowed = [
     'PATH', 'Path', 'PATHEXT', 'ComSpec', 'SystemRoot', 'SYSTEMROOT', 'WINDIR',
@@ -70,6 +140,8 @@ function compileInProcess(
   signal,
   observer,
   activeChildren,
+  processRegistry,
+  owner,
   processReaper,
   testHooks,
 ) {
@@ -97,18 +169,29 @@ function compileInProcess(
     activeChildren.add(child)
 
     let settled = false
-    const esbuildProcesses = new Map()
+    let resultReceived = false
+    const knownInspections = new Map()
     const notify = event => {
       try { observer(Object.freeze({ ...event })) } catch {}
     }
     const trackKnownProcess = pid => {
-      if (!Number.isSafeInteger(pid) || pid <= 0 || esbuildProcesses.has(pid)) return
+      if (!Number.isSafeInteger(pid) || pid <= 0) return null
+      if (knownInspections.has(pid)) return knownInspections.get(pid)
+      processRegistry.track(pid, child.pid, owner)
       const inspection = Promise.resolve()
         .then(() => processReaper.inspect(pid))
         .then(identity => ({ ok: true, identity }))
         .catch(() => ({ ok: false, identity: null }))
-      esbuildProcesses.set(pid, inspection)
+      knownInspections.set(pid, inspection)
       void inspection.then(report => {
+        processRegistry.mark(pid, child.pid, {
+          identity: report.identity?.identity ?? null,
+          parentPid: report.identity?.parentPid ?? null,
+          state: report.ok ? (report.identity ? 'tracked' : 'gone') : 'identity-unknown',
+          lastStatus: report.ok
+            ? (report.identity ? 'identity-recorded' : 'already-gone')
+            : 'identity-inspection-failed',
+        })
         notify({
           type: 'process-identity',
           pid,
@@ -121,18 +204,40 @@ function compileInProcess(
     }
     const reapKnownProcesses = async () => {
       let ok = true
-      for (const [pid, inspection] of esbuildProcesses) {
+      for (const [pid, inspection] of knownInspections) {
         const report = await inspection
+        const record = processRegistry.get(pid, child.pid)
         if (!report.ok) {
+          processRegistry.mark(pid, child.pid, {
+            state: 'unresolved',
+            lastStatus: 'identity-inspection-failed',
+          })
           notify({ type: 'process-reaped', pid, ok: false, status: 'identity-inspection-failed' })
           ok = false
           continue
         }
         if (!report.identity) {
+          processRegistry.mark(pid, child.pid, {
+            state: 'gone',
+            lastStatus: 'already-gone',
+          })
           notify({ type: 'process-reaped', pid, ok: true, status: 'already-gone' })
           continue
         }
-        const result = await processReaper.terminatePid(pid, report.identity)
+        if (!record?.identity) {
+          processRegistry.mark(pid, child.pid, {
+            state: 'unresolved',
+            lastStatus: 'identity-unavailable',
+          })
+          notify({ type: 'process-reaped', pid, ok: false, status: 'identity-unavailable' })
+          ok = false
+          continue
+        }
+        const result = await processReaper.terminatePid(pid, { pid, identity: record.identity })
+        processRegistry.mark(pid, child.pid, {
+          state: result.ok ? 'gone' : 'unresolved',
+          lastStatus: result.status,
+        })
         notify({ type: 'process-reaped', pid, ...result })
         if (!result.ok) ok = false
       }
@@ -193,9 +298,19 @@ function compileInProcess(
         return
       }
       if (message?.type === 'result' && message.code instanceof Uint8Array) {
+        resultReceived = true
         const code = copy(message.code)
         if (code.byteLength > maxBundleBytes) {
           finish(new SafeViewerError('BUNDLE_LIMIT', 'Compiled bundle exceeds its limit'))
+          return
+        }
+        if (typeof testHooks?.beforeResult === 'function') {
+          Promise.resolve()
+            .then(() => testHooks.beforeResult())
+            .then(
+              () => finish(null, code),
+              () => finish(new SafeViewerError('BUILD_FAILED', 'Compilation result gate failed')),
+            )
           return
         }
         finish(null, code)
@@ -214,7 +329,9 @@ function compileInProcess(
     child.once('error', () => finish(new SafeViewerError('BUILD_FAILED', 'Compilation process failed')))
     child.once('exit', (code, signal) => {
       notify({ type: 'compile-exit', pid: child.pid, code, signal })
-      if (!settled) finish(new SafeViewerError('BUILD_FAILED', 'Compilation process exited without a result'))
+      if (!settled && !resultReceived) {
+        finish(new SafeViewerError('BUILD_FAILED', 'Compilation process exited without a result'))
+      }
     })
     signal?.addEventListener('abort', onAbort, { once: true })
     child.send({
@@ -289,12 +406,14 @@ export function createCompiler({
   cache = createBundleCache(),
   processObserver = () => {},
   processReaper = createProcessReaper(),
+  processRegistry = createProcessRegistry(),
   testHooks = null,
 } = {}) {
   check(Number.isSafeInteger(compileTimeoutMs) && compileTimeoutMs > 0, 'COMPILER_CONFIGURATION', 'Invalid compile timeout')
   check(Number.isSafeInteger(concurrency) && concurrency > 0, 'COMPILER_CONFIGURATION', 'Invalid compiler concurrency')
   const inFlight = new Map()
   const children = new Set()
+  const owner = Symbol('safe-viewer-compiler')
   let active = 0
   let disposed = false
   let disposal
@@ -303,47 +422,97 @@ export function createCompiler({
 
   function waitForJob(job, signal, cacheState) {
     if (signal?.aborted) return Promise.reject(new SafeViewerError('COMPILE_CANCELLED', 'Compilation cancelled'))
-    job.waiters++
     return new Promise((resolve, reject) => {
       let settled = false
-      const cleanup = () => signal?.removeEventListener('abort', onAbort)
-      const settle = action => {
-        if (settled) return
-        settled = true
-        job.waiters--
-        cleanup()
-        action()
+      const waiter = {
+        cancelled: false,
+        settle(value, error) {
+          if (settled) return
+          settled = true
+          job.waiters.delete(waiter)
+          signal?.removeEventListener('abort', onAbort)
+          if (error) reject(error)
+          else resolve({ ...value, cache: cacheState })
+        },
       }
-      // The caller observes cancellation only after the compile process tree
-      // has been retired by the job's own cleanup path.
-      const onAbort = () => { if (!job.done) job.controller.abort() }
+      // A waiter's cancellation is local. The shared job is aborted only
+      // after its last waiter leaves or a job-level timeout/dispose fires.
+      const onAbort = () => {
+        if (settled || job.done) return
+        waiter.cancelled = true
+        if ([...job.waiters].every(item => item.cancelled)) job.controller.abort()
+      }
+      job.waiters.add(waiter)
       signal?.addEventListener('abort', onAbort, { once: true })
-      job.promise.then(
-        value => settle(() => resolve({ ...value, cache: cacheState })),
-        error => settle(() => reject(error)),
-      )
     })
+  }
+
+  async function reapOwnedKnownProcesses() {
+    let ok = true
+    for (const record of processRegistry.unresolved(owner)) {
+      if (!record.identity) {
+        ok = false
+        continue
+      }
+      const result = await processReaper.terminatePid(record.pid, {
+        pid: record.pid,
+        identity: record.identity,
+      })
+      processRegistry.mark(record.pid, record.rootPid, {
+        state: result.ok ? 'gone' : 'unresolved',
+        lastStatus: result.status,
+      })
+      if (!result.ok) ok = false
+    }
+    return ok
   }
 
   return Object.freeze({
     cache,
-    stats: () => Object.freeze({
-      ...cache.snapshot(),
-      processes: children.size,
-      fused,
-      cleanupFailures,
-    }),
+    processRegistry,
+    stats: () => {
+      const records = processRegistry.snapshot()
+      const unresolved = processRegistry.unresolved()
+      return Object.freeze({
+        ...cache.snapshot(),
+        processes: children.size,
+        rootProcesses: children.size,
+        knownChildProcesses: records.filter(record => record.state !== 'gone').length,
+        confirmedExitedProcesses: records.filter(record => record.state === 'gone').length,
+        unresolvedProcesses: unresolved.map(record => Object.freeze({
+          pid: record.pid,
+          rootPid: record.rootPid,
+          identity: record.identity,
+          state: record.state,
+          lastStatus: record.lastStatus,
+        })),
+        terminationState: unresolved.length > 0 || fused ? 'quarantined' : 'clean',
+        waiters: [...inFlight.values()].reduce((count, job) => count + job.waiters.size, 0),
+        activeWaiters: [...inFlight.values()].reduce(
+          (count, job) => count + [...job.waiters].filter(waiter => !waiter.cancelled).length,
+          0,
+        ),
+        fused,
+        cleanupFailures,
+      })
+    },
     async compile(artifact, { signal } = {}) {
       check(!disposed, 'VIEWER_DISPOSED', 'Compiler disposed')
       check(!fused, 'COMPILER_QUARANTINED', 'Compiler cleanup is unresolved')
+      check(processRegistry.unresolved().length === 0, 'COMPILER_QUARANTINED', 'Compiler cleanup is unresolved')
       if (signal?.aborted) throw new SafeViewerError('COMPILE_CANCELLED', 'Compilation cancelled')
       const key = bundleKey(artifact.versionDigest)
       const cached = cache.get(key)
       if (cached) return { ...cached, cache: 'hit' }
-      if (inFlight.has(key)) return waitForJob(inFlight.get(key), signal, 'hit')
+      if (inFlight.has(key)) {
+        const existing = inFlight.get(key)
+        if (!existing.done) return waitForJob(existing, signal, 'hit')
+        const completed = cache.get(key)
+        if (completed) return { ...completed, cache: 'hit' }
+      }
       check(active < concurrency, 'COMPILER_BUSY', 'Compiler busy')
       active++
-      const job = { waiters: 0, done: false, controller: new AbortController(), promise: null }
+      const job = { waiters: new Set(), done: false, controller: new AbortController(), promise: null }
       job.promise = (async () => {
         try {
           const maxBundleBytes = Math.min(artifact.build.maxBundleBytes, LIMITS.bundleBytes)
@@ -354,6 +523,8 @@ export function createCompiler({
             job.controller.signal,
             processObserver,
             children,
+            processRegistry,
+            owner,
             processReaper,
             testHooks,
           )
@@ -376,6 +547,22 @@ export function createCompiler({
           active--
         }
       })()
+      job.promise.then(
+        value => {
+          for (const waiter of [...job.waiters]) {
+            waiter.settle(value, waiter.cancelled
+              ? new SafeViewerError('COMPILE_CANCELLED', 'Compilation cancelled')
+              : null)
+          }
+        },
+        error => {
+          for (const waiter of [...job.waiters]) {
+            waiter.settle(null, waiter.cancelled
+              ? new SafeViewerError('COMPILE_CANCELLED', 'Compilation cancelled')
+              : error)
+          }
+        },
+      )
       inFlight.set(key, job)
       return waitForJob(job, signal, 'build')
     },
@@ -390,6 +577,7 @@ export function createCompiler({
             ? true
             : processReaper.terminateTree(child.pid)))
         await Promise.allSettled(jobs.map(job => job.promise))
+        await reapOwnedKnownProcesses()
         children.clear()
         cache.clear()
       })()

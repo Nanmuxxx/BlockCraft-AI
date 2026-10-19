@@ -44,6 +44,12 @@ childProcess.spawn = function guardedSpawn(command, args, options) {
       const message = { type: 'esbuild-child', pid: child.pid }
       if (testFault === 'crash-after-esbuild') {
         void report(message).then(() => process.exit(70))
+      } else if (testFault === 'hang-after-esbuild') {
+        // Deterministic timeout/cancel fixture: the service PID is reported
+        // first, then the compile child is parked until the host retires it.
+        void report(message).then(() => {
+          Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0)
+        })
       } else {
         void report(message)
       }

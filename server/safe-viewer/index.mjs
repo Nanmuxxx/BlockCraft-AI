@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto'
 import { json as protocolJson, protocol } from '../custom-block/protocol.mjs'
 import { assertSafeSource } from './source-policy.mjs'
-import { createCompiler } from './compile.mjs'
+import { createCompiler, createProcessRegistry } from './compile.mjs'
 import {
   LIMITS, PERMISSIONS_POLICY, SAFE_VIEWER_HEADERS, SafeViewerError, VIEWER_PROTOCOL,
   boundedString, check, exactKeys, hostCsp, isPlainRecord, normalizeOrigin, runnerCsp, safeMessage,
@@ -106,6 +106,7 @@ export function createSafeViewerService({
   compileTimeoutMs = LIMITS.compileTimeoutMs,
   sessionTtlMs = LIMITS.sessionTtlMs,
   maxSessions = LIMITS.sessions,
+  processRegistry = createProcessRegistry(),
 } = {}) {
   const parentSet = new Set(parentOrigins.map(normalizeOrigin))
   let runnerPool = (runnerOrigins.length ? runnerOrigins : runnerOrigin ? [runnerOrigin] : []).map(normalizeOrigin)
@@ -113,7 +114,7 @@ export function createSafeViewerService({
   let runnerCursor = 0
   let disposed = false
   const sessions = new Map()
-  const compiler = createCompiler({ compileTimeoutMs })
+  const compiler = createCompiler({ compileTimeoutMs, processRegistry })
   const stats = {
     compiles: 0,
     failures: 0,
@@ -336,6 +337,9 @@ export function createSafeViewerService({
 
   return Object.freeze({
     enabled: () => enabled === true,
+    // Trusted recovery must reuse this registry when replacing the service;
+    // a fresh registry cannot prove that an old quarantined tree is retired.
+    processRegistry,
     ready,
     compile,
     handleRequest,
