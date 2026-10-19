@@ -15,6 +15,12 @@ import { request as customRequest } from '../custom-block-generation/fixtures.mj
 import { request as mochiRequest, advice } from '../mochi-ai/fixtures.mjs'
 
 const key = 'offline-model-contract-key'
+function modelEnvironment(t, value) {
+  const previous = process.env.DEEPSEEK_MODEL
+  if (value === undefined) delete process.env.DEEPSEEK_MODEL
+  else process.env.DEEPSEEK_MODEL = value
+  t.after(() => { if (previous === undefined) delete process.env.DEEPSEEK_MODEL; else process.env.DEEPSEEK_MODEL = previous })
+}
 const spec = { version: 1, id: 'tasks', name: '任务', entities: [{ id: 'items', name: '任务', fields: [{ id: 'title', name: '名称', type: 'text', required: true }] }], blocks: [{ id: 'list', name: '清单', type: 'list', fieldIds: ['title'] }], relations: [{ id: 'binding', type: 'dataBinding', blockId: 'list', entityId: 'items' }] }
 async function setup(t) {
   const dir = mkdtempSync(join(tmpdir(), 'blockcraft-model-contract-')); chmodSync(dir, 0o700)
@@ -58,4 +64,44 @@ test('explicit priced model composes entry/Mochi/CustomBlock with one shared aud
   await assert.rejects(provider.generate(customRequest()))
   assert.equal(f.calls(), POLICY.maxCalls); assert.equal(f.ledger.snapshot().entries.length, POLICY.maxCalls)
   assert.ok(f.ledger.snapshot().entries.every(e => e.status === 'settled'))
+})
+
+test('branded paid transport selects the priced default in all three consumers without a model override', async t => {
+  modelEnvironment(t, undefined)
+  const f = await setup(t), options = { apiKey: key, fetchImpl: f.transport }
+  const r = await post(t, options); assert.equal(r.status, 200); assert.deepEqual(await r.json(), spec)
+  f.reply(advice()); const m = mochi(options); assert.equal(m.model, PRICING.model)
+  assert.deepEqual(await m.analyze(mochiRequest()), advice())
+  f.reply({ mock: 'inert' })
+  assert.equal(await custom({ ...options, allowPaid: true }).generate(customRequest()), '{"mock":"inert"}')
+  assert.equal(f.calls(), 3); assert.equal(f.ledger.snapshot().entries.length, 3)
+  assert.ok(f.ledger.snapshot().entries.every(e => e.status === 'settled'))
+})
+
+test('explicit invalid environment or constructor model never falls back for a paid transport', async t => {
+  modelEnvironment(t, 'unapproved-model')
+  const f = await setup(t), options = { apiKey: key, fetchImpl: f.transport }
+  const r = await post(t, options); assert.equal(r.status, 502); await r.json()
+  assert.equal(mochi(options).model, 'unapproved-model')
+  await assert.rejects(mochi(options).analyze(mochiRequest()))
+  for (const model of ['unapproved-model', 'deepseek-v4-flash', 'deepseek-chat']) {
+    const r = await post(t, { ...options, model }); assert.equal(r.status, 502); await r.json()
+    await assert.rejects(mochi({ ...options, model }).analyze(mochiRequest()))
+    if (model === 'unapproved-model') assert.throws(() => custom({ ...options, allowPaid: true, model }), { code: 'API_CONFIGURATION' })
+    else await assert.rejects(custom({ ...options, allowPaid: true, model }).generate(customRequest()))
+  }
+  assert.equal(f.calls(), 0); assert.equal(f.ledger.snapshot().entries.length, 0)
+})
+
+test('ordinary injected offline adapters keep the historical default in all consumers', async t => {
+  modelEnvironment(t, undefined)
+  let calls = 0, content = spec
+  const options = { apiKey: key, fetchImpl: async (_url, init) => {
+    calls++; assert.equal(JSON.parse(init.body).model, 'deepseek-v4-flash')
+    return Response.json({ choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: JSON.stringify(content) } }] })
+  } }
+  const r = await post(t, options); assert.equal(r.status, 200); await r.json()
+  content = advice(); assert.deepEqual(await mochi(options).analyze(mochiRequest()), advice())
+  content = { mock: 'inert' }; assert.equal(await custom({ ...options, allowPaid: true }).generate(customRequest()), '{"mock":"inert"}')
+  assert.equal(calls, 3)
 })

@@ -5,6 +5,7 @@ const ENDPOINT = 'https://api.deepseek.com/chat/completions'
 const nativeFetch = globalThis.fetch
 const paidTransports = new WeakSet()
 export const isPaidTransport = value => paidTransports.has(value)
+export const defaultModelForTransport = value => isPaidTransport(value) ? PRICING.model : 'deepseek-v4-flash'
 async function abortable(work, signal) {
   signal.throwIfAborted()
   let abort

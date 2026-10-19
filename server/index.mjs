@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { authorizeGeneration } from './paid-gateway/access.mjs'
 import { requireControlledEgress } from './paid-gateway/egress.mjs'
-import { isPaidTransport } from './paid-gateway/provider.mjs'
+import { isPaidTransport, defaultModelForTransport } from './paid-gateway/provider.mjs'
 import { buildInteractiveMessages, assertInteractiveSpec, createInteractiveGate } from './trusted-interactive.mjs'
 import { createServer } from 'node:http'
 import { readFile, realpath, stat } from 'node:fs/promises'
@@ -219,8 +219,8 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
 /** Dependency injection is for offline tests; the executable always uses official fetch. */
 export function createAppServer({
   apiKey = process.env.DEEPSEEK_API_KEY?.trim(),
-  model = process.env.DEEPSEEK_MODEL?.trim() || 'deepseek-v4-flash',
   fetchImpl = globalThis.fetch,
+  model = process.env.DEEPSEEK_MODEL?.trim() || defaultModelForTransport(fetchImpl),
   aiTimeoutMs = LIMITS.aiTimeoutMs,
   staticDir = resolve(fileURLToPath(new URL('../dist/', import.meta.url))),
   publicOrigin = process.env.PUBLIC_ORIGIN?.trim() || '',
