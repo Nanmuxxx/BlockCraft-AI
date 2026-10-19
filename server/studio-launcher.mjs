@@ -11,14 +11,15 @@ const STUDIO_APP_ID = 'pomodoro'
 const exactKeys = (value, keys) => value && typeof value === 'object' && !Array.isArray(value)
   && Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value, key))
 
-function privateFile(path, maxBytes) {
+function privateFile(path, maxBytes, metadataOnly = false) {
   if (!isAbsolute(path) || realpathSync(path) !== path) refuse()
   const parent = lstatSync(dirname(path))
   if (!parent.isDirectory() || parent.uid !== process.getuid() || (parent.mode & 0o777) !== 0o700) refuse()
-  const fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW)
+  const fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK)
   try {
     const stat = fstatSync(fd)
     if (!stat.isFile() || stat.uid !== process.getuid() || (stat.mode & 0o777) !== 0o600 || stat.nlink !== 1 || stat.size > maxBytes) refuse()
+    if (metadataOnly) return
     const bytes = readFileSync(fd)
     if (bytes.length > maxBytes) refuse()
     return bytes
@@ -74,8 +75,10 @@ export async function startStudioServer({ env = process.env, host = '127.0.0.1',
   const approved = readApproval(path, publicOrigin)
   const bindingKey = privateFile(join(directory, 'binding.key'), 32)
   if (bindingKey.length !== 32) refuse()
-  // Issuer never creates a new paid ledger; continuity requires separate review.
-  if (approved.issuer) privateFile(join(directory, 'studio-ledger.json'), 1024 * 1024)
+  // Every Studio launch requires an existing private canonical ledger, even
+  // without the optional issuer. Inspect metadata only; Gateway owns parsing
+  // and locking. Approval maxCalls never grants fresh budget/continuity.
+  privateFile(join(directory, 'studio-ledger.json'), 1024 * 1024, true)
   let issuer
   const current = req => {
     try {
