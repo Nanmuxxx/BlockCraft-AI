@@ -1,0 +1,6 @@
+attempt=1 running=true health=starting
+attempt=2 running=true health=starting
+attempt=3 running=true health=starting
+attempt=4 running=true health=healthy
+status=running exit=0 health=healthy
+status=running exit=0 health=healthy
