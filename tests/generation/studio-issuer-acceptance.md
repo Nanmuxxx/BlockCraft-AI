@@ -1,5 +1,22 @@
 # Studio issuer candidate acceptance — Mock only
 
+## Independent HMAC byte contract follow-up
+
+Task ISSUER-MAC-VECTOR-20261020, decision6275861868: explicit LF byte0x0a in
+implementation/fixture, fixed public vector computed with Python and OpenSSL.
+Initial-MAC acceptance, literal5c6e-MAC rejection before any listen, and exact
+known attempt1 MAC emitted by production are covered independently of fixture
+MAC generation. See studio-mac-vector.json, studio-mac-vector.verify.py and
+design's byte-level vector section. Raw historical Git blob and JS evaluation
+already show correct LF; this follow-up adds unambiguous bytes and independent
+evidence, not a state migration or a claim of previous unauthorized issuance.
+
+Focused issuer34/34 and full generation109/109 Mock PASS,0 skipped; HTTPS
+Chromium Mock PASS again (1 injected provider call,0 paid). New evidence is in
+studio-mac-evidence and studio-mac-{focused,generation,browser}.log. Independent
+TL acceptance remains pending. All real/public/production and budget continuity
+limitations below continue; no actual private state or keys were accessed.
+
 ## Supplemental ledger preflight review
 
 All Studio launches, including configurations without the optional issuer, now
