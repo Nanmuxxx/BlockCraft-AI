@@ -1,4 +1,5 @@
 import ts from 'typescript'
+import { packageLock } from './package-lock.mjs'
 import { protocol, json } from '../../server/custom-block/protocol.mjs'
 import { checkImports } from '../../server/custom-block/import-policy.mjs'
 import { PACKAGE_PINS } from '../../server/custom-block/policy.mjs'
@@ -118,6 +119,7 @@ export async function exportProjectZip(input, options = {}) {
   const files = []
   const add = (path, text) => { assertOutputPath(path); files.push({ path, content: text }) }
   add('package.json', content(templates.packageJson))
+  add('package-lock.json', content(packageLock))
   add('tsconfig.json', content(templates.tsconfig))
   add('index.html', '<!doctype html>\n<html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Independent App</title></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>\n')
   add('vite.config.ts', "import { defineConfig } from 'vite';\nexport default defineConfig({ base: './', server: { host: '127.0.0.1' } });\n")
