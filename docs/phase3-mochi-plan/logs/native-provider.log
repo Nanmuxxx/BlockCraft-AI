@@ -1,0 +1,16 @@
+✔ real provider request shape uses existing configuration, bounded context and no records (9.279958ms)
+✔ server rejects snapshots/records/extra metadata instead of forwarding them (0.220959ms)
+✔ schema and referential validation reject unknown fields/blocks, capabilities and silent modifications (1.354916ms)
+✔ provider fails closed without key and never retries/falls back on HTTP, JSON or truncation errors (0.633875ms)
+✔ HTTP and declared-size rejection cancel unused bodies without waiting for cleanup (0.3395ms)
+✔ provider aborts on deadline and external cancellation, including body reads (22.983958ms)
+✔ uncooperative fetch/body and cancellation cleanup cannot hold the provider beyond its deadline (22.748417ms)
+✔ Mochi rejects mixed tool/refusal/error/multiple-choice envelopes and invalid UTF-8 (0.865834ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 91.50875
