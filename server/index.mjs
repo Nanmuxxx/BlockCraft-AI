@@ -1,4 +1,7 @@
 import { randomUUID } from 'node:crypto'
+import { authorizeGeneration } from './paid-gateway/access.mjs'
+import { requireControlledEgress } from './paid-gateway/egress.mjs'
+import { isPaidTransport } from './paid-gateway/provider.mjs'
 import { buildInteractiveMessages, assertInteractiveSpec, createInteractiveGate } from './trusted-interactive.mjs'
 import { createMochiIntegration } from './mochi-ai/index.mjs'
 import { createServer } from 'node:http'
@@ -93,6 +96,7 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
   const onClose = () => { if (!res.writableEnded) controller.abort() }
   res.on('close', onClose)
   try {
+    requireControlledEgress(fetchImpl)
     const response = await fetchImpl(ENDPOINT, {
       method: 'POST',
       redirect: 'error',
@@ -144,6 +148,7 @@ export function createAppServer({
   aiTimeoutMs = LIMITS.aiTimeoutMs,
   mochi,
   interactive,
+  generationAccess,
 } = {}) {
   // Trusted deployment injection only; CLI/env cannot manufacture access or
   // money authorization. Shared existing key/model/fetch; disabled by default.
@@ -159,6 +164,9 @@ export function createAppServer({
       }
       if (req.url !== '/api/ai/generate') throw fail(404, 'NOT_FOUND', '接口不存在。')
       if (req.method !== 'POST') throw fail(405, 'METHOD_NOT_ALLOWED', '此接口仅接受 POST。')
+      // Identity is checked for BOTH v1 and v2, before parsing or Provider work.
+      // Origin remains defense in depth; it never grants authorization.
+      if (!await authorizeGeneration(req, res, generationAccess)) throw fail(401, 'UNAUTHORIZED', '生成接口需要服务端授权。')
       // No CORS; reject browser cross-origin attempts even when they skip preflight.
       if (req.headers.origin && req.headers.origin !== `http://${req.headers.host}`) {
         throw fail(403, 'ORIGIN_REJECTED', '不允许跨来源请求。')
@@ -198,7 +206,7 @@ export function createAppServer({
         }
         if (!apiKey) throw fail(503, 'AI_NOT_CONFIGURED', 'AI 服务尚未配置。')
         const spec = await generate(input.idea.trim(), { apiKey, model, fetchImpl, aiTimeoutMs, interactive: isInteractive }, res)
-        send(res, 200, isInteractive ? { protocol: 'trusted-interactive/1', spec, provenance: { source: fetchImpl === globalThis.fetch ? 'deepseek' : 'offline-fixture', model } } : spec)
+        send(res, 200, isInteractive ? { protocol: 'trusted-interactive/1', spec, provenance: { source: isPaidTransport(fetchImpl) ? 'deepseek' : 'offline-fixture', model } } : spec)
       } finally { inFlight-- }
     } catch (error) {
       const safe = error instanceof HttpError ? error : fail(500, 'INTERNAL_ERROR', '服务暂时不可用。')

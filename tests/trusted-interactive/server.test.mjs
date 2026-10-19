@@ -11,7 +11,7 @@ export function offlineOptions(origin, overrides = {}) {
     resolveAccess: async () => ({ sessionId: 'offline-session', appId: 'offline-app', readOnly: false }), reserveBudget: async () => true, ...overrides }
 }
 async function harness(t, interactive, fetchImpl) {
-  const server = createAppServer({ apiKey: 'offline-test-key', model: 'offline-fixture-model', fetchImpl, interactive })
+  const server = createAppServer({ generationAccess: () => true, apiKey: 'offline-test-key', model: 'offline-fixture-model', fetchImpl, interactive })
   server.listen(0, '127.0.0.1'); await once(server, 'listening')
   const url = `http://127.0.0.1:${server.address().port}/api/ai/generate`
   t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve) }))

@@ -1,5 +1,6 @@
 import { GenerationError, ensure, LIMITS } from './protocol.mjs'
 import { buildMessages } from './contract.mjs'
+import { requireControlledEgress } from '../paid-gateway/egress.mjs'
 
 const ENDPOINT = 'https://api.deepseek.com/chat/completions'
 
@@ -40,6 +41,7 @@ export function createDeepSeekProvider({ allowPaid = false, apiKey, model = 'dee
   ensure(typeof apiKey === 'string' && apiKey.length > 0 && apiKey.length <= 512 && !/[\s\x00-\x1f]/u.test(apiKey), 'API_CONFIGURATION')
   ensure(['deepseek-v4-flash', 'deepseek-chat'].includes(model) && typeof fetchImpl === 'function', 'API_CONFIGURATION')
   ensure(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= LIMITS.timeoutMs, 'API_CONFIGURATION')
+  requireControlledEgress(fetchImpl)
   // No key on the public object, in prompts, persisted metadata, logs or errors.
   return Object.freeze({ kind: 'deepseek', async generate(request) {
     const messages = buildMessages(request)

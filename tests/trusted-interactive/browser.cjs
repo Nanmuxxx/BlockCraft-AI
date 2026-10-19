@@ -13,7 +13,7 @@ async function run() {
   const { createAppServer } = await import('../../server/index.mjs')
   const { createServer } = await import('vite')
   let mode = 'success', calls = 0, output = structuredClone(fixture)
-  const backend = createAppServer({ apiKey: 'offline-test-only', model: 'offline-fixture-model',
+  const backend = createAppServer({ generationAccess: () => true, apiKey: 'offline-test-only', model: 'offline-fixture-model',
     interactive: { enabled: true, allowedOrigin: 'http://127.0.0.1:5198', approval: { reference: 'OFFLINE-ONLY', providerVerified: true, permissionsVerified: true, maxCalls: 20, expiresAt: Date.now() + 600000 },
       resolveAccess: async () => ({ sessionId: 'offline-session', appId: 'offline-app', readOnly: false }), reserveBudget: async () => true },
     fetchImpl: async (url, options) => {
