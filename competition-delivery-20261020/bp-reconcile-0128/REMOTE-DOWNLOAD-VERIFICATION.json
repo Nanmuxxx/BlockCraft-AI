@@ -1,0 +1,16 @@
+{
+  "commit": "2d1e66dd435e79ef13ad44fffecc8c933d0f8951",
+  "verification": "remote git fetch followed by git show; independently downloaded bytes match local candidate",
+  "files": [
+    {
+      "path": "competition-delivery-20261020/bp-reconcile-0128/candidate/BlockCraftAI_BP_Reconciled_Candidate.pptx",
+      "bytes": 2243429,
+      "sha256": "c3f03d8be81a8fab9522f25c2be28d07296d2c0472d4b472f37916cb89a9ac6f"
+    },
+    {
+      "path": "competition-delivery-20261020/bp-reconcile-0128/candidate/BlockCraftAI_BP_Reconciled_Candidate.pdf",
+      "bytes": 1022375,
+      "sha256": "5493c0844c6bc01baaed452fd37b5fc53dd828bc81ad3007969bf09d93135b8c"
+    }
+  ]
+}
