@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-10-20 Asia/Shanghai",
+  "pages": 15,
+  "all15TextParity": "PASS",
+  "requestedRedesignFilename": "NOT FOUND under /Users/nanmuxun/BlockAI",
+  "files": [
+    {
+      "path": "/Users/nanmuxun/BlockAI/competition-delivery-20261019/BlockCraftAI_Final_BP.pdf",
+      "bytes": 813890,
+      "sha256": "29d6aa2a6cdeb489cfa3da48c19851dc3a014df859cdff1f23425cf4323e890c"
+    },
+    {
+      "path": "/Users/nanmuxun/BlockAI/competition-delivery-20261019/BlockCraftAI_Final_BP.pptx",
+      "bytes": 430280,
+      "sha256": "3ee82646e0a225f6a1f52c50288f26eed8be3708c0fa9fdeae4769bc66574a33"
+    }
+  ],
+  "actualPageText": {
+    "5": "04 为什么选择功能积木\n产品创新：新功能代码与持续局部修改\n以下是产品价值主张与研发目标，尚待真实模型与用户任务验证。\nBlockCraft AI\nFinal · 2026.10.19\n5\n01\nAI 创造新功能\n目标是为新需求写代码，\n超越内置 CRUD 与可信\n组件的固定能力范围。\n用户价值：表达更多个性需求\n02\n修改一个功能\n目标：选中积木表达变化，\n查看新版本的修改方案，\n经确认后应用。\n用户价值：看得懂修改范围\n03\n持续拥有项目\n受支持项目可本机导出，\nCRUD 已有独立验收。\n外观保真与公网仍待完善。\n用户价值：软件能长期使用",
+    "7": "06 当前链路与目标设计\n技术架构：让生成、编辑与运行衔接\n实线表示已有模块，虚线表示待验收或待接线环节；整条链路尚未闭环。\nBlockCraft AI\nFinal · 2026.10.19\n7\n当前可验证路径\n需求与 DeepSeek\n已接接口与 JSON 校验\n在线生成效果仍待核验\n›\nAppSpec 功能定义\nv1 三类 CRUD 积木\nv2 可信番茄钟离线入口\n›\nB / C 工作坊\n#52 B/C 外观展示已接\n固定 Fixture 验收通过\n›\nMochi 可信交互\n#49 Engine/CAS 已接\nProvider 禁用\n新功能积木的研发路径\nReact/TSX 生成\n单例准入、离线安装已验\nUI 已接，源码未运行\n›\n版本化源码制品\nSourceArtifact 与摘要\n唯一 owner / CAS\n›\n隔离编译与 Viewer\n安全 Spike：NO-GO\n正式 C 模式禁止集成\nZIP 独立交付路径\n本机 CRUD 导出已验\n外观保真 P1，公网待验",
+    "9": "08 用户与场景假设\n首批测试对象：会反复修改小工具的人\n优先接触校园组织负责人和学生项目小组，验证持续编辑的实际需求。\nBlockCraft AI\nFinal · 2026.10.19\n9\n校园组织负责人\n报名、名单与活动记录。\n关注规则变化后是否还能继续用。\n学生项目小组与个人\n课程项目与个人记录工具。\n可信番茄钟已验，仅离线配置。\n已有 AppSpec 离线原型，不代表客户使用",
+    "10": "09 官方资料比较与待验证差异\n竞争定位：以独立功能作为持续修改单元\n视觉修改、持续迭代和代码导出已有成熟产品支持，差异需要真实任务对比。\nBlockCraft AI\nFinal · 2026.10.19\n10\n维度\nLovable\nBubble\nBlockCraft AI\n创造单元\n自然语言生成应用\n支持代码编辑\n页面、工作流\n插件与 API 扩展\n现有 AppSpec；目标由 AI\n编写新 React/TSX 积木\n选中目标修改\n选中页面元素\n提示或视觉修改\n在编辑器中修改\n元素与工作流\n目标：选中功能积木\n经 Mochi 确认局部改写\n持续迭代\n对话、视觉及代码\n继续修改项目\n持续编辑应用\n与业务逻辑\nEngine/CAS 与 B/C 外观已接\n正式 AI Provider 尚未启用\n项目导出\nGitHub 同步\n及源码导出\n支持数据导出\n不提供应用源码导出\n受支持本机 CRUD 导出已验\n外观保真 P1，公网待验收\n待证明：功能积木能否让普通用户更清楚地表达修改范围，并持续完成真实任务。",
+    "13": "12 以可验证的结果推进\n产品路线图与验收里程碑\n10 月 19 日冻结材料；正式 AI、ZIP 外观与魔塔部署分别验收。\nBlockCraft AI\nFinal · 2026.10.19\n13\n阶段\n交付重点\n通过标准\n10 月 19 日\n冻结 B 版 Demo、录屏与 BP\n官方格式和提交入口待确认\n同版实际 CRUD、B/C 回归\n材料口径一致，Tech Lead 审核\nMochi 启用\n#49/#52 基础已合并，Provider 禁用\n#54 Mock QA 通过，尚未合并\n真实授权租约、预算与正式接线\n同版浏览器验收后再决定启用\n修改与导出\nReact ZIP CRUD 已有独立验收\n补文案、颜色、圆角导出保真 P1\n实际导出工程构建与交互复现\n外观逐项对照，不泛化支持范围\n公开与试点\nDocker 基础 GO；魔塔链接待确认\n真实 AI 生成与公开演示待验收\nHTTPS、访问权限与平台回归\n核实模型来源、成本及失败保护\n任意 TSX 隔离 Spike 仍为 NO-GO；源码改写与公开产品闭环属于后续目标。"
+  }
+}
