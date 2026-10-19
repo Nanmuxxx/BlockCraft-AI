@@ -21,7 +21,7 @@
     "test:trusted-interactive:reliability": "node tests/trusted-interactive/reliability.browser.cjs",
     "test:trusted-pomodoro-ui": "node --test tests/trusted-pomodoro-ui/*.test.cjs",
     "test:trusted-pomodoro-ui:browser": "npm --prefix server run build && node server/custom-block/build-protocol.mjs && node tools/project-zip-export/prepare.mjs && node tests/trusted-pomodoro-ui/browser.cjs && node tests/trusted-pomodoro-ui/races.browser.cjs",
-    "test:safe-viewer": "node node_modules/typescript/bin/tsc -p server/tsconfig.json && node server/custom-block/build-protocol.mjs && node --test tests/safe-viewer/server.test.mjs",
+    "test:safe-viewer": "node node_modules/typescript/bin/tsc -p server/tsconfig.json && node server/custom-block/build-protocol.mjs && node --test tests/safe-viewer/*.test.mjs",
     "test:safe-viewer:browser": "node node_modules/typescript/bin/tsc -p server/tsconfig.json && node server/custom-block/build-protocol.mjs && node tests/safe-viewer/browser.cjs",
     "dev:safe-viewer": "node node_modules/typescript/bin/tsc -p server/tsconfig.json && node server/custom-block/build-protocol.mjs && node tests/safe-viewer/serve.mjs"
   },

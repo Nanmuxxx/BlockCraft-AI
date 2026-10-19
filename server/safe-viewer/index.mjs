@@ -30,6 +30,9 @@ function fail(res, error) {
     REQUEST_TOO_LARGE: 413,
     COMPILER_BUSY: 429,
     COMPILE_TIMEOUT: 504,
+    COMPILE_CANCELLED: 499,
+    COMPILER_TERMINATION_FAILED: 503,
+    COMPILER_CONFIGURATION: 503,
     RUNNER_CAPACITY: 503,
     SESSION_EXPIRED: 404,
     NOT_FOUND: 404,
@@ -167,7 +170,7 @@ export function createSafeViewerService({
     return { origin }
   }
 
-  async function compile(input, meta) {
+  async function compile(input, meta, { signal } = {}) {
     ensureReady()
     check(meta && parentSet.has(meta.origin), 'ORIGIN_REJECTED', 'Compile origin is not allowed')
     stats.compiles++
@@ -190,7 +193,7 @@ export function createSafeViewerService({
       protocol.assertObjectSchema(artifact.manifest.propsSchema)
       protocol.assertSchemaValue(artifact.manifest.propsSchema, instance.props)
       assertSafeSource(artifact)
-      const result = await compiler.compile({ ...artifact, versionDigest: instance.versionDigest })
+      const result = await compiler.compile({ ...artifact, versionDigest: instance.versionDigest }, { signal })
       const id = randomBytes(24).toString('base64url')
       const nonce = randomBytes(24).toString('base64url')
       const expiresAt = Date.now() + sessionTtlMs
@@ -221,17 +224,21 @@ export function createSafeViewerService({
   }
 
   async function handleCompile(req, res) {
+    const controller = new AbortController()
+    const cancel = () => { if (!res.writableEnded) controller.abort() }
+    res.once('close', cancel)
     try {
       ensureReady()
       check(req.method === 'POST', 'INVALID_REQUEST', 'Compile requires POST')
       const meta = requestMeta(req)
       check(contentIsJson(req), 'CONTENT_TYPE_REJECTED', 'Compile requires application/json')
       const input = await readJson(req, LIMITS.requestBytes)
-      const result = await compile(input, meta)
+      if (res.destroyed) return
+      const result = await compile(input, meta, { signal: controller.signal })
       json(res, 200, result)
     } catch (error) {
-      fail(res, error)
-    }
+      if (!res.destroyed) fail(res, error)
+    } finally { res.off('close', cancel) }
   }
 
   async function handleRunner(req, res) {
@@ -358,11 +365,11 @@ export function createSafeViewerService({
       })
     },
     dispose() {
-      if (disposed) return
+      if (disposed) return Promise.resolve()
       disposed = true
       sessions.clear()
       quarantined.clear()
-      compiler.dispose()
+      return compiler.dispose()
     },
   })
 }
