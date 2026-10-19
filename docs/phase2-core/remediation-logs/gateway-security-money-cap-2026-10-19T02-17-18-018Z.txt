@@ -1,0 +1,19 @@
+✔ anonymous legacy and v2 (no Origin, forged Host/XFF/Origin/body approval) reject before Provider (22.247375ms)
+✔ default disabled even with injected Provider/key; untrusted auth exceptions and late identity fail closed (2009.490042ms)
+✔ all native Provider defaults blocked without controlled transport (2.555875ms)
+✔ durable reserve precedes one fixed official request; no caller headers, tools, retries or secret audit (39.12375ms)
+✔ concurrent attempts rejected before Provider and before a second reservation (36.602292ms)
+✔ request policy rejects other endpoint/model/tools/token limits and oversized input with zero network (20.283416ms)
+✔ durable call cap survives reopen and reservations never refunded (129.933542ms)
+✔ conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10 (87.625334ms)
+✔ missing or over-bound usage halts automatic calls permanently; no refund (192.0205ms)
+✔ unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt (566.873ms)
+✔ exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed (49.136ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3312.3385

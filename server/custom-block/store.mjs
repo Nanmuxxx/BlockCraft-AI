@@ -1,5 +1,5 @@
 import { constants } from 'node:fs'
-import { open, mkdir, lstat, readdir, link, unlink } from 'node:fs/promises'
+import { open, mkdir, lstat, readdir, link, unlink, rmdir } from 'node:fs/promises'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { protocol, json, ensure, GenerationError, LIMITS } from './protocol.mjs'
@@ -11,9 +11,16 @@ async function readBounded(filename) {
     const stat = await handle.stat()
     ensure(stat.isFile() && stat.size <= LIMITS.storeBytes, 'STORE_LIMIT')
     const buffer = Buffer.alloc(LIMITS.storeBytes + 1)
-    const { bytesRead } = await handle.read(buffer, 0, buffer.length, 0)
-    ensure(bytesRead <= LIMITS.storeBytes, 'STORE_LIMIT')
-    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, bytesRead)))
+    let length = 0
+    // A successful read may be short without reaching EOF. Consume the full
+    // bounded file so a JSON prefix cannot conceal unread trailing content.
+    while (length < buffer.length) {
+      const { bytesRead } = await handle.read(buffer, length, buffer.length - length, length)
+      if (bytesRead === 0) break
+      length += bytesRead
+      ensure(length <= LIMITS.storeBytes, 'STORE_LIMIT')
+    }
+    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, length)))
   } finally { await handle.close() }
 }
 
@@ -57,14 +64,24 @@ export function createPendingStore(directory, { maxArtifacts = 256 } = {}) {
         return old
       }
       try { return await existing() } catch (error) { if (error.code !== 'ENOENT') throw error }
-      ensure((await readdir(root)).length < maxArtifacts, 'STORE_QUOTA')
-      const temp = path.join(root, `.pending-${randomUUID()}.tmp`)
-      const handle = await open(temp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600)
+      // Atomic mkdir coordinates independent handles/processes sharing this root.
+      // Never wait on or remove an unknown lease: after a crash the trusted host
+      // must inspect the directory before recovering its stale .write-lock.
+      const lease = path.join(root, '.write-lock')
+      try { await mkdir(lease, { mode: 0o700 }) }
+      catch (error) { if (error.code === 'EEXIST') throw new GenerationError('STORE_BUSY'); throw error }
       try {
-        await handle.writeFile(text); await handle.sync(); await handle.close()
-        try { await link(temp, target) } catch (error) { if (error.code !== 'EEXIST') throw error }
-        return await existing()
-      } finally { await handle.close().catch(() => {}); await unlink(temp).catch(() => {}) }
+        // Another writer may have completed between the initial lookup and lease.
+        try { return await existing() } catch (error) { if (error.code !== 'ENOENT') throw error }
+        ensure((await readdir(root)).filter(name => name !== '.write-lock').length < maxArtifacts, 'STORE_QUOTA')
+        const temp = path.join(root, `.pending-${randomUUID()}.tmp`)
+        const handle = await open(temp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600)
+        try {
+          await handle.writeFile(text); await handle.sync(); await handle.close()
+          try { await link(temp, target) } catch (error) { if (error.code !== 'EEXIST') throw error }
+          return await existing()
+        } finally { await handle.close().catch(() => {}); await unlink(temp).catch(() => {}) }
+      } finally { await rmdir(lease).catch(() => {}) }
     },
     async inspect(reference) {
       protocol.assertArtifactReference(reference)

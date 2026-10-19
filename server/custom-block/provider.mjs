@@ -1,5 +1,7 @@
+import { requireControlledEgress } from '../paid-gateway/egress.mjs'
 import { GenerationError, ensure, LIMITS } from './protocol.mjs'
 import { buildMessages } from './contract.mjs'
+import { abortable } from '../ai-abort.mjs'
 
 const ENDPOINT = 'https://api.deepseek.com/chat/completions'
 
@@ -12,18 +14,18 @@ async function readEnvelope(response, controller) {
   const chunks = []
   try {
     for (;;) {
-      const { done, value } = await reader.read()
+      const { done, value } = await abortable(reader.read(), controller.signal)
       if (done) break
       bytes += value.byteLength
       ensure(bytes <= LIMITS.upstreamBytes, 'UPSTREAM_LIMIT')
       chunks.push(Buffer.from(value))
     }
     const envelope = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))
-    ensure(Array.isArray(envelope.choices) && envelope.choices.length === 1, 'UPSTREAM_INVALID')
+    ensure(Array.isArray(envelope.choices) && envelope.choices.length === 1 && envelope.error === undefined, 'UPSTREAM_INVALID')
     const choice = envelope.choices[0]
     ensure(choice.finish_reason === 'stop' && choice.message?.role === 'assistant' &&
-      typeof choice.message.content === 'string' && !choice.message.refusal &&
-      !choice.message.tool_calls && !choice.message.function_call, 'UPSTREAM_INVALID')
+      typeof choice.message.content === 'string' && (choice.message.refusal === undefined || choice.message.refusal === null) &&
+      choice.message.tool_calls === undefined && choice.message.function_call === undefined, 'UPSTREAM_INVALID')
     ensure(Buffer.byteLength(choice.message.content) <= LIMITS.outputBytes, 'OUTPUT_LIMIT')
     return choice.message.content
   } finally {
@@ -40,26 +42,35 @@ export function createDeepSeekProvider({ allowPaid = false, apiKey, model = 'dee
   ensure(typeof apiKey === 'string' && apiKey.length > 0 && apiKey.length <= 512 && !/[\s\x00-\x1f]/u.test(apiKey), 'API_CONFIGURATION')
   ensure(['deepseek-v4-flash', 'deepseek-chat'].includes(model) && typeof fetchImpl === 'function', 'API_CONFIGURATION')
   ensure(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= LIMITS.timeoutMs, 'API_CONFIGURATION')
+  requireControlledEgress(fetchImpl)
   // No key on the public object, in prompts, persisted metadata, logs or errors.
-  return Object.freeze({ kind: 'deepseek', async generate(request) {
+  return Object.freeze({ kind: 'deepseek', async generate(request, { signal } = {}) {
+    ensure(!signal?.aborted, 'CANCELLED')
     const messages = buildMessages(request)
     const controller = new AbortController()
-    let timer
-    const deadline = new Promise((_, reject) => { timer = setTimeout(() => {
-      controller.abort(); reject(new GenerationError('UPSTREAM_TIMEOUT'))
-    }, timeoutMs) })
+    const abort = () => controller.abort(new GenerationError('CANCELLED'))
+    signal?.addEventListener('abort', abort, { once: true })
+    const timer = setTimeout(() => controller.abort(new GenerationError('UPSTREAM_TIMEOUT')), timeoutMs)
+    let received
     const operation = async () => {
-      const response = await fetchImpl(ENDPOINT, {
+      controller.signal.throwIfAborted()
+      const fetching = Promise.resolve(fetchImpl(ENDPOINT, {
         method: 'POST', redirect: 'error', signal: controller.signal,
         headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ model, messages, stream: false, response_format: { type: 'json_object' }, max_tokens: 8192 }),
-      })
+      }))
+      void fetching.then(response => { if (controller.signal.aborted) void response.body?.cancel().catch(() => {}) }).catch(() => {})
+      const response = received = await abortable(fetching, controller.signal)
       return readEnvelope(response, controller)
     }
-    try { return await Promise.race([operation(), deadline]) }
+    try { return await operation() }
     catch (error) {
+      if (signal?.aborted) throw new GenerationError('CANCELLED')
       if (error instanceof GenerationError) throw error
       throw new GenerationError('UPSTREAM_INVALID')
-    } finally { clearTimeout(timer); controller.abort() }
+    } finally {
+      clearTimeout(timer); signal?.removeEventListener('abort', abort); controller.abort()
+      if (received?.body && !received.body.locked) void received.body.cancel().catch(() => {})
+    }
   } })
 }

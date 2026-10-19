@@ -1,0 +1,21 @@
+
+> blockcraft-ai@0.1.0 test:workshop-export
+> node tools/project-zip-export/prepare.mjs && node --test tests/workshop-export/*.test.*
+
+✔ only explicit dev on strict IPv4 loopback receives a capability; builds and preview never do (0.425583ms)
+✔ local mode refuses wildcard/network hosts, automatic port changes and HTTPS proxy setups (0.11925ms)
+✔ export capture reads the actual sole owner without CAS, authorization change or publication (1.653166ms)
+✔ exact references only, deduplicated; missing registry is rejected (13.002709ms)
+✔ owner replacement during async resolution or while download is in flight rejects stale data (1.902583ms)
+✔ local capability + exact Origin/Host required; errors contain no project data or ZIP (20.861166ms)
+✔ reject malformed, oversized and unsupported media requests (4.436042ms)
+✔ real HTTP returns complete builtins and exact CustomBlock sources, retaining no previous project (38.109042ms)
+✔ missing, tampered and non-empty stateSchema artifacts reject the WHOLE response (5.651791ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 265.355875

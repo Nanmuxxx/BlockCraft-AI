@@ -8,7 +8,7 @@ import { cases } from './fixtures.mjs'
 test('existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure', async t => {
   let candidate
   let upstreamCalls = 0
-  const server = createAppServer({ apiKey: 'offline-test-key', fetchImpl: async (url, options) => {
+  const server = createAppServer({ generationAccess: () => true, apiKey: 'offline-test-key', fetchImpl: async (url, options) => {
     upstreamCalls++
     // This fake fetch NEVER makes an upstream request.
     assert.equal(url, 'https://api.deepseek.com/chat/completions')
@@ -53,7 +53,7 @@ for (const [name, mutate] of [
   mutate(spec)
   let candidate = spec
   let calls = 0
-  const server = createAppServer({ apiKey: 'offline-test-key', fetchImpl: async () => {
+  const server = createAppServer({ generationAccess: () => true, apiKey: 'offline-test-key', fetchImpl: async () => {
     calls++
     return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(candidate) } }] })
   } })

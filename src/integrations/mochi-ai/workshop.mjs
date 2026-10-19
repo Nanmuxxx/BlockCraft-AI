@@ -8,6 +8,12 @@ export function createWorkshopMochiConversation(host, { settleMs = 750, customCo
   const readContext = projection ? projection.read : () => { const view = host.getSnapshot(); return { ...view.context, mode: view.mode } }
   const conversation = createMochiConversation({ ...options, readContext, focusBlock: blockId => host.setSelection(blockId) })
   let previous, timer, stopped = false
+  // A later grant must not authorize work scheduled before revocation. Host
+  // notifications alone cannot observe consent/capability state transitions.
+  const unsubscribeConsent = conversation.subscribe(() => {
+    const state = conversation.getSnapshot()
+    if (!state.enabled || !state.proactiveEnabled) clearTimeout(timer)
+  })
   try { previous = conversation.syncContext() } catch { /* Metadata pending/unavailable: recover on the next trusted notification. */ }
   const structure = c => JSON.stringify([c.blocks, c.entities, c.relations])
   const unsubscribe = (projection || host).subscribe(() => {
@@ -29,5 +35,5 @@ export function createWorkshopMochiConversation(host, { settleMs = 750, customCo
       conversation.onEvent({ type: event }).catch(() => {})
     }, settleMs)
   })
-  return { conversation, dispose() { stopped = true; clearTimeout(timer); unsubscribe(); projection?.dispose(); conversation.dispose() } }
+  return { conversation, dispose() { stopped = true; clearTimeout(timer); unsubscribe(); unsubscribeConsent(); projection?.dispose(); conversation.dispose() } }
 }

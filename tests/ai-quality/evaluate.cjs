@@ -7,6 +7,13 @@ const normalize = value => value.normalize('NFKC').toLowerCase().replace(/[\s\p{
 const matches = (value, aliases) => aliases.some(alias => normalize(alias) === normalize(value))
 const issue = (code, at, message) => ({ code, at, message })
 
+// This evaluator measures the v1 business-data contract. The shared schema also
+// accepts v2, whose interactive behavior needs a separate quality contract.
+function assertQualitySpec(spec) {
+  assertAppSpec(spec)
+  if (spec.version !== 1) throw new Error('AI quality evaluation requires AppSpec v1')
+}
+
 // These are explicit claims of unavailable behavior, not a general language
 // classifier. More subtle overpromises still need product review (see README).
 const unsupportedClaims = [
@@ -27,7 +34,7 @@ function evaluateSpec(spec, contract) {
     // These limitations are always disclosed; a valid fixture does not implement them.
     pending: contract.pending,
   })
-  try { assertAppSpec(spec) }
+  try { assertQualitySpec(spec) }
   catch (error) {
     errors.push(issue('INVALID_SPEC', '$', error.message))
     return result()
@@ -102,7 +109,7 @@ function evaluateSpec(spec, contract) {
 // field names, types, required flags and select choices.
 const sorted = values => values.map(value => JSON.stringify(value)).sort()
 function domainFingerprint(spec) {
-  assertAppSpec(spec)
+  assertQualitySpec(spec)
   return JSON.stringify(sorted(spec.entities.map(entity => {
     const fieldShape = field => ({ name: normalize(field.name), type: field.type, required: field.required,
       ...(field.type === 'select' ? { options: field.options.map(normalize).sort() } : {}) })

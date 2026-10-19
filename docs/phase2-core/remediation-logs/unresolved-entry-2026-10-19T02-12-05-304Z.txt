@@ -1,0 +1,53 @@
+diff --cc server/index.mjs
+index fda167d,b868d18..0000000
+--- a/server/index.mjs
++++ b/server/index.mjs
+@@@ -1,10 -1,9 +1,11 @@@
+  import { randomUUID } from 'node:crypto'
++ import { abortable } from './ai-abort.mjs'
+  import { buildInteractiveMessages, assertInteractiveSpec, createInteractiveGate } from './trusted-interactive.mjs'
+ -import { createMochiIntegration } from './mochi-ai/index.mjs'
+  import { createServer } from 'node:http'
+ -import { pathToFileURL } from 'node:url'
+ +import { readFile, realpath, stat } from 'node:fs/promises'
+ +import { extname, isAbsolute, relative, resolve, sep } from 'node:path'
+ +import { fileURLToPath, pathToFileURL } from 'node:url'
+ +import { createMochiIntegration } from './mochi-ai/index.mjs'
+  import { assertAppSpec } from './.generated/appSpecValidation.js'
+  import { buildGenerationMessages } from './aiGenerationPrompt.mjs'
+  import { checkGeneratedApplication } from './aiGenerationQuality.mjs'
+@@@ -273,19 -199,24 +288,32 @@@ export function createAppServer(
+        inFlight++
+        try {
+          const input = await readInput(req)
++         // Close can occur at the end-of-input boundary, before generate has
++         // attached its own listener. Never start a new paid call for that peer.
++         if (res.destroyed) return
+          if (!input || Array.isArray(input) || typeof input !== 'object' ||
+              !Object.keys(input).every(key => key === 'idea' || key === 'protocol') ||
+ -            (Object.hasOwn(input, 'protocol') && input.protocol !== 'trusted-interactive/1') || typeof input.idea !== 'string' ||
+ -            !input.idea.trim() || input.idea.length > LIMITS.ideaChars) {
+ +            (Object.hasOwn(input, 'protocol') && input.protocol !== 'trusted-interactive/1') ||
+ +            typeof input.idea !== 'string' || !input.idea.trim() || input.idea.length > LIMITS.ideaChars) {
+            throw fail(400, 'INVALID_INPUT', `请提供 1–${LIMITS.ideaChars} 个字符的软件创意（idea）。`)
+          }
+          const isInteractive = input.protocol === 'trusted-interactive/1'
+          if (isInteractive) {
+++<<<<<<< HEAD
+ +          try {
+ +            await admitInteractive(req, { model, requestId: randomUUID(), maxTokens: Buffer.byteLength(JSON.stringify(buildInteractiveMessages(input.idea.trim()))) + 8192 })
+ +          } catch (error) {
+ +            throw fail(error.status ?? 503, error.code ?? 'AI_DISABLED', '可信交互生成未获授权或预算不可用。')
+ +          }
+++=======
++           const admission = new AbortController()
++           const cancelAdmission = () => { if (!res.writableEnded) admission.abort() }
++           res.once('close', cancelAdmission)
++           if (res.destroyed) admission.abort()
++           try { await admitInteractive(req, { model, requestId: randomUUID(), maxTokens: Buffer.byteLength(JSON.stringify(buildInteractiveMessages(input.idea.trim()))) + 8192, signal: admission.signal }) }
++           catch (error) { throw fail(error.status ?? 503, error.code ?? 'AI_DISABLED', '可信交互生成未获授权或预算不可用。') }
++           finally { res.off('close', cancelAdmission) }
+++>>>>>>> 764f2dd023d3e3ca54af755f6291e142e0ccb915
+            if (res.destroyed) return
+          }
+          if (!apiKey) throw fail(503, 'AI_NOT_CONFIGURED', 'AI 服务尚未配置。')

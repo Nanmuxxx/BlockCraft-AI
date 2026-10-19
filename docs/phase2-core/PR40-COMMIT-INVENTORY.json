@@ -1,0 +1,1416 @@
+[
+  {
+    "sha": "b9f1ad1a9b2b3bf9a2efb768ccff2646eb9cf659",
+    "subject": "docs(ai-core): inventory night baseline and development queue",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md"
+    ]
+  },
+  {
+    "sha": "4d9645a6476ee25072db410a05d84b5e3a08f5f1",
+    "subject": "fix(generation): bound responses and reject cancelled or wrong-protocol results",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "src/components/ai-create/generateApp.ts",
+      "tests/generation/client-boundary.test.cjs"
+    ]
+  },
+  {
+    "sha": "ef2a7be9df1c97f640d512089a4d0ec9e0e6d4d9",
+    "subject": "feat(mochi): adapt bounded model plans through existing host validation",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi/modelPlanProvider.ts",
+      "tests/generation/service-runtime.test.cjs",
+      "tests/mochi-ai/model-plan.test.cjs"
+    ]
+  },
+  {
+    "sha": "362d88af87292cc32933721585c11ee596231479",
+    "subject": "fix(generation): reject ambiguous completions and invalid UTF-8",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "server/index.mjs",
+      "server/server.test.mjs",
+      "tests/ai-core-night/check.mjs",
+      "tests/generation/browser.cjs"
+    ]
+  },
+  {
+    "sha": "5eb59924fa6ae8114d83543c5e0ffd82e9692464",
+    "subject": "fix(ai): enforce deadlines when transports ignore cancellation",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Mochi Host / Conversation",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "server/ai-abort.mjs",
+      "server/index.mjs",
+      "server/mochi-ai/provider.mjs",
+      "server/server.test.mjs",
+      "tests/mochi-ai/provider.test.mjs"
+    ]
+  },
+  {
+    "sha": "3dd0261157dac28732e428e35ea0bd8661433ce2",
+    "subject": "test(mochi): exercise bounded JSON plans through workshop browser flow",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "tests/mochi/browser.cjs",
+      "tests/mochi/fixture.tsx"
+    ]
+  },
+  {
+    "sha": "49322795326a41ebd368c94930b5de41071a3711",
+    "subject": "fix(qa): keep business quality evaluation scoped to AppSpec v1",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "tests/ai-quality/evaluate.cjs",
+      "tests/ai-quality/quality.test.cjs"
+    ]
+  },
+  {
+    "sha": "0a1e60258e6fa0cf1a9160aee2c08cfa0de79172",
+    "subject": "fix(ai): cancel unused response bodies on rejection and late arrival",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Mochi Host / Conversation",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "server/index.mjs",
+      "server/mochi-ai/provider.mjs",
+      "server/server.test.mjs",
+      "src/components/ai-create/generateApp.ts",
+      "tests/generation/client-boundary.test.cjs",
+      "tests/mochi-ai/provider.test.mjs"
+    ]
+  },
+  {
+    "sha": "4c7251a27cee052e74acfc85eb1f731ec06c1a13",
+    "subject": "fix(mochi): retire model plan waits promptly on cancellation",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi/modelPlanProvider.ts",
+      "tests/mochi-ai/model-plan.test.cjs"
+    ]
+  },
+  {
+    "sha": "84c1d449ef2c030c218c6cee2b7eb554fda1e208",
+    "subject": "fix(custom-block): bound pending transport waits and reject mixed envelopes",
+    "modules": [
+      "CustomBlock / B-C / owner"
+    ],
+    "paths": [
+      "server/custom-block/provider.mjs",
+      "tests/custom-block-generation/provider.test.mjs"
+    ]
+  },
+  {
+    "sha": "c9c8c9de2e441f137ab038a3bf73452649725f7e",
+    "subject": "fix(mochi-source): detach cancelled requests before abort reentry",
+    "modules": [
+      "Mochi source / Runtime CAS"
+    ],
+    "paths": [
+      "src/integrations/mochi-source/planning.ts",
+      "tests/mochi-source/planning.test.cjs"
+    ]
+  },
+  {
+    "sha": "fd4a1ec7bb4a599f0a754d71cc4460c2ee15e8eb",
+    "subject": "fix(mochi): bound selected metadata before model transport",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi/modelPlanProvider.ts",
+      "tests/mochi-ai/model-plan.test.cjs"
+    ]
+  },
+  {
+    "sha": "3d0df4a4d058f12c6521c4e1bc54b9995e1112a1",
+    "subject": "docs(ai-core): record verified gaps and production integration contract",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "docs/agent-a-night/AI-CORE-INTERFACE-CONTRACT.md"
+    ]
+  },
+  {
+    "sha": "95eb06e40e4a473a9389699cf2062733fa3428e8",
+    "subject": "fix(mochi): release service concurrency on ignored cancellation",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "server/mochi-ai/service.mjs",
+      "tests/mochi-ai/service.test.mjs"
+    ]
+  },
+  {
+    "sha": "495f0b6f97b39126928e0418ff14f85dd15ec691",
+    "subject": "fix(ai): bound interactive admission and retire disconnected gates",
+    "modules": [
+      "DeepSeek generation / v1-v2"
+    ],
+    "paths": [
+      "server/index.mjs",
+      "server/trusted-interactive.mjs",
+      "tests/trusted-interactive/gate.test.mjs",
+      "tests/trusted-interactive/server.test.mjs"
+    ]
+  },
+  {
+    "sha": "d912dddcf327ab930386f76e6f151c11a984b717",
+    "subject": "docs(ai-core): preserve command ledger and browser acceptance evidence",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Mochi Host / Conversation",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "docs/agent-a-night/.gitignore",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/artifact-production/report.json",
+      "docs/agent-a-night/browser/artifact-races/offline-pomodoro.install.json",
+      "docs/agent-a-night/browser/artifact-races/report.json",
+      "docs/agent-a-night/browser/custom-workshop/report.json",
+      "docs/agent-a-night/browser/custom-workshop/workshop-b-1366.png",
+      "docs/agent-a-night/browser/custom-workshop/workshop-c-390.png",
+      "docs/agent-a-night/browser/mochi-advice/report.json",
+      "docs/agent-a-night/browser/mochi-model/report.json",
+      "docs/agent-a-night/browser/trusted-races/report.json",
+      "docs/agent-a-night/browser/trusted/entry-390.png",
+      "docs/agent-a-night/browser/trusted/report.json",
+      "docs/agent-a-night/logs/artifact-formal-browser-2026-10-18T17-57-08-841Z.txt",
+      "docs/agent-a-night/logs/artifact-race-browser-2026-10-18T18-02-19-795Z.txt",
+      "docs/agent-a-night/logs/baseline-suite-2026-10-18T18-16-36-779Z.txt",
+      "docs/agent-a-night/logs/build-admission-2026-10-18T18-16-37-614Z.txt",
+      "docs/agent-a-night/logs/build-after-source-2026-10-18T18-07-53-654Z.txt",
+      "docs/agent-a-night/logs/build-initial.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/compiler-cache-2026-10-18T18-02-00-343Z.txt",
+      "docs/agent-a-night/logs/compiler-deps-2026-10-18T18-01-52-526Z.txt",
+      "docs/agent-a-night/logs/core-complete-2026-10-18T18-07-53-654Z.txt",
+      "docs/agent-a-night/logs/core-regression-2026-10-18T17-55-58-012Z.txt",
+      "docs/agent-a-night/logs/custom-protocol-build-2026-10-18T17-56-21-132Z.txt",
+      "docs/agent-a-night/logs/custom-provider-cleanup-2026-10-18T18-04-32-551Z.txt",
+      "docs/agent-a-night/logs/custom-workshop-browser-2026-10-18T18-07-53-654Z.txt",
+      "docs/agent-a-night/logs/export-assets-prepare-2026-10-18T17-56-21-481Z.txt",
+      "docs/agent-a-night/logs/generation-artifact-security-2026-10-18T17-59-30-093Z.txt",
+      "docs/agent-a-night/logs/generation-browser-2026-10-18T17-55-56-855Z.txt",
+      "docs/agent-a-night/logs/generation-client.txt",
+      "docs/agent-a-night/logs/interactive-admission-before-2026-10-18T18-15-17-665Z.txt",
+      "docs/agent-a-night/logs/interactive-admission-fixed-2026-10-18T18-15-39-168Z.txt",
+      "docs/agent-a-night/logs/interactive-disconnect-2026-10-18T18-16-25-488Z.txt",
+      "docs/agent-a-night/logs/missing-prerequisites-retry-2026-10-18T17-56-21-742Z.txt",
+      "docs/agent-a-night/logs/mochi-advice-formal-browser-2026-10-18T17-59-30-092Z.txt",
+      "docs/agent-a-night/logs/mochi-model-browser-2026-10-18T17-56-57-030Z.txt",
+      "docs/agent-a-night/logs/model-plan-cancellation-2026-10-18T18-03-28-324Z.txt",
+      "docs/agent-a-night/logs/model-plan-cancellation-fixed-2026-10-18T18-03-51-503Z.txt",
+      "docs/agent-a-night/logs/model-request-bound-2026-10-18T18-12-13-393Z.txt",
+      "docs/agent-a-night/logs/model-request-bound-fixed-2026-10-18T18-12-27-740Z.txt",
+      "docs/agent-a-night/logs/production-build-2026-10-18T17-59-17-060Z.txt",
+      "docs/agent-a-night/logs/quality-v1-2026-10-18T18-01-52-527Z.txt",
+      "docs/agent-a-night/logs/response-cleanup-2026-10-18T18-03-11-420Z.txt",
+      "docs/agent-a-night/logs/security-prerequisites-fixed-2026-10-18T18-02-19-796Z.txt",
+      "docs/agent-a-night/logs/server-deadline-fixed-2026-10-18T17-58-38-079Z.txt",
+      "docs/agent-a-night/logs/server-deadline-regression-2026-10-18T17-58-25-168Z.txt",
+      "docs/agent-a-night/logs/server-disconnect-2026-10-18T17-59-16-795Z.txt",
+      "docs/agent-a-night/logs/server-protocol-2026-10-18T17-55-42-173Z.txt",
+      "docs/agent-a-night/logs/service-cancel-before-2026-10-18T18-13-50-915Z.txt",
+      "docs/agent-a-night/logs/service-cancel-fixed-2026-10-18T18-14-01-277Z.txt",
+      "docs/agent-a-night/logs/source-plan-cancellation-2026-10-18T18-05-42-769Z.txt",
+      "docs/agent-a-night/logs/source-plan-cancellation-fixed-2026-10-18T18-05-56-200Z.txt",
+      "docs/agent-a-night/logs/source-reentrant-before-2026-10-18T18-06-11-225Z.txt",
+      "docs/agent-a-night/logs/source-reentrant-fixed-2026-10-18T18-06-24-063Z.txt",
+      "docs/agent-a-night/logs/trusted-formal-browser-2026-10-18T17-57-08-841Z.txt",
+      "docs/agent-a-night/logs/trusted-races-browser-2026-10-18T17-58-38-370Z.txt"
+    ]
+  },
+  {
+    "sha": "b053ff798255bcb05d28d5ad04f194c30ebd103f",
+    "subject": "fix(mochi-source): retire cancelled registry admission waits",
+    "modules": [
+      "Mochi source / Runtime CAS"
+    ],
+    "paths": [
+      "src/integrations/mochi-source/planning.ts",
+      "tests/mochi-source/planning.test.cjs"
+    ]
+  },
+  {
+    "sha": "b547ac73e0275488c5d4c00148126524ac339fa5",
+    "subject": "fix(mochi-ai): bound client transport and decode strict UTF-8",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/client-transport.test.mjs"
+    ]
+  },
+  {
+    "sha": "9bbbfaafc89be09b2ba4200fd67eb66e832f30f4",
+    "subject": "fix(mochi-ai): preserve conversation ownership during abort reentry",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/client.test.mjs"
+    ]
+  },
+  {
+    "sha": "e891260d99f03b41d3573fc9f6fecf716a75ea3b",
+    "subject": "fix(artifact): retire superseded installation preparation",
+    "modules": [
+      "Generated Artifact"
+    ],
+    "paths": [
+      "src/integrations/generated-artifact/install.ts",
+      "tests/generated-artifact/install.test.cjs"
+    ]
+  },
+  {
+    "sha": "a638a31df15ccde8562807682244959380843ed9",
+    "subject": "fix(mochi-ai): bound trusted access admission and reject invalid request bytes",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "server/mochi-ai/http.mjs",
+      "tests/mochi-ai/http.test.mjs"
+    ]
+  },
+  {
+    "sha": "2d5f235074ff4e9934f25f487b8ea197229453f0",
+    "subject": "docs(ai-core): checkpoint verified core regressions and night report",
+    "modules": [
+      "Mochi Host / Conversation",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/artifact-cancel/report.json",
+      "docs/agent-a-night/browser/mochi-advice-final/report.json",
+      "docs/agent-a-night/browser/mochi-client-cancel/report.json",
+      "docs/agent-a-night/browser/mochi-model-final/report.json",
+      "docs/agent-a-night/logs/advice-client-after-2026-10-18T18-25-35-322Z.txt",
+      "docs/agent-a-night/logs/advice-client-before-2026-10-18T18-25-18-333Z.txt",
+      "docs/agent-a-night/logs/advice-client-complete-2026-10-18T18-26-02-685Z.txt",
+      "docs/agent-a-night/logs/advice-client-fixed-2026-10-18T18-25-44-654Z.txt",
+      "docs/agent-a-night/logs/advice-http-after-2026-10-18T18-31-04-386Z.txt",
+      "docs/agent-a-night/logs/advice-http-before-2026-10-18T18-30-35-942Z.txt",
+      "docs/agent-a-night/logs/advice-http-disconnect-2026-10-18T18-31-20-309Z.txt",
+      "docs/agent-a-night/logs/advice-http-valid-before-2026-10-18T18-30-45-419Z.txt",
+      "docs/agent-a-night/logs/browser-advice-client-2026-10-18T18-29-20-705Z.txt",
+      "docs/agent-a-night/logs/browser-advice-client-retry-2026-10-18T18-30-05-912Z.txt",
+      "docs/agent-a-night/logs/browser-installer-cancel-2026-10-18T18-29-20-706Z.txt",
+      "docs/agent-a-night/logs/build-client-cancel-2026-10-18T18-26-43-077Z.txt",
+      "docs/agent-a-night/logs/build-installer-cancel-2026-10-18T18-29-20-709Z.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/conversation-cancel-after-2026-10-18T18-26-32-240Z.txt",
+      "docs/agent-a-night/logs/conversation-cancel-before-2026-10-18T18-26-19-784Z.txt",
+      "docs/agent-a-night/logs/core-checkpoint-2026-10-18T18-29-20-727Z.txt",
+      "docs/agent-a-night/logs/installer-cancel-after-2026-10-18T18-28-31-824Z.txt",
+      "docs/agent-a-night/logs/installer-cancel-before-2026-10-18T18-28-14-203Z.txt",
+      "docs/agent-a-night/logs/installer-cancel-final-2026-10-18T18-29-09-014Z.txt",
+      "docs/agent-a-night/logs/installer-cancel-fixture-fixed-2026-10-18T18-28-44-729Z.txt",
+      "docs/agent-a-night/logs/installer-cancel-valid-before-2026-10-18T18-28-54-636Z.txt",
+      "docs/agent-a-night/logs/mochi-advice-final-2026-10-18T18-21-55-199Z.txt",
+      "docs/agent-a-night/logs/mochi-model-final-2026-10-18T18-21-55-197Z.txt",
+      "docs/agent-a-night/logs/source-registry-after-2026-10-18T18-24-23-014Z.txt",
+      "docs/agent-a-night/logs/source-registry-before-2026-10-18T18-22-36-595Z.txt"
+    ]
+  },
+  {
+    "sha": "f47cfb6ec2e9622d7fe18587e410e69d69a79224",
+    "subject": "fix(artifact-ui): retire cancelled file reads and preserve reentrant drafts",
+    "modules": [
+      "Generated Artifact"
+    ],
+    "paths": [
+      "src/integrations/generated-artifact/ui.ts",
+      "tests/generated-artifact-ui/ui.test.cjs"
+    ]
+  },
+  {
+    "sha": "9ae77114cc73754bd7a9cee1d8959a9c0561a51a",
+    "subject": "fix(artifact-ui): validate native file bytes with strict UTF-8 bounds",
+    "modules": [
+      "Generated Artifact"
+    ],
+    "paths": [
+      "src/integrations/generated-artifact/ui.ts",
+      "tests/generated-artifact-ui/production-browser.cjs",
+      "tests/generated-artifact-ui/ui.test.cjs"
+    ]
+  },
+  {
+    "sha": "a5c9359a4dc7ecc84634ee770e0b8137f598a058",
+    "subject": "fix(ai-server): reject disconnected requests before model dispatch",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "server/index.mjs",
+      "server/server.test.mjs"
+    ]
+  },
+  {
+    "sha": "63df9114b304cb1b334ad995c72ce87727c5b4ae",
+    "subject": "fix(mochi-source): bound completion egress and guard cancellation",
+    "modules": [
+      "Mochi source / Runtime CAS"
+    ],
+    "paths": [
+      "src/integrations/mochi-source/providers.ts",
+      "tests/mochi-source/provider.test.cjs"
+    ]
+  },
+  {
+    "sha": "833b99c805c5a6d17294989ec4a8eb29323deff3",
+    "subject": "fix(mochi-client): retain request ownership across state publication",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/client.test.mjs"
+    ]
+  },
+  {
+    "sha": "755480c7e5c2bc9aa29055be1083c6febb1f1b4f",
+    "subject": "feat(custom-block): propagate caller cancellation before artifact storage",
+    "modules": [
+      "CustomBlock / B-C / owner"
+    ],
+    "paths": [
+      "server/custom-block/generator.mjs",
+      "server/custom-block/provider.mjs",
+      "tests/custom-block-generation/pipeline.test.mjs",
+      "tests/custom-block-generation/provider.test.mjs"
+    ]
+  },
+  {
+    "sha": "f5b1ba1e87f1dc1e216330dffd1bc188c59a57ea",
+    "subject": "docs(ai-core): record 649 regressions and caller cancellation boundaries",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/AI-CORE-INTERFACE-CONTRACT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/advice-publication/report.json",
+      "docs/agent-a-night/browser/artifact-utf8/report.json",
+      "docs/agent-a-night/logs/advice-publication-after-2026-10-18T18-44-03-502Z.txt",
+      "docs/agent-a-night/logs/advice-publication-before-2026-10-18T18-43-52-306Z.txt",
+      "docs/agent-a-night/logs/advice-publication-final-2026-10-18T18-44-19-769Z.txt",
+      "docs/agent-a-night/logs/artifact-byte-final-2026-10-18T18-38-26-993Z.txt",
+      "docs/agent-a-night/logs/artifact-read-after-2026-10-18T18-36-55-404Z.txt",
+      "docs/agent-a-night/logs/artifact-read-before-2026-10-18T18-36-31-773Z.txt",
+      "docs/agent-a-night/logs/artifact-read-final-2026-10-18T18-37-15-082Z.txt",
+      "docs/agent-a-night/logs/artifact-utf8-after-2026-10-18T18-37-48-702Z.txt",
+      "docs/agent-a-night/logs/artifact-utf8-before-2026-10-18T18-37-35-628Z.txt",
+      "docs/agent-a-night/logs/browser-advice-publication-2026-10-18T18-44-37-191Z.txt",
+      "docs/agent-a-night/logs/browser-artifact-utf8-2026-10-18T18-38-04-490Z.txt",
+      "docs/agent-a-night/logs/build-artifact-read-2026-10-18T18-37-15-413Z.txt",
+      "docs/agent-a-night/logs/build-artifact-utf8-2026-10-18T18-37-49-017Z.txt",
+      "docs/agent-a-night/logs/build-source-publication-2026-10-18T18-44-38-326Z.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/core-artifact-ingress-2026-10-18T18-40-07-333Z.txt",
+      "docs/agent-a-night/logs/core-artifact-ingress-fixed-2026-10-18T18-40-31-914Z.txt",
+      "docs/agent-a-night/logs/core-caller-cancel-2026-10-18T18-47-23-644Z.txt",
+      "docs/agent-a-night/logs/core-publication-2026-10-18T18-45-50-915Z.txt",
+      "docs/agent-a-night/logs/custom-caller-after-2026-10-18T18-46-37-548Z.txt",
+      "docs/agent-a-night/logs/custom-caller-before-2026-10-18T18-46-28-377Z.txt",
+      "docs/agent-a-night/logs/custom-caller-final-2026-10-18T18-47-14-223Z.txt",
+      "docs/agent-a-night/logs/custom-provider-cancel-after-2026-10-18T18-47-01-829Z.txt",
+      "docs/agent-a-night/logs/custom-provider-cancel-before-2026-10-18T18-46-44-680Z.txt",
+      "docs/agent-a-night/logs/generation-predispatch-after-2026-10-18T18-39-51-699Z.txt",
+      "docs/agent-a-night/logs/generation-predispatch-before-2026-10-18T18-39-38-611Z.txt",
+      "docs/agent-a-night/logs/source-provider-after-2026-10-18T18-42-32-953Z.txt",
+      "docs/agent-a-night/logs/source-provider-before-2026-10-18T18-42-14-426Z.txt"
+    ]
+  },
+  {
+    "sha": "fe4496f7350247b2cd58affba16fc938114575e8",
+    "subject": "fix(trusted-ai): normalize access and budget adapter failures",
+    "modules": [
+      "DeepSeek generation / v1-v2"
+    ],
+    "paths": [
+      "server/trusted-interactive.mjs",
+      "tests/trusted-interactive/gate.test.mjs"
+    ]
+  },
+  {
+    "sha": "e0017d8b6f15f85258153aa27baa9bd92cea4923",
+    "subject": "test(trusted-ai): verify sanitized adapter failures over HTTP",
+    "modules": [
+      "DeepSeek generation / v1-v2"
+    ],
+    "paths": [
+      "tests/trusted-interactive/server.test.mjs"
+    ]
+  },
+  {
+    "sha": "9c6b8788df29f5a6c3f2a29ae6ae071e348bb516",
+    "subject": "test(ai-core): discover owned regression families and record prerequisites",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "tests/ai-core-night/regression.mjs"
+    ]
+  },
+  {
+    "sha": "bbafb266779a9bbb578b7a123c7692335a51522d",
+    "subject": "test(custom-block): verify same-version reinstall and state migration boundaries",
+    "modules": [
+      "CustomBlock / B-C / owner"
+    ],
+    "paths": [
+      "tests/custom-block-workshop/reinstall.test.cjs"
+    ]
+  },
+  {
+    "sha": "3510b0876ede425a002ad8e2129d4792d0025937",
+    "subject": "test(custom-block): keep hazardous admitted source inert and execution denied",
+    "modules": [
+      "CustomBlock / B-C / owner"
+    ],
+    "paths": [
+      "tests/custom-block-generation/pipeline.test.mjs"
+    ]
+  },
+  {
+    "sha": "63d58fa503598c92636afa0f6f7942be683f069f",
+    "subject": "test(ai-core): connect fixture generation installation and source edits",
+    "modules": [
+      "CustomBlock / B-C / owner"
+    ],
+    "paths": [
+      "tests/custom-block-generation/installation.test.cjs"
+    ]
+  },
+  {
+    "sha": "7bdbfbeab581e4cddbb6a0f02fab1e43efc53d4b",
+    "subject": "fix(custom-block): enforce pending store quota across writers",
+    "modules": [
+      "CustomBlock / B-C / owner"
+    ],
+    "paths": [
+      "server/custom-block/store.mjs",
+      "tests/custom-block-generation/pipeline.test.mjs"
+    ]
+  },
+  {
+    "sha": "b0a121464d2bc950970aa2f276497898c64b3c2f",
+    "subject": "docs(ai-core): record 724 checks and pending source edit vertical slice",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T18-53-18-240Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T18-59-10-263Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T18-59-10-882Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T19-03-16-853Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T18-53-17-888Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T18-59-10-549Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-03-16-522Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T18-53-17-623Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T18-59-10-301Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-03-16-272Z.txt",
+      "docs/agent-a-night/logs/generation-install-edit-2026-10-18T18-59-03-656Z.txt",
+      "docs/agent-a-night/logs/interactive-errors-after-2026-10-18T18-51-56-763Z.txt",
+      "docs/agent-a-night/logs/interactive-errors-before-2026-10-18T18-51-48-008Z.txt",
+      "docs/agent-a-night/logs/interactive-errors-http-2026-10-18T18-52-49-063Z.txt",
+      "docs/agent-a-night/logs/reinstall-boundaries-2026-10-18T18-53-45-905Z.txt",
+      "docs/agent-a-night/logs/source-admission-boundary-2026-10-18T18-55-28-097Z.txt",
+      "docs/agent-a-night/logs/store-lease-boundaries-2026-10-18T19-02-55-844Z.txt",
+      "docs/agent-a-night/logs/store-quota-race-after-2026-10-18T19-02-28-467Z.txt",
+      "docs/agent-a-night/logs/store-quota-race-before-2026-10-18T19-02-07-169Z.txt"
+    ]
+  },
+  {
+    "sha": "468aa12b842c0ae269bf527f8b4f3c58a2f733fc",
+    "subject": "fix(custom-block): consume complete bounded store records before validation",
+    "modules": [
+      "CustomBlock / B-C / owner"
+    ],
+    "paths": [
+      "server/custom-block/store.mjs",
+      "tests/custom-block-generation/pipeline.test.mjs"
+    ]
+  },
+  {
+    "sha": "93c38e3062b31e47048f7f43beca8ad64c0634da",
+    "subject": "fix(mochi): bound source model completion and retire cancelled transports",
+    "modules": [
+      "Mochi source / Runtime CAS"
+    ],
+    "paths": [
+      "src/integrations/mochi-source/providers.ts",
+      "tests/mochi-source/planning.test.cjs",
+      "tests/mochi-source/provider.test.cjs"
+    ]
+  },
+  {
+    "sha": "8fb63c539b0b2ab08b695ebfb52479b60f1329d8",
+    "subject": "fix(mochi): cap AppSpec model plan waits without changing invocation order",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi/modelPlanProvider.ts",
+      "tests/mochi-ai/model-plan.test.cjs"
+    ]
+  },
+  {
+    "sha": "44bb5e8c9158c7030a01cee5ee28e373c5d935e9",
+    "subject": "docs(ai-core): record bounded storage and model deadlines",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/logs/browser-model-deadline-2026-10-18T19-14-38-555Z.txt",
+      "docs/agent-a-night/logs/build-model-deadline-2026-10-18T19-14-40-892Z.txt",
+      "docs/agent-a-night/logs/build-source-deadline-2026-10-18T19-11-35-956Z.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T19-11-16-416Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T19-14-40-420Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-11-16-083Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-14-40-019Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-11-15-820Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-14-39-710Z.txt",
+      "docs/agent-a-night/logs/model-plan-deadline-before-2026-10-18T19-13-50-512Z.txt",
+      "docs/agent-a-night/logs/model-plan-deadline-compatible-2026-10-18T19-14-17-735Z.txt",
+      "docs/agent-a-night/logs/model-plan-deadline-fixed-2026-10-18T19-14-05-430Z.txt",
+      "docs/agent-a-night/logs/model-plan-deadline-reentry-2026-10-18T19-14-30-269Z.txt",
+      "docs/agent-a-night/logs/source-deadline-before-2026-10-18T19-09-25-115Z.txt",
+      "docs/agent-a-night/logs/source-deadline-fixed-2026-10-18T19-10-39-489Z.txt",
+      "docs/agent-a-night/logs/source-deadline-owner-2026-10-18T19-11-08-018Z.txt",
+      "docs/agent-a-night/logs/source-deadline-reentry-2026-10-18T19-10-56-504Z.txt",
+      "docs/agent-a-night/logs/store-read-limit-2026-10-18T19-08-16-423Z.txt",
+      "docs/agent-a-night/logs/store-short-read-before-2026-10-18T19-07-57-983Z.txt",
+      "docs/agent-a-night/logs/store-short-read-fixed-2026-10-18T19-08-04-202Z.txt"
+    ]
+  },
+  {
+    "sha": "77a87f37226fc7cf63f94cf8670fa6afa87960e1",
+    "subject": "docs(ai-core): archive model deadline browser and command evidence",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/model-deadline/report.json"
+    ]
+  },
+  {
+    "sha": "a572442ee3808670f6e2cd05e6fe09512411480d",
+    "subject": "fix(mochi): close rejected incomplete HTTP uploads after response",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "server/mochi-ai/http.mjs",
+      "tests/mochi-ai/http.test.mjs"
+    ]
+  },
+  {
+    "sha": "292f9521af341b719e153497d8a10f290e8f3c2a",
+    "subject": "test(mochi): cover incomplete and split chunked upload boundaries",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "tests/mochi-ai/http.test.mjs"
+    ]
+  },
+  {
+    "sha": "14e2d723ac60516f8e60ecff20701ae7f5fd0b76",
+    "subject": "fix(mochi): bind conversation egress to atomically published project context",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/client.test.mjs"
+    ]
+  },
+  {
+    "sha": "898a5b54caeedfd82cb1d69415d063b98581fbb7",
+    "subject": "fix(mochi): isolate conversation observers from cancellation",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/client.test.mjs"
+    ]
+  },
+  {
+    "sha": "e1ec32e13ae11834bf800dbd6772aa02121470dd",
+    "subject": "fix(mochi): sanitize access and ledger exception metadata",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "server/mochi-ai/http.mjs",
+      "server/mochi-ai/service.mjs",
+      "tests/mochi-ai/http.test.mjs"
+    ]
+  },
+  {
+    "sha": "c7624c0301fb9eb50959dab07e5050d42580aa8f",
+    "subject": "fix(mochi): capture trusted application scope across async admission",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "server/mochi-ai/service.mjs",
+      "tests/mochi-ai/service.test.mjs"
+    ]
+  },
+  {
+    "sha": "cef4cf427ab2fdfbc4b8254be5e8d392b03feac8",
+    "subject": "fix(artifact): keep install receipts independent of render observer errors",
+    "modules": [
+      "Generated Artifact"
+    ],
+    "paths": [
+      "src/integrations/generated-artifact/ui.ts",
+      "tests/generated-artifact-ui/ui.test.cjs"
+    ]
+  },
+  {
+    "sha": "a6a0fbb776f4c9abc43300166b468ab664f82fef",
+    "subject": "docs(ai-core): record HTTP admission and project transition evidence",
+    "modules": [
+      "Mochi Host / Conversation",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/context-atomic/report.json",
+      "docs/agent-a-night/logs/advice-access-snapshot-before-2026-10-18T19-26-40-628Z.txt",
+      "docs/agent-a-night/logs/advice-access-snapshot-fixed-2026-10-18T19-26-47-997Z.txt",
+      "docs/agent-a-night/logs/advice-context-reentry-before-2026-10-18T19-23-07-891Z.txt",
+      "docs/agent-a-night/logs/advice-context-reentry-fixed-2026-10-18T19-23-23-008Z.txt",
+      "docs/agent-a-night/logs/advice-egress-project-before-2026-10-18T19-23-37-425Z.txt",
+      "docs/agent-a-night/logs/advice-egress-project-fixed-2026-10-18T19-23-50-967Z.txt",
+      "docs/agent-a-night/logs/advice-observer-before-2026-10-18T19-24-05-296Z.txt",
+      "docs/agent-a-night/logs/advice-observer-fixed-2026-10-18T19-24-17-967Z.txt",
+      "docs/agent-a-night/logs/advice-project-reentry-before-2026-10-18T19-22-38-246Z.txt",
+      "docs/agent-a-night/logs/artifact-observer-before-2026-10-18T19-28-22-166Z.txt",
+      "docs/agent-a-night/logs/artifact-observer-fixed-2026-10-18T19-28-31-932Z.txt",
+      "docs/agent-a-night/logs/artifact-observer-receipt-before-2026-10-18T19-28-31-641Z.txt",
+      "docs/agent-a-night/logs/browser-context-atomic-2026-10-18T19-24-31-106Z.txt",
+      "docs/agent-a-night/logs/build-context-atomic-2026-10-18T19-24-24-563Z.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T19-24-25-290Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-24-24-909Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-24-24-586Z.txt",
+      "docs/agent-a-night/logs/mochi-admission-metadata-before-2026-10-18T19-25-30-766Z.txt",
+      "docs/agent-a-night/logs/mochi-admission-metadata-fixed-2026-10-18T19-25-39-697Z.txt",
+      "docs/agent-a-night/logs/mochi-chunked-bound-before-2026-10-18T19-21-14-007Z.txt",
+      "docs/agent-a-night/logs/mochi-chunked-compatibility-2026-10-18T19-21-27-602Z.txt",
+      "docs/agent-a-night/logs/mochi-incomplete-upload-before-2026-10-18T19-19-30-294Z.txt",
+      "docs/agent-a-night/logs/mochi-incomplete-upload-fixed-2026-10-18T19-19-40-669Z.txt"
+    ]
+  },
+  {
+    "sha": "9a0b2511d4699a667b7edd5a439184111eea91c8",
+    "subject": "fix(mochi): recheck cancellation across synchronous admission callbacks",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "server/mochi-ai/service.mjs",
+      "tests/mochi-ai/admission-cancellation.test.mjs"
+    ]
+  },
+  {
+    "sha": "f8e5821e7c64de8d8c65873bf5c8bace7a6b69c4",
+    "subject": "fix(mochi): retire host waits when provider ignores cancellation",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi/host.ts",
+      "tests/mochi-ai/host-cancellation.test.cjs"
+    ]
+  },
+  {
+    "sha": "6c52cd4d8fdddfbb86288731a8cd959f1e7af8bc",
+    "subject": "fix(mochi): skip disposed consent opt-ins while preserving explicit revocation",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/consent-lifecycle.test.mjs"
+    ]
+  },
+  {
+    "sha": "79b14325cd3585c1b21aef979de96c2b22db8475",
+    "subject": "test(ai-core): bind command evidence to code revision and harness settings",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "tests/ai-core-night/check.mjs"
+    ]
+  },
+  {
+    "sha": "de6436eca480f8ee7fb9bbd3bd2b2ed353a88d45",
+    "subject": "docs(ai-core): archive host retirement and consent lifecycle evidence",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/AI-CORE-INTERFACE-CONTRACT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/admission-artifact/report.json",
+      "docs/agent-a-night/browser/consent-lifecycle/report.json",
+      "docs/agent-a-night/browser/host-retirement/report.json",
+      "docs/agent-a-night/logs/admission-cancel-before-2026-10-18T19-34-11-762Z.txt",
+      "docs/agent-a-night/logs/admission-cancel-fixed-2026-10-18T19-34-23-467Z.txt",
+      "docs/agent-a-night/logs/admission-revocation-fixed-2026-10-18T19-34-44-904Z.txt",
+      "docs/agent-a-night/logs/browser-admission-artifact-2026-10-18T19-35-34-325Z.txt",
+      "docs/agent-a-night/logs/browser-consent-lifecycle-2026-10-18T19-43-38-559Z.txt",
+      "docs/agent-a-night/logs/browser-host-retirement-2026-10-18T19-39-44-605Z.txt",
+      "docs/agent-a-night/logs/build-admission-final-2026-10-18T19-35-34-324Z.txt",
+      "docs/agent-a-night/logs/build-consent-lifecycle-2026-10-18T19-43-38-559Z.txt",
+      "docs/agent-a-night/logs/build-host-retirement-2026-10-18T19-39-44-607Z.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/consent-lifecycle-before-2026-10-18T19-42-40-897Z.txt",
+      "docs/agent-a-night/logs/consent-lifecycle-fixed-2026-10-18T19-43-19-925Z.txt",
+      "docs/agent-a-night/logs/consent-lifecycle-reproduction-2026-10-18T19-43-09-631Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T19-35-09-558Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T19-39-45-527Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T19-43-39-438Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-35-09-226Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-39-44-990Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-43-38-940Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-35-08-976Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-39-44-629Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-43-38-582Z.txt",
+      "docs/agent-a-night/logs/evidence-baseline-check-2026-10-18T19-46-07-606Z.txt",
+      "docs/agent-a-night/logs/host-retirement-before-2026-10-18T19-37-19-031Z.txt",
+      "docs/agent-a-night/logs/host-retirement-commit-2026-10-18T19-38-10-987Z.txt",
+      "docs/agent-a-night/logs/host-retirement-final-2026-10-18T19-37-54-286Z.txt",
+      "docs/agent-a-night/logs/host-retirement-fixed-2026-10-18T19-37-41-497Z.txt",
+      "docs/agent-a-night/logs/host-retirement-sync-final-2026-10-18T19-38-36-201Z.txt",
+      "docs/agent-a-night/logs/proactive-sync-revoke-before-2026-10-18T19-34-35-592Z.txt"
+    ]
+  },
+  {
+    "sha": "717f3b13c1178cfcf9e33d96a9c3cf5c9d1fb6e6",
+    "subject": "fix(mochi): retire enabled capability on invalid status replies",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/status-validation.test.mjs"
+    ]
+  },
+  {
+    "sha": "3a682c405206577a2c725aae94bfec7454d7f38b",
+    "subject": "fix(mochi): keep late consent acknowledgments subordinate to capability status",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/consent-lifecycle.test.mjs"
+    ]
+  },
+  {
+    "sha": "9dc865742a24efc07f957a17c6ea8803c8469207",
+    "subject": "fix(mochi): publish consent revocation before idle notifications",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/consent-lifecycle.test.mjs"
+    ]
+  },
+  {
+    "sha": "a3993d975e383c6dea61c61b23648ebf7c543464",
+    "subject": "fix(mochi): reserve consent queue order before observer reentry",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/consent-lifecycle.test.mjs"
+    ]
+  },
+  {
+    "sha": "372238a27403a56bc7e85674e4dfe0380668408a",
+    "subject": "fix(mochi): isolate metadata projection notification failures",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/context.mjs",
+      "tests/mochi-ai/context.test.mjs"
+    ]
+  },
+  {
+    "sha": "dbeb007505496c27127713280ebac00a75cb5e2e",
+    "subject": "fix(mochi): bind HTTP access scope before reading uploaded bodies",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "server/mochi-ai/http.mjs",
+      "tests/mochi-ai/http.test.mjs"
+    ]
+  },
+  {
+    "sha": "4272b55ec7e36b0112e978b321eedcca84677a9b",
+    "subject": "docs(ai-core): record status consent and metadata boundary evidence",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/metadata-observer/report.json",
+      "docs/agent-a-night/browser/status-consent/report.json",
+      "docs/agent-a-night/logs/browser-metadata-observer-2026-10-18T19-56-19-277Z.txt",
+      "docs/agent-a-night/logs/browser-status-consent-2026-10-18T19-54-54-262Z.txt",
+      "docs/agent-a-night/logs/build-metadata-observer-2026-10-18T19-56-19-278Z.txt",
+      "docs/agent-a-night/logs/build-status-consent-2026-10-18T19-54-54-262Z.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/consent-atomic-before-2026-10-18T19-52-45-450Z.txt",
+      "docs/agent-a-night/logs/consent-atomic-fixed-2026-10-18T19-53-25-735Z.txt",
+      "docs/agent-a-night/logs/consent-disabled-race-before-2026-10-18T19-51-25-642Z.txt",
+      "docs/agent-a-night/logs/consent-disabled-race-fixed-2026-10-18T19-52-10-000Z.txt",
+      "docs/agent-a-night/logs/consent-reentrant-order-before-2026-10-18T19-53-50-167Z.txt",
+      "docs/agent-a-night/logs/consent-reentrant-order-fixed-2026-10-18T19-54-33-309Z.txt",
+      "docs/agent-a-night/logs/context-observer-before-2026-10-18T19-55-54-995Z.txt",
+      "docs/agent-a-night/logs/context-observer-fixed-2026-10-18T19-56-06-388Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T19-54-55-220Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T19-56-20-203Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-54-54-669Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-56-19-674Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-54-54-290Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-56-19-301Z.txt",
+      "docs/agent-a-night/logs/http-access-body-before-2026-10-18T19-57-42-864Z.txt",
+      "docs/agent-a-night/logs/http-access-body-fixed-2026-10-18T19-57-55-229Z.txt",
+      "docs/agent-a-night/logs/status-capability-final-2026-10-18T19-50-55-007Z.txt",
+      "docs/agent-a-night/logs/status-invalid-before-2026-10-18T19-49-50-471Z.txt",
+      "docs/agent-a-night/logs/status-invalid-fixed-2026-10-18T19-50-25-029Z.txt"
+    ]
+  },
+  {
+    "sha": "9beff5570418f7f7a68f30d34f1b0092d0b3f574",
+    "subject": "docs(ai-core): specify runtime module handoff without editing deployment files",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "docs/agent-a-night/DEPLOYMENT-INTERFACE-NOTE.md",
+      "tests/ai-core-night/runtime-inventory.mjs"
+    ]
+  },
+  {
+    "sha": "27d38aa9e45b5b8d24fd85db16bcc0bd0562e7da",
+    "subject": "test(mochi): verify metadata recovery on a new admitted reference",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "tests/mochi-ai/context.test.mjs"
+    ]
+  },
+  {
+    "sha": "cb16eeffcc9bbb053c65581041cfb5f32db862e8",
+    "subject": "fix(mochi): retire suggestion actions with their conversation context",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/suggestion-actions.test.mjs"
+    ]
+  },
+  {
+    "sha": "e2dcd9fef262c8e258abcc110076181a3cb53b30",
+    "subject": "docs(ai-core): archive metadata recovery and retired suggestion evidence",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/suggestion-actions/report.json",
+      "docs/agent-a-night/logs/browser-suggestion-actions-2026-10-18T20-18-26-105Z.txt",
+      "docs/agent-a-night/logs/browser-suggestion-actions-2026-10-18T20-18-34-893Z.txt",
+      "docs/agent-a-night/logs/build-suggestion-actions-2026-10-18T20-18-15-505Z.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T20-09-34-029Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-09-33-541Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-09-32-939Z.txt",
+      "docs/agent-a-night/logs/delivery-default-suite-2026-10-18T20-09-32-915Z.txt",
+      "docs/agent-a-night/logs/delivery-isolation-quality-2026-10-18T20-10-57-875Z.txt",
+      "docs/agent-a-night/logs/metadata-recovery-2026-10-18T20-11-29-476Z.txt",
+      "docs/agent-a-night/logs/runtime-inventory-2026-10-18T20-05-37-069Z.txt",
+      "docs/agent-a-night/logs/suggestion-actions-after-2026-10-18T20-15-58-266Z.txt",
+      "docs/agent-a-night/logs/suggestion-actions-before-2026-10-18T20-15-41-217Z.txt"
+    ]
+  },
+  {
+    "sha": "7d7f7aa03994eaa03893da55082ec0813452a744",
+    "subject": "test(generation): cover formal HTTP cancellation and late results on desktop and mobile",
+    "modules": [
+      "DeepSeek generation / v1-v2"
+    ],
+    "paths": [
+      "tests/generation/cancellation.browser.cjs"
+    ]
+  },
+  {
+    "sha": "0a5c8abf172bcba7d07c8e67d7a4b87185be7396",
+    "subject": "fix(mochi): bind continued suggestion to its project across focus callbacks",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/suggestion-actions.test.mjs"
+    ]
+  },
+  {
+    "sha": "e8ac1c4f0a347dc1621fdcd695d41e95134c8e69",
+    "subject": "test(generation): report actual HTTP application flows on desktop and mobile",
+    "modules": [
+      "DeepSeek generation / v1-v2"
+    ],
+    "paths": [
+      "tests/generation/browser.cjs"
+    ]
+  },
+  {
+    "sha": "f2e514e9b708cac5b33b0c3c72500dd099ebc575",
+    "subject": "fix(mochi): retire focused actions after cancellation and context round trips",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/suggestion-actions.test.mjs"
+    ]
+  },
+  {
+    "sha": "8672d8e59a104a4e26d641f328df155ffde579a9",
+    "subject": "test(generation): verify literal model text across formal B and C modes",
+    "modules": [
+      "DeepSeek generation / v1-v2"
+    ],
+    "paths": [
+      "tests/generation/text-safety.browser.cjs"
+    ]
+  },
+  {
+    "sha": "15af6dac3e7f4355f48b6247c88399dcaa993b2b",
+    "subject": "docs(ai-core): archive formal HTTP mobile cancellation and text safety evidence",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/focus-epoch/report.json",
+      "docs/agent-a-night/browser/generation-cancellation/report.json",
+      "docs/agent-a-night/browser/generation-http-mobile/report.json",
+      "docs/agent-a-night/browser/generation-text-safety/report.json",
+      "docs/agent-a-night/logs/browser-focus-epoch-2026-10-18T20-30-59-772Z.txt",
+      "docs/agent-a-night/logs/build-focus-epoch-2026-10-18T20-30-59-772Z.txt",
+      "docs/agent-a-night/logs/build-suggestion-focus-2026-10-18T20-27-39-714Z.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T20-24-09-682Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T20-31-00-747Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-24-09-320Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-31-00-161Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-24-09-039Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-30-59-800Z.txt",
+      "docs/agent-a-night/logs/generation-cancellation-browser-2026-10-18T20-24-01-871Z.txt",
+      "docs/agent-a-night/logs/generation-http-latest-2026-10-18T20-26-23-221Z.txt",
+      "docs/agent-a-night/logs/generation-http-mobile-2026-10-18T20-27-38-569Z.txt",
+      "docs/agent-a-night/logs/generation-text-safety-2026-10-18T20-33-37-585Z.txt",
+      "docs/agent-a-night/logs/suggestion-focus-after-2026-10-18T20-26-07-346Z.txt",
+      "docs/agent-a-night/logs/suggestion-focus-before-2026-10-18T20-25-52-692Z.txt",
+      "docs/agent-a-night/logs/suggestion-focus-epoch-2026-10-18T20-30-37-914Z.txt",
+      "docs/agent-a-night/logs/suggestion-focus-retirement-after-2026-10-18T20-30-24-350Z.txt",
+      "docs/agent-a-night/logs/suggestion-focus-retirement-before-2026-10-18T20-28-56-326Z.txt",
+      "docs/agent-a-night/logs/suggestion-focus-selection-2026-10-18T20-26-23-015Z.txt"
+    ]
+  },
+  {
+    "sha": "dc0240f55856f21fe00cda3184fe07f407b47b4c",
+    "subject": "fix(mochi): reject retired ignore actions after synchronous context round trips",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/suggestion-actions.test.mjs"
+    ]
+  },
+  {
+    "sha": "8403d931faf5718eff2a503c4de7f362349d8d11",
+    "subject": "test(generation): verify incomplete HTTP uploads release bounded admission",
+    "modules": [
+      "DeepSeek generation / v1-v2"
+    ],
+    "paths": [
+      "tests/generation/ingress.test.mjs"
+    ]
+  },
+  {
+    "sha": "a412cce752755b9f4d4816fb57eefdb3676e5e6e",
+    "subject": "fix(mochi): preserve lifecycle cleanup for nonstandard adapter failures",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/client.mjs",
+      "tests/mochi-ai/adapter-errors.test.mjs"
+    ]
+  },
+  {
+    "sha": "2f53dd9d4d382bc43323415f847b606490afdacb",
+    "subject": "fix(mochi): retire scheduled analysis when proactive consent is revoked",
+    "modules": [
+      "Mochi Host / Conversation"
+    ],
+    "paths": [
+      "src/integrations/mochi-ai/workshop.mjs",
+      "tests/mochi-ai/workshop-browser.cjs",
+      "tests/mochi-ai/workshop.test.mjs"
+    ]
+  },
+  {
+    "sha": "1f751e0f294b37c0ca89252fc7ac5fbef63ac439",
+    "subject": "test(generation): cover input deadline and rate-limited incomplete uploads",
+    "modules": [
+      "DeepSeek generation / v1-v2"
+    ],
+    "paths": [
+      "tests/generation/ingress.test.mjs"
+    ]
+  },
+  {
+    "sha": "0a1e7c98f05aba5bf21118a7a3cf1cb01c1957f8",
+    "subject": "docs(ai-core): archive consent timer and ingress evidence",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/adapter-errors/report.json",
+      "docs/agent-a-night/browser/consent-timer/report.json",
+      "docs/agent-a-night/logs/adapter-errors-after-2026-10-18T20-42-32-953Z.txt",
+      "docs/agent-a-night/logs/adapter-errors-before-2026-10-18T20-42-24-625Z.txt",
+      "docs/agent-a-night/logs/build-adapter-errors-2026-10-18T20-42-43-276Z.txt",
+      "docs/agent-a-night/logs/build-consent-timer-2026-10-18T20-44-40-202Z.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/core-consent-timer-2026-10-18T20-43-55-279Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T20-41-49-380Z.txt",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T20-43-55-994Z.txt",
+      "docs/agent-a-night/logs/core-ignore-ingress-2026-10-18T20-41-48-662Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-41-49-021Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-43-55-632Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-41-48-742Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-43-55-350Z.txt",
+      "docs/agent-a-night/logs/generation-ingress-2026-10-18T20-40-48-814Z.txt",
+      "docs/agent-a-night/logs/generation-ingress-deadline-2026-10-18T20-45-53-373Z.txt",
+      "docs/agent-a-night/logs/generation-ingress-fixed-2026-10-18T20-41-40-948Z.txt",
+      "docs/agent-a-night/logs/suggestion-ignore-epoch-after-2026-10-18T20-37-28-973Z.txt",
+      "docs/agent-a-night/logs/suggestion-ignore-epoch-before-2026-10-18T20-37-20-309Z.txt",
+      "docs/agent-a-night/logs/workshop-adapter-errors-2026-10-18T20-42-53-605Z.txt",
+      "docs/agent-a-night/logs/workshop-consent-timer-2026-10-18T20-43-44-322Z.txt",
+      "docs/agent-a-night/logs/workshop-consent-timer-after-2026-10-18T20-43-28-887Z.txt",
+      "docs/agent-a-night/logs/workshop-consent-timer-before-2026-10-18T20-43-18-520Z.txt"
+    ]
+  },
+  {
+    "sha": "17c41f240feaf1b82b219e9a44a7928d97ef2155",
+    "subject": "docs(ai-core): record verified remote commit mapping",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "docs/agent-a-night/COMMIT-MAPPING.json"
+    ]
+  },
+  {
+    "sha": "b59b5414594a92791e336ad4d0b56fb780e75357",
+    "subject": "docs(ai-core): record final ingress and runtime regression evidence",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "AI-CORE-GAP-MATRIX.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/core-discovered-2026-10-18T20-49-42-921Z.txt",
+      "docs/agent-a-night/logs/core-export-independent-2026-10-18T20-50-12-358Z.txt",
+      "docs/agent-a-night/logs/core-ingress-deadline-final-2026-10-18T20-49-42-220Z.txt",
+      "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-49-42-563Z.txt",
+      "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-49-42-288Z.txt",
+      "docs/agent-a-night/logs/default-suite-final-2026-10-18T20-50-30-818Z.txt",
+      "docs/agent-a-night/logs/production-build-final-2026-10-18T20-50-31-688Z.txt"
+    ]
+  },
+  {
+    "sha": "2aca6a4cbaee00c162b6cdf90baa80fc5f68d44d",
+    "subject": "docs(ai-core): sync night evidence and remote head",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt"
+    ]
+  },
+  {
+    "sha": "3bf225f400756da4c51bc74ad45dfe3669d103d5",
+    "subject": "docs(ai-core): correct published commit mapping",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt"
+    ]
+  },
+  {
+    "sha": "947079c26ac467a6d41f83f375965bde0bb56ac3",
+    "subject": "docs(ai-core): archive final browser and interop evidence",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/browser-inventory.json",
+      "docs/agent-a-night/browser/final-cancel/report.json",
+      "docs/agent-a-night/browser/final-generation/report.json",
+      "docs/agent-a-night/browser/final-text-safety/report.json",
+      "docs/agent-a-night/logs/browser-final-cancel-2026-10-18T21-04-27-385Z.txt",
+      "docs/agent-a-night/logs/browser-final-generation-2026-10-18T21-04-08-521Z.txt",
+      "docs/agent-a-night/logs/browser-final-text-safety-2026-10-18T21-05-02-040Z.txt",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/interop-audit-2026-10-18T21-03-52-644Z.txt"
+    ]
+  },
+  {
+    "sha": "7a88a776c7b3c1b463e446d1803edd60c4767db1",
+    "subject": "docs(ai-core): record generation and install retry audit",
+    "modules": [
+      "DeepSeek generation / v1-v2",
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json",
+      "docs/agent-a-night/LOCAL-COMMITS.txt",
+      "docs/agent-a-night/TEST-COMMANDS.md",
+      "docs/agent-a-night/logs/commands.jsonl",
+      "docs/agent-a-night/logs/generation-artifact-retry-boundaries-2026-10-18T21-12-13-137Z.txt",
+      "docs/agent-a-night/logs/generation-artifact-retry-build-2026-10-18T21-12-31-136Z.txt",
+      "docs/agent-a-night/logs/generation-artifact-retry-default-2026-10-18T21-12-21-856Z.txt"
+    ]
+  },
+  {
+    "sha": "16d8920b0de1bccf847af3f01426d1deb59ce21b",
+    "subject": "docs(ai-core): record browser verification state",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json"
+    ]
+  },
+  {
+    "sha": "39138d19e5c1c36d4c4ccdd91474a418fa9b519b",
+    "subject": "docs(ai-core): finalize PR convergence decision",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json"
+    ]
+  },
+  {
+    "sha": "1cecc1bb6f338c0d148c807ae9a3c8b2d6616ec0",
+    "subject": "docs(ai-core): clarify functional commit baseline",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md"
+    ]
+  },
+  {
+    "sha": "2ff2b8063b2d0a35a52fa930244fae6f38b76ae1",
+    "subject": "docs(ai-core): map final convergence commit",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json"
+    ]
+  },
+  {
+    "sha": "e04ab5351bdcab5ee69a04d29f2d47cc6d446166",
+    "subject": "docs(ai-core): normalize final candidate references",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json"
+    ]
+  },
+  {
+    "sha": "6be0af43e8b7ab9a31fdb87869071f66626afd1f",
+    "subject": "docs(ai-core): finalize PR commit count",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md",
+      "docs/agent-a-night/COMMIT-MAPPING.json"
+    ]
+  },
+  {
+    "sha": "692b7f56e1df094f4db95e35cc3be1fc72cc3dfc",
+    "subject": "docs(ai-core): pin final candidate",
+    "modules": [
+      "Tests / evidence"
+    ],
+    "paths": [
+      "AGENT-A-NIGHT-QUEUE.md",
+      "NIGHT-AGENT-A-REPORT.md"
+    ]
+  }
+]

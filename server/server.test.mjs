@@ -15,7 +15,7 @@ const completion = (content = JSON.stringify(spec), finish_reason = 'stop') => R
 })
 async function setup(t, options = {}) {
   let calls = 0
-  const server = createAppServer({
+  const server = createAppServer({ generationAccess: () => true,
     apiKey: 'mock-key-never-real',
     fetchImpl: async () => { calls++; return completion() },
     ...options,
@@ -147,6 +147,31 @@ for (const [name, response, code] of [
   const s = await setup(t, { fetchImpl: async () => response() })
   await errorIs(await s.post(), 502, code)
 })
+for (const [name, envelope] of [
+  ['multiple choices', { choices: [0, 1].map(() => ({ finish_reason: 'stop', message: { content: JSON.stringify(spec) } })) }],
+  ['tool calls', { choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(spec), tool_calls: [] } }] }],
+  ['legacy function call', { choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(spec), function_call: {} } }] }],
+  ['refusal with content', { choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(spec), refusal: 'PRIVATE_MODEL_RESPONSE' } }] }],
+  ['wrong message role', { choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(spec), role: 'user' } }] }],
+  ['error with choices', { error: { message: 'PRIVATE_MODEL_RESPONSE' }, choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(spec) } }] }],
+]) test(`rejects ambiguous completion: ${name}`, async t => {
+  const s = await setup(t, { fetchImpl: async () => Response.json(envelope) })
+  await errorIs(await s.post(), 502, 'AI_INVALID_RESPONSE')
+})
+test('invalid UTF-8 input is rejected before upstream, even inside valid JSON strings', async t => {
+  const s = await setup(t)
+  const bytes = Buffer.concat([Buffer.from('{"idea":"task'), Buffer.from([0xc3, 0x28]), Buffer.from('"}')])
+  await errorIs(await s.post({}, { body: bytes }), 400, 'INVALID_INPUT')
+  assert.equal(s.calls(), 0)
+})
+test('invalid UTF-8 upstream cannot silently replace bytes inside an otherwise valid AppSpec', async t => {
+  const envelope = JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(spec) } }] })
+  const bytes = Buffer.from(envelope.replace('任务管理', 'INVALID_UTF8_MARKER'))
+  const marker = bytes.indexOf('INVALID_UTF8_MARKER')
+  const invalid = Buffer.concat([bytes.subarray(0, marker), Buffer.from([0xff]), bytes.subarray(marker + 'INVALID_UTF8_MARKER'.length)])
+  const s = await setup(t, { fetchImpl: async () => new Response(invalid) })
+  await errorIs(await s.post(), 502, 'AI_INVALID_RESPONSE')
+})
 test('timeout aborts an upstream call and returns safe 504', async t => {
   const s = await setup(t, { aiTimeoutMs: 25, fetchImpl: async (_url, { signal }) => new Promise((_resolve, reject) => {
     signal.addEventListener('abort', () => reject(signal.reason), { once: true })
@@ -185,4 +210,72 @@ test('cross-origin requests and wrong methods/paths never call upstream', async 
   await errorIs(await fetch(`${s.base}/api/ai/generate`), 405, 'METHOD_NOT_ALLOWED')
   await errorIs(await fetch(`${s.base}/unknown`), 404, 'NOT_FOUND')
   assert.equal(s.calls(), 0)
+})
+
+test('deadline releases ignored-abort transport and cancels its late response body', async t => {
+  let resolve, cancelled = 0
+  const s = await setup(t, { aiTimeoutMs: 10, fetchImpl: () => new Promise(r => { resolve = r }) })
+  await errorIs(await s.post(), 504, 'AI_TIMEOUT')
+  resolve(new Response(new ReadableStream({ cancel() { cancelled++ } })))
+  await new Promise(r => setImmediate(r))
+  assert.equal(cancelled, 1)
+})
+test('HTTP and declared-size rejection cancel unused upstream bodies without blocking admission', async t => {
+  for (const [init, code] of [[{ status: 503 }, 'AI_UNAVAILABLE'], [{ headers: { 'content-length': '9999999' } }, 'AI_OUTPUT_TOO_LARGE']]) {
+    let cancelled = 0
+    const s = await setup(t, { fetchImpl: async () => new Response(new ReadableStream({
+      cancel() { cancelled++; return new Promise(() => {}) },
+    }), init) })
+    await errorIs(await s.post(), 502, code)
+    assert.equal(cancelled, 1)
+  }
+})
+test('deadline releases ignored-abort body, including nonsettling cancel', async t => {
+  let cancelled = 0
+  const s = await setup(t, { aiTimeoutMs: 10, fetchImpl: async () => new Response(new ReadableStream({
+    cancel() { cancelled++; return new Promise(() => {}) },
+  })) })
+  await errorIs(await s.post(), 504, 'AI_TIMEOUT')
+  assert.equal(cancelled, 1)
+})
+test('timed-out requests do not retain concurrency slots', async t => {
+  let calls = 0
+  const s = await setup(t, { aiTimeoutMs: 10, fetchImpl: () => { calls++; return new Promise(() => {}) } })
+  const first = await Promise.all(Array.from({ length: LIMITS.concurrentRequests }, () => s.post()))
+  for (const response of first) await errorIs(response, 504, 'AI_TIMEOUT')
+  await errorIs(await s.post(), 504, 'AI_TIMEOUT')
+  assert.equal(calls, LIMITS.concurrentRequests + 1)
+})
+
+test('HTTP disconnect aborts upstream and releases admission even when transport ignores cancellation', async t => {
+  let begin, firstSignal, late, calls = 0
+  const started = new Promise(resolve => { begin = resolve })
+  const s = await setup(t, { fetchImpl: (_url, { signal }) => {
+    if (++calls > 1) return Promise.resolve(completion())
+    firstSignal = signal; begin()
+    return new Promise(resolve => { late = resolve })
+  } })
+  const controller = new AbortController()
+  const operation = s.post({ idea: '取消的请求' }, { signal: controller.signal })
+  const rejection = assert.rejects(operation)
+  await started; controller.abort(); await rejection
+  if (!firstSignal.aborted) await once(firstSignal, 'abort')
+  assert.equal(firstSignal.aborted, true)
+  assert.equal((await s.post()).status, 200)
+  late(completion())
+})
+
+test('disconnect at input completion prevents a generation call before upstream dispatch', async t => {
+  let calls = 0
+  const server = createAppServer({ generationAccess: () => true, apiKey: 'mock-key-never-real', fetchImpl: async () => { calls++; return completion() } })
+  server.once('request', (req, res) => { req.once('end', () => res.destroy()) })
+  server.listen(0, '127.0.0.1'); await once(server, 'listening')
+  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve) }))
+  const url = `http://127.0.0.1:${server.address().port}/api/ai/generate`
+  const options = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: '任务工具' }) }
+  await assert.rejects(fetch(url, options))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(calls, 0, 'closed response must not incur a new upstream call')
+  const next = await fetch(url, options)
+  assert.equal(next.status, 200); assert.equal(calls, 1)
 })
