@@ -15,6 +15,24 @@
 - ModelScope 配置：根目录 `ms_deploy.json`，`sdk_type=docker`、`port=7860`、当前 `resource_configuration=platform/2v-cpu-16g-mem`
 - Docker 入口：根目录 `Dockerfile`，Node 24 多阶段构建，最终执行 `node server/index.mjs`
 
+### 后续候选状态（2026-10-20，只读核对）
+
+上述部署包仍只对应历史 `main` SHA `4a95cae50f772cd242d932cdbd93366381d1df74`；不能把它描述成已包含下列 Core/Gateway 候选，也不能把旧 ZIP 直接用于新候选部署。
+
+| 对象 | 精确 SHA / 状态 | Docker 相关核对 | 部署含义 |
+| --- | --- | --- | --- |
+| 当前 main / PR #65 ZIP 来源 | `4a95cae50f772cd242d932cdbd93366381d1df74`；ZIP manifest 同源 | Dockerfile、`.dockerignore`、`ms_deploy.json` 静态检查绑定此 SHA | 历史无密钥 Docker 准备基线，不代表 ModelScope 已构建或运行 |
+| PR #65 文档分支 HEAD | `16744543c9aeacb279abae655d6a311865b7cc40`；OPEN/Draft | 仅部署文档/证据变动；没有因此触发 Docker acceptance workflow | 不能当成产品代码 SHA 或平台部署 revision |
+| PR #68 冻结候选 | `d6f2cb4f110d22f665690e3af1d818249cc03b99`；OPEN/Draft | 相对历史 main 的 Dockerfile、`.dockerignore` 和 `ms_deploy.json` 无变化；包含服务端付费网关模块 | Docker 打包规则看起来可包含该模块，未对该 SHA 做镜像构建或平台验收 |
+| Core follow-up | `8aedff514dce3a2d2882a37bb29888892a0a376f`；独立 follow-up，未纳入冻结 PR #68 | 相对 PR #68 仅变更 `server/index.mjs`、`server/aiGenerationPrompt.mjs` 和两项测试；Docker 配置文件无变化 | 仍是未冻结候选；不得重打包或上传，需 Core/Gateway/QA 完成各自门禁后由负责人指定最终 SHA |
+| Gateway 限额复核 | PR #56 现有 HEAD `7d00712a2e11494eac9cd2e5bf83fb147d553d56`；新的候选 SHA 尚未提供 | 当前 PR #56 不能证明其与 Core follow-up 的组合验收 | 等 Gateway 提供精确组合 SHA 和 owner/QA 证据；不能据旧限额实现打开付费路径 |
+
+只读源码差异显示 Core follow-up 在 `startServer()` 中仍默认不构造 paid runtime；只有显式提供可信 principal resolver，或启用 `AI_GENERATION_IDENTITY_MODE=opaque-session` 并提供 allowlist，才进入该组合。可执行入口在 `NODE_ENV=production` 时绑定 `0.0.0.0`，端口取 `PORT`，默认 `7860`。这些是精确候选源码检查，不是构建或目标平台运行证据。该 follow-up 加入 `AI_GENERATION_BINDING_KEY` 的严格配置读取；opaque-session 模式还要求 `AI_GENERATION_SESSION_ALLOWLIST_PATH` 指向绝对路径、权限受限的文件。它们是付费组合的敏感运行配置，当前不应设置或注入。
+
+PR #68 的定价快照在代码中标为 `2026-10-19`，并设置 `expiresAt=2026-10-20T00:00:00+08:00`；截至本手册日期该快照已到期。未重新核验官方价格并获得独立批准前，任何 Gateway paid runtime 都必须保持关闭。当前没有 Gateway 新候选精确 SHA；容器单实例、持久 POSIX 卷、权限、账本/claim 恢复和平台关闭信号语义也均未验证。
+
+PR #65 所记录的历史 CI/Docker 证据不能替代 PR #68 或 `8aedff…` 的镜像构建。本文本轮没有运行 Docker/Compose、没有重打包 ZIP、没有改 CI，也没有上传或部署 ModelScope。
+
 上述 SHA 由本次 `git ls-remote origin refs/heads/main` 及 `git fetch origin main` 核验。它是部署候选源代码版本，不是 ModelScope revision；平台首次接收后会产生自己的提交/revision。资源档位的费用/配额必须由负责人在平台确认，不因配置文件存在而推断免费。
 
 ## 精确文件边界
