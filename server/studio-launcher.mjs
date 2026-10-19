@@ -144,7 +144,7 @@ function grantPayload(g) {
 function createIssuer({ directory, bindingKey, approved, reload, fault }) {
   const statePath = join(directory, 'studio-issuer-state.json')
   const grantDigest = digest(grantPayload(approved.issuer))
-  const mac = payload => createHmac('sha256', bindingKey).update('blockcraft-studio-issuer-v1\n').update(payload).digest('hex')
+  const mac = payload => createHmac('sha256', bindingKey).update(Buffer.from('blockcraft-studio-issuer-v1', 'ascii')).update(Buffer.from([0x0a])).update(payload).digest('hex')
   let halted = false, closing = false
   const readers = new Set(), pending = new Set()
   function read() {
