@@ -62,7 +62,7 @@
 
 - `server/custom-block/import-policy.mjs` 做语法准入、相对路径解析、动态 import/`require`/`eval`/`Function`/Worker/WebAssembly 等拒绝。
 - 本分支进一步把 Viewer 允许的裸包收窄为 `react` 和 `react/jsx-runtime`；相对导入只能落在制品自身的源码集合内。
-- React、React DOM 和 esbuild 使用仓库内固定版本；esbuild 版本 0.25.12，与既有 Artifact 策略一致。
+- React、React DOM 和 esbuild-wasm 使用仓库内固定版本；esbuild 版本 0.25.12，与既有 Artifact 策略一致。
 - 不访问 npm registry；编译只从本地 `node_modules` 读取包内容。
 
 ### 3.6 C 模式
@@ -112,7 +112,7 @@ frame-ancestors <exact-parent-origin>
 | 边界 | 可信侧 | 不可信侧 | 结论 |
 | --- | --- | --- | --- |
 | 宿主页面 | 宿主 UI、session、Cookie、LocalStorage、网络监听 | 生成 TSX、props、消息内容 | 模型代码不得进入宿主 JS 上下文 |
-| 编译服务 | 协议校验、导入准入、esbuild worker | 源码、manifest、props | 编译成功不等于执行授权 |
+| 编译服务 | 协议校验、导入准入、esbuild-wasm worker | 源码、manifest、props | 编译成功不等于执行授权 |
 | runner 文档 | runner runtime、CSP、sandbox | bundle 内的用户组件 | 运行在独立源站、不透明源、无宿主凭据 |
 | 消息通道 | 宿主 controller、一次性 MessageChannel | iframe 内消息 | 来源、目标、session、nonce、seq、结构均校验 |
 | 部署 | 专用 Viewer 源站、证书、进程/源站池 | 浏览器进程调度和同源复用 | 需要独立部署与监控；死循环源站要退役 |
@@ -129,7 +129,7 @@ frame-ancestors <exact-parent-origin>
 | T6 | 伪造 postMessage | 伪造 ready/error、注入状态 | source/origin/session/nonce/seq/精确字段/大小；后续使用一次性 MessageChannel | 从宿主窗口伪造 ready/boot，rejected 计数增加，accepted 不变，仍为 ready | 同源 runner 进程内的恶意 bundle 可发合法形状消息，但只有自己会话能力 |
 | T7 | 非法协议/导入/摘要 | 绕过准入、加载非预期代码 | 精确协议、digest 重算、事件/能力为空、导入白名单、bundle 上限、源能力 denylist | `INVALID_PROTOCOL`、`IMPORT_REJECTED`、`SOURCE_CAPABILITY_REJECTED`、`DIGEST_MISMATCH`、`BUNDLE_LIMIT` 均被测试 | 静态扫描可被动态字符串绕过；运行时/CSP 兜底 |
 | T8 | 渲染异常 | 白屏、错误扩散 | React ErrorBoundary、`onUncaughtError`、`onCaughtError`、父级 watchdog、remove iframe | 渲染错误夹具返回 `RENDER_ERROR`；宿主继续响应 | 极端 React/浏览器崩溃 |
-| T9 | 编译期 DoS | CPU/内存耗尽、请求堆积 | worker `resourceLimits`、超时、并发上限、请求体上限、源复杂度限制、缓存 | 1ms 超时测试返回 `COMPILE_TIMEOUT`；超限返回 `BUNDLE_LIMIT`/`REQUEST_TOO_LARGE` | esbuild/原生二进制漏洞 |
+| T9 | 编译期 DoS | CPU/内存耗尽、请求堆积 | worker `resourceLimits`、超时、并发上限、请求体上限、源复杂度限制、缓存 | 1ms 超时测试返回 `COMPILE_TIMEOUT`；超限返回 `BUNDLE_LIMIT`/`REQUEST_TOO_LARGE` | esbuild-wasm/WASM runtime 漏洞 |
 | T10 | 供应链/缓存投毒 | 执行非预期 bundle | 内容摘要、版本化缓存 key、session 绑定 bundle、Host+session 校验、ACAO 仅限代码资源 | 第二次编译 `cache: hit`；bundle 摘要与内容一致；错误 session/Host 被拒 | 服务器被攻破时无法保护 |
 | T11 | 点击劫持/嵌入 | 诱导宿主用户操作 | `frame-ancestors` 精确父源；CSP sandbox；host CSP `frame-src` 仅列出 runner 源站 | runner 响应头断言通过；host 只能嵌入配置的 runner | 部署 CSP 配置错误 |
 | T12 | 导航/弹窗 | 离开宿主、钓鱼、参数外传 | 无 `allow-top-navigation`/`allow-popups`/`allow-forms`；`form-action/base-uri 'none'`；运行时 `open/location/postMessage` 屏蔽 | `target="_top"` 点击后宿主 URL 不变；控制台显示 sandbox 阻止 | 计算属性 `location` 的 self-navigation 仍可能发生；不携带宿主秘密 |

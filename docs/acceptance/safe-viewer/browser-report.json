@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-19T01:59:01.082Z",
+  "generatedAt": "2026-10-19T02:03:06.089Z",
   "browser": "153.0.8010.12",
-  "hostOrigin": "http://127.0.0.1:57224",
+  "hostOrigin": "http://127.0.0.1:62993",
   "runnerOrigins": [
-    "http://127.0.0.2:57224",
-    "http://127.0.0.3:57224",
-    "http://127.0.0.4:57224",
-    "http://127.0.0.5:57224",
-    "http://127.0.0.6:57224",
-    "http://127.0.0.7:57224"
+    "http://127.0.0.2:62993",
+    "http://127.0.0.3:62993",
+    "http://127.0.0.4:62993",
+    "http://127.0.0.5:62993",
+    "http://127.0.0.6:62993",
+    "http://127.0.0.7:62993"
   ],
   "checks": [
     {
@@ -101,7 +101,7 @@
   },
   "runnerPool": 6,
   "quarantined": [
-    "http://127.0.0.6:57224"
+    "http://127.0.0.6:62993"
   ],
   "runnerRetired": 1,
   "note": "Real Chromium interactions; no screenshot substituted for execution."

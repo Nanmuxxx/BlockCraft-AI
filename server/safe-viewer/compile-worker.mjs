@@ -1,6 +1,6 @@
 import { parentPort, workerData } from 'node:worker_threads'
 import path from 'node:path'
-import { build, stop } from 'esbuild'
+import { build, initialize, stop } from 'esbuild-wasm'
 
 const { sources, entry, maxBundleBytes, runtimeSource } = workerData
 
@@ -17,6 +17,7 @@ function safePath(from, specifier) {
 }
 
 try {
+  await initialize()
   const result = await build({
     stdin: {
       contents: `import { mountViewer } from "/__blockcraft_runtime__.js";\nmountViewer(() => import(${JSON.stringify(`./${entry}`)}));\n`,

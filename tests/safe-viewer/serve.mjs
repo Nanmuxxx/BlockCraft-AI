@@ -2,15 +2,22 @@ import http from 'node:http'
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import path from 'node:path'
-import { build } from 'esbuild'
+import { build, initialize } from 'esbuild-wasm'
 import { createSafeViewerService } from '../../server/safe-viewer/index.mjs'
 import { hostCsp } from '../../server/safe-viewer/policy.mjs'
 import { createFixtures } from './fixtures.mjs'
 
 const directory = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(directory, '../..')
+let esbuildReady
+
+async function ensureEsbuild() {
+  esbuildReady ??= initialize()
+  await esbuildReady
+}
 
 async function clientBundle() {
+  await ensureEsbuild()
   const result = await build({
     entryPoints: [path.join(root, 'src/integrations/safe-viewer/client.ts')],
     bundle: true,

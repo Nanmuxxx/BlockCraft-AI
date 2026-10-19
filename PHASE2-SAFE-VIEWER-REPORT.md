@@ -20,7 +20,7 @@
 
 - `server/safe-viewer/index.mjs`：编译/会话/runner/bundle/retire 路由；严格 Origin/Host/协议/摘要校验；runner 源站池和 quarantine。
 - `server/safe-viewer/compile.mjs`：编译缓存、内容摘要、并发/超时、LRU 限制。
-- `server/safe-viewer/compile-worker.mjs`：隔离 worker 中的 esbuild 打包；导入白名单；源/包体限制；用户组件惰性求值。
+- `server/safe-viewer/compile-worker.mjs`：隔离 worker 中的 esbuild-wasm 打包；导入白名单；源/包体限制；用户组件惰性求值。
 - `server/safe-viewer/source-policy.mjs`：在既有 `checkImports` 之上的静态能力 denylist 和 import 子集检查。
 - `server/safe-viewer/policy.mjs`：CSP、Permissions-Policy、大小/时间限制、错误模型。
 - `server/safe-viewer/assets/runtime-core.js`：iframe 内可信 runtime；CSP/sandbox 内的握手、硬化、ErrorBoundary、计时器清理和 dispose。
@@ -113,10 +113,10 @@ npm run test:safe-viewer:browser
 ```text
 npm run build       # tsc -b && vite build，通过
 npm test            # 194/194 通过
-npm ci --dry-run    # 在临时目录验证全新安装解析，通过
+npm ci              # 全新安装，通过
 ```
 
-依赖说明：为保持既有 Artifact 策略的 esbuild `0.25.12`，本分支把它加入根依赖；Vite 8 的可选 peer 声明为 `^0.27 || ^0.28`，首次解析需要 `--legacy-peer-deps`。锁定后全新 `npm ci --dry-run` 通过，实际 `npm run build` 也通过。若后续升级 esbuild/Vite，必须同步更新 Artifact 工具链策略并重新跑安全验收。
+依赖说明：为保持既有 Artifact 策略的 esbuild `0.25.12`，同时避开 Vite 8 对原生 esbuild `^0.27 || ^0.28` 的可选 peer 冲突，本分支使用同版本 `esbuild-wasm`。裸 `npm ci`、`npm test`、安全 Viewer 测试和 `npm run build` 均已通过。若后续升级 esbuild/Vite，必须同步更新 Artifact 工具链策略并重新跑安全验收。
 
 ## 5. 开发中发现并修复的问题
 

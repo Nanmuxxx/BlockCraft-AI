@@ -2,7 +2,7 @@ import { Worker } from 'node:worker_threads'
 import { createHash } from 'node:crypto'
 import { createRequire } from 'node:module'
 import { readFileSync } from 'node:fs'
-import { version as esbuildVersion } from 'esbuild'
+import { version as esbuildVersion } from 'esbuild-wasm'
 import { LIMITS, POLICY_VERSION, SafeViewerError, check } from './policy.mjs'
 
 const require = createRequire(import.meta.url)
