@@ -1,0 +1,17 @@
+✔ Studio defaults closed: flags, absent approval, HTTP or nonexact origin cannot start (1.616042ms)
+✔ private approval/key and exact policy verification fail closed (1.822291ms)
+✔ trusted Studio composition returns v2 pomodoro; no anonymous cookie minting or local-owner entry (79.752459ms)
+✔ anonymous, forged, unknown, expired, revoked, duplicate cookies reject without egress (41.183375ms)
+✔ wrong, missing and duplicate Origin reject 403, regardless of forwarded identity (34.138541ms)
+✔ persisted budget and idempotency survive shutdown/restart; a second process cannot acquire ledger (159.177041ms)
+✔ live approval revocation/change or unsafe permissions close active authorization (38.180917ms)
+✔ encoded generation path cannot bypass strict Origin and approval expiry is live (39.783375ms)
+✔ shutdown drains an admitted request before releasing durable ledger (84.531375ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 535.700084
