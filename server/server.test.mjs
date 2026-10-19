@@ -178,6 +178,14 @@ test('timeout aborts an upstream call and returns safe 504', async t => {
   }) })
   await errorIs(await s.post(), 504, 'AI_TIMEOUT')
 })
+test('paid gateway budget failures remain service-unavailable and opaque', async t => {
+  const s = await setup(t, { fetchImpl: async () => { throw Object.assign(new Error('private ledger detail'), { code: 'BUDGET_EXHAUSTED' }) } })
+  await errorIs(await s.post(), 503, 'BUDGET_EXHAUSTED')
+})
+test('paid transport timeout is a safe 504 even when the HTTP deadline is longer', async t => {
+  const s = await setup(t, { aiTimeoutMs: 1000, fetchImpl: async () => { throw Object.assign(new Error('bounded transport timer'), { code: 'UPSTREAM_CANCELLED' }) } })
+  await errorIs(await s.post(), 504, 'AI_TIMEOUT')
+})
 test('timeout also covers upstream body consumption', async t => {
   const s = await setup(t, { aiTimeoutMs: 25, fetchImpl: async (_url, { signal }) => new Response(new ReadableStream({
     start(controller) { signal.addEventListener('abort', () => controller.error(signal.reason), { once: true }) },

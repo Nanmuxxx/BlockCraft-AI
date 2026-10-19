@@ -3,6 +3,7 @@ import { abortable } from './ai-abort.mjs'
 import { authorizeGeneration } from './paid-gateway/access.mjs'
 import { requireControlledEgress } from './paid-gateway/egress.mjs'
 import { isPaidTransport, defaultModelForTransport } from './paid-gateway/provider.mjs'
+import { createPaidGenerationRuntime } from './paid-gateway/runtime.mjs'
 import { buildInteractiveMessages, assertInteractiveSpec, createInteractiveGate } from './trusted-interactive.mjs'
 import { createServer } from 'node:http'
 import { readFile, realpath, stat } from 'node:fs/promises'
@@ -25,6 +26,11 @@ export const LIMITS = Object.freeze({
   rateLimitEntries: 10_000,
 })
 const ENDPOINT = 'https://api.deepseek.com/chat/completions'
+const GATEWAY_UNAVAILABLE = new Set([
+  'API_CONFIGURATION', 'LEDGER_UNAVAILABLE', 'LEDGER_LOCKED', 'LEDGER_INVALID',
+  'BUDGET_EXHAUSTED', 'BUDGET_HALTED', 'PRICING_EXPIRED', 'CONCURRENCY_LIMIT',
+  'EGRESS_DENIED', 'IDENTITY_ADAPTER_REQUIRED',
+])
 
 class HttpError extends Error {
   constructor(status, code, message) { super(message); this.status = status; this.code = code }
@@ -218,6 +224,14 @@ async function generate(idea, { apiKey, model, fetchImpl, aiTimeoutMs, interacti
   } catch (error) {
     if (error instanceof HttpError) throw error
     if (timedOut) throw fail(504, 'AI_TIMEOUT', 'AI 服务响应超时，请稍后重试。')
+    // The paid transport uses this code when its own bounded timer wins. A
+    // client disconnect still destroys the response, so send() remains a no-op.
+    if (error?.code === 'UPSTREAM_CANCELLED' || error?.code === 'UPSTREAM_TIMEOUT') {
+      throw fail(504, 'AI_TIMEOUT', 'AI 服务响应超时，请稍后重试。')
+    }
+    // Paid transport failures are deliberately mapped to a stable service
+    // status. Do not expose provider, ledger, or credential details.
+    if (GATEWAY_UNAVAILABLE.has(error?.code)) throw fail(503, error.code, 'AI 生成服务当前不可用，请稍后重试。')
     throw fail(502, 'AI_INVALID_RESPONSE', 'AI 服务返回无效响应或连接失败。')
   } finally {
     clearTimeout(timer)
@@ -233,6 +247,7 @@ export function createAppServer({
   fetchImpl = globalThis.fetch,
   model = process.env.DEEPSEEK_MODEL?.trim() || defaultModelForTransport(fetchImpl),
   aiTimeoutMs = LIMITS.aiTimeoutMs,
+  requestsPerMinute = LIMITS.requestsPerMinute,
   staticDir = resolve(fileURLToPath(new URL('../dist/', import.meta.url))),
   publicOrigin = process.env.PUBLIC_ORIGIN?.trim() || '',
   mochi,
@@ -251,8 +266,16 @@ export function createAppServer({
   const admitInteractive = createInteractiveGate(interactive)
   const clients = new Map()
   let inFlight = 0
+  let accepting = true
+  let activeHandlers = 0
+  const idleWaiters = new Set()
   const server = createServer(async (req, res) => {
+    activeHandlers++
     try {
+      if (!accepting) {
+        send(res, 503, { error: { code: 'SERVER_SHUTTING_DOWN', message: '服务正在关闭，请稍后重试。' } })
+        return
+      }
       if (await mochiAi.handle(req, res)) return
       const pathname = requestPath(req.url)
       if (pathname === '/api/health' && req.method === 'GET') {
@@ -280,7 +303,7 @@ export function createAppServer({
         if (clients.size >= LIMITS.rateLimitEntries) throw fail(503, 'SERVER_BUSY', '服务繁忙，请稍后重试。')
         entry = { count: 0, reset: now + 60_000 }; clients.set(ip, entry)
       }
-      if (++entry.count > LIMITS.requestsPerMinute) {
+      if (++entry.count > requestsPerMinute) {
         res.setHeader('Retry-After', String(Math.max(1, Math.ceil((entry.reset - now) / 1000))))
         throw fail(429, 'RATE_LIMITED', '请求过于频繁，请稍后重试。')
       }
@@ -317,8 +340,32 @@ export function createAppServer({
     } catch (error) {
       const safe = error instanceof HttpError ? error : fail(500, 'INTERNAL_ERROR', '服务暂时不可用。')
       send(res, safe.status, { error: { code: safe.code, message: safe.message } })
+    } finally {
+      activeHandlers--
+      if (activeHandlers === 0) {
+        for (const resolveIdle of idleWaiters) resolveIdle(true)
+        idleWaiters.clear()
+      }
     }
   })
+  server.beginShutdown = () => { accepting = false }
+  server.waitForRequests = ({ timeoutMs } = {}) => {
+    if (activeHandlers === 0) return Promise.resolve(true)
+    return new Promise(resolve => {
+      let timer
+      let settled = false
+      const onIdle = () => finish(true)
+      const finish = idle => {
+        if (settled) return
+        settled = true
+        if (timer) clearTimeout(timer)
+        idleWaiters.delete(onIdle)
+        resolve(idle)
+      }
+      idleWaiters.add(onIdle)
+      if (Number.isSafeInteger(timeoutMs) && timeoutMs >= 0) timer = setTimeout(() => finish(false), timeoutMs)
+    })
+  }
   server.requestTimeout = LIMITS.inputTimeoutMs + 1000
   server.headersTimeout = LIMITS.inputTimeoutMs
   server.timeout = LIMITS.inputTimeoutMs + aiTimeoutMs + 5000
@@ -326,12 +373,93 @@ export function createAppServer({
   return server
 }
 
+/** Start closed by default. A paid runtime is composed only when a trusted
+ * identity resolver is explicitly injected by the embedding server process.
+ */
+export async function startServer({
+  host = '127.0.0.1',
+  port = 3001,
+  env = process.env,
+  resolveIdentity,
+  paidRuntimeFactory = createPaidGenerationRuntime,
+  appServerFactory = createAppServer,
+  drainTimeoutMs = LIMITS.aiTimeoutMs + LIMITS.inputTimeoutMs + 5_000,
+} = {}) {
+  if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('Invalid PORT')
+  if (!Number.isSafeInteger(drainTimeoutMs) || drainTimeoutMs < 0 || drainTimeoutMs > 60_000) throw new Error('Invalid shutdown drain timeout')
+
+  let paidRuntime = null
+  let server
+  try {
+    let appServerOptions
+    if (typeof resolveIdentity === 'function') {
+      paidRuntime = paidRuntimeFactory({ env, resolveIdentity })
+      appServerOptions = paidRuntime.appServerOptions
+    }
+    server = appServerOptions ? appServerFactory(appServerOptions) : appServerFactory()
+    await new Promise((resolve, reject) => {
+      const onError = error => { server.off('listening', onListening); reject(error) }
+      const onListening = () => { server.off('error', onError); resolve() }
+      server.once('error', onError)
+      server.once('listening', onListening)
+      server.listen(port, host)
+    })
+  } catch (error) {
+    try { paidRuntime?.close() } catch { /* preserve the startup failure */ }
+    throw error
+  }
+
+  let shutdownTask
+  const shutdown = () => {
+    if (shutdownTask) return shutdownTask
+    shutdownTask = (async () => {
+      server.beginShutdown()
+      const closed = new Promise((resolve, reject) => {
+        try { server.close(error => error ? reject(error) : resolve()) }
+        catch (error) { reject(error) }
+      })
+      const drained = await server.waitForRequests({ timeoutMs: drainTimeoutMs })
+      if (!drained) server.closeAllConnections()
+      await server.waitForRequests()
+      await closed
+      paidRuntime?.close()
+    })()
+    return shutdownTask
+  }
+  return Object.freeze({ server, shutdown })
+}
+
+/** Install idempotent signal hooks without forcing an abrupt process exit. */
+export function installShutdownHandlers(shutdown, processLike = process) {
+  if (typeof shutdown !== 'function' || typeof processLike.once !== 'function' || typeof processLike.off !== 'function') {
+    throw new TypeError('Invalid shutdown handler configuration')
+  }
+  let task
+  const onSignal = () => {
+    if (task) return
+    processLike.off('SIGINT', onSignal)
+    processLike.off('SIGTERM', onSignal)
+    task = Promise.resolve().then(shutdown).catch(() => { processLike.exitCode = 1 })
+  }
+  processLike.once('SIGINT', onSignal)
+  processLike.once('SIGTERM', onSignal)
+  return () => {
+    processLike.off('SIGINT', onSignal)
+    processLike.off('SIGTERM', onSignal)
+  }
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const production = process.env.NODE_ENV === 'production'
   const port = Number(process.env.PORT || (production ? 7860 : 3001))
   const host = production ? '0.0.0.0' : '127.0.0.1'
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid PORT')
-  const server = createAppServer()
-  server.on('error', () => { console.error('Backend failed to listen.'); process.exitCode = 1 })
-  server.listen(port, host, () => console.info(`BlockCraft AI backend: http://${host}:${port}`))
+  startServer({ host, port }).then(({ server, shutdown }) => {
+    installShutdownHandlers(shutdown)
+    server.on('error', () => { console.error('Backend server error.') })
+    console.info(`BlockCraft AI backend: http://${host}:${port}`)
+  }).catch(() => {
+    console.error('Backend failed to start.')
+    process.exitCode = 1
+  })
 }
