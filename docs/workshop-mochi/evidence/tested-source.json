@@ -1,0 +1,8 @@
+{
+  "testedSha": "c7c4b086551247ad60ae0e1e5a87e254155abd03",
+  "testedTree": "e3bfded43e9886eb852a248c31e8c1eac0b1d770",
+  "cleanAtTestStart": true,
+  "productionAndTestsUnchangedDuringRuns": true,
+  "browser": "Chromium 156.0.8078.4",
+  "node": "v24.22.0"
+}

@@ -1,5 +1,6 @@
 import { useId, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { Blocks, LayoutGrid, Unlink } from 'lucide-react'
+import { readBlockPresentation, blockCardStyle } from '../../components/blocks/presentation'
 import { useSnapCanvas } from '../../components/blocks/useSnapCanvas'
 import { CARD_HEIGHT, stackFor } from '../../components/blocks/snap-layout'
 import { APP_BLOCK_CATALOG } from '../../components/blocks/app-canvas'
@@ -52,12 +53,18 @@ export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
         const point = snap.scene[item.id]
         if (!point) return null
         const builtin = item.kind === 'builtin' ? APP_BLOCK_CATALOG[item.block.type] : undefined
+        const presentation = readBlockPresentation(item.kind === 'builtin' ? item.block : undefined)
+        const visualStyle = blockCardStyle(presentation)
         const name = item.kind === 'builtin' ? item.block.name : item.manifest?.name ?? '自定义积木（版本元数据不可用）'
         const state = item.kind === 'custom' ? configurationState(item.manifest?.propsSchema, authorization.readOnly) : undefined
         const group = stackFor(item.id, snap.stacks)
         return <button key={`${item.kind}:${item.id}`} type="button" data-block-key={`${item.kind}:${item.id}`}
           className={`block-canvas__block block-canvas__block--${builtin?.tone ?? 'apricot'}${selected === item.id ? ' is-selected' : ''}${snap.dragging.includes(item.id) ? ' is-dragging' : ''}${snap.celebrating.includes(item.id) ? ' is-snapped' : ''}`}
-          style={{ left: point.x, top: point.y, width: snap.board.cardWidth, height: CARD_HEIGHT }}
+          style={{ left: point.x, top: point.y, width: snap.board.cardWidth, height: CARD_HEIGHT, ...visualStyle }}
+          data-presentation-button-text={presentation?.buttonText ?? undefined}
+          data-presentation-background-color={presentation?.backgroundColor ?? undefined}
+          data-presentation-text-color={presentation?.textColor ?? undefined}
+          data-presentation-border-radius={presentation?.borderRadius ?? undefined}
           aria-pressed={selected === item.id} aria-label={`${name}${item.kind === 'custom' ? '，自定义积木' : ''}${group.length > 1 ? `，已拼接 ${group.length} 块，可整组拖动` : ''}`}
           onPointerDown={event => snap.startDrag(event, item.id)} onPointerMove={snap.updateDrag}
           onPointerUp={event => snap.finishDrag(event)} onPointerCancel={event => snap.finishDrag(event, true)} onLostPointerCapture={event => snap.finishDrag(event, true)}
@@ -66,7 +73,7 @@ export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
           <span className="block-canvas__top"><span className="block-canvas__icon"><Blocks size={20} aria-hidden="true" /></span><span className="block-canvas__number">{String(index + 1).padStart(2, '0')}</span></span>
           <span className="block-canvas__title">{name}</span>
           <span className="block-canvas__description">{builtin?.description ?? `${state!.label} · ${state!.writeLabel}`}</span>
-          <span className="block-canvas__detail">{group.length > 1 ? `${group.length} 块拼在一起 · 可整组移动` : builtin?.detail ?? state!.executionLabel}</span>
+          <span className="block-canvas__detail">{presentation.buttonText ? `按钮：${presentation.buttonText}` : group.length > 1 ? `${group.length} 块拼在一起 · 可整组移动` : builtin?.detail ?? state!.executionLabel}</span>
         </button>
       })}
     </div>

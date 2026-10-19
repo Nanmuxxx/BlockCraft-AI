@@ -8,6 +8,7 @@ import { useSnapCanvas } from './blocks/useSnapCanvas'
 import { CARD_HEIGHT, stackFor } from './blocks/snap-layout'
 import { appBlockKind, APP_BLOCK_CATALOG } from './blocks/app-canvas'
 import './block-canvas.css'
+import { readBlockPresentation, blockCardStyle } from './blocks/presentation'
 
 export type { BlockCanvasProps, BlockModuleData, BlockBuilderBindings, BlockEdit, BlockRelation, RecipeId, VisualExample, AppBlockType, AppCanvasEdit, AppCanvasBindings } from './blocks/contract'
 export { toAppCanvasModules } from './blocks/app-canvas'
@@ -119,13 +120,14 @@ export function BlockCanvas<Id extends string = ModuleId>({ modules: requestedMo
         const Icon = example?.icon ?? module?.icon ?? (kind ? ICONS[kind] : Blocks)
         const point = snap.scene[key]
         if (!point) return null
+        const presentation = readBlockPresentation({ type: appKind, presentation: module?.presentation })
         const group = stackFor(key, snap.stacks)
         const related = module ? builder?.relations.filter(({ sourceId, targetId }) => sourceId === module.id || targetId === module.id).length ?? 0 : 0
         return <button type="button" key={key} data-block-key={key}
           className={`block-canvas__block block-canvas__block--${example?.tone ?? module?.tone ?? defaults?.tone ?? 'apricot'}${selectedKey === key ? ' is-selected' : ''}${snap.dragging.includes(key) ? ' is-dragging' : ''}${module && combineFrom === module.id ? ' is-source' : ''}${module && partnerId === module.id ? ' is-partner' : ''}${snap.celebrating.includes(key) ? ' is-snapped' : ''}`}
           aria-pressed={source && module ? combineFrom === module.id || partnerId === module.id : selectedKey === key}
           aria-label={`${name}${example ? '，展示积木' : ''}${group.length > 1 ? `，已拼接 ${group.length} 块，可整组拖动` : ''}`}
-          style={{ left: point.x, top: point.y, width: snap.board.cardWidth, height: CARD_HEIGHT }}
+          style={{ left: point.x, top: point.y, width: snap.board.cardWidth, height: CARD_HEIGHT, ...blockCardStyle(presentation) }}
           onPointerDown={(event) => snap.startDrag(event, key)} onPointerMove={snap.updateDrag}
           onPointerUp={(event) => snap.finishDrag(event)} onPointerCancel={(event) => snap.finishDrag(event, true)} onLostPointerCapture={(event) => snap.finishDrag(event, true)}
           onKeyDown={(event) => { if (event.key === 'Escape') cancelCombination() }} onClick={() => { if (!snap.consumeDragClick(key)) choose(key) }}>
@@ -133,7 +135,7 @@ export function BlockCanvas<Id extends string = ModuleId>({ modules: requestedMo
           <span className="block-canvas__top"><span className="block-canvas__icon"><Icon size={20} aria-hidden="true" /></span><span className="block-canvas__number">{example ? '展示' : String(index + 1).padStart(2, '0')}</span></span>
           <span className="block-canvas__title">{name}</span>
           <span className="block-canvas__description">{example?.description ?? module?.description ?? defaults?.description}</span>
-          <span className="block-canvas__detail">{group.length > 1 ? `${group.length} 块拼在一起 · 可整组移动` : example ? '展示积木 · 暂无业务功能' : related ? `已组合 · ${related} 项能力` : module?.detail ?? defaults?.detail}</span>
+          <span className="block-canvas__detail">{group.length > 1 ? `${group.length} 块拼在一起 · 可整组移动` : example ? '展示积木 · 暂无业务功能' : related ? `已组合 · ${related} 项能力` : presentation.buttonText ? `按钮：${presentation.buttonText}` : module?.detail ?? defaults?.detail}</span>
         </button>
       })}
     </div>

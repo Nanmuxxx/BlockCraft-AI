@@ -4,6 +4,7 @@ const { expect } = require('playwright/test')
 const assert = require('node:assert/strict')
 const fs = require('node:fs/promises')
 const path = require('node:path')
+const { execFileSync } = require('node:child_process')
 const { createHash } = require('node:crypto')
 const { api, createClubRegistrationExample } = require('../custom-block/fixtures.cjs')
 const root = path.resolve(__dirname, '../..')
@@ -15,7 +16,7 @@ async function run() {
   const { trustedSample } = await import('../../tools/custom-block-compiler/trusted-samples.mjs')
   const { unzip } = await import('../project-zip-export/fixtures.mjs')
   const vite = await createServer({ root, mode: 'local-export', server: { host: '127.0.0.1', port: 5196, strictPort: true, watch: { ignored: ['**/.cache/**', '**/docs/workshop-export-evidence/**'] } } })
-  const report = { browser: 'Chromium', generation: 'fixed offline HTTP response on real /ai-create; no model calls', cases: [], errors: [], paidCalls: 0 }
+  const report = { sha: execFileSync('git', ['rev-parse', 'HEAD'], {cwd:root, encoding:'utf8'}).trim(), browser: 'Chromium', generation: 'fixed offline HTTP response on real /ai-create; no model calls', cases: [], errors: [], paidCalls: 0 }
   let browser
   try {
     await fs.mkdir(output, { recursive: true }); await fs.mkdir(downloads, { recursive: true })
@@ -23,7 +24,7 @@ async function run() {
     browser = await chromium.launch({ headless: true, executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE })
     report.version = browser.version()
     for (const width of [1366, 390]) {
-      const page = await browser.newPage({ viewport: { width, height: 900 }, isMobile: width === 390, hasTouch: width === 390, acceptDownloads: true })
+      const page = await browser.newPage({ viewport: { width, height: width === 390 ? 844 : 1000 }, isMobile: width === 390, hasTouch: width === 390, acceptDownloads: true })
       const outbound = [], downloadsSeen = [], sent = []
       page.on('pageerror', error => report.errors.push(error.message))
       page.on('download', item => downloadsSeen.push(item))
