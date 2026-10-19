@@ -1,11 +1,25 @@
 import { createHash } from 'node:crypto'
+import { types } from 'node:util'
 import { PRICING, POLICY, ensure, GatewayError } from './pricing.mjs'
 
 const ENDPOINT = 'https://api.deepseek.com/chat/completions'
 const nativeFetch = globalThis.fetch
 const paidTransports = new WeakSet()
+const admissionTransports = new WeakSet()
 export const isPaidTransport = value => paidTransports.has(value)
+export const supportsPaidAdmission = value => admissionTransports.has(value)
 export const defaultModelForTransport = value => isPaidTransport(value) ? PRICING.model : 'deepseek-v4-flash'
+function captureAdmission(lease) {
+  ensure(lease && typeof lease === 'object' && typeof lease.assertCurrent === 'function', 'ADMISSION_REQUIRED')
+  const guard = lease.assertCurrent
+  return () => {
+    let result
+    try { result = guard.call(lease) } catch { throw new GatewayError('ADMISSION_REJECTED') }
+    // Reject async predicates, also consume a rejected native Promise safely.
+    if (types.isPromise(result)) void result.catch(() => {})
+    ensure(result === true, 'ADMISSION_REJECTED')
+  }
+}
 async function abortable(work, signal) {
   signal.throwIfAborted()
   let abort
@@ -28,12 +42,13 @@ async function read(response, signal) {
 
 /** Sole production egress. No retries, redirects, tools, browser-provided URL,
  * key or model. Call reservation is synchronous and durable before fetch. */
-export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, timeoutMs = POLICY.timeoutMs, onResponse } = {}) {
+export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, timeoutMs = POLICY.timeoutMs, onResponse, requireAdmission = false } = {}) {
   ensure(typeof apiKey === 'string' && apiKey.length >= 16 && apiKey.length <= 512 && !/\s/.test(apiKey), 'API_CONFIGURATION')
-  ensure(ledger && typeof ledger.reserve === 'function', 'LEDGER_UNAVAILABLE')
+  ensure(ledger && ['reserve', 'notSent', 'uncertain', 'settle', 'snapshot'].every(k => typeof ledger[k] === 'function'), 'LEDGER_UNAVAILABLE')
+  ensure(typeof requireAdmission === 'boolean', 'API_CONFIGURATION')
   ensure(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= POLICY.timeoutMs, 'TIMEOUT_CONFIGURATION')
   let active = false
-  const transport = async (url, init) => {
+  const transport = async (url, init, admission) => {
     ensure(!active, 'CONCURRENCY_LIMIT')
     ensure(url === ENDPOINT && init?.method === 'POST', 'EGRESS_DENIED')
     ensure(!init.signal?.aborted, 'CANCELLED')
@@ -48,21 +63,33 @@ export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, t
     ensure(inputBytes <= POLICY.maxInputBytes, 'INPUT_LIMIT')
     const inputBound = inputBytes + POLICY.framingTokens
     const requestHash = createHash('sha256').update(JSON.stringify(body)).digest('hex')
-    const id = ledger.reserve(inputBound, body.max_tokens, requestHash)
+    const assertCurrent = admission === undefined && !requireAdmission ? () => {} : captureAdmission(admission)
     active = true
     const controller = new AbortController()
     const cancel = () => controller.abort()
     init.signal?.addEventListener('abort', cancel, { once: true })
     if (init.signal?.aborted) cancel()
     const timer = setTimeout(cancel, timeoutMs)
-    let response
+    let response, id, sent = false
     try {
       controller.signal.throwIfAborted()
+      assertCurrent()
+      controller.signal.throwIfAborted()
+      id = ledger.reserve(inputBound, body.max_tokens, requestHash)
       const wire = { ...body, thinking: { type: 'disabled' } }
-      const fetching = Promise.resolve().then(() => { controller.signal.throwIfAborted(); return fetchImpl(ENDPOINT, {
+      const wireInit = {
         method: 'POST', redirect: 'error', signal: controller.signal,
         headers: { Authorization: 'Bearer ' + apiKey, 'Content-Type': 'application/json' }, body: JSON.stringify(wire),
-      }) })
+      }
+      const fetching = Promise.resolve().then(() => {
+        controller.signal.throwIfAborted()
+        assertCurrent()
+        controller.signal.throwIfAborted()
+        // No await between live guard and fetch invocation. Invocation itself is
+        // the conservative point of no refund, even when fetch throws sync.
+        sent = true
+        return fetchImpl(ENDPOINT, wireInit)
+      })
       void fetching.then(r => { if (controller.signal.aborted) void r.body?.cancel().catch(() => {}) }).catch(() => {})
       response = await abortable(fetching, controller.signal)
       ensure(response.ok, 'UPSTREAM_UNAVAILABLE')
@@ -92,7 +119,10 @@ export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, t
       controller.signal.throwIfAborted()
       return Response.json(safe)
     } catch (error) {
-      ledger.uncertain(id) // Completed trustworthy usage stays settled; unknown usage halts all calls.
+      if (id) {
+        if (sent) ledger.uncertain(id) // Settled usage stays settled; unknown sent calls halt.
+        else ledger.notSent(id) // Proven not invoked; retain attempt/hash, release money.
+      }
       throw new GatewayError(error instanceof GatewayError ? error.code : 'UPSTREAM_FAILED')
     } finally {
       clearTimeout(timer); controller.abort(); init.signal?.removeEventListener('abort', cancel)
@@ -101,5 +131,6 @@ export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, t
     }
   }
   paidTransports.add(transport)
+  admissionTransports.add(transport)
   return transport
 }
