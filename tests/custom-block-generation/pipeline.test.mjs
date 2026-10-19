@@ -1,12 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, rm, readdir, readFile, writeFile, stat, chmod, symlink } from 'node:fs/promises'
+import { mkdtemp, mkdir, rm, readdir, readFile, writeFile, stat, chmod, symlink, lstat, open } from 'node:fs/promises'
+import { spawn } from 'node:child_process'
 import path from 'node:path'
 import os from 'node:os'
 import { createGenerator } from '../../server/custom-block/generator.mjs'
 import { createPendingStore } from '../../server/custom-block/store.mjs'
 import { admitOutput } from '../../server/custom-block/contract.mjs'
-import { protocol } from '../../server/custom-block/protocol.mjs'
+import { protocol, LIMITS } from '../../server/custom-block/protocol.mjs'
 import { request, response, scenarios } from './fixtures.mjs'
 
 globalThis.fetch = () => { throw new Error('TEST_NETWORK_FORBIDDEN') }
@@ -108,6 +109,50 @@ test('private store permissions, quotas and references fail closed', async t => 
   await chmod(directory, 0o755)
   await assert.rejects(store.put(input), { code: 'STORE_PRIVATE_DIRECTORY_REQUIRED' })
 })
+
+test('store reads the complete immutable record when the filesystem returns short reads', async t => {
+  const { store, directory } = await setup(t), input = await record()
+  await store.put(input)
+  const handle = await open(path.join(directory, (await readdir(directory))[0]), 'r')
+  const prototype = Object.getPrototypeOf(handle), original = prototype.read
+  await handle.close()
+  // Short successful reads are allowed by the filesystem API, even before EOF.
+  t.mock.method(prototype, 'read', function(buffer, offset, length, position) {
+    return original.call(this, buffer, offset, Math.min(length, 31), position)
+  })
+  assert.deepEqual(await store.inspect(ref(input.entry)), input)
+})
+
+test('a valid JSON prefix cannot hide unread trailing bytes in a stored record', async t => {
+  const { store, directory } = await setup(t), input = await record()
+  await store.put(input)
+  const filename = path.join(directory, (await readdir(directory))[0])
+  const prefix = JSON.stringify(input)
+  await writeFile(filename, prefix + '\nUNTRUSTED TRAILING BYTES')
+  const handle = await open(filename, 'r'), prototype = Object.getPrototypeOf(handle), original = prototype.read
+  await handle.close()
+  t.mock.method(prototype, 'read', function(buffer, offset, length, position) {
+    return original.call(this, buffer, offset, Math.min(length, Buffer.byteLength(prefix)), position)
+  })
+  await assert.rejects(store.inspect(ref(input.entry)), { code: 'STORE_INVALID' })
+})
+
+test('store accepts the exact byte limit but rejects growth after its initial file stat', async t => {
+  const { store, directory } = await setup(t), input = await record()
+  await store.put(input)
+  const filename = path.join(directory, (await readdir(directory))[0]), prefix = JSON.stringify(input)
+  const bounded = prefix + ' '.repeat(LIMITS.storeBytes - Buffer.byteLength(prefix))
+  await writeFile(filename, bounded)
+  assert.deepEqual(await store.inspect(ref(input.entry)), input)
+  const handle = await open(filename, 'r'), prototype = Object.getPrototypeOf(handle), original = prototype.stat
+  await handle.close()
+  t.mock.method(prototype, 'stat', async function(...args) {
+    const snapshot = await original.apply(this, args)
+    await writeFile(filename, bounded + ' ')
+    return snapshot
+  })
+  await assert.rejects(store.inspect(ref(input.entry)), { code: 'STORE_LIMIT' })
+})
 test('caller mutation cannot change the artifact snapshot during asynchronous hashing', async t => {
   const { store } = await setup(t)
   const input = await record(), reference = ref(input.entry)
@@ -138,4 +183,124 @@ test('all JSON files are inert source artifacts, not generated source module fil
   assert.equal(content.entry.artifact.artifactVersion, 1)
   assert.equal(content.status, 'pending-build')
   assert.equal((await readdir(directory)).some(p => /\.(tsx?|jsx?)$/.test(p)), false)
+})
+
+test('caller cancellation retires ignored provider work before any pending-store write', { timeout: 1000 }, async () => {
+  let rejectOld, calls = 0, puts = 0, oldSignal
+  const provider = { kind: 'mock', generate(_request, { signal } = {}) {
+    calls++; oldSignal = signal
+    return calls === 1 ? new Promise((_, reject) => { rejectOld = reject }) : JSON.stringify(response())
+  } }
+  const store = { async put(record) { puts++; return record } }
+  const generator = createGenerator({ enabled: true, provider, store })
+  const controller = new AbortController()
+  const old = generator.generate(request(), { signal: controller.signal })
+  const rejected = assert.rejects(old, { code: 'CANCELLED' })
+  controller.abort(); await rejected
+  assert.equal(oldSignal.aborted, true); assert.equal(puts, 0)
+  const fresh = await generator.generate(request())
+  assert.equal(fresh.execution, 'denied'); assert.equal(puts, 1)
+  rejectOld(Error('late provider secret')); await new Promise(resolve => setImmediate(resolve))
+  assert.equal(puts, 1)
+})
+
+test('pre-cancelled generator performs no provider or storage calls', async () => {
+  let calls = 0; const controller = new AbortController(); controller.abort()
+  const generator = createGenerator({ enabled: true, provider: { kind: 'mock', generate() { calls++; return '{}' } }, store: { put() { calls++ } } })
+  await assert.rejects(generator.generate(request(), { signal: controller.signal }), { code: 'CANCELLED' })
+  assert.equal(calls, 0)
+})
+
+test('cancellation during output admission prevents storage; admitted storage retains an honest outcome', async () => {
+  const controller = new AbortController(); let puts = 0
+  const provider = { kind: 'mock', generate() { queueMicrotask(() => controller.abort()); return JSON.stringify(response()) } }
+  const generator = createGenerator({ enabled: true, provider, store: { put() { puts++; throw Error('must not store') } } })
+  await assert.rejects(generator.generate(request(), { signal: controller.signal }), { code: 'CANCELLED' }); assert.equal(puts, 0)
+  const next = new AbortController()
+  const committed = createGenerator({ enabled: true, provider: mock(response()), store: { async put(record) { next.abort(); return record } } })
+  assert.equal((await committed.generate(request(), { signal: next.signal })).status, 'pending-build')
+})
+
+test('syntax admission is not sandbox certification: hazardous source stays inert and execution denied', async t => {
+  const { store } = await setup(t)
+  globalThis.__sourceAdmissionExecuted = false
+  t.after(() => { delete globalThis.__sourceAdmissionExecuted })
+  const candidate = response()
+  candidate.sources['src/Component.tsx'] = `globalThis.__sourceAdmissionExecuted = true;
+export default function HazardousAdmissionFixture() {
+  // These browser operations are data in this test. Never mount this fixture.
+  fetch('https://must-never-be-requested.invalid/');
+  document.body.textContent = 'must never mutate';
+  while (true) {}
+  return <div dangerouslySetInnerHTML={{__html: '<script>never</script>'}} />;
+}`
+  const receipt = await createGenerator({ enabled: true, provider: mock(candidate), store }).generate(request())
+  assert.equal(receipt.validation, 'source-admitted')
+  assert.equal(receipt.build, 'not-attempted'); assert.equal(receipt.execution, 'denied')
+  assert.equal(receipt.requirementsReview, 'not-performed')
+  assert.equal(globalThis.__sourceAdmissionExecuted, false)
+  const saved = await store.inspect(receipt.reference)
+  assert.equal(saved.entry.artifact.sources['src/Component.tsx'], candidate.sources['src/Component.tsx'])
+})
+
+test('independent store handles cannot race distinct artifacts past the shared directory quota', async t => {
+  const { store, directory } = await setup(t, { maxArtifacts: 1 })
+  const secondStore = createPendingStore(directory, { maxArtifacts: 1 })
+  const first = await record(), second = await record(), output = response()
+  output.manifest.name = '另一个独立版本'
+  second.entry = await admitOutput(request(), JSON.stringify(output))
+  const outcomes = await Promise.allSettled([store.put(first), secondStore.put(second)])
+  assert.equal(outcomes.filter(result => result.status === 'fulfilled').length, 1)
+  const rejection = outcomes.find(result => result.status === 'rejected')
+  assert.ok(['STORE_BUSY', 'STORE_QUOTA'].includes(rejection.reason.code))
+  const files = await readdir(directory)
+  assert.equal(files.length, 1); assert.match(files[0], /^[a-f0-9]{64}\.json$/)
+  const winner = outcomes.find(result => result.status === 'fulfilled').value
+  assert.deepEqual(await store.inspect(ref(winner.entry)), winner)
+  // An immutable existing version remains reusable even when the quota is full.
+  assert.deepEqual(await secondStore.put(winner), winner)
+})
+
+test('unknown or stale store lease fails closed, remains intact, and is never followed', async t => {
+  const { store, directory } = await setup(t, { maxArtifacts: 1 }), input = await record()
+  const lease = path.join(directory, '.write-lock')
+  await mkdir(lease, { mode: 0o700 }); await writeFile(path.join(lease, 'owner-evidence'), 'do not delete')
+  await assert.rejects(store.put(input), { code: 'STORE_BUSY' })
+  assert.equal(await readFile(path.join(lease, 'owner-evidence'), 'utf8'), 'do not delete')
+  assert.equal(await store.inspect(ref(input.entry)), undefined)
+  // Only this test owns/removes its fixture lease. Production does no recovery.
+  await rm(lease, { recursive: true }); await symlink('/dev/null', lease)
+  await assert.rejects(store.put(input), { code: 'STORE_BUSY' })
+  assert.equal((await lstat(lease)).isSymbolicLink(), true)
+  await rm(lease); await store.put(input)
+  assert.deepEqual(await readdir(directory), [`${input.entry.versionDigest.slice(7)}.json`])
+  const other = await record(), output = response(); output.manifest.name = 'quota rejected'
+  other.entry = await admitOutput(request(), JSON.stringify(output))
+  await assert.rejects(store.put(other), { code: 'STORE_QUOTA' })
+  assert.deepEqual(await readdir(directory), [`${input.entry.versionDigest.slice(7)}.json`])
+})
+
+test('separate node processes share the same bounded store write lease', { timeout: 5000 }, async t => {
+  const { store, directory } = await setup(t, { maxArtifacts: 1 })
+  const inputs = [await record(), await record()], output = response(); output.manifest.name = 'cross-process second version'
+  inputs[1].entry = await admitOutput(request(), JSON.stringify(output))
+  // Execute trusted store code only; candidate TSX remains JSON data on stdin/IPC.
+  const script = `import { createPendingStore } from ${JSON.stringify(new URL('../../server/custom-block/store.mjs', import.meta.url).href)};
+process.send({ready:true}); process.once('message',async ({directory,record})=>{
+ try { await createPendingStore(directory,{maxArtifacts:1}).put(record); process.send({ok:true}); }
+ catch(error) { process.send({ok:false,code:error.code}); }
+ process.disconnect();
+});`
+  const children = inputs.map(() => spawn(process.execPath, ['--input-type=module', '-e', script], { stdio: ['ignore', 'ignore', 'pipe', 'ipc'] }))
+  t.after(() => children.forEach(child => { if (child.exitCode === null) child.kill() }))
+  const ready = children.map(child => new Promise((resolve, reject) => { child.once('message', resolve); child.once('error', reject) }))
+  await Promise.all(ready)
+  const outcomes = children.map(child => new Promise((resolve, reject) => { child.once('message', resolve); child.once('error', reject) }))
+  children.forEach((child, index) => child.send({ directory, record: inputs[index] }))
+  const results = await Promise.all(outcomes)
+  assert.equal(results.filter(result => result.ok).length, 1)
+  assert.ok(['STORE_BUSY', 'STORE_QUOTA'].includes(results.find(result => !result.ok).code))
+  assert.equal((await readdir(directory)).length, 1)
+  const saved = await Promise.all(inputs.map(input => store.inspect(ref(input.entry))))
+  assert.equal(saved.filter(Boolean).length, 1)
 })

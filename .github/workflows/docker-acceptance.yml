@@ -44,6 +44,7 @@ jobs:
           : > artifacts/docker-acceptance/container.log
           : > artifacts/docker-acceptance/container-inspect.txt
           : > artifacts/docker-acceptance/docker-version.log
+          : > artifacts/docker-acceptance/esm-resolution.log
           : > artifacts/docker-acceptance/zip-isolation.log
           : > artifacts/docker-acceptance/test-results.log
 
@@ -107,6 +108,63 @@ jobs:
           echo "IMAGE_NAME=$image" >> "$GITHUB_ENV"
           docker build --tag "$image" . 2>&1 | tee artifacts/docker-acceptance/build.log
 
+      - name: Verify final-image ESM import resolution
+        shell: bash
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          docker run --rm -i --entrypoint node "$IMAGE_NAME" --input-type=module - <<'NODE' 2>&1 | tee artifacts/docker-acceptance/esm-resolution.log
+          import fs from 'node:fs'
+          import path from 'node:path'
+          import { pathToFileURL } from 'node:url'
+
+          const root = '/app'
+          const entry = '/app/server/index.mjs'
+          const optionalRoots = [
+            '/app/server/ai-abort.mjs',
+            '/app/server/paid-gateway/access.mjs',
+            '/app/server/paid-gateway/egress.mjs',
+            '/app/server/paid-gateway/provider.mjs',
+          ]
+          const roots = [entry]
+          for (const file of optionalRoots) {
+            if (fs.existsSync(file)) roots.push(file)
+            else console.log(`OPTIONAL_MODULE_ABSENT_IN_THIS_SOURCE_CANDIDATE ${file}`)
+          }
+          const visited = new Set()
+          const pending = [...roots]
+          const patterns = [
+            /\bfrom\s*['"]([^'"]+)['"]/g,
+            /\bimport\s*['"]([^'"]+)['"]/g,
+            /\bimport\s*\(\s*['"]([^'"]+)['"]\s*\)/g,
+          ]
+          while (pending.length) {
+            const file = path.resolve(pending.pop())
+            if (visited.has(file)) continue
+            if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
+              throw new Error(`ESM_IMPORT_MISSING ${file}`)
+            }
+            visited.add(file)
+            const source = fs.readFileSync(file, 'utf8')
+            for (const pattern of patterns) {
+              pattern.lastIndex = 0
+              for (const match of source.matchAll(pattern)) {
+                const specifier = match[1]
+                if (!specifier.startsWith('.')) continue
+                const target = path.resolve(path.dirname(file), specifier)
+                if (!fs.existsSync(target) || !fs.statSync(target).isFile()) {
+                  throw new Error(`ESM_IMPORT_MISSING ${file} -> ${specifier} (${target})`)
+                }
+                pending.push(target)
+              }
+            }
+          }
+          for (const file of visited) {
+            if (file !== entry) await import(pathToFileURL(file).href)
+          }
+          console.log(`PASS final-image ESM resolution/import: ${visited.size} files; entry=${entry}`)
+          NODE
+
       - name: Start container and run bounded smoke tests
         shell: bash
         timeout-minutes: 12
@@ -160,6 +218,13 @@ jobs:
           fi
           docker inspect --format 'status={{.State.Status}} exit={{.State.ExitCode}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' \
             "$container" | tee -a artifacts/docker-acceptance/container-health.log
+
+          if docker exec "$container" test -f /app/server/paid-gateway/access.mjs; then
+            export HAS_PAID_GATEWAY=true
+          else
+            export HAS_PAID_GATEWAY=false
+          fi
+          echo "has_paid_gateway_runtime=$HAS_PAID_GATEWAY" | tee -a artifacts/docker-acceptance/http-smoke.log
 
           BASE_URL=http://127.0.0.1:7860 node --input-type=module <<'NODE'
           import assert from 'node:assert/strict'
@@ -305,24 +370,28 @@ jobs:
             }
           }
 
+          const gatewayCandidate = process.env.HAS_PAID_GATEWAY === 'true'
+          const deniedStatus = gatewayCandidate ? 401 : 503
+          const deniedCode = gatewayCandidate ? 'UNAUTHORIZED' : 'AI_NOT_CONFIGURED'
           const generation = await localFetch('/api/ai/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idea: 'docker acceptance smoke test' }),
           })
-          assert.equal(generation.status, 503)
+          assert.equal(generation.status, deniedStatus)
           assert.match(generation.headers.get('content-type') || '', /^application\/json/)
-          assert.equal((await generation.json()).error.code, 'AI_NOT_CONFIGURED')
-          log('POST /api/ai/generate without key -> 503 application/json {error.code:"AI_NOT_CONFIGURED"}')
+          assert.equal((await generation.json()).error.code, deniedCode)
+          log(`POST /api/ai/generate without key/auth -> ${deniedStatus} ${deniedCode}; no paid credentials`)
           const trustedGeneration = await localFetch('/api/ai/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idea: 'offline trusted timer smoke test', protocol: 'trusted-interactive/1' }),
           })
-          assert.equal(trustedGeneration.status, 503)
+          assert.equal(trustedGeneration.status, deniedStatus)
           assert.match(trustedGeneration.headers.get('content-type') || '', /^application\/json/)
-          assert.equal((await trustedGeneration.json()).error.code, 'AI_DISABLED')
-          log('POST /api/ai/generate trusted-interactive/1 without server authorization -> 503 AI_DISABLED; no key, no upstream request')
+          const trustedDeniedCode = gatewayCandidate ? 'UNAUTHORIZED' : 'AI_DISABLED'
+          assert.equal((await trustedGeneration.json()).error.code, trustedDeniedCode)
+          log(`POST /api/ai/generate trusted-interactive/1 without server authorization -> ${deniedStatus} ${trustedDeniedCode}; no key, no upstream request`)
           zipLog('PASS production image has no successful local-project-export route')
           log(`PASS ${assets.length} local resources, routes, health, traversal, and no-key degradation`)
           NODE
@@ -345,6 +414,7 @@ jobs:
             echo "image=${IMAGE_NAME:-not-created}"
             echo "container=${CONTAINER_NAME:-not-created}"
             echo "docker_version=see docker-version.log"
+            echo "esm_resolution=see esm-resolution.log"
             echo "build_log_bytes=$(wc -c < artifacts/docker-acceptance/build.log 2>/dev/null || echo 0)"
             echo "health_log_tail:"
             tail -n 20 artifacts/docker-acceptance/container-health.log 2>/dev/null || true

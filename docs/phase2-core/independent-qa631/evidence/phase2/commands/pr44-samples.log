@@ -1,0 +1,11 @@
+✔ todo: preserved real output validates and drives the existing Runtime (5.572917ms)
+✔ club: preserved real output validates and drives the existing Runtime (1.155625ms)
+✔ real evidence has exactly two settled calls, no duplicate mobile/failure charge, distinct requirement structures (0.214334ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 191.920625

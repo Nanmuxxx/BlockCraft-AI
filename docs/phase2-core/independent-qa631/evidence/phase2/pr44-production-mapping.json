@@ -1,0 +1,15 @@
+{
+  "remoteHead": "da212774b7022f95c036b1167ae2d204f65080bc",
+  "testedSha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+  "gatewayAndProviderBlobsEqual": {
+    "server/paid-gateway/access.mjs": true,
+    "server/paid-gateway/egress.mjs": true,
+    "server/paid-gateway/ledger.mjs": true,
+    "server/paid-gateway/pricing.mjs": true,
+    "server/paid-gateway/provider.mjs": true,
+    "server/custom-block/provider.mjs": false,
+    "server/mochi-ai/provider.mjs": false
+  },
+  "entryEqual": false,
+  "entryNote": "Entry is composed with PR42 in tested candidate, not equal to standalone PR44."
+}

@@ -1,0 +1,29 @@
+{
+  "id": "pr44-security",
+  "command": [
+    "node",
+    "--test",
+    "tests/phase2-qa/security44.test.mjs"
+  ],
+  "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+  "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+  "node": "v24.22.0",
+  "startedAt": "2026-10-19T02:49:15.554Z",
+  "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/pr44-security.log",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "release": "25.6.0",
+    "timezone": "Asia/Shanghai",
+    "npm": "11.19.1",
+    "executable": "/usr/local/bin/node",
+    "qa": {
+      "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+      "NIGHT_QA_OUTPUT": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands"
+    }
+  },
+  "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+  "exitCode": 0,
+  "signal": null,
+  "finishedAt": "2026-10-19T02:49:18.953Z"
+}

@@ -37,6 +37,14 @@ async function run() {
       await expect(page.locator('[data-block-key]')).toHaveCount(3)
       const importer = page.locator('.custom-block-import'), preview = importer.getByLabel('AI 积木添加预览')
       await importer.locator('summary').click(); await importer.getByLabel('导入方式').selectOption('ai')
+      const malformed = Buffer.from(JSON.stringify(exported))
+      const marker = Buffer.from(exported.importFile.artifact.artifact.manifest.name)
+      const markerOffset = malformed.indexOf(marker)
+      assert.ok(markerOffset >= 0); malformed[markerOffset] = 0xff
+      await importer.getByLabel('积木制品 JSON').setInputFiles({ name: 'invalid-utf8.json', mimeType: 'application/json', buffer: malformed })
+      await expect(preview).toContainText('不是有效的 UTF-8')
+      await expect(page.locator('[data-block-key]')).toHaveCount(3)
+      await expect(preview.getByRole('button', { name: '预览添加', exact: true })).toHaveCount(0)
       const select = () => importer.getByLabel('积木制品 JSON').setInputFiles({ name: 'archived-real-pomodoro.install.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(exported)) })
       await select(); await preview.getByRole('button', { name: '预览添加', exact: true }).click()
       await expect(preview.getByRole('button', { name: '确认添加', exact: true })).toBeVisible()
@@ -60,7 +68,7 @@ async function run() {
       assert.deepEqual(external, []); assert.deepEqual(errors, [])
       await page.screenshot({ path: path.join(output, `unavailable-${width}.png`), fullPage: true })
       const video = page.video(); await context.close()
-      report.cases.push({ width, passed: true, checks: ['production route without QA decoration', 'archived export load', 'preview with exact version/props/source/pending', 'preview/cancel no added card', 'explicit confirm adds one', 'B selects and inspects parameters', 'C unavailable without iframe', 'no QA bridge', 'no external/API egress', 'no horizontal overflow'], video: await video.path(), errors, external })
+      report.cases.push({ width, passed: true, checks: ['production route without QA decoration', 'invalid UTF-8 rejected before preview without adding a card', 'archived export load', 'preview with exact version/props/source/pending', 'preview/cancel no added card', 'explicit confirm adds one', 'B selects and inspects parameters', 'C unavailable without iframe', 'no QA bridge', 'no external/API egress', 'no horizontal overflow'], video: await video.path(), errors, external })
     }
   } catch (error) { report.errors.push(error.stack || String(error)); throw error }
   finally { await writeFile(path.join(output, 'report.json'), JSON.stringify(report, null, 2)); await browser.close(); await vite.close() }

@@ -1,0 +1,20 @@
+{
+  "pullRequest": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/45",
+  "draft": true,
+  "main": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
+  "sourceCore": "764f2dd023d3e3ca54af755f6291e142e0ccb915",
+  "securitySource": "da212774b7022f95c036b1167ae2d204f65080bc",
+  "localCode": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+  "localEvidence": "4a662f98e27ac596bd6f05610c8f2e37cf63b052",
+  "firstRemoteCandidate": "1e5ac96ac60404549bc8405f07185d51b6eb706e",
+  "verifiedEquivalentTree": "1173e369ed902e5e269346051cd9013b10fabcdc",
+  "method": "Git-data API; exact tree SHA validated; new branch; no force update",
+  "realModelCallsThisCoreTask": 0,
+  "verdict": "BLOCKED",
+  "securityAuditFixSource": "032ffa19adcdc20b066e0d5fcee70136f4492119",
+  "localFinalCode": "47a0c45bc95834d575a07e986b0b3987a9accff7",
+  "sourceSecurityOwnerAuditCode": "0ec82cf07a16f6a9e0ed9124e7133b4ace51d2e8",
+  "dockerSource": "278b13008fcbd90eb874e067ca3ffc1b33fef664",
+  "dockerMergeLocal": "9d7e31b45ce69fe33e5a9264f170796aac54ed8f",
+  "securityDefaultModelSource": "aa7766615e0b6bddfe9c72a6f1709a302d3629ca"
+}

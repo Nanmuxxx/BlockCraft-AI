@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { MochiError, check, validateRequest, validateAdvice, binding, fingerprint, object } from '../../src/integrations/mochi-ai/protocol.mjs'
 import { tokenReservation } from './provider.mjs'
+import { abortable } from '../ai-abort.mjs'
 export const POLICY = Object.freeze({ sessionMs: 3_600_000, sessionCalls: 8, sessionTokens: 100_000,
   chatIntervalMs: 2000, proactiveIntervalMs: 30_000, cooldownMs: 600_000, concurrency: 2, sessions: 1000, seen: 200 })
 const denied = (code, message, status = 429) => { throw new MochiError(code, message, status) }
@@ -59,6 +60,9 @@ export function createMochiService({ provider, enabled = false, approval, reserv
     async analyze(access, raw, { signal } = {}) {
       gate()
       const state = session(access), input = validateRequest(raw)
+      // Resolver-owned session objects may be reused or mutated while the
+      // durable budget/provider awaits. Keep this request's trusted scope fixed.
+      access = Object.freeze({ sessionId: access.sessionId, appId: access.appId })
       check(input.context.mode === 'blocks', 'MODE_UNAVAILABLE', '请回到 B 模式再提问。', 409)
       check(input.context.appId === access.appId, 'CONTEXT_MISMATCH', '应用上下文已变化。', 409)
       if (input.kind === 'proactive' && !state.consent) denied('PROACTIVE_DISABLED', '主动建议尚未开启。', 403)
@@ -72,14 +76,18 @@ export function createMochiService({ provider, enabled = false, approval, reserv
       const reservation = tokenReservation(input)
       if (calls >= approval.maxCalls || tokens + reservation > approval.maxTotalTokens || state.calls >= POLICY.sessionCalls || state.tokens + reservation > POLICY.sessionTokens) denied('BUDGET_EXHAUSTED', '本次 AI 预算已用完。')
       signal?.throwIfAborted()
+      const epoch = state.consentEpoch
       state.calls++; calls++; state.tokens += reservation; tokens += reservation
       state[timeKey] = now(); state.busy = true; inFlight++
       if (proactive) remember(state.events, eventKey)
-      const epoch = state.consentEpoch
       const controller = new AbortController(); state.controller = proactive ? controller : undefined
       const abort = () => controller.abort(); signal?.addEventListener('abort', abort, { once: true })
-      let budgetTimer, budgetAbort
+      // Trusted synchronous adapters can cancel between the early check and
+      // listener registration. A missed event must not authorize ledger egress.
+      if (signal?.aborted) abort()
+      let budgetTimer, budgetAbort, budgetTimedOut = false
       try {
+        if (controller.signal.aborted || (proactive && (!state.consent || epoch !== state.consentEpoch))) denied('CANCELLED', '已取消本次请求。', 499)
         // Deployment adapter atomically reserves a monetary allowance in its
         // durable shared ledger, using approved model pricing. No prompt/data.
         // Memory counters above are additional limits, never a currency cap.
@@ -88,7 +96,7 @@ export function createMochiService({ provider, enabled = false, approval, reserv
           admitted = await Promise.race([
             reserveBudget(Object.freeze({ requestId: randomUUID(), sessionId: access.sessionId, appId: access.appId,
               approvalReference: approval.reference, model: provider.model, maxTokens: reservation, signal: controller.signal })),
-            new Promise((_, reject) => { budgetTimer = setTimeout(() => { reject(new Error('Budget timeout')); controller.abort() }, 5000) }),
+            new Promise((_, reject) => { budgetTimer = setTimeout(() => { budgetTimedOut = true; reject(new Error('Budget timeout')); controller.abort() }, 5000) }),
             new Promise((_, reject) => {
               budgetAbort = () => reject(new MochiError('CANCELLED', '已取消本次请求。', 499))
               controller.signal.addEventListener('abort', budgetAbort, { once: true })
@@ -96,13 +104,20 @@ export function createMochiService({ provider, enabled = false, approval, reserv
             }),
           ])
         } catch (error) {
-          if (error instanceof MochiError && error.code === 'CANCELLED') throw error
+          if (controller.signal.aborted && !budgetTimedOut) denied('CANCELLED', '已取消本次请求。', 499)
           denied('BUDGET_UNAVAILABLE', '费用控制暂不可用，未调用模型。', 503)
         } finally { clearTimeout(budgetTimer); controller.signal.removeEventListener('abort', budgetAbort) }
         if (admitted !== true) denied('BUDGET_EXHAUSTED', '费用额度不足，未调用模型。')
         if (controller.signal.aborted) denied('CANCELLED', '已取消本次请求。', 499)
         gate()
-        const advice = validateAdvice(await provider.analyze(input, { signal: controller.signal }), input.context)
+        if (controller.signal.aborted || (proactive && (!state.consent || epoch !== state.consentEpoch))) denied('CANCELLED', '已取消本次请求。', 499)
+        let output
+        try { output = await abortable(provider.analyze(input, { signal: controller.signal }), controller.signal) }
+        catch (error) {
+          if (controller.signal.aborted) denied('CANCELLED', '已取消本次请求。', 499)
+          throw error
+        }
+        const advice = validateAdvice(output, input.context)
         if (controller.signal.aborted || (proactive && (!state.consent || epoch !== state.consentEpoch))) denied('CANCELLED', '已取消本次请求。', 499)
         const suggestions = []
         for (const s of advice.suggestions) {

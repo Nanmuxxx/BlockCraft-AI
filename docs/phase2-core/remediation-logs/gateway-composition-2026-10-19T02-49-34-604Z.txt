@@ -1,0 +1,12 @@
+✔ v1: real gateway implementation composes auth, validation and durable budget with mock egress (142.150292ms)
+✔ v2: real gateway implementation composes auth, validation and durable budget with mock egress (132.107375ms)
+✔ legacy model alias is rejected before network/reservation; matching CustomBlock model contract is explicit (22.666209ms)
+✔ Mochi native egress rejects and explicit matching gateway produces validated advice offline (37.356792ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 485.770625

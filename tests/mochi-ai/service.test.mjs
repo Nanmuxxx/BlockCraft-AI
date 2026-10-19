@@ -85,6 +85,22 @@ test('approval is snapshotted so caller mutation cannot increase the grant', asy
   assert.equal(f.count(), 1)
 })
 
+test('trusted access is captured before budget await so later mutation cannot change dedup scope', async () => {
+  let finish, calls = 0
+  const trusted = { ...access }
+  const f = fixture({ reserveBudget: () => ++calls === 1 ? new Promise(resolve => { finish = resolve }) : true })
+  const first = f.service.analyze(trusted, request())
+  trusted.appId = 'foreign-app'; trusted.sessionId = 'foreign-session'
+  finish(true)
+  const reply = await first
+  assert.equal(reply.binding.appId, access.appId)
+  assert.equal(reply.suggestions.length, 1)
+  f.tick()
+  const next = await f.service.analyze(access, request())
+  assert.equal(next.suggestions.length, 0)
+  assert.equal(f.count(), 2)
+})
+
 
 test('durable monetary adapter required, deny/error/abort never reach provider', async () => {
   for (const [reserveBudget, code] of [[undefined, 'BUDGET_UNAVAILABLE'], [() => false, 'BUDGET_EXHAUSTED'], [() => { throw new Error('ledger down') }, 'BUDGET_UNAVAILABLE']]) {
@@ -120,4 +136,23 @@ test('durable ledger timeout is unavailable and releases concurrency without pro
   const rejected = assert.rejects(pending, { code: 'BUDGET_UNAVAILABLE' })
   t.mock.timers.tick(5000); await rejected
   assert.equal(f.count(), 0); assert.equal(f.service.usage().inFlight, 0)
+})
+
+for (const proactive of [false, true]) test(`${proactive ? 'consent revocation' : 'caller cancellation'} releases service despite provider ignoring abort`, { timeout: 1000 }, async () => {
+  let rejectOld, started
+  const began = new Promise(resolve => { started = resolve })
+  const f = fixture({ provider: { configured: true, analyze: () => { started(); return new Promise((_, reject) => { rejectOld = reject }) } } })
+  const controller = new AbortController()
+  if (proactive) f.service.consent(access, { enabled: true })
+  const pending = f.service.analyze(access, request(proactive ? 'proactive' : 'chat'), { signal: controller.signal })
+  const rejected = assert.rejects(pending, { code: 'CANCELLED' })
+  await began
+  if (proactive) f.service.consent(access, { enabled: false })
+  else controller.abort()
+  await rejected
+  assert.equal(f.service.usage().inFlight, 0)
+  assert.equal(f.service.usage().calls, 1) // Cancelled calls remain charged.
+  rejectOld(new Error('late transport failure'))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(f.service.usage().inFlight, 0)
 })

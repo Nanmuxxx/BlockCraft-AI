@@ -124,3 +124,97 @@ test('unexpected session exception remains error; no success receipt or automati
   await f.ui.readFile(input(file())); await f.ui.prepare(); await f.ui.confirm()
   assert.equal(f.ui.getSnapshot().phase, 'error'); await assert.rejects(f.ui.confirm()); assert.equal(calls, 1); assert.equal(f.owner.getSnapshot().custom.instances.length, 0); f.ui.dispose()
 })
+
+for (const cause of ['cancel', 'replace', 'dispose', 'revision', 'permission']) {
+  test(`stalled file read settles promptly after ${cause}; late rejection cannot overwrite new input`, { timeout: 1000 }, async () => {
+    const f = setup(); let rejectRead
+    const pending = f.ui.readFile({ size: 1, text: () => new Promise((_, reject) => { rejectRead = reject }) })
+    await Promise.resolve()
+    if (cause === 'cancel') f.ui.cancel()
+    if (cause === 'replace') f.ui.beforeContextChange()
+    if (cause === 'dispose') f.ui.dispose()
+    if (cause === 'permission') f.owner.setReadOnly(true)
+    if (cause === 'revision') {
+      const before = f.owner.getSnapshot(), next = copy(before); next.revision++
+      f.owner.compareAndSwap(before, next, f.owner.getAuthorization())
+    }
+    await pending
+    if (cause === 'dispose') f.ui.activate()
+    if (cause === 'permission') f.owner.setReadOnly(false)
+    await f.ui.readFile(input(envelope()))
+    rejectRead(Error('late read failure')); await new Promise(resolve => setImmediate(resolve))
+    assert.equal(f.ui.getSnapshot().phase, 'loaded')
+    assert.equal(f.owner.getSnapshot().custom.instances.length, 0)
+    f.ui.dispose()
+  })
+}
+
+test('a superseding file read settles the stalled caller without losing its own draft', { timeout: 1000 }, async () => {
+  const f = setup()
+  const pending = f.ui.readFile({ size: 1, text: () => new Promise(() => {}) })
+  await f.ui.readFile(input(envelope())); await pending
+  assert.equal(f.ui.getSnapshot().phase, 'loaded'); f.ui.dispose()
+})
+
+for (const phase of ['idle', 'reading']) {
+  test(`subscriber reentry during ${phase} publication keeps the newer read`, async () => {
+    const f = setup(); let newer, armed = true, staleReads = 0
+    const off = f.ui.subscribe(() => {
+      if (!armed || f.ui.getSnapshot().phase !== phase) return
+      armed = false
+      newer = f.ui.readFile(input(envelope()))
+    })
+    await f.ui.readFile({ size: 1, text: async () => { staleReads++; return '{' } })
+    await newer
+    assert.equal(staleReads, 0)
+    assert.equal(f.ui.getSnapshot().phase, 'loaded')
+    off(); f.ui.dispose()
+  })
+}
+
+test('native file bytes use strict UTF-8 before accepting names or props; text fallback cannot mask corruption', async () => {
+  const f = setup(); let textCalls = 0
+  const bytes = Buffer.from(JSON.stringify(envelope()))
+  const offset = bytes.indexOf(Buffer.from('离线真实制品'))
+  assert.ok(offset >= 0); bytes[offset] = 0xff
+  await f.ui.readFile({ size: bytes.length, arrayBuffer: async () => Uint8Array.from(bytes).buffer, text: async () => { textCalls++; return bytes.toString('utf8') } })
+  assert.equal(f.ui.getSnapshot().phase, 'error'); assert.equal(textCalls, 0)
+  assert.equal(f.owner.getSnapshot().custom.instances.length, 0)
+  const valid = Buffer.from(JSON.stringify(envelope()))
+  await f.ui.readFile({ size: valid.length, arrayBuffer: async () => Uint8Array.from(valid).buffer, text: async () => { throw Error('must use bytes') } })
+  assert.equal(f.ui.getSnapshot().phase, 'loaded'); await f.ui.prepare()
+  assert.equal(f.ui.getSnapshot().phase, 'preview'); f.ui.dispose()
+})
+
+test('file byte bounds reject invalid declarations and oversized byte buffers', async () => {
+  const f = setup(); let reads = 0
+  for (const size of [-1, NaN, Infinity, 0.5, 4_000_001]) {
+    await f.ui.readFile({ size, text: async () => { reads++; return '{}' } })
+    assert.equal(f.ui.getSnapshot().phase, 'error')
+  }
+  assert.equal(reads, 0)
+  await f.ui.readFile({ size: 1, arrayBuffer: async () => new ArrayBuffer(4_000_001), text: async () => '{}' })
+  assert.equal(f.ui.getSnapshot().phase, 'error'); assert.match(f.ui.getSnapshot().message, /过大/)
+  f.ui.dispose()
+})
+
+test('native byte read cancellation also retires without waiting for the File promise', { timeout: 1000 }, async () => {
+  const f = setup()
+  const pending = f.ui.readFile({ size: 1, arrayBuffer: () => new Promise(() => {}), text: async () => { throw Error('fallback forbidden') } })
+  f.ui.cancel(); await pending
+  assert.equal(f.ui.getSnapshot().phase, 'idle'); f.ui.dispose()
+})
+
+test('an observer failure cannot turn a successful confirmed install into an error', async () => {
+  const f = setup()
+  await f.ui.readFile(input(envelope())); await f.ui.prepare()
+  const offBad = f.ui.subscribe(() => { if (f.ui.getSnapshot().phase === 'installed') throw Error('observer render failed') })
+  const phases = []
+  const offGood = f.ui.subscribe(() => { phases.push(f.ui.getSnapshot().phase) })
+  await f.ui.confirm()
+  assert.equal(f.ui.getSnapshot().phase, 'installed')
+  assert.deepEqual(phases, ['confirming', 'installed'])
+  assert.equal(f.owner.getSnapshot().custom.instances.length, 1)
+  assert.equal(f.owner.getSnapshot().revision, 1)
+  offBad(); offGood(); f.ui.dispose()
+})

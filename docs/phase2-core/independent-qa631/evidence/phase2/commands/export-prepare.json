@@ -1,0 +1,33 @@
+{
+  "id": "export-prepare",
+  "command": [
+    "node",
+    "tools/project-zip-export/prepare.mjs"
+  ],
+  "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+  "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+  "node": "v24.22.0",
+  "startedAt": "2026-10-19T02:17:04.324Z",
+  "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/export-prepare.log",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "release": "25.6.0",
+    "timezone": "Asia/Shanghai",
+    "npm": "11.19.1",
+    "executable": "/usr/local/bin/node",
+    "qa": {
+      "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+      "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+      "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+      "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+      "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+      "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+      "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+    }
+  },
+  "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+  "exitCode": 0,
+  "signal": null,
+  "finishedAt": "2026-10-19T02:17:04.630Z"
+}

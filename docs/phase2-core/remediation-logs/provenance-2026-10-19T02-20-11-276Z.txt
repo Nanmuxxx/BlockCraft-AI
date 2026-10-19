@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "main": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
+  "core": "764f2dd023d3e3ca54af755f6291e142e0ccb915",
+  "code": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+  "checkedHead": "4a662f98e27ac596bd6f05610c8f2e37cf63b052",
+  "protectedFiles": "Docker/deployment, ZIP exporter, #36 CAS tests",
+  "productionFrozen": true
+}

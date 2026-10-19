@@ -1,0 +1,49 @@
+✔ pre-aborted request makes zero reservations and zero calls (24.207875ms)
+✔ separate transport instances sharing ledger cannot reserve concurrently (47.242791ms)
+✔ duplicate sequential bodies each charge once and have distinct reservation IDs, same hash (50.897041ms)
+✔ cancel pending body releases concurrency, retains reservation and halts after reopen (48.966834ms)
+✖ DIAGNOSTIC: onResponse must obey cancellation/deadline (78.596292ms)
+✖ DIAGNOSTIC: all response fields must exclude API key sentinel (38.179667ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 4
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 331.139917
+
+✖ failing tests:
+
+test at tests/phase2-qa/gateway-independent.mjs:17:1
+✖ DIAGNOSTIC: onResponse must obey cancellation/deadline (78.596292ms)
+  AssertionError [ERR_ASSERTION]: 10ms deadline exceeded while awaiting response audit hook
+  + actual - expected
+  
+  + 'still-pending'
+  - 'rejected'
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/gateway-independent.mjs:17:517)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'still-pending',
+    expected: 'rejected',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phase2-qa/gateway-independent.mjs:18:1
+✖ DIAGNOSTIC: all response fields must exclude API key sentinel (38.179667ms)
+  AssertionError [ERR_ASSERTION]: upstream model metadata leaked key sentinel to onResponse and response
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/gateway-independent.mjs:18:330)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

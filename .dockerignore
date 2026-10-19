@@ -12,6 +12,9 @@
 !server/package.json
 !server/tsconfig.json
 !server/index.mjs
+!server/ai-abort.mjs
+!server/paid-gateway/
+!server/paid-gateway/**
 !server/trusted-interactive.mjs
 !server/aiGenerationPrompt.mjs
 !server/aiGenerationQuality.mjs

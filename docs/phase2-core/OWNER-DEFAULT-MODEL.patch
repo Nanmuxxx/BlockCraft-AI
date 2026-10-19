@@ -1,0 +1,65 @@
+--- a/server/index.mjs
++++ b/server/index.mjs
+@@ -2,7 +2,7 @@
+ import { abortable } from './ai-abort.mjs'
+ import { authorizeGeneration } from './paid-gateway/access.mjs'
+ import { requireControlledEgress } from './paid-gateway/egress.mjs'
+-import { isPaidTransport } from './paid-gateway/provider.mjs'
++import { isPaidTransport, defaultModelForTransport } from './paid-gateway/provider.mjs'
+ import { buildInteractiveMessages, assertInteractiveSpec, createInteractiveGate } from './trusted-interactive.mjs'
+ import { createServer } from 'node:http'
+ import { readFile, realpath, stat } from 'node:fs/promises'
+@@ -230,8 +230,8 @@
+ /** Dependency injection is for offline tests; the executable always uses official fetch. */
+ export function createAppServer({
+   apiKey = process.env.DEEPSEEK_API_KEY?.trim(),
+-  model = process.env.DEEPSEEK_MODEL?.trim() || 'deepseek-v4-flash',
+   fetchImpl = globalThis.fetch,
++  model = process.env.DEEPSEEK_MODEL?.trim() || defaultModelForTransport(fetchImpl),
+   aiTimeoutMs = LIMITS.aiTimeoutMs,
+   staticDir = resolve(fileURLToPath(new URL('../dist/', import.meta.url))),
+   publicOrigin = process.env.PUBLIC_ORIGIN?.trim() || '',
+--- a/server/mochi-ai/provider.mjs
++++ b/server/mochi-ai/provider.mjs
+@@ -1,4 +1,5 @@
+ import { requireControlledEgress } from '../paid-gateway/egress.mjs'
++import { defaultModelForTransport } from '../paid-gateway/provider.mjs'
+ import { LIMITS, MochiError, bytes, validateAdvice, validateRequest } from '../../src/integrations/mochi-ai/protocol.mjs'
+ import { abortable } from '../ai-abort.mjs'
+ export const ENDPOINT = 'https://api.deepseek.com/chat/completions'
+@@ -25,7 +26,7 @@
+   } finally { void reader.cancel().catch(() => {}); reader.releaseLock() }
+ }
+ /** Same existing server env/endpoint/model. No new key store, retries or fallback. */
+-export function createDeepSeekProvider({ apiKey = process.env.DEEPSEEK_API_KEY?.trim(), model = process.env.DEEPSEEK_MODEL?.trim() || 'deepseek-v4-flash', fetchImpl = globalThis.fetch, timeoutMs = 20_000 } = {}) {
++export function createDeepSeekProvider({ apiKey = process.env.DEEPSEEK_API_KEY?.trim(), fetchImpl = globalThis.fetch, model = process.env.DEEPSEEK_MODEL?.trim() || defaultModelForTransport(fetchImpl), timeoutMs = 20_000 } = {}) {
+   return { configured: Boolean(apiKey), model, async analyze(rawInput, { signal } = {}) {
+     const input = validateRequest(rawInput)
+     if (!apiKey) throw new MochiError('AI_NOT_CONFIGURED', 'Mochi AI 尚未配置。', 503)
+--- a/server/custom-block/provider.mjs
++++ b/server/custom-block/provider.mjs
+@@ -1,4 +1,5 @@
+ import { requireControlledEgress } from '../paid-gateway/egress.mjs'
++import { defaultModelForTransport } from '../paid-gateway/provider.mjs'
+ import { GenerationError, ensure, LIMITS } from './protocol.mjs'
+ import { buildMessages } from './contract.mjs'
+ import { abortable } from '../ai-abort.mjs'
+@@ -37,7 +38,7 @@
+ }
+ 
+ /** Server-only explicit paid-call boundary. Construction is default denied; no env read. */
+-export function createDeepSeekProvider({ allowPaid = false, apiKey, model = 'deepseek-v4-flash', fetchImpl = globalThis.fetch, timeoutMs = LIMITS.timeoutMs } = {}) {
++export function createDeepSeekProvider({ allowPaid = false, apiKey, fetchImpl = globalThis.fetch, model = defaultModelForTransport(fetchImpl), timeoutMs = LIMITS.timeoutMs } = {}) {
+   ensure(allowPaid === true, 'PAID_API_DISABLED')
+   ensure(typeof apiKey === 'string' && apiKey.length > 0 && apiKey.length <= 512 && !/[\s\x00-\x1f]/u.test(apiKey), 'API_CONFIGURATION')
+   ensure(['deepseek-flash', 'deepseek-v4-flash', 'deepseek-chat'].includes(model) && typeof fetchImpl === 'function', 'API_CONFIGURATION')
+--- a/server/paid-gateway/provider.mjs
++++ b/server/paid-gateway/provider.mjs
+@@ -5,6 +5,7 @@
+ const nativeFetch = globalThis.fetch
+ const paidTransports = new WeakSet()
+ export const isPaidTransport = value => paidTransports.has(value)
++export const defaultModelForTransport = value => isPaidTransport(value) ? PRICING.model : 'deepseek-v4-flash'
+ async function abortable(work, signal) {
+   signal.throwIfAborted()
+   let abort

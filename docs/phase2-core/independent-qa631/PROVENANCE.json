@@ -1,0 +1,38 @@
+{
+  "snapshotPurpose": "Independent QA historical execution on 6319729; not acceptance of later production changes. Source report remains owned by QA.",
+  "source": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+  "screenshots": [
+    {
+      "path": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/pr44-replay/todo-390-b.png",
+      "sha256": "74929a255228c88e03537621445691c54751170331d290807e2c9af5642a4f1a"
+    },
+    {
+      "path": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/pr44-replay/todo-390-c.png",
+      "sha256": "c9dec5b1bfacd6dc2fae80539028b2b669b8ba639cd9ab3fda7fe6a27aacd082"
+    },
+    {
+      "path": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/pr44-replay/club-1366-b.png",
+      "sha256": "e6625d70dcfbf02237b8a0754d2fa5f19597c53ec7a649fbf87dee994f50aa24"
+    },
+    {
+      "path": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/pr44-replay/club-1366-c.png",
+      "sha256": "4feefbf512c625475faffa708b693f31d33d935049595a46fc73f8a5ae55c07e"
+    },
+    {
+      "path": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/pr44-replay/club-390-b.png",
+      "sha256": "1b5a1d176474f9f30a14ed870eb1ee6175cad322ab15c3654ed4b6f41e53a63d"
+    },
+    {
+      "path": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/pr44-replay/club-390-c.png",
+      "sha256": "bc6a28815bd878e456f308187ffc8b944886afa90bd89d892351995898fc87b2"
+    },
+    {
+      "path": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/pr44-replay/todo-1366-b.png",
+      "sha256": "6cad33bfec9c985631f5f2e84f9fc2c7d2db9f9287282f8bb79148b702eaa64c"
+    },
+    {
+      "path": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/pr44-replay/todo-1366-c.png",
+      "sha256": "8beeda3db78b2d18435372bf2e83f71a93a00c43cf31f226233412923557c009"
+    }
+  ]
+}

@@ -2,11 +2,13 @@
 // Only DeepSeek fetch is injected; no real key or paid upstream request.
 const { chromium } = require('playwright')
 const { expect } = require('playwright/test')
-const { mkdir } = require('node:fs/promises')
+const { mkdir, writeFile } = require('node:fs/promises')
+const { execFileSync } = require('node:child_process')
 const { once } = require('node:events')
 const assert = require('node:assert/strict')
 const path = require('node:path')
 const root = path.resolve(__dirname, '../..')
+const output = process.env.GENERATION_QA_OUTPUT || '/tmp/blockcraft-g2-audit'
 
 async function run() {
   const { cases } = await import('./fixtures.mjs')
@@ -16,7 +18,7 @@ async function run() {
   let candidate
   let mode = 'success'
   let calls = 0
-  const backendOptions = { apiKey: 'offline-test-key', model: 'offline-browser-model', fetchImpl: async (url, options) => {
+  const backendOptions = { generationAccess: () => true, apiKey: 'offline-test-key', model: 'offline-browser-model', fetchImpl: async (url, options) => {
     calls++
     assert.equal(url, 'https://api.deepseek.com/chat/completions')
     const request = JSON.parse(options.body)
@@ -43,9 +45,24 @@ async function run() {
   let browser
   try {
     await vite.listen()
-    await mkdir('/tmp/blockcraft-g2-audit', { recursive: true })
+    await mkdir(output, { recursive: true })
     browser = await chromium.launch({ headless: true })
-    const page = await browser.newPage()
+    const report = { repositoryHead: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), browser: browser.version(), scope: 'formal /ai-create -> actual local HTTP service; only upstream DeepSeek fetch injected with hand-authored offline fixtures', realModelCalls: 0, cases: [] }
+    for (const width of [1366, 390]) {
+    if (width === 390) {
+      await closeBackend(); backend = createAppServer(backendOptions); backend.listen(backendPort, '127.0.0.1'); await once(backend, 'listening')
+    }
+    mode = 'success'
+    const callsBefore = calls
+    const context = await browser.newContext({ viewport: { width, height: 900 }, isMobile: width === 390, hasTouch: width === 390, serviceWorkers: 'block' })
+    const page = await context.newPage()
+    const external = []
+    await page.route('**/*', route => {
+      const target = new URL(route.request().url())
+      if (target.origin === 'http://127.0.0.1:5193') return route.continue()
+      external.push(target.href)
+      return route.abort('blockedbyclient')
+    })
     const failures = []
     const assetFailures = []
     page.on('response', response => {
@@ -99,7 +116,7 @@ async function run() {
     await inspector.getByLabel('字段名称', { exact: true }).fill('导演')
     await inspector.getByRole('button', { name: '新增字段', exact: true }).click()
     await inspector.getByRole('checkbox', { name: '展示 导演', exact: true }).check()
-    await page.screenshot({ path: '/tmp/blockcraft-g2-audit/generated-b.png', fullPage: true })
+    await page.screenshot({ path: path.join(output, `generated-b-${width}.png`), fullPage: true })
     await page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
     const region = page.getByRole('region', { name: '已看电影记录', exact: true })
     await region.getByRole('button', { name: '编辑', exact: true }).click()
@@ -110,7 +127,7 @@ async function run() {
     await expect(inspector.getByRole('checkbox', { name: '展示 导演', exact: true })).toBeChecked()
     await page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
     await expect(region.getByRole('cell', { name: '宫崎骏', exact: true })).toBeVisible()
-    await page.screenshot({ path: '/tmp/blockcraft-g2-audit/generated-c.png', fullPage: true })
+    await page.screenshot({ path: path.join(output, `generated-c-${width}.png`), fullPage: true })
     if (!await page.getByLabel('你想做什么软件？').isVisible()) await page.locator('.ai-create-regenerate > summary').click()
     for (mode of ['failure', 'invalid', 'empty', 'no-input', 'network']) {
       await page.getByRole('button', { name: /^(生成新应用|重试生成)$/ }).click()
@@ -126,11 +143,16 @@ async function run() {
     await page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
     await expect(region.getByText('暂无记录')).toBeVisible()
     assert.deepEqual(responses, [...cases.map(() => 200), ...Array(5).fill(502), 200])
-    assert.equal(calls, responses.length)
+    assert.equal(calls - callsBefore, responses.length)
     await page.evaluate(() => document.fonts.ready)
     assert.deepEqual(assetFailures, [], 'styles, fonts and images load without HTTP errors')
     assert.deepEqual(failures, [])
-    console.log(`PASS: ${cases.length} distinct offline apps rendered and recorded data; aggregates, B Inspector edits / C records, edit/delete, 5 failures retain old app, retry; ${calls} real local HTTP requests with injected DeepSeek; zero paid calls.`)
+    assert.deepEqual(external, [])
+    report.cases.push({ width, offlineApplications: cases.length, injectedUpstreamCalls: calls - callsBefore, httpResponses: responses, bInspectorEditAndCRecords: true, failuresRetainOldProject: 5, retryReplacesWithEmptyRecords: true, errors: failures, assetFailures, external })
+    await context.close()
+    }
+    await writeFile(path.join(output, 'report.json'), JSON.stringify(report, null, 2) + '\n')
+    console.log(JSON.stringify(report, null, 2))
   } finally {
     await browser?.close()
     await vite.close()

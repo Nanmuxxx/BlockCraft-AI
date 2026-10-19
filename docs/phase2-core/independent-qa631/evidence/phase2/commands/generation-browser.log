@@ -1,0 +1,64 @@
+
+> blockcraft-ai@0.1.0 test:generation:browser
+> node tests/generation/browser.cjs
+
+{
+  "repositoryHead": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+  "browser": "156.0.8078.4",
+  "scope": "formal /ai-create -> actual local HTTP service; only upstream DeepSeek fetch injected with hand-authored offline fixtures",
+  "realModelCalls": 0,
+  "cases": [
+    {
+      "width": 1366,
+      "offlineApplications": 7,
+      "injectedUpstreamCalls": 13,
+      "httpResponses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        502,
+        502,
+        502,
+        502,
+        502,
+        200
+      ],
+      "bInspectorEditAndCRecords": true,
+      "failuresRetainOldProject": 5,
+      "retryReplacesWithEmptyRecords": true,
+      "errors": [],
+      "assetFailures": [],
+      "external": []
+    },
+    {
+      "width": 390,
+      "offlineApplications": 7,
+      "injectedUpstreamCalls": 13,
+      "httpResponses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        502,
+        502,
+        502,
+        502,
+        502,
+        200
+      ],
+      "bInspectorEditAndCRecords": true,
+      "failuresRetainOldProject": 5,
+      "retryReplacesWithEmptyRecords": true,
+      "errors": [],
+      "assetFailures": [],
+      "external": []
+    }
+  ]
+}

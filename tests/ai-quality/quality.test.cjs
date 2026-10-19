@@ -145,6 +145,16 @@ for (const [name, mutate] of Object.entries(malformed)) test(`protocol rejection
   assert.ok(errorsFor(mutate(loadFixture(cases[0].id))).includes('INVALID_SPEC'))
 })
 
+test('v1 quality and diversity reject schema-valid v2 data apps', () => {
+  const spec = { ...loadFixture(cases[0].id), version: 2 }
+  assertAppSpec(spec)
+  assert.ok(errorsFor(spec).includes('INVALID_SPEC'))
+  assert.throws(() => domainFingerprint(spec), /requires AppSpec v1/)
+  const report = evaluateDiversity([{ caseId: 'v2-data', spec }])
+  assert.equal(report.ok, false)
+  assert.equal(report.errors[0].code, 'DIVERSITY_INVALID_SPEC')
+})
+
 test('cross-entity fields and nonnumeric/wrong-entity metric references are invalid', () => {
   const contract = cases.find(item => item.id === 'reading-log')
   for (const mutate of [

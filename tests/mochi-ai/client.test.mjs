@@ -74,6 +74,42 @@ test('cancel and dispose suppress late output; disabled status never falls back'
   await assert.rejects(pending, { code: 'CONTEXT_CHANGED' }); assert.equal(f.client.getSnapshot().messages.length, 1)
 })
 
+test('cancel retires an ignored analysis promise without altering newer history', { timeout: 500 }, async () => {
+  let rejectOld, calls = 0
+  const f = fixture(input => ++calls === 1 ? new Promise((_, reject) => { rejectOld = reject }) : wire(input.context))
+  await f.client.refreshStatus()
+  const old = f.client.chat('old question')
+  f.client.cancel()
+  await assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  await f.client.chat('new question')
+  const snapshot = f.client.getSnapshot()
+  rejectOld(new Error('late ignored transport failure'))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(f.client.getSnapshot(), snapshot)
+  assert.equal(snapshot.messages.length, 3)
+  assert.equal(snapshot.busy, false)
+})
+
+test('abort listener reentry retains ownership of the newer conversation request', { timeout: 500 }, async () => {
+  let fresh, releaseFresh, calls = 0
+  const f = fixture((input, { signal }) => {
+    if (++calls === 1) {
+      signal.addEventListener('abort', () => { fresh = f.client.chat('new question') }, { once: true })
+      return new Promise(() => {})
+    }
+    return new Promise(resolve => { releaseFresh = () => resolve(wire(input.context)) })
+  })
+  await f.client.refreshStatus()
+  const old = f.client.chat('old question')
+  f.client.cancel()
+  await assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.client.getSnapshot().busy, true)
+  await assert.rejects(f.client.chat('must not supersede'), { code: 'AI_BUSY' })
+  releaseFresh(); await fresh
+  assert.equal(f.client.getSnapshot().messages.length, 3)
+  assert.equal(f.client.getSnapshot().busy, false)
+})
+
 test('rapid consent on/off is serialized and ends off at the server', async () => {
   const f = fixture(), writes = []; let server = false
   f.api.consent = async enabled => { writes.push(enabled); server = enabled; return { proactiveEnabled: enabled } }
@@ -121,4 +157,123 @@ test('disabled reason survives selection and mode changes; C mode never sends ch
   f.api.status = async () => ({ enabled: true, proactiveEnabled: false, modificationsEnabled: false })
   await f.client.refreshStatus(); f.change({ ...context(), mode: 'run' }); f.client.syncContext()
   await assert.rejects(f.client.chat('hello'), { code: 'MODE_UNAVAILABLE' }); assert.equal(f.count(), 0)
+})
+
+for (const trigger of ['message', 'busy']) test(`subscriber cancellation during ${trigger} publication prevents analysis egress`, async () => {
+  const f = fixture(); await f.client.refreshStatus(); f.client.syncContext()
+  let armed = true
+  const off = f.client.subscribe(() => {
+    const state = f.client.getSnapshot()
+    if (!armed || (trigger === 'message' ? state.messages.length === 0 : !state.busy)) return
+    armed = false; f.client.cancel()
+  })
+  await assert.rejects(f.client.chat('cancel before transport'), { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.count(), 0); assert.equal(f.client.getSnapshot().busy, false)
+  off(); f.client.dispose()
+})
+
+test('subscriber replacement at request publication keeps only the fresh analysis and history', async () => {
+  const f = fixture(); await f.client.refreshStatus(); f.client.syncContext()
+  let armed = true, fresh
+  const off = f.client.subscribe(() => {
+    if (!armed || !f.client.getSnapshot().busy) return
+    armed = false; f.client.cancel(); fresh = f.client.chat('fresh request')
+  })
+  await assert.rejects(f.client.chat('retired request'), { code: 'CONTEXT_CHANGED' })
+  await fresh
+  assert.equal(f.count(), 1); assert.equal(f.calls[0].prompt, 'fresh request')
+  assert.deepEqual(f.calls[0].history, ['retired request'])
+  assert.deepEqual(f.client.getSnapshot().messages.map(m => m.role), ['user', 'user', 'assistant'])
+  assert.equal(f.client.getSnapshot().busy, false)
+  off(); f.client.dispose()
+})
+
+for (const trigger of ['abort', 'subscriber']) test(`project transition publishes the new identity before ${trigger} reentry`, async () => {
+  let fresh, release, calls = 0
+  const f = fixture((input, { signal }) => {
+    if (++calls === 1) {
+      if (trigger === 'abort') signal.addEventListener('abort', () => { fresh = f.client.chat('new project question') }, { once: true })
+      return new Promise(() => {})
+    }
+    return new Promise(resolve => { release = () => resolve(wire(input.context)) })
+  })
+  await f.client.refreshStatus()
+  const old = f.client.chat('old project question')
+  let armed = trigger === 'subscriber'
+  const off = f.client.subscribe(() => {
+    if (!armed) return
+    armed = false; fresh = f.client.chat('new project question')
+  })
+  f.change({ ...context(), appId: 'next-app', instanceId: 'next-instance' })
+  f.client.syncContext()
+  await assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.client.getSnapshot().busy, true)
+  assert.deepEqual(f.client.getSnapshot().messages.map(m => m.content), ['new project question'])
+  assert.deepEqual(f.calls[1].history, [])
+  assert.equal(f.calls[1].context.appId, 'next-app')
+  release(); await fresh
+  assert.deepEqual(f.client.getSnapshot().messages.map(m => m.role), ['user', 'assistant'])
+  off(); f.client.dispose()
+})
+
+test('context synchronization is idempotent inside a state subscriber', () => {
+  const f = fixture()
+  let notifications = 0
+  const off = f.client.subscribe(() => {
+    assert(++notifications <= 2, 'context publication recursively invalidated itself')
+    f.client.syncContext()
+  })
+  f.client.syncContext()
+  assert.equal(notifications, 1)
+  off(); f.client.dispose()
+})
+
+test('a newer project transition during notification cannot be overwritten by the older transition', async () => {
+  const f = fixture(); await f.client.refreshStatus(); f.client.syncContext()
+  let armed = true, fresh
+  const off = f.client.subscribe(() => {
+    if (!armed) return
+    armed = false
+    f.change({ ...context(), appId: 'third-app', instanceId: 'third-instance' })
+    f.client.syncContext(); fresh = f.client.chat('third project question')
+  })
+  f.change({ ...context(), appId: 'second-app', instanceId: 'second-instance' })
+  f.client.syncContext()
+  await fresh
+  assert.equal(f.calls[0].context.appId, 'third-app')
+  assert.deepEqual(f.calls[0].history, [])
+  assert.deepEqual(f.client.getSnapshot().messages.map(m => m.role), ['user', 'assistant'])
+  off(); f.client.dispose()
+})
+
+for (const trigger of ['context', 'busy']) test(`project changed during ${trigger} notification blocks stale-context egress`, async () => {
+  const f = fixture(); await f.client.refreshStatus()
+  if (trigger === 'busy') f.client.syncContext()
+  let armed = true
+  const off = f.client.subscribe(() => {
+    if (!armed || (trigger === 'busy' && !f.client.getSnapshot().busy)) return
+    armed = false
+    f.change({ ...context(), appId: 'replacement-app', instanceId: 'replacement-instance' })
+    if (trigger === 'context') f.client.syncContext()
+  })
+  await assert.rejects(f.client.chat('must remain in original project'), { code: 'CONTEXT_CHANGED' })
+  assert.equal(f.count(), 0)
+  assert.equal(f.client.getSnapshot().busy, false)
+  off(); f.client.dispose()
+})
+
+test('a failing state observer cannot skip transport cancellation or later observers', async () => {
+  let signal
+  const f = fixture((_input, options) => { signal = options.signal; return new Promise(() => {}) })
+  await f.client.refreshStatus()
+  const old = f.client.chat('cancel this request')
+  const offBad = f.client.subscribe(() => { throw new Error('observer rendering failure') })
+  let notified = 0
+  const offGood = f.client.subscribe(() => { notified++ })
+  assert.doesNotThrow(() => f.client.cancel())
+  await assert.rejects(old, { code: 'CONTEXT_CHANGED' })
+  assert.equal(signal.aborted, true)
+  assert.equal(notified, 1)
+  assert.equal(f.client.getSnapshot().busy, false)
+  offBad(); offGood(); f.client.dispose()
 })
