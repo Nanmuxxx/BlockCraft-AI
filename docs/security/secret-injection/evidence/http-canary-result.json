@@ -1,0 +1,52 @@
+{
+  "candidate_sha": "63a4ab2b65b9ffba72875a383a4ad82f472725fe",
+  "node": "v24.22.0",
+  "platform": "darwin",
+  "results": [
+    {
+      "case": "success-with-untrusted-metadata",
+      "status": 200,
+      "mock_calls": 1,
+      "leak": false,
+      "pass": true
+    },
+    {
+      "case": "upstream-error-body",
+      "status": 502,
+      "mock_calls": 1,
+      "leak": false,
+      "pass": true
+    },
+    {
+      "case": "upstream-throws-secret",
+      "status": 502,
+      "mock_calls": 1,
+      "leak": false,
+      "pass": true
+    },
+    {
+      "case": "secret-in-spec",
+      "status": 502,
+      "mock_calls": 1,
+      "leak": false,
+      "pass": true
+    },
+    {
+      "case": "auth-throws-secret",
+      "status": 401,
+      "mock_calls": 0,
+      "leak": false,
+      "pass": true
+    },
+    {
+      "case": "key-only-closed",
+      "status": 401,
+      "mock_calls": 0,
+      "leak": false,
+      "pass": true
+    }
+  ],
+  "external_attempts": 0,
+  "real_model_calls": 0,
+  "scope": "loopback HTTP response/headers, captured console, synthetic ledger only; browser/build/image/export not covered"
+}
