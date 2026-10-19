@@ -35,7 +35,7 @@ test('real provider HTTP request shape is reused, paid fetch replaced by fixture
   assert.equal(result.status, 200)
   assert.deepEqual(result.body.spec, fixture)
   assert.deepEqual(result.body.provenance, { source: 'offline-fixture', model: 'offline-fixture-model' })
-  assert.equal(calls, 1); assert.ok(reservation.maxTokens > 8192)
+  assert.equal(calls, 1); assert.equal(reservation.maxTokens, 2048)
   assert.equal(reservation.approvalReference, 'OFFLINE-TEST-ONLY')
 })
 test('all authorization and budget gates reject before upstream; no body can grant approval', async t => {

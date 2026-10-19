@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "id": "pomodoro-25min",
+  "name": "25分钟番茄钟",
+  "entities": [],
+  "blocks": [
+    {
+      "id": "pomodoro-25",
+      "name": "25分钟番茄钟",
+      "type": "pomodoro",
+      "protocolVersion": 1,
+      "durationSeconds": 1500
+    }
+  ],
+  "relations": []
+}

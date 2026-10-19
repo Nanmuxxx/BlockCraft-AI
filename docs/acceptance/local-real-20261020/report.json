@@ -1,0 +1,40 @@
+{
+  "sha": "e4d65ac77e02d41668d260c082dc2788c64b5975",
+  "at": "2026-10-19T18:21:46.694Z",
+  "result": "REAL AI PASS — LOCAL ONLY",
+  "prompt": "帮我做一个 25 分钟番茄钟",
+  "generationRequests": 1,
+  "externalBrowserRequests": 0,
+  "checks": [
+    "anonymous 401",
+    "real HTTP generation returned validated AppSpec",
+    "automatic B",
+    "C initial 25:00",
+    "start counts down",
+    "pause holds",
+    "B/C retains state",
+    "reset 25:00"
+  ],
+  "httpStatus": 200,
+  "ledger": {
+    "halted": false,
+    "entries": [
+      {
+        "id": "c7bd046f-2f63-4dde-99da-60992240e89e",
+        "at": "2026-10-19T18:21:47.156Z",
+        "requestHash": "afd5e64c30dbf2df7e4972a66846f1a3f4229d2f4220abf0758467dd18db8cd7",
+        "status": "settled",
+        "reserveNano": 36658000,
+        "estimatedNano": 1622000,
+        "usage": {
+          "prompt_tokens": 551,
+          "completion_tokens": 65,
+          "total_tokens": 616
+        }
+      }
+    ]
+  },
+  "estimatedCny": 0.001622,
+  "reservedCny": 0.036658,
+  "accountBalanceVerified": false
+}

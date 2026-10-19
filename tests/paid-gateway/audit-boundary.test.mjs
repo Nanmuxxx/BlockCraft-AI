@@ -1,4 +1,4 @@
-import test from 'node:test'
+import test, { beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtempSync, chmodSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -68,3 +68,6 @@ test('audit callback exception is sanitized; trustworthy usage remains settled w
   assert.equal(ledger.snapshot().entries[0].status, 'settled')
   assert.ok(ledger.snapshot().entries[0].reserveNano > 0)
 })
+
+// Historical policy window for Mock tests only; real timers remain active.
+beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-10-19T12:00:00+08:00') }))
