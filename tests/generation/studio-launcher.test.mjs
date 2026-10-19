@@ -7,6 +7,7 @@ import { join } from 'node:path'
 import { request } from 'node:http'
 import { startStudioServer } from '../../server/studio-launcher.mjs'
 import { POLICY, PRICING } from '../../server/paid-gateway/pricing.mjs'
+import { openLedger } from '../../server/paid-gateway/ledger.mjs'
 
 const origin = 'https://studio.example'
 const token = 'studio-synthetic-session-0000000000000001'
@@ -25,6 +26,8 @@ function fixture(t) {
   const save = () => writeFileSync(path, JSON.stringify(approval), { mode: 0o600 })
   save()
   writeFileSync(join(dir, 'binding.key'), Buffer.alloc(32, 0x4b), { mode: 0o600 })
+  // Explicit provisioning is synthetic fixture setup, never Studio startup.
+  openLedger(join(dir, 'studio-ledger.json')).close()
   const env = { STUDIO_APPROVAL_PATH: path, PUBLIC_ORIGIN: origin, DEEPSEEK_API_KEY: 'synthetic-studio-test-only-key' }
   let egress = 0
   let instance
