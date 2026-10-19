@@ -1,0 +1,36 @@
+{
+  "codeSha": "a5392394b44c1d5702888af6f80e25195a3cc137",
+  "node": "v24.22.0",
+  "platform": "win32",
+  "commands": [
+    {
+      "name": "typescript",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\干陆烃芸\\Desktop\\HKS\\BlockCraft-AI-demo-gallery\\node_modules\\typescript\\bin\\tsc",
+        "-b"
+      ],
+      "started": "2026-10-19T16:01:51.930Z",
+      "code": 0
+    },
+    {
+      "name": "production-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\干陆烃芸\\Desktop\\HKS\\BlockCraft-AI-demo-gallery\\node_modules\\vite\\bin\\vite.js",
+        "build"
+      ],
+      "started": "2026-10-19T16:01:54.403Z",
+      "code": 0
+    },
+    {
+      "name": "browser-run",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\干陆烃芸\\Desktop\\HKS\\BlockCraft-AI-gallery-stability\\tests\\gallery-stability\\browser.cjs"
+      ],
+      "started": "2026-10-19T16:01:56.012Z",
+      "code": 0
+    }
+  ]
+}
