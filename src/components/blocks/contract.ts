@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import type { BlockPosition, ModuleId } from '../../model/appConfig'
-import type { BlockSpec } from '../../model/appSpec'
+import type { BlockPresentation, BlockSpec } from '../../model/appSpec'
 
 export type AppBlockType = BlockSpec['type']
 
@@ -14,6 +14,7 @@ export interface BlockModuleData<Id extends string = ModuleId> {
   tone?: 'sage' | 'blue' | 'apricot'
   icon?: LucideIcon
   settings?: { showCompleted?: boolean }
+  presentation?: BlockPresentation
 }
 
 export type RecipeId = 'course-tasks' | 'task-stats'
