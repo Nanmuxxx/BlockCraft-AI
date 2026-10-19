@@ -1,0 +1,545 @@
+✖ existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure (148.5299ms)
+✖ route rejects structurally legal but incomplete metric-only app without input, then recovers (18.3139ms)
+✖ route rejects structurally legal but incomplete unbound empty entity, then recovers (10.9129ms)
+✖ route rejects structurally legal but incomplete hidden optional field, then recovers (7.4881ms)
+✖ prompt embeds the exact live protocol boundary and keeps idea in its own user message (3.0493ms)
+✔ club-app: independent requirement mapping and real runtime CRUD/aggregations (7.8437ms)
+✔ fitness-log: independent requirement mapping and real runtime CRUD/aggregations (12.9868ms)
+✔ study-log: independent requirement mapping and real runtime CRUD/aggregations (10.36ms)
+✔ personal-tasks: independent requirement mapping and real runtime CRUD/aggregations (6.4295ms)
+✔ fitness-library: independent requirement mapping and real runtime CRUD/aggregations (4.5713ms)
+✔ money-app: independent requirement mapping and real runtime CRUD/aggregations (4.2114ms)
+✔ lost-found: independent requirement mapping and real runtime CRUD/aggregations (2.9749ms)
+✔ book-log: independent requirement mapping and real runtime CRUD/aggregations (1.6504ms)
+✔ movie-log: independent requirement mapping and real runtime CRUD/aggregations (1.4559ms)
+✔ same domain, different goals change entities/fields; no mandatory form/list/metric set (1.5425ms)
+✔ record count is supported with empty field evidence and reflects actual rows, not unique objects (2.825ms)
+✔ base v1 empty specs stay legal; only the independent generation policy rejects them (0.4112ms)
+✔ separate completeness detects empty fields, unbound objects, missing input and inaccessible fields (0.4232ms)
+✔ bad binding, required field omission, cross-entity fields, illegal numeric metric and unknown types fail structure (2.4435ms)
+✔ structure cannot prove semantics: valid unrelated apps need review; independent mappings expose the mismatch (0.5921ms)
+✔ independent reviewer receives original goals, spec and actual operations as data without any API call (2.3619ms)
+✔ review must cover every goal and bind current input/spec/requirements; malformed evidence fails closed (5.1567ms)
+✔ only actual exposed operations count; list required fields are editable, hidden optional fields are not (1.9677ms)
+✔ unsupported operations remain unsupported despite plausible block names, including mixed and unsupported-only goals (5.119ms)
+✔ legacy demos keep their original protocol and remain usable without requirement reviews (4.1558ms)
+✖ legacy protocol projection does not advertise trusted v2 primitives (5.2012ms)
+✖ generation rejects unfinished media type uploads and closes without waiting for body (96.7477ms)
+✖ generation rejects unfinished cross-origin uploads and closes without waiting for body (16.5398ms)
+✖ generation rejects unfinished declared size uploads and closes without waiting for body (9.9188ms)
+✖ generation rejects unfinished method uploads and closes without waiting for body (10.8633ms)
+✖ generation rejects unfinished route uploads and closes without waiting for body (9.9838ms)
+✖ over-limit unfinished chunked upload is structured 413 and releases the generation slot (16.4277ms)
+✖ unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect (16.3641ms)
+✖ generation accepts valid multibyte JSON split inside a UTF-8 codepoint (22.4919ms)
+✖ unfinished request reaches its input deadline, returns structured 408 and releases admission (24.9362ms)
+✔ rate-limited unfinished upload receives 429 without reaching upstream or waiting for its body (70.8385ms)
+✔ ordinary start is closed by default and shuts down idempotently (100.8725ms)
+✖ key and ledger configuration cannot activate generation without trusted identity (20.1541ms)
+✖ explicit paid runtime keeps the ledger lock until an in-flight request is aborted (4.168ms)
+✖ explicit paid runtime serves a validated Mock AppSpec and settles before shutdown closes the ledger (15.4112ms)
+✖ startup failure closes an explicitly opened paid runtime (10.443ms)
+✖ listen failure closes an explicitly opened paid runtime (8.4517ms)
+✔ SIGINT and SIGTERM hooks invoke one idempotent shutdown task (1.0592ms)
+﹣ real process signals do not interrupt request drain or release the ledger early (0.1595ms) # Requires POSIX signal delivery
+✖ native-clock expired pricing denies before model egress (2.8539ms)
+✔ principal resolver is bounded and rejects boolean, malformed, errors and late results (21.463ms)
+✔ boolean identity alone cannot construct a runtime even with key and ledger configuration (89.3353ms)
+✔ invalid principal rejects before request context construction (9.0862ms)
+✖ request contexts isolate principals, keys and normalized semantic payload under concurrency (32.9268ms)
+✔ invalid input and duplicate or malformed idempotency headers never construct request context (40.7806ms)
+✔ request context errors return a fixed sanitized response (18.9842ms)
+✔ opaque cookie adapter rejects absent, expired, revoked, unknown and forged-header identities before runtime work (44.2873ms)
+✖ opaque cookie hashes resolve stable principals and isolate identical keys across principals (17.9794ms)
+✖ CLI identity mode stays closed by default and requires a private explicit allowlist (38.8629ms)
+✖ authenticated HTTP composition returns a generated AppSpec through the real Gateway runtime (15.631ms)
+✖ missing session rejects before request context, reservation, or provider egress (5.6172ms)
+✖ budget exhaustion maps to HTTP 503 without a seventh provider request (6.1431ms)
+✖ upstream timeout maps to HTTP 504 and records uncertain spend before shutdown (5.9598ms)
+✖ client disconnect aborts the Mock upstream and preserves the uncertain ledger claim (3.606ms)
+ℹ tests 59
+ℹ suites 0
+ℹ pass 29
+ℹ fail 29
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 1492.8394
+
+✖ failing tests:
+
+test at tests\generation\compatibility.test.mjs:8:1
+✖ existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure (148.5299ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/compatibility.test.mjs:31:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\compatibility.test.mjs:51:4
+✖ route rejects structurally legal but incomplete metric-only app without input, then recovers (18.3139ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'AI_INVALID_RESPONSE'
+  - 'AI_INCOMPLETE_APP'
+          ^
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/compatibility.test.mjs:70:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'AI_INVALID_RESPONSE',
+    expected: 'AI_INCOMPLETE_APP',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\compatibility.test.mjs:51:4
+✖ route rejects structurally legal but incomplete unbound empty entity, then recovers (10.9129ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'AI_INVALID_RESPONSE'
+  - 'AI_INCOMPLETE_APP'
+          ^
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/compatibility.test.mjs:70:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'AI_INVALID_RESPONSE',
+    expected: 'AI_INCOMPLETE_APP',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\compatibility.test.mjs:51:4
+✖ route rejects structurally legal but incomplete hidden optional field, then recovers (7.4881ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'AI_INVALID_RESPONSE'
+  - 'AI_INCOMPLETE_APP'
+          ^
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/compatibility.test.mjs:70:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'AI_INVALID_RESPONSE',
+    expected: 'AI_INCOMPLETE_APP',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\generation.test.mjs:28:1
+✖ prompt embeds the exact live protocol boundary and keeps idea in its own user message (3.0493ms)
+  Error: Review v1 protocol projection
+      at readV1GenerationProtocol (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/aiGenerationPrompt.mjs:19:81)
+      at buildGenerationSystemPrompt (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/aiGenerationPrompt.mjs:29:3)
+      at buildGenerationMessages (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/aiGenerationPrompt.mjs:62:32)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/generation.test.mjs:32:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at tests\generation\generation.test.mjs:247:1
+✖ legacy protocol projection does not advertise trusted v2 primitives (5.2012ms)
+  Error: Review v1 protocol projection
+      at readV1GenerationProtocol (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/aiGenerationPrompt.mjs:19:81)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/generation.test.mjs:248:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests\generation\ingress.test.mjs:70:4
+✖ generation rejects unfinished media type uploads and closes without waiting for body (96.7477ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/ingress.test.mjs:74:39)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\ingress.test.mjs:70:4
+✖ generation rejects unfinished cross-origin uploads and closes without waiting for body (16.5398ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/ingress.test.mjs:74:39)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\ingress.test.mjs:70:4
+✖ generation rejects unfinished declared size uploads and closes without waiting for body (9.9188ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/ingress.test.mjs:74:39)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\ingress.test.mjs:70:4
+✖ generation rejects unfinished method uploads and closes without waiting for body (10.8633ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/ingress.test.mjs:74:39)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\ingress.test.mjs:70:4
+✖ generation rejects unfinished route uploads and closes without waiting for body (9.9838ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/ingress.test.mjs:74:39)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\ingress.test.mjs:78:1
+✖ over-limit unfinished chunked upload is structured 413 and releases the generation slot (16.4277ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/ingress.test.mjs:82:39)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\ingress.test.mjs:86:1
+✖ unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect (16.3641ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/ingress.test.mjs:96:39)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\ingress.test.mjs:100:1
+✖ generation accepts valid multibyte JSON split inside a UTF-8 codepoint (22.4919ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/ingress.test.mjs:109:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\ingress.test.mjs:112:1
+✖ unfinished request reaches its input deadline, returns structured 408 and releases admission (24.9362ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/ingress.test.mjs:124:39)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\lifecycle.test.mjs:52:1
+✖ key and ledger configuration cannot activate generation without trusted identity (20.1541ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:72:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\generation\lifecycle.test.mjs:77:1
+✖ explicit paid runtime keeps the ledger lock until an in-flight request is aborted (4.168ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:22:18)
+      at paidRuntimeFactory (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:85:41)
+      at startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:503:21)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:86:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\generation\lifecycle.test.mjs:107:1
+✖ explicit paid runtime serves a validated Mock AppSpec and settles before shutdown closes the ledger (15.4112ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:22:18)
+      at paidRuntimeFactory (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:110:41)
+      at startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:503:21)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:120:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\generation\lifecycle.test.mjs:133:1
+✖ startup failure closes an explicitly opened paid runtime (10.443ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /startup failed/. Input:
+  
+  'Error: LEDGER_PERMISSIONS'
+  
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:136:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: LEDGER_PERMISSIONS
+        at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+        at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+        at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:22:18)
+        at paidRuntimeFactory (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:135:41)
+        at startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:503:21)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:136:3)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: /startup failed/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests\generation\lifecycle.test.mjs:144:1
+✖ listen failure closes an explicitly opened paid runtime (8.4517ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   code: 'LEDGER_PERMISSIONS'
+  -   code: 'EADDRINUSE'
+    }
+  
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:150:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: LEDGER_PERMISSIONS
+        at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+        at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+        at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:22:18)
+        at paidRuntimeFactory (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:152:36)
+        at startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:503:21)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:150:3)
+        at async Test.run (node:internal/test_runner/test:1409:7),
+    expected: { code: 'EADDRINUSE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests\generation\lifecycle.test.mjs:269:1
+✖ native-clock expired pricing denies before model egress (2.8539ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:22:18)
+      at paidRuntimeFactory (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:273:113)
+      at startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:503:21)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/lifecycle.test.mjs:273:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\generation\principal-entry.test.mjs:61:1
+✖ request contexts isolate principals, keys and normalized semantic payload under concurrency (32.9268ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-entry.test.mjs:74:46)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\principal-entry.test.mjs:126:1
+✖ opaque cookie hashes resolve stable principals and isolate identical keys across principals (17.9794ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-entry.test.mjs:140:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\generation\principal-entry.test.mjs:146:1
+✖ CLI identity mode stays closed by default and requires a private explicit allowlist (38.8629ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:495:51)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-entry.test.mjs:163:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests\generation\principal-gateway-http.test.mjs:66:1
+✖ authenticated HTTP composition returns a generated AppSpec through the real Gateway runtime (15.631ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:495:51)
+      at async post (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-gateway-http.test.mjs:56:22)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-gateway-http.test.mjs:74:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests\generation\principal-gateway-http.test.mjs:84:1
+✖ missing session rejects before request context, reservation, or provider egress (5.6172ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:495:51)
+      at async post (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-gateway-http.test.mjs:56:22)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-gateway-http.test.mjs:87:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests\generation\principal-gateway-http.test.mjs:95:1
+✖ budget exhaustion maps to HTTP 503 without a seventh provider request (6.1431ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:495:51)
+      at async post (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-gateway-http.test.mjs:56:22)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-gateway-http.test.mjs:99:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests\generation\principal-gateway-http.test.mjs:116:1
+✖ upstream timeout maps to HTTP 504 and records uncertain spend before shutdown (5.9598ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:495:51)
+      at async post (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-gateway-http.test.mjs:56:22)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-gateway-http.test.mjs:120:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests\generation\principal-gateway-http.test.mjs:128:1
+✖ client disconnect aborts the Mock upstream and preserves the uncertain ledger claim (3.606ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/index.mjs:495:51)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/generation/principal-gateway-http.test.mjs:135:22)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+STDERR:

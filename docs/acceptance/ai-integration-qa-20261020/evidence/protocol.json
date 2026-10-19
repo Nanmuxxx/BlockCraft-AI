@@ -1,0 +1,12 @@
+{
+  "name": "protocol",
+  "started": "2026-10-19T16:41:10.065Z",
+  "args": [
+    "server/custom-block/build-protocol.mjs"
+  ],
+  "exit": 0,
+  "signal": null,
+  "node": "v24.22.0",
+  "platform": "win32",
+  "sha": "d6f2cb4f110d22f665690e3af1d818249cc03b99"
+}

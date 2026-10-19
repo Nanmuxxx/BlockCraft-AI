@@ -1,0 +1,550 @@
+✖ hung audit callback obeys deadline; concurrency releases without refunding settled usage (7.8755ms)
+✖ cancel during audit rejects promptly and late callback resolution/rejection cannot succeed (3.0421ms)
+✖ untrusted model metadata never enters callback/response; only configured priced model is emitted (2.5336ms)
+✖ audit callback exception is sanitized; trustworthy usage remains settled with reservation retained (2.2608ms)
+✖ same principal/key is single-use concurrently and remains claimed after restart (14.1048ms)
+✖ same principal/key with different payload conflicts without a second reservation (5.6211ms)
+✖ invalid identity or idempotency key fails closed before claim and reservation (4.7031ms)
+✖ claim-store creation failure and corruption happen before any reservation (10.6576ms)
+✖ claim persistence failure poisons the sidecar before reservation and later retries (8.3957ms)
+✖ capacity and binding-key mismatch fail closed before reserve (8.2276ms)
+✖ unknown outcome keeps claim and ledger halt across restart (5.5538ms)
+✖ a second handle cannot retain stale claims; close/reopen reloads settled claims (3.5669ms)
+✖ directory-wide ownership excludes different ledgers, aliases and another process (4.2175ms)
+✖ ledger close cannot transfer sidecar ownership; stale sidecar locks deny startup (4.4383ms)
+✖ legacy model names fail before reservation/network in all three consumers; no alias rewriting (6.5155ms)
+✖ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (2.0163ms)
+✖ branded paid transport selects the priced default in all three consumers without a model override (2.5458ms)
+✖ explicit invalid environment or constructor model never falls back for a paid transport (2.8695ms)
+✖ ordinary injected offline adapters keep the historical default in all consumers (119.5187ms)
+✖ one claim and reservation, canonical request replay/conflict, restart, single use (7.2212ms)
+✖ request closures cannot cross principals; shared gate rejects concurrent distinct request (2.9452ms)
+✖ invalid identity, payload, key and missing binding configuration are rejected without claim/reserve/egress (2.6625ms)
+✖ timeout preserves claim and unknown outcome halt across restart (2.9943ms)
+✖ disconnect preserves claim and unknown outcome halt across restart (2.1251ms)
+✖ throw preserves claim and unknown outcome halt across restart (2.166ms)
+✖ sidecar persist failure, lock and exhausted durable budget deny before egress (2.898ms)
+✖ native clock is never extended: expiry denies real ledger and composed runtime with zero reserve/egress (1.3454ms)
+✔ HTTP mapping is explicit and unknown/storage/config/pricing errors default503 (1.2827ms)
+✔ production composition requires trusted identity, key and persistent ledger path (3.9974ms)
+✖ composed app server authenticates before a mock DeepSeek call and persists bounded audit (2.228ms)
+✖ anonymous legacy and v2 (no Origin, forged Host/XFF/Origin/body approval) reject before Provider (206.6859ms)
+✔ default disabled even with injected Provider/key; untrusted auth exceptions and late identity fail closed (2045.832ms)
+✔ all native Provider defaults blocked without controlled transport (12.861ms)
+✖ durable reserve precedes one fixed official request; no caller headers, tools, retries or secret audit (4.4309ms)
+✖ concurrent attempts rejected before Provider and before a second reservation (2.2755ms)
+✖ request policy rejects other endpoint/model/tools/token limits and oversized input with zero network (2.7468ms)
+✖ durable call cap survives reopen and reservations never refunded (3.54ms)
+✖ conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10 (3.3214ms)
+✖ missing or over-bound usage halts automatic calls permanently; no refund (4.4004ms)
+✖ unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt (3.1642ms)
+✖ exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed (2.6534ms)
+ℹ tests 41
+ℹ suites 0
+ℹ pass 4
+ℹ fail 37
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3157.5893
+
+✖ failing tests:
+
+test at tests\paid-gateway\audit-boundary.test.mjs:19:1
+✖ hung audit callback obeys deadline; concurrency releases without refunding settled usage (7.8755ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at store (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/audit-boundary.test.mjs:16:18)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/audit-boundary.test.mjs:20:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\audit-boundary.test.mjs:37:1
+✖ cancel during audit rejects promptly and late callback resolution/rejection cannot succeed (3.0421ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at store (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/audit-boundary.test.mjs:16:18)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/audit-boundary.test.mjs:39:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\audit-boundary.test.mjs:52:1
+✖ untrusted model metadata never enters callback/response; only configured priced model is emitted (2.5336ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at store (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/audit-boundary.test.mjs:16:18)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/audit-boundary.test.mjs:54:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\audit-boundary.test.mjs:63:1
+✖ audit callback exception is sanitized; trustworthy usage remains settled with reservation retained (2.2608ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at store (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/audit-boundary.test.mjs:16:18)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/audit-boundary.test.mjs:64:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\idempotency-sidecar.test.mjs:31:1
+✖ same principal/key is single-use concurrently and remains claimed after restart (14.1048ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/idempotency-sidecar.test.mjs:33:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\idempotency-sidecar.test.mjs:58:1
+✖ same principal/key with different payload conflicts without a second reservation (5.6211ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/idempotency-sidecar.test.mjs:60:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\idempotency-sidecar.test.mjs:69:1
+✖ invalid identity or idempotency key fails closed before claim and reservation (4.7031ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/idempotency-sidecar.test.mjs:71:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\idempotency-sidecar.test.mjs:81:1
+✖ claim-store creation failure and corruption happen before any reservation (10.6576ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/idempotency-sidecar.test.mjs:84:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\idempotency-sidecar.test.mjs:97:1
+✖ claim persistence failure poisons the sidecar before reservation and later retries (8.3957ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/idempotency-sidecar.test.mjs:99:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\idempotency-sidecar.test.mjs:113:1
+✖ capacity and binding-key mismatch fail closed before reserve (8.2276ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/idempotency-sidecar.test.mjs:115:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\idempotency-sidecar.test.mjs:130:1
+✖ unknown outcome keeps claim and ledger halt across restart (5.5538ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/idempotency-sidecar.test.mjs:132:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\idempotency-sidecar.test.mjs:148:1
+✖ a second handle cannot retain stale claims; close/reopen reloads settled claims (3.5669ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/idempotency-sidecar.test.mjs:150:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\idempotency-sidecar.test.mjs:168:1
+✖ directory-wide ownership excludes different ledgers, aliases and another process (4.2175ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/idempotency-sidecar.test.mjs:170:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\idempotency-sidecar.test.mjs:201:1
+✖ ledger close cannot transfer sidecar ownership; stale sidecar locks deny startup (4.4383ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/idempotency-sidecar.test.mjs:203:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\model-contract.test.mjs:45:1
+✖ legacy model names fail before reservation/network in all three consumers; no alias rewriting (6.5155ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at setup (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/model-contract.test.mjs:27:18)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/model-contract.test.mjs:46:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\model-contract.test.mjs:55:1
+✖ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (2.0163ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at setup (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/model-contract.test.mjs:27:18)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/model-contract.test.mjs:56:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\model-contract.test.mjs:69:1
+✖ branded paid transport selects the priced default in all three consumers without a model override (2.5458ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at setup (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/model-contract.test.mjs:27:18)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/model-contract.test.mjs:71:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\model-contract.test.mjs:81:1
+✖ explicit invalid environment or constructor model never falls back for a paid transport (2.8695ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at setup (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/model-contract.test.mjs:27:18)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/model-contract.test.mjs:83:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\model-contract.test.mjs:96:1
+✖ ordinary injected offline adapters keep the historical default in all consumers (119.5187ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/model-contract.test.mjs:103:44)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\paid-gateway\principal-runtime.test.mjs:28:1
+✖ one claim and reservation, canonical request replay/conflict, restart, single use (7.2212ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPrincipalPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:71:18)
+      at fixture (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:22:17)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:30:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\principal-runtime.test.mjs:44:1
+✖ request closures cannot cross principals; shared gate rejects concurrent distinct request (2.9452ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPrincipalPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:71:18)
+      at fixture (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:22:17)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:48:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\principal-runtime.test.mjs:60:1
+✖ invalid identity, payload, key and missing binding configuration are rejected without claim/reserve/egress (2.6625ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPrincipalPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:71:18)
+      at fixture (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:22:17)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:61:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\principal-runtime.test.mjs:69:56
+✖ timeout preserves claim and unknown outcome halt across restart (2.9943ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPrincipalPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:71:18)
+      at fixture (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:22:17)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:71:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\principal-runtime.test.mjs:69:56
+✖ disconnect preserves claim and unknown outcome halt across restart (2.1251ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPrincipalPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:71:18)
+      at fixture (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:22:17)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:71:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\principal-runtime.test.mjs:69:56
+✖ throw preserves claim and unknown outcome halt across restart (2.166ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPrincipalPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:71:18)
+      at fixture (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:22:17)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:71:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\principal-runtime.test.mjs:83:1
+✖ sidecar persist failure, lock and exhausted durable budget deny before egress (2.898ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPrincipalPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:71:18)
+      at fixture (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:22:17)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:84:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\principal-runtime.test.mjs:97:1
+✖ native clock is never extended: expiry denies real ledger and composed runtime with zero reserve/egress (1.3454ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPrincipalPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:71:18)
+      at fixture (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:22:17)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/principal-runtime.test.mjs:100:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\runtime.test.mjs:28:1
+✖ composed app server authenticates before a mock DeepSeek call and persists bounded audit (2.228ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/runtime.mjs:22:18)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/runtime.test.mjs:31:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\security.test.mjs:33:1
+✖ anonymous legacy and v2 (no Origin, forged Host/XFF/Origin/body approval) reject before Provider (206.6859ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  502 !== 200
+  
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:41:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 502,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\paid-gateway\security.test.mjs:63:1
+✖ durable reserve precedes one fixed official request; no caller headers, tools, retries or secret audit (4.4309ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at ledger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:23:50)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:64:27)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\security.test.mjs:78:1
+✖ concurrent attempts rejected before Provider and before a second reservation (2.2755ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at ledger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:23:50)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:79:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\security.test.mjs:85:1
+✖ request policy rejects other endpoint/model/tools/token limits and oversized input with zero network (2.7468ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at ledger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:23:50)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:86:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\security.test.mjs:92:1
+✖ durable call cap survives reopen and reservations never refunded (3.54ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at ledger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:23:50)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:93:27)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\security.test.mjs:100:1
+✖ conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10 (3.3214ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at ledger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:23:50)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:101:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\security.test.mjs:111:1
+✖ missing or over-bound usage halts automatic calls permanently; no refund (4.4004ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at ledger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:23:50)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:113:29)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\security.test.mjs:120:1
+✖ unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt (3.1642ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at ledger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:23:50)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:122:23)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\paid-gateway\security.test.mjs:137:1
+✖ exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed (2.6534ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/paid-gateway/ledger.mjs:18:3)
+      at ledger (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:23:50)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI/tests/paid-gateway/security.test.mjs:138:27)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+STDERR:

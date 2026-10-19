@@ -1,0 +1,15 @@
+{
+  "name": "server",
+  "started": "2026-10-19T16:41:36.304Z",
+  "args": [
+    "--test",
+    "--test-timeout=15000",
+    "server/*.test.mjs"
+  ],
+  "exit": null,
+  "signal": "SIGTERM",
+  "error": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+  "node": "v24.22.0",
+  "platform": "win32",
+  "sha": "d6f2cb4f110d22f665690e3af1d818249cc03b99"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "root",
+  "started": "2026-10-19T16:41:30.943Z",
+  "args": [
+    "--test",
+    "src/components/blocks/presentation.test.cjs",
+    "src/model/appSpec.test.cjs",
+    "src/model/appRuntime.test.cjs",
+    "src/model/appChangePlan.test.cjs",
+    "src/components/blocks/blocks.test.cjs",
+    "src/components/ai-create/generateApp.test.cjs",
+    "src/components/app-builder/AppSpecCanvas.test.cjs",
+    "src/integrations/mochi/planning.test.cjs",
+    "src/components/mochi-ai/mochi-ai.test.cjs",
+    "src/components/mochi-ai/mochi-ai-v2.test.cjs"
+  ],
+  "exit": 0,
+  "signal": null,
+  "node": "v24.22.0",
+  "platform": "win32",
+  "sha": "d6f2cb4f110d22f665690e3af1d818249cc03b99"
+}
