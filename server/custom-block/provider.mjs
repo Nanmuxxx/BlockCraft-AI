@@ -39,7 +39,7 @@ async function readEnvelope(response, controller) {
 export function createDeepSeekProvider({ allowPaid = false, apiKey, model = 'deepseek-v4-flash', fetchImpl = globalThis.fetch, timeoutMs = LIMITS.timeoutMs } = {}) {
   ensure(allowPaid === true, 'PAID_API_DISABLED')
   ensure(typeof apiKey === 'string' && apiKey.length > 0 && apiKey.length <= 512 && !/[\s\x00-\x1f]/u.test(apiKey), 'API_CONFIGURATION')
-  ensure(['deepseek-v4-flash', 'deepseek-chat'].includes(model) && typeof fetchImpl === 'function', 'API_CONFIGURATION')
+  ensure(['deepseek-flash', 'deepseek-v4-flash', 'deepseek-chat'].includes(model) && typeof fetchImpl === 'function', 'API_CONFIGURATION')
   ensure(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= LIMITS.timeoutMs, 'API_CONFIGURATION')
   requireControlledEgress(fetchImpl)
   // No key on the public object, in prompts, persisted metadata, logs or errors.
