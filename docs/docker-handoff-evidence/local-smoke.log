@@ -1,0 +1,5 @@
+BlockCraft AI backend: http://0.0.0.0:60231
+PASS health JSON; production CLI started from /tmp, clean environment/no credentials
+PASS entry document and both SPA paths
+PASS anonymous/forged bearer v1 and trusted-interactive/1(v2) -> 401 JSON UNAUTHORIZED
+PASS local source CLI smoke only; NOT a Docker or HTTPS test
