@@ -1,0 +1,93 @@
+{
+  "sha": "c7c4b086551247ad60ae0e1e5a87e254155abd03",
+  "provider": "isolated fixed JSON completion + real Workshop/Host/Runtime/CAS; zero AI calls",
+  "cases": [
+    {
+      "width": 1366,
+      "height": 1000,
+      "passed": true,
+      "originalRevision": 0,
+      "confirmedRevision": 1,
+      "styles": {
+        "bg": "rgb(171, 205, 239)",
+        "color": "rgb(18, 52, 86)",
+        "radius": "12px"
+      },
+      "checks": [
+        "Preview zero writes B/C",
+        "Confirm receipt + revision",
+        "B/C computed styles and button text",
+        "partial patch + radius zero",
+        "Cancel",
+        "selection invalidation",
+        "concurrent revision rejected",
+        "authorization revocation during Confirm rejects without write",
+        "read-only gate",
+        "unsafe patch rejected",
+        "cancel late completion",
+        "project replacement late completion",
+        "no horizontal overflow"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "passed": true,
+      "originalRevision": 0,
+      "confirmedRevision": 1,
+      "styles": {
+        "bg": "rgb(171, 205, 239)",
+        "color": "rgb(18, 52, 86)",
+        "radius": "12px"
+      },
+      "checks": [
+        "Preview zero writes B/C",
+        "Confirm receipt + revision",
+        "B/C computed styles and button text",
+        "partial patch + radius zero",
+        "Cancel",
+        "selection invalidation",
+        "concurrent revision rejected",
+        "authorization revocation during Confirm rejects without write",
+        "read-only gate",
+        "unsafe patch rejected",
+        "cancel late completion",
+        "project replacement late completion",
+        "no horizontal overflow"
+      ]
+    },
+    {
+      "surface": "production build /ai-create",
+      "generation": "offline intercepted JSON response",
+      "width": 1366,
+      "height": 1000,
+      "passed": true,
+      "modificationProvider": "disabled",
+      "checks": [
+        "official schema accepted",
+        "real product B/C styles and text",
+        "production composer disabled",
+        "test globals absent",
+        "no overflow"
+      ]
+    },
+    {
+      "surface": "production build /ai-create",
+      "generation": "offline intercepted JSON response",
+      "width": 390,
+      "height": 844,
+      "passed": true,
+      "modificationProvider": "disabled",
+      "checks": [
+        "official schema accepted",
+        "real product B/C styles and text",
+        "production composer disabled",
+        "test globals absent",
+        "no overflow"
+      ]
+    }
+  ],
+  "errors": [],
+  "network": [],
+  "chromium": "156.0.8078.4"
+}

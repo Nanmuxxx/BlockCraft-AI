@@ -1,0 +1,52 @@
+[
+  {
+    "localPath": ".cache/workshop-final/presentation/applied-B-1366.png",
+    "sha256": "e25da4321238ecca606d5dc9e919dda0327cf595c9ef465d79705652611e9315",
+    "bytes": 298291
+  },
+  {
+    "localPath": ".cache/workshop-final/presentation/applied-B-390.png",
+    "sha256": "6098decac4e9e105a98c721dac0eb05041add943ba1c40ee8055dcd965ea9341",
+    "bytes": 263010
+  },
+  {
+    "localPath": ".cache/workshop-final/presentation/applied-C-1366.png",
+    "sha256": "114a756250f79c06666d4379434d6f7af58632f2a51e17aa279f25e44a745342",
+    "bytes": 153038
+  },
+  {
+    "localPath": ".cache/workshop-final/presentation/applied-C-390.png",
+    "sha256": "e6ed554616c6fb19c168f5c242854cfbf50d6173479287c818eeea89ea3dd6e6",
+    "bytes": 141449
+  },
+  {
+    "localPath": ".cache/workshop-final/presentation/preview-1366.png",
+    "sha256": "ff3e6d1305765a85b536befa43c975e0b4b9baa76d77bd41d68ab78ff984b680",
+    "bytes": 308070
+  },
+  {
+    "localPath": ".cache/workshop-final/presentation/preview-390.png",
+    "sha256": "a1e16b39e204e0740acc70d4a8e3e26910d9cc8c4dc1d669a141415b854c5532",
+    "bytes": 269830
+  },
+  {
+    "localPath": ".cache/workshop-final/presentation/production-B-1366.png",
+    "sha256": "449f514e2a0635dccc8c138ae6aaed01f6412d24f43bc03350f94d93b32a2fe2",
+    "bytes": 286984
+  },
+  {
+    "localPath": ".cache/workshop-final/presentation/production-B-390.png",
+    "sha256": "965089298e4f8df4857359c7a88f08afaf89c714d8fe07663674fc93010d7bff",
+    "bytes": 255695
+  },
+  {
+    "localPath": ".cache/workshop-final/presentation/production-C-1366.png",
+    "sha256": "694e387744a407600e62e72d9ee5b96306c4dc5bc91b6daea80d0ccaa565805e",
+    "bytes": 142713
+  },
+  {
+    "localPath": ".cache/workshop-final/presentation/production-C-390.png",
+    "sha256": "40b3c530c810bc5f3235c96a95dbc96c4329b5f045fb89890fc07609b57b3f51",
+    "bytes": 130714
+  }
+]
