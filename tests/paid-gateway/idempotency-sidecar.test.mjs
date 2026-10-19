@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
+import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, renameSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { openLedger } from '../../server/paid-gateway/ledger.mjs'
@@ -141,5 +142,76 @@ test('unknown outcome keeps claim and ledger halt across restart', t => {
   assert.equal(ledger.snapshot().halted, true)
   assert.equal(ledger.snapshot().entries.length, 1)
   store.close()
+  ledger.close()
+})
+
+test('a second handle cannot retain stale claims; close/reopen reloads settled claims', t => {
+  const { directory, ledgerPath } = fixture(t)
+  const ledger = openLedger(ledgerPath)
+  const first = sidecar(ledger, directory)
+  assert.throws(() => sidecar(ledger, directory), { code: 'IDEMPOTENCY_LOCKED' })
+  const id = reserve(first)
+  ledger.settle(id, { prompt_tokens: 10, completion_tokens: 10, total_tokens: 20 })
+  assert.throws(() => sidecar(ledger, directory), { code: 'IDEMPOTENCY_LOCKED' })
+  first.close()
+  const second = sidecar(ledger, directory)
+  first.close() // An old handle must not release its replacement's lease.
+  assert.throws(() => reserve(first), { code: 'IDEMPOTENCY_UNAVAILABLE' })
+  assert.throws(() => reserve(second), { code: 'IDEMPOTENCY_REPLAY' })
+  assert.throws(() => sidecar(ledger, directory), { code: 'IDEMPOTENCY_LOCKED' })
+  assert.equal(ledger.snapshot().entries.length, 1)
+  assert.equal(second.snapshot().claims.length, 1)
+  second.close()
+  ledger.close()
+})
+
+test('directory-wide ownership excludes different ledgers, aliases and another process', t => {
+  const { directory, ledgerPath } = fixture(t)
+  const ledger = openLedger(ledgerPath)
+  const alternate = openLedger(join(directory, 'alternate.json'))
+  const first = sidecar(ledger, directory)
+  const alias = join(directory, 'alias')
+  symlinkSync(directory, alias, 'dir')
+  assert.throws(() => sidecar(ledger, alias), { code: 'IDEMPOTENCY_LOCKED' })
+  assert.throws(() => sidecar(alternate, join(directory, 'alias', '..', 'alias')), { code: 'IDEMPOTENCY_LOCKED' })
+  const script = `
+    import { openLedger } from ${JSON.stringify(new URL('../../server/paid-gateway/ledger.mjs', import.meta.url).href)};
+    import { openIdempotencySidecar } from ${JSON.stringify(new URL('../../server/paid-gateway/idempotency-sidecar.mjs', import.meta.url).href)};
+    const ledger = openLedger(process.argv[1]);
+    try {
+      openIdempotencySidecar({ ledger, directory: process.argv[2], bindingKey: Buffer.alloc(32, 0x5a) });
+      process.exitCode = 1;
+    } catch (e) { if (e.code !== 'IDEMPOTENCY_LOCKED') throw e; }
+    finally { ledger.close(); }
+  `
+  const child = spawnSync(process.execPath, ['--input-type=module', '-e', script, join(directory, 'child.json'), alias], { encoding: 'utf8', timeout: 5000 })
+  assert.equal(child.status, 0, child.stderr)
+  const id = reserve(first)
+  ledger.settle(id, { prompt_tokens: 10, completion_tokens: 10, total_tokens: 20 })
+  first.close()
+  const next = sidecar(alternate, alias)
+  assert.throws(() => reserve(next), { code: 'IDEMPOTENCY_REPLAY' })
+  assert.equal(ledger.snapshot().entries.length, 1)
+  assert.equal(alternate.snapshot().entries.length, 0)
+  next.close()
+  alternate.close()
+  ledger.close()
+})
+
+test('ledger close cannot transfer sidecar ownership; stale sidecar locks deny startup', t => {
+  const { directory, ledgerPath } = fixture(t)
+  let ledger = openLedger(ledgerPath)
+  const first = sidecar(ledger, directory)
+  ledger.close()
+  ledger = openLedger(ledgerPath)
+  assert.throws(() => reserve(first), { code: 'LEDGER_LEASE_REQUIRED' })
+  assert.throws(() => sidecar(ledger, directory), { code: 'IDEMPOTENCY_LOCKED' })
+  assert.equal(ledger.snapshot().entries.length, 0)
+  first.close()
+  const second = sidecar(ledger, directory)
+  second.close()
+  writeFileSync(join(directory, '.paid-idempotency.json.lock'), 'synthetic stale lease', { mode: 0o600 })
+  assert.throws(() => sidecar(ledger, directory), { code: 'IDEMPOTENCY_LOCKED' })
+  assert.equal(ledger.snapshot().entries.length, 0)
   ledger.close()
 })

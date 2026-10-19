@@ -1,5 +1,5 @@
-import { openSync, closeSync, writeFileSync, fsyncSync, renameSync, unlinkSync, lstatSync, readFileSync } from 'node:fs'
-import { dirname, join, resolve } from 'node:path'
+import { openSync, closeSync, writeFileSync, fsyncSync, renameSync, unlinkSync, lstatSync, readFileSync, realpathSync } from 'node:fs'
+import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { PRICING, POLICY, ensure, price } from './pricing.mjs'
 
@@ -8,7 +8,7 @@ const openLedgerDirectories = new WeakMap()
 export function assertLedgerLease(ledger, directory) {
   const lease = openLedgerDirectories.get(ledger)
   ensure(lease && lease.isOpen(), 'LEDGER_LEASE_REQUIRED')
-  ensure(lease.directory === directory, 'SIDECAR_DIRECTORY_MISMATCH')
+  ensure(lease.directory === realpathSync(directory), 'SIDECAR_DIRECTORY_MISMATCH')
 }
 
 // The canonical CLI path is shared across worktrees. Hold an exclusive process
@@ -80,6 +80,6 @@ export function openLedger(path) {
     snapshot() { check(); return structuredClone(state) },
     close() { if (closed) return; closed = true; closeSync(lock); if (!broken) unlinkSync(path + '.lock') },
   }
-  openLedgerDirectories.set(ledger, { directory: resolve(dirname(path)), isOpen: () => !closed && !broken })
+  openLedgerDirectories.set(ledger, { directory: realpathSync(dirname(path)), isOpen: () => !closed && !broken })
   return Object.freeze(ledger)
 }

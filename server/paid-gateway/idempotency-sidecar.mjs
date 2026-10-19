@@ -1,5 +1,5 @@
 import { createHmac, createHash } from 'node:crypto'
-import { closeSync, fsyncSync, lstatSync, openSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
+import { closeSync, fsyncSync, lstatSync, openSync, readFileSync, realpathSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { assertLedgerLease } from './ledger.mjs'
@@ -49,7 +49,7 @@ function validateState(state, maxClaims) {
 }
 
 export function openIdempotencySidecar({ ledger, directory, bindingKey, maxClaims = DEFAULT_MAX_CLAIMS } = {}) {
-  const resolvedDirectory = resolve(directory ?? '')
+  const resolvedDirectory = realpathSync(resolve(directory ?? ''))
   assertLedgerLease(ledger, resolvedDirectory)
   ensure(Buffer.isBuffer(bindingKey) && bindingKey.length >= 32, 'IDEMPOTENCY_KEY_REQUIRED')
   bindingKey = Buffer.from(bindingKey)
@@ -57,6 +57,19 @@ export function openIdempotencySidecar({ ledger, directory, bindingKey, maxClaim
   const keyCheck = tag(bindingKey, 'blockcraft-paid-idempotency-key-check-v1')
 
   const path = join(resolvedDirectory, '.paid-idempotency.json')
+  // A ledger lock protects one ledger file, not this directory-wide store.
+  // An OS lease also excludes other ledger paths/processes and path aliases.
+  // Stale leases are never automatically recovered.
+  const lockPath = path + '.lock'
+  let lock
+  try {
+    lock = openSync(lockPath, 'wx', 0o600)
+    fsyncSync(lock)
+  } catch {
+    if (lock !== undefined) closeSync(lock)
+    failClosed('IDEMPOTENCY_LOCKED')
+  }
+  const release = () => { closeSync(lock); unlinkSync(lockPath) }
   let state
   let closed = false
   let broken = false
@@ -74,6 +87,8 @@ export function openIdempotencySidecar({ ledger, directory, bindingKey, maxClaim
     validateState(state, maxClaims)
     ensure(state.keyCheck === keyCheck, 'IDEMPOTENCY_KEY_MISMATCH')
   } catch (error) {
+    release()
+    bindingKey.fill(0)
     if (error.code?.startsWith('IDEMPOTENCY_')) throw error
     failClosed()
   }
@@ -107,7 +122,12 @@ export function openIdempotencySidecar({ ledger, directory, bindingKey, maxClaim
       try { return ledger.reserve(inputBound, outputBound, requestHash) }
       catch (error) { throw error }
     },
-    close() { closed = true },
+    close() {
+      if (closed) return
+      closed = true
+      bindingKey.fill(0)
+      release()
+    },
     snapshot() { check(); return structuredClone(state) },
   })
 }
