@@ -64,7 +64,7 @@ def main():
              "",
              "| PR | 状态 | HEAD |",
              "|---|---|---|"]
-    lines.extend(f"| #{p['number']} | {'Draft' if p['draft'] else 'Open'} | \`{p['head']['sha'][:12]}\` |" for p in selected)
+    lines.extend(f"| #{p['number']} | {'Draft' if p['draft'] else 'Open'} | `{p['head']['sha'][:12]}` |" for p in selected)
     lines += ["", "**最近的 Agent 报告**"]
     for role in ROLES:
         item = last_reports.get(role)
