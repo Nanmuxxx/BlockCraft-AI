@@ -1,0 +1,84 @@
+{
+  "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+  "startedAt": "2026-10-19T02:18:28.278Z",
+  "zipSha256": "f3fdc43d9673ce69c6b944b98f1a852c26bc711087e8084c402a426582584fa7",
+  "zipBytes": 39519,
+  "files": [
+    "README.md",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "provenance.json",
+    "src/App.tsx",
+    "src/components/FormBlock.tsx",
+    "src/components/ListBlock.tsx",
+    "src/components/MetricBlock.tsx",
+    "src/data.ts",
+    "src/main.tsx",
+    "src/model.ts",
+    "src/styles.css",
+    "tsconfig.json",
+    "vite.config.ts"
+  ],
+  "dir": "/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/phase2-independent-lWrhGk",
+  "cache": "/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/phase2-npm-cache-mBSkXp",
+  "source": "real Workshop UI download, builtin only",
+  "realModelCalls": 0,
+  "checks": [
+    "fresh online npm ci without ignore-scripts; empty cache/config; lock matches manifest"
+  ],
+  "commands": [
+    {
+      "command": [
+        "npm",
+        "ci"
+      ],
+      "exit": 0,
+      "signal": null,
+      "log": "command-0.log"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exit": 0,
+      "signal": null,
+      "log": "command-1.log"
+    }
+  ],
+  "viewports": [
+    {
+      "width": 1366,
+      "status": "PASS",
+      "checks": [
+        "Create/read; form reset; row count +1",
+        "prefill; cancel preserves original",
+        "UI update same ID/no duplicate; hidden legal scalar preserved (test-only callback seed/read)",
+        "invalid ID edit/update callbacks reject with alert; no data overwrite/append (fault injection)",
+        "delete active edit clears editor",
+        "ordinary delete; empty list",
+        "refresh restores exact exported initial rows, no editor; no viewport overflow"
+      ]
+    },
+    {
+      "width": 390,
+      "status": "PASS",
+      "checks": [
+        "Create/read; form reset; row count +1",
+        "prefill; cancel preserves original",
+        "UI update same ID/no duplicate; hidden legal scalar preserved (test-only callback seed/read)",
+        "invalid ID edit/update callbacks reject with alert; no data overwrite/append (fault injection)",
+        "delete active edit clears editor",
+        "ordinary delete; empty list",
+        "refresh restores exact exported initial rows, no editor; no viewport overflow"
+      ]
+    }
+  ],
+  "external": [],
+  "errors": [],
+  "browser": "156.0.8078.4",
+  "status": "PASS",
+  "finishedAt": "2026-10-19T02:18:39.805Z"
+}

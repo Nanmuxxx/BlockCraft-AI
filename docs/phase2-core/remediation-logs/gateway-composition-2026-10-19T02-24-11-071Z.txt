@@ -1,0 +1,51 @@
+✖ v1: real gateway implementation composes auth, validation and durable budget with mock egress (22.391833ms)
+✖ v2: real gateway implementation composes auth, validation and durable budget with mock egress (14.988708ms)
+✖ legacy model alias is rejected before network/reservation; matching CustomBlock model contract is explicit (21.210916ms)
+✔ Mochi native egress rejects and explicit matching gateway produces validated advice offline (39.966125ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 1
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 280.550792
+
+✖ failing tests:
+
+test at tests/phase2-core/gateway-composition.test.mjs:38:3
+✖ v1: real gateway implementation composes auth, validation and durable budget with mock egress (22.391833ms)
+  Error: ACCESS_CONFIGURATION
+      at createLocalAccess (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-core-remediation/server/paid-gateway/access.mjs:5:73)
+      at serve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-core-remediation/tests/phase2-core/gateway-composition.test.mjs:29:23)
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-core-remediation/tests/phase2-core/gateway-composition.test.mjs:39:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at tests/phase2-core/gateway-composition.test.mjs:38:3
+✖ v2: real gateway implementation composes auth, validation and durable budget with mock egress (14.988708ms)
+  Error: ACCESS_CONFIGURATION
+      at createLocalAccess (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-core-remediation/server/paid-gateway/access.mjs:5:73)
+      at serve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-core-remediation/tests/phase2-core/gateway-composition.test.mjs:29:23)
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-core-remediation/tests/phase2-core/gateway-composition.test.mjs:39:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests/phase2-core/gateway-composition.test.mjs:49:1
+✖ legacy model alias is rejected before network/reservation; matching CustomBlock model contract is explicit (21.210916ms)
+  Error: ACCESS_CONFIGURATION
+      at createLocalAccess (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-core-remediation/server/paid-gateway/access.mjs:5:73)
+      at serve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-core-remediation/tests/phase2-core/gateway-composition.test.mjs:29:23)
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-core-remediation/tests/phase2-core/gateway-composition.test.mjs:50:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

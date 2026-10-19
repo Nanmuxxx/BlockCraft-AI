@@ -48,3 +48,10 @@ Viewer 的 TSX 构建/隔离执行验收仍是独立前提；安装或 source-pl
 - Viewer 团队：提供独立 build/isolation 验收；ZIP 团队：维持拒绝策略与导出模板所有权。
 
 本聊天 `REAL_MODEL_CALLS=0`。Fixture 测试仅证明协议/状态边界，不证明真实模型质量、浏览器或部署通过。
+
+
+## Exact paid model / audit composition follow-up
+
+#44 model-contract owner patch requires explicit PRICING.model for entry/Mochi/CustomBlock and the same createPaidTransport plus canonical ledger. Historic defaults remain offline-compatible, reject before paid reservation/network; no alias rewrite. Core code 2d6f8ce2c282803e9f39270252e8395d3b6e77cb includes exact single-line CustomBlock allowlist patch and owner audit-boundary remediation. onResponse(safeEnvelope, {id, requestHash, signal}) receives fixed approved model, cloned safe content and cancellation signal; async wait shares transport deadline. Trusted callback must cooperate with signal for its own side effects; late result is ignored, settled usage/reservation not refunded. Malicious or synchronously blocking server callbacks are outside sandbox guarantees. Ordinary startup remains paid-disabled. Docker and independent final QA remain BLOCKED.
+
+Final default-model supersession: constructor model wins; entry/Mochi environment override is next; otherwise defaultModelForTransport(fetchImpl). Exact branded paid transport defaults PRICING.model; trusted ordinary offline adapters retain legacy. CustomBlock never reads environment. Explicit invalid model/old alias is rejected by paid gateway before reservation/network. Owner verified actual Core entry patch; no authentication/permission budget changes. #46 curated runtime packaging is incorporated; final-image CI still mandatory.

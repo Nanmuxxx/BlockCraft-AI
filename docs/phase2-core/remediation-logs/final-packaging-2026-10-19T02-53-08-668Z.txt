@@ -1,0 +1,257 @@
+{
+  "entry": "server/index.mjs",
+  "scope": "Literal imports, require and import.meta.url file reads; COPY coverage only. Docker context exclusions require separate review.",
+  "files": [
+    {
+      "file": "dist/",
+      "build": true,
+      "runtime": true,
+      "bytes": 160
+    },
+    {
+      "file": "server/.generated/appSpecValidation.js",
+      "build": true,
+      "runtime": true,
+      "bytes": 10787
+    },
+    {
+      "file": "server/ai-abort.mjs",
+      "build": false,
+      "runtime": false,
+      "bytes": 800
+    },
+    {
+      "file": "server/aiGenerationPrompt.mjs",
+      "build": true,
+      "runtime": true,
+      "bytes": 6588
+    },
+    {
+      "file": "server/aiGenerationQuality.mjs",
+      "build": true,
+      "runtime": true,
+      "bytes": 11416
+    },
+    {
+      "file": "server/index.mjs",
+      "build": true,
+      "runtime": true,
+      "bytes": 16328
+    },
+    {
+      "file": "server/mochi-ai/http.mjs",
+      "build": true,
+      "runtime": true,
+      "bytes": 5629
+    },
+    {
+      "file": "server/mochi-ai/index.mjs",
+      "build": true,
+      "runtime": true,
+      "bytes": 684
+    },
+    {
+      "file": "server/mochi-ai/provider.mjs",
+      "build": true,
+      "runtime": true,
+      "bytes": 5818
+    },
+    {
+      "file": "server/mochi-ai/service.mjs",
+      "build": true,
+      "runtime": true,
+      "bytes": 9682
+    },
+    {
+      "file": "server/paid-gateway/access.mjs",
+      "build": false,
+      "runtime": false,
+      "bytes": 1442
+    },
+    {
+      "file": "server/paid-gateway/egress.mjs",
+      "build": false,
+      "runtime": false,
+      "bytes": 441
+    },
+    {
+      "file": "server/paid-gateway/pricing.mjs",
+      "build": false,
+      "runtime": false,
+      "bytes": 1281
+    },
+    {
+      "file": "server/paid-gateway/provider.mjs",
+      "build": false,
+      "runtime": false,
+      "bytes": 6444
+    },
+    {
+      "file": "server/trusted-interactive.mjs",
+      "build": true,
+      "runtime": true,
+      "bytes": 4291
+    },
+    {
+      "file": "src/integrations/mochi-ai/protocol.mjs",
+      "build": true,
+      "runtime": true,
+      "bytes": 7301
+    },
+    {
+      "file": "src/model/appSpec.ts",
+      "build": true,
+      "runtime": true,
+      "bytes": 2029
+    },
+    {
+      "file": "src/model/trustedInteractive.schema.json",
+      "build": true,
+      "runtime": true,
+      "bytes": 1255
+    }
+  ],
+  "edges": [
+    {
+      "from": "server/index.mjs",
+      "to": "server/ai-abort.mjs"
+    },
+    {
+      "from": "server/index.mjs",
+      "to": "server/paid-gateway/access.mjs"
+    },
+    {
+      "from": "server/index.mjs",
+      "to": "server/paid-gateway/egress.mjs"
+    },
+    {
+      "from": "server/index.mjs",
+      "to": "server/paid-gateway/provider.mjs"
+    },
+    {
+      "from": "server/paid-gateway/provider.mjs",
+      "to": "server/paid-gateway/pricing.mjs"
+    },
+    {
+      "from": "server/index.mjs",
+      "to": "server/trusted-interactive.mjs"
+    },
+    {
+      "from": "server/trusted-interactive.mjs",
+      "to": "server/.generated/appSpecValidation.js"
+    },
+    {
+      "from": "server/trusted-interactive.mjs",
+      "to": "server/ai-abort.mjs"
+    },
+    {
+      "from": "server/trusted-interactive.mjs",
+      "to": "src/model/trustedInteractive.schema.json"
+    },
+    {
+      "from": "server/index.mjs",
+      "to": "server/mochi-ai/index.mjs"
+    },
+    {
+      "from": "server/mochi-ai/index.mjs",
+      "to": "server/mochi-ai/provider.mjs"
+    },
+    {
+      "from": "server/mochi-ai/provider.mjs",
+      "to": "server/paid-gateway/egress.mjs"
+    },
+    {
+      "from": "server/mochi-ai/provider.mjs",
+      "to": "src/integrations/mochi-ai/protocol.mjs"
+    },
+    {
+      "from": "server/mochi-ai/provider.mjs",
+      "to": "server/ai-abort.mjs"
+    },
+    {
+      "from": "server/mochi-ai/index.mjs",
+      "to": "server/mochi-ai/service.mjs"
+    },
+    {
+      "from": "server/mochi-ai/service.mjs",
+      "to": "src/integrations/mochi-ai/protocol.mjs"
+    },
+    {
+      "from": "server/mochi-ai/service.mjs",
+      "to": "server/mochi-ai/provider.mjs"
+    },
+    {
+      "from": "server/mochi-ai/service.mjs",
+      "to": "server/ai-abort.mjs"
+    },
+    {
+      "from": "server/mochi-ai/index.mjs",
+      "to": "server/mochi-ai/http.mjs"
+    },
+    {
+      "from": "server/mochi-ai/http.mjs",
+      "to": "src/integrations/mochi-ai/protocol.mjs"
+    },
+    {
+      "from": "server/mochi-ai/http.mjs",
+      "to": "server/ai-abort.mjs"
+    },
+    {
+      "from": "server/index.mjs",
+      "to": "server/.generated/appSpecValidation.js"
+    },
+    {
+      "from": "server/index.mjs",
+      "to": "server/aiGenerationPrompt.mjs"
+    },
+    {
+      "from": "server/aiGenerationPrompt.mjs",
+      "to": "src/model/appSpec.ts"
+    },
+    {
+      "from": "server/index.mjs",
+      "to": "server/aiGenerationQuality.mjs"
+    },
+    {
+      "from": "server/aiGenerationQuality.mjs",
+      "to": "server/.generated/appSpecValidation.js"
+    },
+    {
+      "from": "server/index.mjs",
+      "to": "dist/"
+    }
+  ],
+  "missing": [
+    {
+      "file": "server/ai-abort.mjs",
+      "build": false,
+      "runtime": false,
+      "bytes": 800
+    },
+    {
+      "file": "server/paid-gateway/access.mjs",
+      "build": false,
+      "runtime": false,
+      "bytes": 1442
+    },
+    {
+      "file": "server/paid-gateway/egress.mjs",
+      "build": false,
+      "runtime": false,
+      "bytes": 441
+    },
+    {
+      "file": "server/paid-gateway/pricing.mjs",
+      "build": false,
+      "runtime": false,
+      "bytes": 1281
+    },
+    {
+      "file": "server/paid-gateway/provider.mjs",
+      "build": false,
+      "runtime": false,
+      "bytes": 6444
+    }
+  ],
+  "status": "BLOCKED"
+}

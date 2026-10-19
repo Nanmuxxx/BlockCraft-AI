@@ -1,0 +1,41 @@
+{
+  "sourcePR": 44,
+  "originalHead": "da212774b7022f95c036b1167ae2d204f65080bc",
+  "modelContractHead": "8ddac045125506f7129593b9d07fb0d50f9d72d3",
+  "originalEntryOwnerPatch": "docs/phase2-core/OWNER-ENTRY-COMPOSITION.patch",
+  "entries": [
+    {
+      "path": "docs/acceptance/phase2-deepseek/core-entry-composition.patch",
+      "blob": "ade666ded170ecfd56980f022c6bc849465040a8"
+    },
+    {
+      "path": "server/paid-gateway/README.md",
+      "blob": "1dee1dfaaff77bd7a782155b6e9c1d703c6d5639"
+    },
+    {
+      "path": "server/paid-gateway/access.mjs",
+      "blob": "bc63d70d7cb016b83b4fe9a77c4a0732c1fc369a"
+    },
+    {
+      "path": "server/paid-gateway/egress.mjs",
+      "blob": "ebf49a86b5a051f71b93f99a142b270055eb4703"
+    },
+    {
+      "path": "server/paid-gateway/ledger.mjs",
+      "blob": "cc73b0f8b859c5890a6d18fcf272c993f3077d97"
+    },
+    {
+      "path": "server/paid-gateway/pricing.mjs",
+      "blob": "506b32487cabd481409cfe304d771b1e214c0273"
+    },
+    {
+      "path": "server/paid-gateway/provider.mjs",
+      "blob": "58000e5ae38eeb23a760de550765c3987969afac"
+    },
+    {
+      "path": "tests/paid-gateway/security.test.mjs",
+      "blob": "d2565dd4fc5dd15f93e6623c8b34d19f81fae477"
+    }
+  ],
+  "note": "Formal remote source and exact patch read. Original module hashes compared against local 4a662f98; subsequent owner model-contract changes recorded separately."
+}

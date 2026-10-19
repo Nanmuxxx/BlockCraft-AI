@@ -1,0 +1,15 @@
+{
+  "testedSha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+  "remoteHead": "1e5ac96ac60404549bc8405f07185d51b6eb706e",
+  "productionBlobDifferences": [],
+  "allFileDifferences": [
+    "PHASE2-CORE-INTEGRATION-REPORT.md",
+    "PHASE2-CORE-INTERFACES.md",
+    "docs/phase2-core/PRE-REMEDIATION-REPORT.md",
+    "docs/phase2-core/remediation-logs/baseline-2026-10-19T02-15-30-630Z.txt",
+    "docs/phase2-core/remediation-logs/commands.jsonl",
+    "docs/phase2-core/remediation-logs/gateway-security-money-cap-2026-10-19T02-17-18-018Z.txt",
+    "tests/paid-gateway/security.test.mjs"
+  ],
+  "method": "GitHub recursive tree blob IDs compared to local git ls-tree; no new execution attributed to remote SHA"
+}

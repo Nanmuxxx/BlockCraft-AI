@@ -1,0 +1,5 @@
+{
+  "status": "REQUIRES_CONTAINER_ACCEPTANCE",
+  "exitCode": 2,
+  "reason": "Curated runtime-server staging is outside this COPY-only auditor; run Docker owner final-image ESM and HTTP acceptance."
+}

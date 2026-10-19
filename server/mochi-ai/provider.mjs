@@ -1,5 +1,6 @@
 import { requireControlledEgress } from '../paid-gateway/egress.mjs'
 import { LIMITS, MochiError, bytes, validateAdvice, validateRequest } from '../../src/integrations/mochi-ai/protocol.mjs'
+import { defaultModelForTransport } from '../paid-gateway/provider.mjs'
 import { abortable } from '../ai-abort.mjs'
 export const ENDPOINT = 'https://api.deepseek.com/chat/completions'
 export const MAX_OUTPUT_TOKENS = 1024
@@ -25,7 +26,7 @@ async function readBounded(response, signal) {
   } finally { void reader.cancel().catch(() => {}); reader.releaseLock() }
 }
 /** Same existing server env/endpoint/model. No new key store, retries or fallback. */
-export function createDeepSeekProvider({ apiKey = process.env.DEEPSEEK_API_KEY?.trim(), model = process.env.DEEPSEEK_MODEL?.trim() || 'deepseek-v4-flash', fetchImpl = globalThis.fetch, timeoutMs = 20_000 } = {}) {
+export function createDeepSeekProvider({ apiKey = process.env.DEEPSEEK_API_KEY?.trim(), fetchImpl = globalThis.fetch, model = process.env.DEEPSEEK_MODEL?.trim() || defaultModelForTransport(fetchImpl), timeoutMs = 20_000 } = {}) {
   return { configured: Boolean(apiKey), model, async analyze(rawInput, { signal } = {}) {
     const input = validateRequest(rawInput)
     if (!apiKey) throw new MochiError('AI_NOT_CONFIGURED', 'Mochi AI 尚未配置。', 503)

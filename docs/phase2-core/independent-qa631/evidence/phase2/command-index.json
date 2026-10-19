@@ -1,0 +1,719 @@
+[
+  {
+    "id": "admission-observer",
+    "command": [
+      "node",
+      "tests/phase2-qa/admission-observer.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:18:27.396Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/admission-observer.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:18:27.588Z"
+  },
+  {
+    "id": "build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:16:59.301Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/build.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:03.544Z"
+  },
+  {
+    "id": "cancellation-browser",
+    "command": [
+      "node",
+      "tests/generation/cancellation.browser.cjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:16.749Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/cancellation-browser.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:21.390Z"
+  },
+  {
+    "id": "cas",
+    "command": [
+      "npm",
+      "run",
+      "test:mochi-host"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:08.014Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/cas.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:08.471Z"
+  },
+  {
+    "id": "docker-audit",
+    "command": [
+      "node",
+      "tests/phase2-core/audit-server-packaging.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:18:39.844Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/docker-audit.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 1,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:18:40.047Z"
+  },
+  {
+    "id": "export-prepare",
+    "command": [
+      "node",
+      "tools/project-zip-export/prepare.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:04.324Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/export-prepare.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:04.630Z"
+  },
+  {
+    "id": "focused",
+    "command": [
+      "node",
+      "--test",
+      "tests/phase2-qa/generation-boundary.test.cjs",
+      "tests/phase2-qa/mochi-boundary.test.mjs",
+      "tests/phase2-qa/server-deadline.test.mjs",
+      "tests/phase2-qa/owner-sequences.test.cjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:51.643Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/focused.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:52.843Z"
+  },
+  {
+    "id": "gateway-independent",
+    "command": [
+      "node",
+      "--test",
+      "tests/phase2-qa/gateway-independent.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:50:05.267Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/gateway-independent.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+        "NIGHT_QA_OUTPUT": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 1,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:50:05.704Z"
+  },
+  {
+    "id": "generation-browser",
+    "command": [
+      "npm",
+      "run",
+      "test:generation:browser"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:09.054Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/generation-browser.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:16.626Z"
+  },
+  {
+    "id": "mochi-host-browser",
+    "command": [
+      "node",
+      "tests/mochi/browser.cjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:18:07.148Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/mochi-host-browser.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:18:23.230Z"
+  },
+  {
+    "id": "mochi-workshop-browser",
+    "command": [
+      "node",
+      "tests/mochi-ai/workshop-browser.cjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:36.439Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/mochi-workshop-browser.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:18:07.113Z"
+  },
+  {
+    "id": "pomodoro-browser",
+    "command": [
+      "node",
+      "tests/trusted-pomodoro-ui/browser.cjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:21.426Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/pomodoro-browser.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:31.999Z"
+  },
+  {
+    "id": "pomodoro-races",
+    "command": [
+      "node",
+      "tests/trusted-pomodoro-ui/races.browser.cjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:32.038Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/pomodoro-races.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:36.404Z"
+  },
+  {
+    "id": "pr44-replay-browser",
+    "command": [
+      "node",
+      "tests/phase2-qa/replay44.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:49:40.162Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/pr44-replay-browser.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+        "NIGHT_QA_OUTPUT": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:49:54.985Z"
+  },
+  {
+    "id": "pr44-samples",
+    "command": [
+      "node",
+      "--test",
+      "tests/phase2-qa/real-samples44.test.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:49:18.991Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/pr44-samples.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+        "NIGHT_QA_OUTPUT": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:49:19.275Z"
+  },
+  {
+    "id": "pr44-security",
+    "command": [
+      "node",
+      "--test",
+      "tests/phase2-qa/security44.test.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:49:15.554Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/pr44-security.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+        "NIGHT_QA_OUTPUT": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:49:18.953Z"
+  },
+  {
+    "id": "protocol-prepare",
+    "command": [
+      "node",
+      "server/custom-block/build-protocol.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:03.906Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/protocol-prepare.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:04.292Z"
+  },
+  {
+    "id": "security",
+    "command": [
+      "node",
+      "--test",
+      "tests/paid-gateway/security.test.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:04.665Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/security.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:07.972Z"
+  },
+  {
+    "id": "server-prepare",
+    "command": [
+      "npm",
+      "--prefix",
+      "server",
+      "run",
+      "build"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:03.581Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/server-prepare.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:03.875Z"
+  },
+  {
+    "id": "standalone",
+    "command": [
+      "node",
+      "tests/phase2-qa/standalone.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:18:27.930Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/standalone.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:18:39.811Z"
+  },
+  {
+    "id": "workshop-browser",
+    "command": [
+      "npm",
+      "run",
+      "test:workshop-export:browser"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:18:23.262Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/workshop-browser.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_OPTIONS": "--require=/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/tests/phase2-qa/no-paid.cjs",
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:18:27.898Z"
+  },
+  {
+    "id": "zip",
+    "command": [
+      "node",
+      "--test",
+      "tests/project-zip-export/export.test.mjs"
+    ],
+    "cwd": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631",
+    "sha": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+    "node": "v24.22.0",
+    "startedAt": "2026-10-19T02:17:08.505Z",
+    "log": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa631/evidence/phase2/commands/zip.log",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0",
+      "timezone": "Asia/Shanghai",
+      "npm": "11.19.1",
+      "executable": "/usr/local/bin/node",
+      "qa": {
+        "NODE_PATH": "/Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-qa/.cache/phase2-browser-runtime/node_modules",
+        "NIGHT_QA_OUTPUT": "evidence/phase2/commands",
+        "GENERATION_QA_OUTPUT": "evidence/phase2/generation",
+        "MOCHI_QA_OUTPUT": "evidence/phase2/mochi-host",
+        "TRUSTED_UI_EVIDENCE": "evidence/phase2/pomodoro",
+        "TRUSTED_UI_RACE_EVIDENCE": "evidence/phase2/pomodoro-races",
+        "EXPORT_QA_OUTPUT": "evidence/phase2/workshop"
+      }
+    },
+    "workingTree": "?? evidence/\n?? tests/phase2-qa/",
+    "exitCode": 0,
+    "signal": null,
+    "finishedAt": "2026-10-19T02:17:09.020Z"
+  }
+]

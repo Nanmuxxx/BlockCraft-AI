@@ -1,0 +1,37 @@
+{
+  "repositoryHead": "63197299ab85330a63dc9af8525d5c5e8d78b48c",
+  "scope": "formal /ai-create, real local HTTP/proxy, injected offline upstream ignoring abort",
+  "realModelCalls": 0,
+  "cases": [
+    {
+      "width": 1366,
+      "httpCalls": 6,
+      "upstreamCalls": 6,
+      "bodyCancels": 1,
+      "cancelledRecordsRetained": true,
+      "lateSuccessCannotReplace": true,
+      "lateRejectionConsumed": true,
+      "navigationCancels": true,
+      "reloadPersistence": false,
+      "errors": [],
+      "external": [],
+      "assetFailures": []
+    },
+    {
+      "width": 390,
+      "httpCalls": 6,
+      "upstreamCalls": 6,
+      "bodyCancels": 1,
+      "cancelledRecordsRetained": true,
+      "lateSuccessCannotReplace": true,
+      "lateRejectionConsumed": true,
+      "navigationCancels": true,
+      "reloadPersistence": false,
+      "errors": [],
+      "external": [],
+      "assetFailures": []
+    }
+  ],
+  "browser": "156.0.8078.4",
+  "nodeUnhandledRejections": []
+}

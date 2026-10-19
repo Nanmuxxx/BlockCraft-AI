@@ -1,6 +1,7 @@
 import { requireControlledEgress } from '../paid-gateway/egress.mjs'
 import { GenerationError, ensure, LIMITS } from './protocol.mjs'
 import { buildMessages } from './contract.mjs'
+import { defaultModelForTransport } from '../paid-gateway/provider.mjs'
 import { abortable } from '../ai-abort.mjs'
 
 const ENDPOINT = 'https://api.deepseek.com/chat/completions'
@@ -37,10 +38,10 @@ async function readEnvelope(response, controller) {
 }
 
 /** Server-only explicit paid-call boundary. Construction is default denied; no env read. */
-export function createDeepSeekProvider({ allowPaid = false, apiKey, model = 'deepseek-v4-flash', fetchImpl = globalThis.fetch, timeoutMs = LIMITS.timeoutMs } = {}) {
+export function createDeepSeekProvider({ allowPaid = false, apiKey, fetchImpl = globalThis.fetch, model = defaultModelForTransport(fetchImpl), timeoutMs = LIMITS.timeoutMs } = {}) {
   ensure(allowPaid === true, 'PAID_API_DISABLED')
   ensure(typeof apiKey === 'string' && apiKey.length > 0 && apiKey.length <= 512 && !/[\s\x00-\x1f]/u.test(apiKey), 'API_CONFIGURATION')
-  ensure(['deepseek-v4-flash', 'deepseek-chat'].includes(model) && typeof fetchImpl === 'function', 'API_CONFIGURATION')
+  ensure(['deepseek-flash', 'deepseek-v4-flash', 'deepseek-chat'].includes(model) && typeof fetchImpl === 'function', 'API_CONFIGURATION')
   ensure(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= LIMITS.timeoutMs, 'API_CONFIGURATION')
   requireControlledEgress(fetchImpl)
   // No key on the public object, in prompts, persisted metadata, logs or errors.

@@ -1,0 +1,164 @@
+
+> blockcraft-ai@0.1.0 test:workshop-export:browser
+> node tools/project-zip-export/prepare.mjs && node tests/workshop-export/browser.cjs
+
+10:18:24 AM [vite] (client) Re-optimizing dependencies because vite config has changed
+{
+  "browser": "Chromium",
+  "generation": "fixed offline HTTP response on real /ai-create; no model calls",
+  "cases": [
+    {
+      "width": 1366,
+      "passed": true,
+      "builtinZip": {
+        "label": "builtin-c",
+        "revision": 4,
+        "bytes": 39519,
+        "sha256": "f3fdc43d9673ce69c6b944b98f1a852c26bc711087e8084c402a426582584fa7",
+        "files": [
+          "README.md",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "mixedZip": {
+        "label": "mixed-b",
+        "revision": 6,
+        "bytes": 40595,
+        "sha256": "9e24ba02eadaffe4cb560e9b1e6383a22bbd157c8aea4cd6f6c2b217ab08191d",
+        "files": [
+          "README.md",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/components/custom/a0/Counter.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "checks": [
+        "creation",
+        "Inspector field edit",
+        "form/list create-update-delete",
+        "metric updates",
+        "B/C retention",
+        "B and C real ZIP downloads + CRC + central directory + required files",
+        "package build scripts and pinned versions",
+        "exact digest, project revision and edited props",
+        "export revision unchanged",
+        "stale snapshot blocks download",
+        "non-empty stateSchema blocks whole ZIP",
+        "Mochi conversation panel remains visible and disabled",
+        "single Mochi mount",
+        "no CustomBlock execution",
+        "no horizontal overflow",
+        "no external requests"
+      ]
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "builtinZip": {
+        "label": "builtin-c",
+        "revision": 4,
+        "bytes": 39519,
+        "sha256": "4920e8732f39cc3c550a5541fb82c274f47a2e165175dd26f45771a31c0c2feb",
+        "files": [
+          "README.md",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "mixedZip": {
+        "label": "mixed-b",
+        "revision": 6,
+        "bytes": 40595,
+        "sha256": "904110529cf2562f80078c8041ddf608f07cc2457113c5a465665e6a24d6743c",
+        "files": [
+          "README.md",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/components/custom/a0/Counter.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "checks": [
+        "creation",
+        "Inspector field edit",
+        "form/list create-update-delete",
+        "metric updates",
+        "B/C retention",
+        "B and C real ZIP downloads + CRC + central directory + required files",
+        "package build scripts and pinned versions",
+        "exact digest, project revision and edited props",
+        "export revision unchanged",
+        "stale snapshot blocks download",
+        "non-empty stateSchema blocks whole ZIP",
+        "Mochi conversation panel remains visible and disabled",
+        "single Mochi mount",
+        "no CustomBlock execution",
+        "no horizontal overflow",
+        "no external requests"
+      ]
+    },
+    {
+      "surface": "ordinary dev",
+      "passed": true,
+      "enabled": false,
+      "endpointStatus": 404
+    },
+    {
+      "surface": "production preview",
+      "passed": true,
+      "enabled": false,
+      "endpointStatus": 404
+    }
+  ],
+  "errors": [],
+  "paidCalls": 0,
+  "version": "156.0.8078.4"
+}

@@ -1,0 +1,59 @@
+10:17:36 AM [vite] (client) Re-optimizing dependencies because vite config has changed
+{
+  "browser": "Chromium",
+  "route": "/ai-create",
+  "provider": "injected fixed offline HTTP envelopes",
+  "paidCalls": 0,
+  "cases": [
+    {
+      "width": 1366,
+      "mobile": false,
+      "passed": true,
+      "analyzeRequests": 6,
+      "checks": [
+        "status failure and retry recovery",
+        "production disabled reason persists",
+        "one Mochi Host UI",
+        "mixed immutable metadata privacy",
+        "no unconsented selection/layout/mode egress",
+        "manual chat through real server/provider/schema/client",
+        "trusted focus",
+        "continue and ignore",
+        "revoked settled event cannot revive after regrant",
+        "new explicit opt-in event",
+        "opt-out",
+        "durable fee rejection zero provider calls",
+        "provider failure visible",
+        "modification composer remains disabled",
+        "no overflow or iframe"
+      ]
+    },
+    {
+      "width": 390,
+      "mobile": "Chromium mobile viewport and touch emulation; not a physical phone",
+      "passed": true,
+      "analyzeRequests": 6,
+      "checks": [
+        "status failure and retry recovery",
+        "production disabled reason persists",
+        "one Mochi Host UI",
+        "mixed immutable metadata privacy",
+        "no unconsented selection/layout/mode egress",
+        "manual chat through real server/provider/schema/client",
+        "trusted focus",
+        "continue and ignore",
+        "revoked settled event cannot revive after regrant",
+        "new explicit opt-in event",
+        "opt-out",
+        "durable fee rejection zero provider calls",
+        "provider failure visible",
+        "modification composer remains disabled",
+        "no overflow or iframe"
+      ]
+    }
+  ],
+  "errors": [],
+  "outbound": [],
+  "offlineProviderCalls": 10,
+  "reservations": 12
+}

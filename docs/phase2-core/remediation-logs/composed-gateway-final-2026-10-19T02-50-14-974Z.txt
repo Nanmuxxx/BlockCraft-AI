@@ -1,0 +1,44 @@
+✔ paid provider construction and future CLI fail closed without explicit gates (124.974542ms)
+✔ mock transport receives fixed HTTPS endpoint, no redirects, bounded JSON request, server-only key (10.731084ms)
+✔ provider rejects no choices (0.251417ms)
+✔ provider rejects too many choices (0.210375ms)
+✔ provider rejects truncated (0.174667ms)
+✔ provider rejects refusal (0.167916ms)
+✔ provider rejects tool call (0.124125ms)
+✔ provider rejects not text (0.142125ms)
+✔ provider rejects wrong role (0.116333ms)
+✔ provider rejects mixed error and content (0.151708ms)
+✔ provider rejects false refusal (0.195959ms)
+✔ provider rejects null tool call (0.1205ms)
+✔ HTTP errors and transport failures are redacted and never retried (0.206792ms)
+✔ declared, streamed and content byte limits are independently enforced (1.094083ms)
+✔ invalid UTF8 and malformed envelope JSON fail closed (0.196375ms)
+✔ timeout bounds both connection and response body; aborts transport (32.247083ms)
+✔ timeout releases late and hanging response bodies; early HTTP/size rejection also cancels (22.819875ms)
+✔ caller cancellation rejects before fetch and retires ignored transport with late body cleanup (0.342167ms)
+✔ caller cancellation retires a nonsettling upstream body without awaiting its cancel (0.17025ms)
+✔ legacy model names fail before reservation/network in all three consumers; no alias rewriting (57.4745ms)
+✔ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (222.466333ms)
+✔ anonymous legacy and v2 (no Origin, forged Host/XFF/Origin/body approval) reject before Provider (23.472667ms)
+✔ default disabled even with injected Provider/key; untrusted auth exceptions and late identity fail closed (2007.127042ms)
+✔ all native Provider defaults blocked without controlled transport (4.484666ms)
+✔ durable reserve precedes one fixed official request; no caller headers, tools, retries or secret audit (39.481166ms)
+✔ concurrent attempts rejected before Provider and before a second reservation (36.772708ms)
+✔ request policy rejects other endpoint/model/tools/token limits and oversized input with zero network (20.266083ms)
+✔ durable call cap survives reopen and reservations never refunded (130.260916ms)
+✔ conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10 (84.542375ms)
+✔ missing or over-bound usage halts automatic calls permanently; no refund (193.713667ms)
+✔ unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt (555.346083ms)
+✔ exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed (49.162167ms)
+✔ v1: real gateway implementation composes auth, validation and durable budget with mock egress (237.992916ms)
+✔ v2: real gateway implementation composes auth, validation and durable budget with mock egress (146.233792ms)
+✔ legacy model alias is rejected before network/reservation; matching CustomBlock model contract is explicit (22.346917ms)
+✔ Mochi native egress rejects and explicit matching gateway produces validated advice offline (38.4075ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3310.802209

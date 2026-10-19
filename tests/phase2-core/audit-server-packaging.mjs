@@ -17,6 +17,13 @@ for (const line of docker.replace(/\\\r?\n/g, ' ').split('\n')) {
   if (!stage || parts.some(p => /[\["*?]/.test(p))) throw Error('Unsupported COPY syntax: refresh audit')
   stages[stage].push(...parts.map(p => p.replace(/^\/app\//, '').replace(/\/$/, '')))
 }
+// The original COPY-only auditor cannot model #46's shell-staged curated tree.
+// Refuse to misreport it as missing files or container success. CI resolves the
+// actual final image import graph.
+if (stages.runtime.includes('runtime-server')) {
+  console.log(JSON.stringify({ status: 'REQUIRES_CONTAINER_ACCEPTANCE', exitCode: 2, reason: 'Curated runtime-server staging is outside this COPY-only auditor; run Docker owner final-image ESM and HTTP acceptance.' }, null, 2))
+  process.exit(2)
+}
 const copied = (file, target) => stages[target].some(source => file === source || file.startsWith(source + '/'))
 const visited = new Set()
 const edges = []
