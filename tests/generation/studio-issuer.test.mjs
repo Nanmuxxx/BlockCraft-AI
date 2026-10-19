@@ -2,6 +2,8 @@ import test, { beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, writeFileSync, rmSync, chmodSync, existsSync, readdirSync, linkSync, symlinkSync, mkdirSync } from 'node:fs'
 import { request } from 'node:http'
+import { Server } from 'node:net'
+import { join } from 'node:path'
 import { startStudioServer } from '../../server/studio-launcher.mjs'
 import { PRICING } from '../../server/paid-gateway/pricing.mjs'
 import { issuerFixture, baseURL, exchange, generate, hash } from './studio-issuer-fixture.mjs'
@@ -9,6 +11,39 @@ import { issuerFixture, baseURL, exchange, generate, hash } from './studio-issue
 beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: PRICING.expiresAt - 3600_000 }))
 function fixture(t) { const f = issuerFixture(); t.after(() => f.cleanup()); return f }
 const cookieOf = r => r.headers.get('set-cookie')?.split(';')[0]
+const macVector = JSON.parse(readFileSync(new URL('./studio-mac-vector.json', import.meta.url), 'utf8'))
+function vectorFixture(t, mac) {
+  // The expected state/MAC are fixed Python+OpenSSL results, not produced by
+  // issuerFixture, the production MAC helper or a JS HMAC calculation.
+  const f = fixture(t)
+  t.mock.timers.setTime(macVector.now)
+  f.approval.issuer = JSON.parse(macVector.grantCanonical); f.save()
+  writeFileSync(join(f.dir, 'binding.key'), Buffer.from(macVector.keyHex, 'hex'))
+  writeFileSync(f.statePath, JSON.stringify({ ...JSON.parse(macVector.stateCanonical), mac }))
+  return f
+}
+
+test('independent fixed known-answer actual LF state is accepted before listening', async t => {
+  const f = vectorFixture(t, macVector.expectedMac), before = readFileSync(f.statePath)
+  assert.equal(macVector.domainHex, '626c6f636b63726166742d73747564696f2d6973737565722d76310a')
+  assert.equal(macVector.expectedMac, '38f416ffacc3ad7d2b0a68b832dbb02bdec0c2dde2111756780ef419eb66c207')
+  const started = await f.start()
+  assert.equal(started.server.listening, true)
+  assert.equal((await fetch(baseURL(started) + '/studio/sign-in')).status, 200)
+  assert.deepEqual(readFileSync(f.statePath), before); assert.equal(f.calls, 0)
+  assert.equal((await exchange(f, started, Buffer.alloc(32).toString('base64url'))).status, 401)
+  assert.deepEqual(f.state(), { ...JSON.parse(macVector.attemptCanonical), mac: macVector.expectedAttemptMac })
+})
+
+test('independent fixed backslash+n MAC is rejected before any listen or state change', async t => {
+  const f = vectorFixture(t, macVector.backslashNMac), before = readFileSync(f.statePath)
+  assert.equal(macVector.backslashNMac, '0b92fe915842d165a13f2bdfd542ed199c04c6b485978c7f10c8a05c9a888776')
+  const listen = t.mock.method(Server.prototype, 'listen')
+  await assert.rejects(f.start())
+  assert.equal(listen.mock.callCount(), 0)
+  assert.deepEqual(readFileSync(f.statePath), before)
+  assert.equal(existsSync(f.ledgerPath + '.lock'), false); assert.equal(f.calls, 0)
+})
 
 test('all Studio launches refuse missing ledger before creating ledger, issuer state or authorization', async t => {
   for (const withIssuer of [true, false]) {

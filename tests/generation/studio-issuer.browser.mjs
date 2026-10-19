@@ -10,7 +10,7 @@ import { chromium } from 'playwright'
 import { issuerFixture, baseURL } from './studio-issuer-fixture.mjs'
 
 const certDir = mkdtempSync(join(tmpdir(), 'bc-studio-test-TLS-'))
-const evidence = resolve('tests/generation/studio-issuer-evidence')
+const evidence = resolve(process.env.STUDIO_MOCK_EVIDENCE_DIR || 'tests/generation/studio-issuer-evidence')
 mkdirSync(evidence, { recursive: true })
 execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-subj', '/CN=127.0.0.1',
   '-keyout', join(certDir, 'test.key'), '-out', join(certDir, 'test.crt')], { stdio: 'ignore' })
