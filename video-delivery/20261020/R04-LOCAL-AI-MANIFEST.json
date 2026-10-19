@@ -1,0 +1,23 @@
+{
+  "status": "INTERNAL_CANDIDATE_BLOCKED",
+  "revision": "R04",
+  "output": "VIDEO-B-105-FINAL-CUT-R04-LOCAL-AI.mp4",
+  "duration_seconds": 105.0,
+  "video": "1920x1080 30fps H.264 yuv420p",
+  "audio": "AAC mono 48kHz; copied unchanged from R03",
+  "mp4_bytes": 8383563,
+  "mp4_sha256": "9ed072a87e0d2ed83ebc5b0b5e04ecd8be2d005dd7a433a3f7992ff7fa9a7dbe",
+  "srt": "VIDEO-B-105-FINAL-CUT-R04-LOCAL-AI.srt",
+  "srt_sha256": "6a2e45b3f28e7b0281622617910752a3c9d2f31eff9749291980cf3e2705379b",
+  "change_from_r03": "Replaced only the burned-in Chinese overlay during output 00:15-00:26 with ASCII English overlay; source footage, narration, timing, subtitles unchanged.",
+  "overlay": [
+    "LOCAL REAL DEEPSEEK",
+    "ONE LOCAL CALL - PUBLIC NOT VERIFIED"
+  ],
+  "real_local_evidence_commit": "7fb98ffd401d08fcc4188a03619fb420860cc2eb",
+  "tested_code_sha": "e4d65ac77e02d41668d260c082dc2788c64b5975",
+  "scope": "one real local DeepSeek deepseek-flash request; no Mock/Replay/Fixture injected",
+  "public_deployment": "NOT_VERIFIED",
+  "submission": "NOT_AUTHORIZED",
+  "validation": "Full ffmpeg decode passed; representative 00:18 frame visually checked. Human full playback and reviewer acceptance remain pending."
+}
