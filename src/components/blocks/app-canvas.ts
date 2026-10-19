@@ -1,3 +1,4 @@
+import { readBlockPresentation } from './presentation'
 import type { ProjectState } from '../../model/appSpec'
 import type { AppBlockType, BlockModuleData } from './contract'
 
@@ -16,6 +17,7 @@ export function appBlockKind(module: BlockModuleData<string>): AppBlockType | nu
 export function toAppCanvasModules(state: ProjectState): BlockModuleData<string>[] {
   return state.spec.blocks.map(block => ({
     id: block.id, kind: block.type, name: block.name,
+    presentation: readBlockPresentation(block),
     description: APP_BLOCK_CATALOG[block.type].description,
     detail: state.spec.entities.find(entity => entity.id === state.spec.relations.find(binding => binding.blockId === block.id)?.entityId)?.name,
   }))
