@@ -1,0 +1,17 @@
+output_in,output_out,kind,source,source_in,source_out,playback_rate,crop,source_sha256,label
+0.0,8.0,image,/Users/nanmuxun/BlockAI/competition-delivery-20261019/rendered/page-02.png,,,1,,9211d70e6f8eaa1217f42034213e5b7834077341afe574db279dfdb05914a7ae,场景假设 · BP 第 2 页 · 介绍画面
+8.0,15.0,image,/Users/nanmuxun/BlockAI/competition-delivery-20261019/rendered/page-01.png,,,1,,a6f0d00f4553fc8038e21095be3372572d544d3646222e3bb94e5ee825141d77,BlockCraft AI · 品牌介绍 · BP 第 1 页
+15.0,26.0,video,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/incoming/b-handoff/raw/B-mode-original.webm,0,11,1,,aecee491073a07740cf2fd8755d9b177ff97a8b3f66877cb01a6f7cfa5633ee9,B 来源：7e94dc9 候选 | 固定离线 AppSpec · 非实时 DeepSeek
+26.0,30.3,video,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/incoming/b-handoff/raw/B-mode-original.webm,7,11.3,1,,aecee491073a07740cf2fd8755d9b177ff97a8b3f66877cb01a6f7cfa5633ee9,B 模式 · 三块内置功能积木 | 7e94dc9 候选
+30.3,33.0,video,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/incoming/b-handoff/raw/B-mode-original.webm,21,23.5,1,,aecee491073a07740cf2fd8755d9b177ff97a8b3f66877cb01a6f7cfa5633ee9,B 模式 · 拖拽布局 | 原速操作，末尾静帧停留
+33.0,40.0,video,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/incoming/b-handoff/raw/B-mode-original.webm,11.1,18,1,,aecee491073a07740cf2fd8755d9b177ff97a8b3f66877cb01a6f7cfa5633ee9,B 模式 · Inspector 修改邮箱字段 | 7e94dc9 候选
+40.0,42.0,freeze,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/incoming/b-handoff/raw/B-mode-original.webm,17.96,,1,,aecee491073a07740cf2fd8755d9b177ff97a8b3f66877cb01a6f7cfa5633ee9,Inspector 配置结果 · 原片静帧停留 | 7e94dc9 候选
+42.0,51.0,video,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/incoming/b-handoff/raw/B-mode-original.webm,23.5,32.5,1,,aecee491073a07740cf2fd8755d9b177ff97a8b3f66877cb01a6f7cfa5633ee9,B 源同一会话 · C 预览新增记录，人数 0 → 1 | 7e94dc9
+51.0,55.0,card,,,,1,,,切换素材来源 · 后续为独立会话
+55.0,72.36666666666667,video,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/incoming/c-handoff/video/c-mode-crud-demo.webm,1.2,9.88,0.5,,7952c732679056162ffc66d44b5d30c12eacdf1222901acc36c102311b7532d9,C 来源：a1fa755 候选 · 独立会话 | 连续原片 0.5× 慢放
+72.36666666666666,76.5,image,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/incoming/c-handoff/screenshots/07-edit-saved.png,,,1,900:510:120:825,dcba480f8d56ccf0d8dd9ecc45ef4fcb2ffa8f8b8c07a9deabef3e67dabafe8d,C 关键截图静态放大 · 编辑后仍为 2 人 | a1fa755
+76.5,80.0,image,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/incoming/c-handoff/screenshots/08-after-delete-metric-1.png,,,1,900:450:120:825,d9b9d4f6d40f657a47629a4b2f4a02a595f1ecaf7f8ba08df6eb29b429e05927,C 关键截图静态放大 · 删除后人数 1 | a1fa755
+80.0,84.5,image,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/incoming/c-handoff/screenshots/10-c-mode-session-restored.png,,,1,900:450:120:825,a85f2744e73457452c004289d3ab4c7b0d35acf2813e47d1063580b8a627883e,C 关键截图静态放大 · 本段会话往返后状态保留 | a1fa755
+84.5,90.0,card,,,,1,,,能力范围说明 · 无新增操作
+90.0,99.0,progress-card,/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/voice-system/r03/mochi-main-8cfa37f.png,,,1,,7210fd52b49be455c5451eed20a5530cb6179832392050f3ec6701a0b41f8d33,当前 main 4a95cae / 产品 tree 8cfa37f 技术进度文字卡；非运行录屏；B/C候选版本未统一冻结
+99.0,105.0,image,/Users/nanmuxun/BlockAI/competition-delivery-20261019/rendered/page-15.png,,,1,,300212fb90f4090c4c6f7e458d3b2c348c4eb854caaae52de400c27fb33230d6,产品愿景 · BP 第 15 页 · 非已完成能力承诺
