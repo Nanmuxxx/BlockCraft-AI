@@ -1,0 +1,29 @@
+{
+  "status": "INTERNAL_CANDIDATE_ONLY_BLOCKED",
+  "mp4": {
+    "path": "VIDEO-B-105-FINAL-CUT-R02.mp4",
+    "bytes": 9395867,
+    "sha256": "ec7235be208a9b69084d12a8e2be4e393eb58209f6c8b97c05b471a1ce745274",
+    "duration_seconds": 105.0,
+    "video": "1920x1080 30fps H.264 yuv420p",
+    "audio": "AAC mono 48kHz"
+  },
+  "srt": {
+    "path": "VIDEO-B-105-FINAL-CUT-R02.srt",
+    "sha256": "8d0b08b897f805d155573418cb93f2436f6909a8df4b8ce1dbf280f1457219ff"
+  },
+  "sources": {
+    "b": "candidate 7e94dc9; offline AppSpec Fixture; not realtime DeepSeek",
+    "c": "candidate a1fa755; independent session; 0.5x segment and static result frames labeled",
+    "online_generation": "not included; no accepted real DeepSeek/Mota Tower shot",
+    "zip": "not included",
+    "tsx": "not executed",
+    "voice": "Microsoft zh-CN-XiaoxiaoNeural; disclosure: 旁白：系统合成语音"
+  },
+  "blocking": [
+    "human full-playback/listening receipt pending",
+    "B/C functional and Mochi truth review pending",
+    "freeze/mixed-candidate approval pending",
+    "official video rules and submission authorization pending"
+  ]
+}

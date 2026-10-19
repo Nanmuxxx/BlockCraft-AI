@@ -1,7 +1,7 @@
 {
   "file": "/Users/nanmuxun/BlockAI/competition-delivery-20261019/video-production/exports/VIDEO-B-105-FINAL-CUT-R02.mp4",
-  "bytes": 9282324,
-  "sha256": "5695cc4262595c8859dbe634a9d97f222a31bd2069ee14ec0979fd899200b9a6",
+  "bytes": 9395867,
+  "sha256": "ec7235be208a9b69084d12a8e2be4e393eb58209f6c8b97c05b471a1ce745274",
   "duration": "00:01:45.00",
   "frames": 3150,
   "spec": "1920x1080 30fps H264 yuv420p AAC mono 48kHz",
@@ -14,7 +14,7 @@
   "current_main": "4a95cae50f772cd242d932cdbd93366381d1df74",
   "video_operational_recordings": "B 7e94dc9568501dd4ad218a43b5aca31026aed2b2; C a1fa7550744ac5189d9dad7fb758d16437d4b66d; separate candidate recordings; uniform freeze pending",
   "product_tree_baseline": "8cfa37f5112adaab1e0adbb4cb4086240111d436 / 8c6b049314267326b6e3cb356c0096860dbbad79",
-  "srt_sha256": "f2a064395b7d49e963c16fd5bc8e7875d9b78b7a5a75754569791117acee55fa",
+  "srt_sha256": "8d0b08b897f805d155573418cb93f2436f6909a8df4b8ce1dbf280f1457219ff",
   "sprint_task_id": "FINAL-SPRINT-20261020",
   "deadline_timezone": "Asia/Shanghai",
   "freeze_deadline": "2026-10-20 16:00",
