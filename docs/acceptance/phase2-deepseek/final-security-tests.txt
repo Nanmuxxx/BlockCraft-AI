@@ -1,0 +1,22 @@
+✔ todo: preserved real output validates and drives the existing Runtime (6.898167ms)
+✔ club: preserved real output validates and drives the existing Runtime (1.045541ms)
+✔ real evidence has exactly two settled calls, no duplicate mobile/failure charge, distinct requirement structures (0.190666ms)
+✔ anonymous legacy and v2 (no Origin, forged Host/XFF/Origin/body approval) reject before Provider (29.086958ms)
+✔ default disabled even with injected Provider/key; untrusted auth exceptions and late identity fail closed (2008.343666ms)
+✔ all native Provider defaults blocked without controlled transport (4.83525ms)
+✔ durable reserve precedes one fixed official request; no caller headers, tools, retries or secret audit (41.462166ms)
+✔ concurrent attempts rejected before Provider and before a second reservation (37.115084ms)
+✔ request policy rejects other endpoint/model/tools/token limits and oversized input with zero network (20.221959ms)
+✔ durable call cap survives reopen and reservations never refunded (125.512125ms)
+✔ conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10 (84.112375ms)
+✔ missing or over-bound usage halts automatic calls permanently; no refund (189.103584ms)
+✔ unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt (558.283417ms)
+✔ exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed (50.723959ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3315.863625

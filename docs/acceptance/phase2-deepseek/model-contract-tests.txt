@@ -1,0 +1,21 @@
+✔ legacy model names fail before reservation/network in all three consumers; no alias rewriting (38.619375ms)
+✔ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (119.592042ms)
+✔ anonymous legacy and v2 (no Origin, forged Host/XFF/Origin/body approval) reject before Provider (21.011875ms)
+✔ default disabled even with injected Provider/key; untrusted auth exceptions and late identity fail closed (2006.736708ms)
+✔ all native Provider defaults blocked without controlled transport (3.152041ms)
+✔ durable reserve precedes one fixed official request; no caller headers, tools, retries or secret audit (44.86475ms)
+✔ concurrent attempts rejected before Provider and before a second reservation (38.89275ms)
+✔ request policy rejects other endpoint/model/tools/token limits and oversized input with zero network (21.517792ms)
+✔ durable call cap survives reopen and reservations never refunded (128.585125ms)
+✔ conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10 (97.158709ms)
+✔ missing or over-bound usage halts automatic calls permanently; no refund (197.383417ms)
+✔ unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt (560.656167ms)
+✔ exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed (48.695542ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3319.2805

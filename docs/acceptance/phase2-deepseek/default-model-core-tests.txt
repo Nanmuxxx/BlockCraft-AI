@@ -1,0 +1,47 @@
+✔ paid provider construction and future CLI fail closed without explicit gates (116.462166ms)
+✔ mock transport receives fixed HTTPS endpoint, no redirects, bounded JSON request, server-only key (10.992708ms)
+✔ provider rejects no choices (0.244958ms)
+✔ provider rejects too many choices (0.210125ms)
+✔ provider rejects truncated (0.178375ms)
+✔ provider rejects refusal (0.161708ms)
+✔ provider rejects tool call (0.142416ms)
+✔ provider rejects not text (0.145583ms)
+✔ provider rejects wrong role (0.11625ms)
+✔ provider rejects mixed error and content (0.159458ms)
+✔ provider rejects false refusal (0.195084ms)
+✔ provider rejects null tool call (0.13ms)
+✔ HTTP errors and transport failures are redacted and never retried (0.190292ms)
+✔ declared, streamed and content byte limits are independently enforced (1.100417ms)
+✔ invalid UTF8 and malformed envelope JSON fail closed (0.191ms)
+✔ timeout bounds both connection and response body; aborts transport (32.1485ms)
+✔ timeout releases late and hanging response bodies; early HTTP/size rejection also cancels (21.705584ms)
+✔ caller cancellation rejects before fetch and retires ignored transport with late body cleanup (0.345125ms)
+✔ caller cancellation retires a nonsettling upstream body without awaiting its cancel (0.170667ms)
+✔ hung audit callback obeys deadline; concurrency releases without refunding settled usage (96.662625ms)
+✔ cancel during audit rejects promptly and late callback resolution/rejection cannot succeed (111.795917ms)
+✔ untrusted model metadata never enters callback/response; only configured priced model is emitted (348.124833ms)
+✔ audit callback exception is sanitized; trustworthy usage remains settled with reservation retained (34.88525ms)
+✔ legacy model names fail before reservation/network in all three consumers; no alias rewriting (57.749125ms)
+✔ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (226.498333ms)
+✔ branded paid transport selects the priced default in all three consumers without a model override (133.788458ms)
+✔ explicit invalid environment or constructor model never falls back for a paid transport (42.887583ms)
+✔ ordinary injected offline adapters keep the historical default in all consumers (1.636083ms)
+✔ anonymous legacy and v2 (no Origin, forged Host/XFF/Origin/body approval) reject before Provider (21.573458ms)
+✔ default disabled even with injected Provider/key; untrusted auth exceptions and late identity fail closed (2006.310208ms)
+✔ all native Provider defaults blocked without controlled transport (1.663458ms)
+✔ durable reserve precedes one fixed official request; no caller headers, tools, retries or secret audit (37.911084ms)
+✔ concurrent attempts rejected before Provider and before a second reservation (35.870541ms)
+✔ request policy rejects other endpoint/model/tools/token limits and oversized input with zero network (19.040667ms)
+✔ durable call cap survives reopen and reservations never refunded (129.754125ms)
+✔ conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10 (84.182708ms)
+✔ missing or over-bound usage halts automatic calls permanently; no refund (191.938292ms)
+✔ unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt (809.847959ms)
+✔ exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed (196.313459ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3679.506417

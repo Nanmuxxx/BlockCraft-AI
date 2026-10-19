@@ -15,7 +15,7 @@ const completion = (content = JSON.stringify(spec), finish_reason = 'stop') => R
 })
 async function setup(t, options = {}) {
   let calls = 0
-  const server = createAppServer({
+  const server = createAppServer({ generationAccess: () => true,
     apiKey: 'mock-key-never-real',
     fetchImpl: async () => { calls++; return completion() },
     ...options,

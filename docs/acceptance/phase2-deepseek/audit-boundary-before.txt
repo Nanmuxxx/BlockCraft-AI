@@ -1,0 +1,52 @@
+✖ hung audit callback obeys deadline; concurrency releases without refunding settled usage (2001.545458ms)
+✖ cancel during audit rejects promptly and late callback resolution/rejection cannot succeed (2001.731291ms)
+✖ untrusted model metadata never enters callback/response; only configured priced model is emitted (40.488375ms)
+✔ audit callback exception is sanitized; trustworthy usage remains settled with reservation retained (37.735667ms)
+
+Interrupted while running:
+
+⚠ tests/paid-gateway/audit-boundary.test.mjs (tests/paid-gateway/audit-boundary.test.mjs:1:1)
+✖ tests/paid-gateway/audit-boundary.test.mjs (28716.775917ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 3
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28720.058959
+
+✖ failing tests:
+
+test at tests/paid-gateway/audit-boundary.test.mjs:19:1
+✖ hung audit callback obeys deadline; concurrency releases without refunding settled usage (2001.545458ms)
+  'test timed out after 2000ms'
+
+test at tests/paid-gateway/audit-boundary.test.mjs:37:1
+✖ cancel during audit rejects promptly and late callback resolution/rejection cannot succeed (2001.731291ms)
+  'test timed out after 2000ms'
+
+test at tests/paid-gateway/audit-boundary.test.mjs:52:1
+✖ untrusted model metadata never enters callback/response; only configured priced model is emitted (40.488375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'OFFLINE_AUDIT_PRIVATE_SENTINEL_12345678'
+  - 'deepseek-flash'
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-phase2-real-deepseek/tests/paid-gateway/audit-boundary.test.mjs:58:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'OFFLINE_AUDIT_PRIVATE_SENTINEL_12345678',
+    expected: 'deepseek-flash',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/paid-gateway/audit-boundary.test.mjs:1:1
+✖ tests/paid-gateway/audit-boundary.test.mjs (28716.775917ms)
+  'Promise resolution is still pending but the event loop has already resolved'
+
+Pre-fix diagnostic reproduced two hung/cancelled audit waits and metadata assertion failure; isolated test processes explicitly terminated after test timeout because the old callback wait remained unresolved. No network or credentials used.

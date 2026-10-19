@@ -6,7 +6,7 @@ import { createServer } from 'vite'
 import { createAppServer } from '../../server/index.mjs'
 const origin = 'http://127.0.0.1:5198'
 const spec = JSON.parse(readFileSync(new URL('./pomodoro.json', import.meta.url)))
-const server = createAppServer({ apiKey: 'offline-only', model: 'offline-fixture-model',
+const server = createAppServer({ generationAccess: () => true, apiKey: 'offline-only', model: 'offline-fixture-model',
   fetchImpl: async () => Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(spec) } }] }),
   interactive: { enabled: true, allowedOrigin: origin,
     approval: { providerVerified: true, permissionsVerified: true, reference: 'OFFLINE-ONLY-NOT-PAID-APPROVAL', maxCalls: 20, expiresAt: Date.now() + 3600000 },

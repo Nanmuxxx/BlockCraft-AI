@@ -1,0 +1,217 @@
+{
+  "live": false,
+  "model": "deepseek-flash",
+  "pricing": {
+    "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+    "verifiedDate": "2026-10-19",
+    "expiresAt": 1792425600000,
+    "model": "deepseek-flash",
+    "inputCnyPerMillion": 2,
+    "outputCnyPerMillion": 8,
+    "inputNanoPerToken": 2000,
+    "outputNanoPerToken": 8000
+  },
+  "policy": {
+    "approval": "PHASE2-USER-10-CNY-20261019",
+    "stopNano": 8000000000,
+    "absoluteNano": 10000000000,
+    "conservativeNano": 1000000000,
+    "maxCalls": 6,
+    "maxOutputTokens": 8192,
+    "maxInputBytes": 65536,
+    "framingTokens": 8192,
+    "timeoutMs": 30000,
+    "maxResponseBytes": 262144,
+    "retries": 0,
+    "concurrency": 1
+  },
+  "cases": [
+    {
+      "id": "todo",
+      "idea": "做一个个人待办清单：记录任务标题、截止日期和是否完成。能新增、查看、编辑、删除任务。不需要提醒、账号或云端存储。",
+      "source": "offline-fixture-smoke",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "spec": {
+        "id": "club-registration",
+        "name": "社团迎新报名",
+        "version": 1,
+        "entities": [
+          {
+            "id": "applicants",
+            "fields": [
+              {
+                "name": "姓名",
+                "type": "text"
+              },
+              {
+                "name": "意向部门",
+                "type": "select"
+              },
+              {
+                "name": "可参加面试",
+                "type": "boolean"
+              }
+            ]
+          }
+        ],
+        "blocks": [
+          {
+            "name": "报名表",
+            "type": "form"
+          },
+          {
+            "name": "报名名单",
+            "type": "list"
+          },
+          {
+            "name": "报名人数",
+            "type": "metric"
+          }
+        ]
+      },
+      "browser": [
+        {
+          "width": 1440,
+          "liveGeneration": false,
+          "checks": [
+            "strict schema",
+            "formal B/C",
+            "required validation",
+            "create",
+            "read",
+            "update same row count",
+            "cancel edit",
+            "B/C record retention",
+            "offline HTTP/invalid/cancel/late preservation",
+            "delete active edit",
+            "empty state",
+            "no generated TSX execution"
+          ]
+        },
+        {
+          "width": 390,
+          "liveGeneration": false,
+          "checks": [
+            "strict schema",
+            "formal B/C",
+            "required validation",
+            "create",
+            "read",
+            "update same row count",
+            "cancel edit",
+            "B/C record retention",
+            "offline HTTP/invalid/cancel/late preservation",
+            "delete active edit",
+            "empty state",
+            "no generated TSX execution"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club",
+      "idea": "做一个社团报名系统：报名者填写姓名、意向部门（技术部、宣传部、策划部）和是否参加面试，管理员可以查看、编辑和删除报名，显示报名总人数。仅当前页面使用，不要账号、自动通知或敏感个人信息。",
+      "source": "offline-fixture-smoke",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "spec": {
+        "id": "club-registration",
+        "name": "社团迎新报名",
+        "version": 1,
+        "entities": [
+          {
+            "id": "applicants",
+            "fields": [
+              {
+                "name": "姓名",
+                "type": "text"
+              },
+              {
+                "name": "意向部门",
+                "type": "select"
+              },
+              {
+                "name": "可参加面试",
+                "type": "boolean"
+              }
+            ]
+          }
+        ],
+        "blocks": [
+          {
+            "name": "报名表",
+            "type": "form"
+          },
+          {
+            "name": "报名名单",
+            "type": "list"
+          },
+          {
+            "name": "报名人数",
+            "type": "metric"
+          }
+        ]
+      },
+      "browser": [
+        {
+          "width": 1440,
+          "liveGeneration": false,
+          "checks": [
+            "strict schema",
+            "formal B/C",
+            "required validation",
+            "create",
+            "read",
+            "update same row count",
+            "cancel edit",
+            "B/C record retention",
+            "offline HTTP/invalid/cancel/late preservation",
+            "delete active edit",
+            "empty state",
+            "no generated TSX execution"
+          ]
+        },
+        {
+          "width": 390,
+          "liveGeneration": false,
+          "checks": [
+            "strict schema",
+            "formal B/C",
+            "required validation",
+            "create",
+            "read",
+            "update same row count",
+            "cancel edit",
+            "B/C record retention",
+            "offline HTTP/invalid/cancel/late preservation",
+            "delete active edit",
+            "empty state",
+            "no generated TSX execution"
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "note": "formal /ai-create; authenticated server-side loopback proxy; no UI transforms or runtime introspection",
+  "browser": "156.0.8078.4",
+  "anonymous": [
+    {
+      "protocol": "legacy-v1",
+      "status": 401
+    },
+    {
+      "protocol": "trusted-interactive/1",
+      "status": 401
+    }
+  ],
+  "realCalls": 0
+}

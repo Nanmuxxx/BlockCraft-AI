@@ -1,0 +1,20 @@
+--- a/tests/paid-gateway/security.test.mjs
++++ b/tests/paid-gateway/security.test.mjs
+@@ -97,6 +97,17 @@
+   assert.throws(() => other.reserve(100, 8192, 'hash'), { code: 'BUDGET_EXHAUSTED' })
+   assert.equal(other.snapshot().entries.reduce((s, e) => s + e.reserveNano, 0), 6 * price(100, 8192))
+ })
++test('conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10', t => {
++  const { store } = ledger(t)
++  const input = POLICY.maxInputBytes + POLICY.framingTokens
++  let count = 0
++  while ((count + 1) * price(input, 8192) <= POLICY.conservativeNano) {
++    const id = store.reserve(input, 8192, 'hash'); store.settle(id, { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 }); count++
++  }
++  assert.ok(count < POLICY.maxCalls)
++  assert.throws(() => store.reserve(input, 8192, 'hash'), { code: 'BUDGET_EXHAUSTED' })
++  assert.ok(store.snapshot().entries.reduce((s, e) => s + e.reserveNano, 0) < 1_000_000_000)
++})
+ test('missing or over-bound usage halts automatic calls permanently; no refund', async t => {
+   for (const usage of [null, {}, { prompt_tokens: 1, completion_tokens: 8193, total_tokens: 8194 }, { prompt_tokens: 1, completion_tokens: 2, total_tokens: 4 }]) {
+     const { store, path } = ledger(t); let calls = 0

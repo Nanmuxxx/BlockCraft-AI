@@ -16,7 +16,7 @@ async function run() {
   let candidate
   let mode = 'success'
   let calls = 0
-  const backendOptions = { apiKey: 'offline-test-key', model: 'offline-browser-model', fetchImpl: async (url, options) => {
+  const backendOptions = { generationAccess: () => true, apiKey: 'offline-test-key', model: 'offline-browser-model', fetchImpl: async (url, options) => {
     calls++
     assert.equal(url, 'https://api.deepseek.com/chat/completions')
     const request = JSON.parse(options.body)

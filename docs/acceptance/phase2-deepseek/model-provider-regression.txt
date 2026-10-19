@@ -1,0 +1,21 @@
+✔ paid provider construction and future CLI fail closed without explicit gates (117.729292ms)
+✔ mock transport receives fixed HTTPS endpoint, no redirects, bounded JSON request, server-only key (10.268667ms)
+✔ provider rejects no choices (0.191417ms)
+✔ provider rejects too many choices (0.175958ms)
+✔ provider rejects truncated (0.139042ms)
+✔ provider rejects refusal (0.136708ms)
+✔ provider rejects tool call (0.11725ms)
+✔ provider rejects not text (0.135084ms)
+✔ provider rejects wrong role (0.143834ms)
+✔ HTTP errors and transport failures are redacted and never retried (0.272459ms)
+✔ declared, streamed and content byte limits are independently enforced (1.186583ms)
+✔ invalid UTF8 and malformed envelope JSON fail closed (0.2245ms)
+✔ timeout bounds both connection and response body; aborts transport (32.418958ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 292.51275
