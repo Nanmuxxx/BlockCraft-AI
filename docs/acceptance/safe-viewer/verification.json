@@ -1,8 +1,9 @@
 {
   "reportVersion": 1,
   "testedMain": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
-  "prHead": "753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd",
-  "testedAt": "2026-10-19T10:13:00+08:00",
+  "prHead": "ae825974aaf92e5670a44813f4722e3025080d70",
+  "verifiedCodeHead": "753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd",
+  "testedAt": "2026-10-19T10:33:00+08:00",
   "source": "GitHub PR head tarball",
   "commands": [
     { "command": "npm ci", "result": "pass" },

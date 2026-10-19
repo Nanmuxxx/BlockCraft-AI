@@ -5,7 +5,8 @@
 ## 0. 最新主线复验
 
 - 最新已确认 `main`：`b56a26a9803718d806bac3ddbd7fbe19e0c495c6`
-- PR #43 rebase 后 head：`753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd`
+- PR #43 测试时最新 head：`ae825974aaf92e5670a44813f4722e3025080d70`
+- 受测 Viewer 代码 head：`753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd`（后续 `ae82597` 为报告/测试元数据提交）
 - PR #43 base：`main`；相对新 main 为 ahead 4 / behind 0，mergeable `CLEAN`
 - 复验源码：GitHub PR head tarball（不是旧基线工作树）
 - 复验结果：`npm ci`、safe-viewer 服务端 6/6、真实 Chromium 14/14、原有测试 194/194、`npm run build` 全部通过
@@ -132,7 +133,7 @@ npm ci              # 全新安装，通过
 
 ### 4.4 新 main / 新 PR head 复验
 
-复验对象为 PR #43 head `753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd` 的 GitHub tarball，其 base 为 `b56a26a9803718d806bac3ddbd7fbe19e0c495c6`。结果：
+复验对象为 PR #43 最新 head `ae825974aaf92e5670a44813f4722e3025080d70` 的 GitHub tarball，其 base 为 `b56a26a9803718d806bac3ddbd7fbe19e0c495c6`；其中 Viewer 代码受测 head 为 `753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd`，`ae82597` 只增加报告/测试元数据。结果：
 
 | 检查 | 结果 |
 | --- | --- |

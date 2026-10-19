@@ -4,7 +4,8 @@ const path = require('node:path')
 const { chromium } = require('playwright')
 
 const testedMain = process.env.SAFE_VIEWER_MAIN_SHA ?? 'b56a26a9803718d806bac3ddbd7fbe19e0c495c6'
-const prHead = process.env.SAFE_VIEWER_PR_HEAD ?? '753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd'
+const prHead = process.env.SAFE_VIEWER_PR_HEAD ?? 'ae825974aaf92e5670a44813f4722e3025080d70'
+const verifiedCodeHead = process.env.SAFE_VIEWER_VERIFIED_CODE_HEAD ?? '753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd'
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 async function frameFor(page) {
@@ -297,6 +298,7 @@ async function run() {
       generatedAt: new Date().toISOString(),
       testedMain,
       prHead,
+      verifiedCodeHead,
       browser: await browser.version(),
       hostOrigin: running.hostOrigin,
       runnerOrigins: running.runnerOrigins,

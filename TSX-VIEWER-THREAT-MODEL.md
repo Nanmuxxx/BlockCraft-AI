@@ -1,6 +1,6 @@
 # TSX Viewer 安全威胁模型
 
-2026-10-19；初始审计基线 `main = 25773e6d65e4e5a2b29d125baa2510f4a10aa343`；本轮最新 `main = b56a26a9803718d806bac3ddbd7fbe19e0c495c6`；PR #43 rebase 后 head `753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd`；参考 PR #40（未合入）HEAD `692b7f56e1df094f4db95e35cc3be1fc72cc3dfc`。本文描述的是 `phase2/safe-tsx-viewer` 分支中的实验模块，不代表正式 C 模式已经放行。
+2026-10-19；初始审计基线 `main = 25773e6d65e4e5a2b29d125baa2510f4a10aa343`；本轮最新 `main = b56a26a9803718d806bac3ddbd7fbe19e0c495c6`；PR #43 测试时最新 head `ae825974aaf92e5670a44813f4722e3025080d70`，受测 Viewer 代码 head `753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd`；参考 PR #40（未合入）HEAD `692b7f56e1df094f4db95e35cc3be1fc72cc3dfc`。本文描述的是 `phase2/safe-tsx-viewer` 分支中的实验模块，不代表正式 C 模式已经放行。
 
 本文取代远端分支早期 `5b5ed00` 的初始状态报告，并保留其信任边界与 launch gates；新增内容只反映本分支实际实现和已执行的真实 Chromium 测试。
 
