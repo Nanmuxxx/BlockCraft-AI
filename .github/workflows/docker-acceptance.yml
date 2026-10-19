@@ -83,6 +83,10 @@ jobs:
           } | tee -a "$log"
           npm run test:trusted-interactive 2>&1 | tee -a "$log"
           {
+            echo "command=npm run test:trusted-pomodoro-ui"
+          } | tee -a "$log"
+          npm run test:trusted-pomodoro-ui 2>&1 | tee -a "$log"
+          {
             echo "command=npm run test:workshop-export"
           } | tee -a "$log"
           npm run test:workshop-export 2>&1 | tee -a "$log"

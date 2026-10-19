@@ -49,11 +49,11 @@ test('real HTTP returns complete builtins and exact CustomBlock sources, retaini
   assert.equal(response.headers.get('Content-Type'), 'application/zip')
   assert.equal(response.headers.get('Cache-Control'), 'no-store')
   const files = unzip(new Uint8Array(await response.arrayBuffer()))
-  assert.equal(files.size, 17)
+  assert.equal(files.size, 18)
   assert(files.has('src/components/custom/a0/src/Counter.tsx') || [...files.keys()].some(p => p.endsWith('Counter.tsx')))
   const second = await post(builtin())
   const otherFiles = unzip(new Uint8Array(await second.arrayBuffer()))
-  assert.equal(otherFiles.size, 14)
+  assert.equal(otherFiles.size, 15)
   assert(![...otherFiles.keys()].some(p => p.includes('/custom/')))
 })
 

@@ -14,6 +14,7 @@ const React = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
 const { createMochiHost } = require('./host.ts')
 const { mockAddOptionalField } = require('./mockPlanner.ts')
+const { createAppChangePlanner } = require('../../model/appChangePlan.ts')
 const { createAppRuntime } = require('../../model/appRuntime.ts')
 const { createClubRegistrationExample, createReadingLogExample } = require('../../model/appSpecExamples.ts')
 const { AppRenderer } = require('../../components/app-renderer/AppRenderer.tsx')
@@ -21,12 +22,13 @@ const { AppSpecCanvas } = require('../../components/app-builder/AppSpecCanvas.ts
 function setup(provider = mockAddOptionalField, initial = createClubRegistrationExample()) {
   const runtime = createAppRuntime(initial)
   let executions = 0, updates = 0
+  const authorizationArgs = []
   const execute = runtime.executeCommand
-  runtime.executeCommand = request => { executions++; return execute(request) }
+  runtime.executeCommand = (request, authorization) => { executions++; authorizationArgs.push(authorization); return execute(request, authorization) }
   runtime.subscribe(() => updates++)
   const host = createMochiHost(runtime, provider)
   host.setSelection(initial.spec.blocks[0].id)
-  return { runtime, host, executions: () => executions, updates: () => updates }
+  return { runtime, host, executions: () => executions, updates: () => updates, authorizationArgs: () => authorizationArgs }
 }
 async function plan(host) { await host.callbacks.onRequestPlan('这是固定 Mock，不解析这句话'); return host.getSnapshot().preview.planId }
 const rejects = (promise, code) => assert.rejects(promise, error => error.code === code)
@@ -351,6 +353,40 @@ test('authorization identity invalidates plans but never grants scope', async ()
   await plan(s.host)
   const shared = s.host.getSnapshot().preview.changes.find(c => c.operation === 'sharedEntityImpact')
   assert.match(shared.description, /直接授权外：applicant-list/)
+})
+
+test('test wrapper forwards the preview authorization to Runtime', async () => {
+  const s = setup(), id = await plan(s.host)
+  const authorization = s.runtime.customProject.getAuthorization()
+  await s.host.callbacks.onConfirm(id)
+  assert.equal(s.executions(), 1)
+  assert.strictEqual(s.authorizationArgs()[0], authorization)
+})
+
+test('old preview authorization cannot pass final CAS after authorization generation changes', () => {
+  const runtime = createAppRuntime(createClubRegistrationExample())
+  const initial = runtime.getSnapshot(), block = initial.spec.blocks[0]
+  const entityId = initial.spec.relations.find(relation => relation.blockId === block.id).entityId
+  const planner = createAppChangePlanner(runtime)
+  const calls = []
+  const execute = runtime.executeCommand
+  runtime.executeCommand = (request, authorization) => { calls.push(authorization); return execute(request, authorization) }
+  const candidate = mockAddOptionalField({
+    prompt: 'authorization CAS regression', requestId: 'auth-cas-regression',
+    context: { selectedBlockId: block.id, revision: initial.revision }, snapshot: initial, signal: new AbortController().signal,
+  })
+  const preview = planner.preview(candidate, { selectedBlockId: block.id, allowedBlockIds: [block.id], allowedEntityIds: [entityId] })
+  assert.equal(preview.ok, true)
+  const oldAuthorization = runtime.customProject.getAuthorization()
+  runtime.customProject.setReadOnly(true)
+  runtime.customProject.setReadOnly(false)
+  assert.notStrictEqual(runtime.customProject.getAuthorization(), oldAuthorization)
+  const result = planner.confirm(preview.plan)
+  assert.equal(result.ok, false)
+  assert.equal(result.error.code, 'AUTHORIZATION_CHANGED')
+  assert.strictEqual(calls[calls.length - 1], oldAuthorization)
+  assert.strictEqual(runtime.getSnapshot(), initial)
+  assert.equal(runtime.getSnapshot().revision, initial.revision)
 })
 
 test('confirm locks before Host observers and own Runtime notifications never publish stale', async () => {

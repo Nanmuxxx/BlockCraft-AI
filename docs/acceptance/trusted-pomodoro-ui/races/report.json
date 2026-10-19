@@ -1,0 +1,49 @@
+{
+  "browser": "151.0.7922.34",
+  "base": "1a45d748027dea8e8e00dba336ed03b7d117284b",
+  "scope": "actual /ai-create, test-only promise delays/invalid fixture and Runtime introspection; original owner CAS",
+  "paidCalls": 0,
+  "cases": [
+    {
+      "width": 1440,
+      "passed": true,
+      "legacyHTTPIntercepted": 1,
+      "trustedGenerationHTTP": 0,
+      "fixtureLoads": 4,
+      "runtimeCreations": 2,
+      "errors": [],
+      "external": [],
+      "checks": [
+        "first beforeContextChange blocks fixture load and mode selection during confirming",
+        "second gate rejects late fixture BEFORE Runtime construction",
+        "same Runtime/owner and exact snapshot retained on rejection",
+        "invalid fixture full schema rejects before replacing old records/custom blocks/source",
+        "cancel and stale completion preserve old/new owner",
+        "explicit successful replacement only creates one Runtime",
+        "trusted path does not install source artifacts",
+        "timer B/C uses same owner with no extra writes"
+      ]
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "legacyHTTPIntercepted": 1,
+      "trustedGenerationHTTP": 0,
+      "fixtureLoads": 4,
+      "runtimeCreations": 2,
+      "errors": [],
+      "external": [],
+      "checks": [
+        "first beforeContextChange blocks fixture load and mode selection during confirming",
+        "second gate rejects late fixture BEFORE Runtime construction",
+        "same Runtime/owner and exact snapshot retained on rejection",
+        "invalid fixture full schema rejects before replacing old records/custom blocks/source",
+        "cancel and stale completion preserve old/new owner",
+        "explicit successful replacement only creates one Runtime",
+        "trusted path does not install source artifacts",
+        "timer B/C uses same owner with no extra writes"
+      ]
+    }
+  ],
+  "errors": []
+}

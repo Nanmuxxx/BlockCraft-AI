@@ -1,0 +1,77 @@
+{
+  "browser": "151.0.7922.34",
+  "baseline": "7e94dc9568501dd4ad218a43b5aca31026aed2b2",
+  "fixture": {
+    "id": "offline-pomodoro",
+    "definitionId": "accept-pomodoro-20261018",
+    "versionDigest": "sha256:d0a7d25b581048dfaf07bd8cafce09191eb02e9932ff90ac3e327782852d35fa",
+    "props": {
+      "initialMinutes": 25,
+      "title": "离线真实番茄钟"
+    }
+  },
+  "scope": "offline archived real artifact, actual production UI; test-only session delay/introspection; zero paid calls or generated TSX execution",
+  "cases": [
+    {
+      "width": 1366,
+      "passed": true,
+      "checks": [
+        "real archived export",
+        "manual import retained",
+        "nonempty CRUD/older state preserved",
+        "read/preview zero write",
+        "cancel zero write",
+        "wrong digest rejected",
+        "revision invalidation",
+        "authorization invalidation",
+        "same-turn duplicate confirm installs once",
+        "mode/link/regenerate/unmount gated synchronously",
+        "beforeunload cancelled while busy",
+        "async generation completion gated before setApp",
+        "successful project replacement cancels preview without old project write",
+        "B selection/drag/Inspector",
+        "C unavailable/no execution",
+        "single Mochi",
+        "duplicate ID rejected",
+        "no external requests",
+        "no horizontal overflow"
+      ],
+      "installCalls": 3,
+      "generationRequestsInterceptedOffline": 3,
+      "video": "/Users/nanmuxun/BlockAI/BlockCraft-AI-trusted-pomodoro-ui/docs/acceptance/trusted-pomodoro-ui/generated-ui/video/page@969b5c602bdee6fcc0cc1d9d9f181dc3.webm",
+      "external": [],
+      "errors": []
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "checks": [
+        "real archived export",
+        "manual import retained",
+        "nonempty CRUD/older state preserved",
+        "read/preview zero write",
+        "cancel zero write",
+        "wrong digest rejected",
+        "revision invalidation",
+        "authorization invalidation",
+        "same-turn duplicate confirm installs once",
+        "mode/link/regenerate/unmount gated synchronously",
+        "beforeunload cancelled while busy",
+        "async generation completion gated before setApp",
+        "successful project replacement cancels preview without old project write",
+        "B selection/drag/Inspector",
+        "C unavailable/no execution",
+        "single Mochi",
+        "duplicate ID rejected",
+        "no external requests",
+        "no horizontal overflow"
+      ],
+      "installCalls": 3,
+      "generationRequestsInterceptedOffline": 3,
+      "video": "/Users/nanmuxun/BlockAI/BlockCraft-AI-trusted-pomodoro-ui/docs/acceptance/trusted-pomodoro-ui/generated-ui/video/page@8e9d3132d2209ad5cbb24febeed71d50.webm",
+      "external": [],
+      "errors": []
+    }
+  ],
+  "errors": []
+}
