@@ -1,0 +1,19 @@
+✔ reader returns empty presentation for absent, malformed or hostile blocks (0.595084ms)
+✔ reader keeps every valid field together and drops only invalid ones (0.115042ms)
+✔ reader rejects hostile colors, non-numeric radius and overlong labels (0.081875ms)
+✔ reader never mutates its input (0.045083ms)
+✔ style mapping keeps an empty object for unset presentation and orders bg, text, radius (0.063084ms)
+✔ reader ignores accessors without executing them (0.041792ms)
+✔ snapshot passthrough: toAppCanvasModules carries presentation and defaults to empty (0.073458ms)
+✔ PR49 model gate accepts official fields and rejects old aliases / unsafe inputs (0.498916ms)
+✔ B card renders committed presentation styles and the configured button label (5.579917ms)
+✔ B card defaults stay byte-identical without or with empty presentation (3.723917ms)
+✔ C block container renders the same presentation values; buttons keep default copy otherwise (1.114292ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 296.153333
