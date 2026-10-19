@@ -6,7 +6,7 @@
 - 独立源码快照：GitHub API 精确 SHA zipball；本机 git fetch 遇连接重置，未切换或改动任何已有工作树。
 - 本地环境：Windows、Node v24.19.0、npm 11.17.0、Chromium 153.0.8010.12；viewport 1440x900 / 390x900。
 - 原部署 Owner 保留 Dockerfile/.dockerignore/ms_deploy.json/workflow/交接文档及魔塔环境所有权；本提交仅新增独立测试与证据。
-- 边界确认请求已发 #57 issuecomment-6270178810，目前尚未收到 Owner ACK。未接管部署权限。
+- 边界确认请求已发 #57 issuecomment-6270178810；Supervisor 已在 issuecomment-6270371611 的 D4 明确授权上述新增目录及冻结 SHA 离线检查。Owner 的活跃 branch/worktree、编辑文件与部署资料尚待回复；这不阻塞已授权离线检查。未接管部署权限。
 
 ## 结果
 
@@ -49,7 +49,7 @@ workflow_dispatch 只执行已有验收工作流；未部署、推镜像到魔�
 ## 阻塞、复现与交接
 
 1. **公网 BLOCKED**：Owner最新汇报public_url=NONE。请提供实际地址、部署SHA/image digest、脱敏构建/启动摘要、回滚目标。地址交付后从独立浏览器复验表中7项公网要求；当前无法出具公网PASS。
-2. **Owner ACK BLOCKED**：确认当前活跃branch/worktree与正在编辑的文件。未修改其任何部署文件；文档修复待明确文件交接，暂不提交产品补丁。
+2. **Owner 资料待补充**：请确认当前活跃branch/worktree与正在编辑的文件。D4 已明确授权 Support 的新增测试/证据目录，无需等待此回复才继续离线检查；未修改其任何部署文件，产品文档修复仍待具体文件交接。
 3. **文档 FAIL**：对比精确SHA的server/README.md第4、21、35行附近与server/index.mjs的authorizeGeneration和CLI入口。建议文档Owner统一Node24/生产启动/401默认关闭说明并补根部署入口。
 4. **交接提交不可公开复现**：`gh api repos/Nanmuxxx/BlockCraft-AI/commits/5936f91c309aa268f79d79b315bea58c147948a9`返回422 No commit found。Owner请发布该交接提交/PR或提供可读取的不可变证据；不据此否定其本地工作。
 5. **付费研发环境**：身份服务、单实例POSIX持久卷、0700/0600、跨重启保存与账本生命周期仍需相应Owner和独立QA证明；无需因此阻塞离线展示。PR#61生命周期由Core/Gateway原QA负责，此次未重复审核。
@@ -59,7 +59,7 @@ workflow_dispatch 只执行已有验收工作流；未部署、推镜像到魔�
 
 ## 重现
 
-在精确产品SHA的独立检出中：
+先分别准备精确产品 SHA 的独立检出及本证据 PR 的检出。以下在产品检出目录运行；测试脚本使用证据检出的绝对路径，因此无需改动产品检出：
 
 ```powershell
 npm ci --no-audit --no-fund
@@ -71,7 +71,7 @@ npm run test:generation
 $env:QA_SOURCE_DIR = (Get-Location).Path
 $env:QA_PLAYWRIGHT_MODULE = 'C:/path/to/separate-tools/node_modules/playwright'
 $env:DEPLOYMENT_QA_EVIDENCE = 'C:/path/to/output'
-node tests/deployment-support/production-qa.cjs
+node 'C:/path/to/evidence-checkout/tests/deployment-support/production-qa.cjs'
 ```
 
 保持本机17860端口空闲。此脚本仅启动/结束其自身的本地子进程。测试所需Playwright不是仓库声明依赖，本次复用了已有独立工具目录。commands.json记录实际安装/测试命令和退出码；截图索引见SCREENSHOTS.md，文件校验见SHA256SUMS。
