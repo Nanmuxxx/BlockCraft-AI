@@ -52,9 +52,11 @@ Windows ACL 首次并行复跑暴露了 `PSModulePath` 混入 PowerShell 7 模�
 - `server/index.mjs` 组合保留 main 静态文件路径与生产监听，同时保留 PR #40 的取消、严格 UTF-8、envelope 和响应体释放。
 - trusted-interactive 原 30/31 的单项失败由 CRLF 协议投影触发；修复后该套件 32/32。
 
-## 5. 未解决与限制
+## 5. 远端状态与限制
 
-- 修复提交只存在于本地隔离分支，尚未推送或更新 PR #40；PR #40 仍为 Draft/open/conflicting。
-- 该候选没有对应 GitHub CI。
+- 修复分支已非强制推送为 `phase2/pr40-windows-fix`，head 为 `45317c2a3df3c787dd8bea60437dcb8c21ca5f3a`。
+- 已创建堆叠 Draft PR #47，base 为 PR #40 分支 `agent-a/ai-core-night-20261019`，只审查本轮增量。
+- PR #40 本身未被改写，仍为 Draft/open/conflicting。
+- 基线分支 `692b7f5` 不包含 main 上的 `.github/workflows/docker-acceptance.yml`，因此 PR #47 没有对应 Docker CI；本地测试结果按 tree/commit 单独记录。
 - Windows ACL 测试验证当前 Windows 11 环境；其他 Windows ACL/组策略环境仍需在目标部署环境复验。
 - 未合并、未修改 main、未部署、未调用真实 DeepSeek，未消耗共享预算。
