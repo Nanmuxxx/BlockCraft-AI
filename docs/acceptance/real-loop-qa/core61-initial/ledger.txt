@@ -1,0 +1,40 @@
+{"case":"401","calls":0,"reservations":0}
+✔ 401 denies before reservation and egress; reopen after shutdown (52.577083ms)
+{"case":"settle-repeat-exhaust","calls":6,"reservations":6,"repeatedKeyDeduplication":"NOT IMPLEMENTED","status":503}
+✔ success settles; identical client request key is NOT idempotent (negative evidence); exhausted ledger returns 503 before egress (143.554833ms)
+{"case":"timeout","calls":1,"reservations":1,"status":504,"ledger":"uncertain+halt"}
+✔ gateway timeout ignoring abort returns 504 then uncertain+halt; no second reservation/egress (90.412083ms)
+{"case":"disconnect","calls":1,"reservations":1,"abort":true,"ledger":"uncertain+halt"}
+✔ real client disconnect aborts egress, marks uncertain and halts (65.118291ms)
+{"case":"shutdown","lockProbes":22,"calls":1,"reservations":1,"lockReleasedAfterHandlers":true,"ledger":"uncertain+halt"}
+✔ shutdown retains exclusive lock throughout handler drain with noncooperative fetch (171.330209ms)
+{"case":"OS-signals","code":null,"signal":"SIGTERM","complete":false,"lockProbes":0,"stdout":"","stderr":""}
+✖ real OS SIGTERM then SIGINT cannot interrupt full server/ledger drain (82.781084ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 5
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 649.261708
+
+✖ failing tests:
+
+test at tests/generation/real-loop-ledger.test.mjs:79:1
+✖ real OS SIGTERM then SIGINT cannot interrupt full server/ledger drain (82.781084ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'SIGTERM' !== null
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core61-qa/tests/generation/real-loop-ledger.test.mjs:95:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'SIGTERM',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

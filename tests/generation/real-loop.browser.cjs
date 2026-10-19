@@ -155,7 +155,7 @@ async function run() {
               await page.getByRole('button', { name: /^(生成新应用|重试生成)$/ }).click()
               const response = await responsePromise
               const body = await Promise.race([response.json(), new Promise((_, reject) => { const timer = setTimeout(() => reject(new Error('response body deadline')), 5000); timer.unref() })])
-              assert.equal(response.status(), failure === 'unauthorized' ? 401 : failure === 'timeout' ? 504 : 502)
+              assert.equal(response.status(), failure === 'unauthorized' ? 401 : failure === 'timeout' ? 504 : failure === 'budget' ? 503 : 502)
               await expect(page.getByRole('alert')).toContainText('当前应用和数据已保留')
               await expect(region.getByRole('cell', { name: '字段与记录保留', exact: true })).toBeVisible(); await metrics()
               if (failure === 'unauthorized') assert.equal(upstreamCalls, providerBefore)
