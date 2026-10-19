@@ -13,8 +13,6 @@
 !server/tsconfig.json
 !server/index.mjs
 !server/ai-abort.mjs
-!server/custom-block/
-!server/custom-block/**
 !server/paid-gateway/
 !server/paid-gateway/**
 !server/trusted-interactive.mjs

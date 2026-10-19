@@ -122,8 +122,6 @@ jobs:
           const entry = '/app/server/index.mjs'
           const optionalRoots = [
             '/app/server/ai-abort.mjs',
-            '/app/server/custom-block/generator.mjs',
-            '/app/server/custom-block/provider.mjs',
             '/app/server/paid-gateway/access.mjs',
             '/app/server/paid-gateway/egress.mjs',
             '/app/server/paid-gateway/provider.mjs',

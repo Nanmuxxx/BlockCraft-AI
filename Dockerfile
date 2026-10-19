@@ -20,7 +20,6 @@ RUN set -eu; \
     cp -R server/mochi-ai /app/runtime-server/mochi-ai; \
     cp -R server/.generated /app/runtime-server/.generated; \
     if [ -f server/ai-abort.mjs ]; then cp server/ai-abort.mjs /app/runtime-server/; fi; \
-    if [ -d server/custom-block ]; then mkdir -p /app/runtime-server/custom-block; cp server/custom-block/*.mjs /app/runtime-server/custom-block/; fi; \
     if [ -d server/paid-gateway ]; then mkdir -p /app/runtime-server/paid-gateway; cp server/paid-gateway/*.mjs /app/runtime-server/paid-gateway/; fi
 
 FROM node:24-bookworm-slim AS runtime
