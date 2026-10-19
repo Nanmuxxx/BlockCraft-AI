@@ -1,0 +1,9 @@
+# P0 MVP Pomodoro QA report
+
+Candidate `8aedff514dce3a2d2882a37bb29888892a0a376f`; base `4a95cae50f772cd242d932cdbd93366381d1df74`; PR `NONE` (Core follow-up remote ref; PR #68 frozen Draft). The checkout was exact detached HEAD. All evidence in this directory is additive QA output.
+
+The real local HTTP path was exercised by `tests/trusted-interactive/browser.cjs` at 1440x1000 and 390x844. Its DeepSeek transport is replaced by an in-process Mock provider; `fixtureCalls=8`, `paidCalls=0`, and every browser request was asserted to loopback. The browser verified the request-to-validated-v2 envelope, B inspector, C timer, start/pause/resume/reset, B/C anchor preservation, invalid/provider failure retention, and explicit ZIP refusal. The separate trusted-pomodoro UI run at 1440x1000 and 390x844 verified the public `/ai-create` entry and race/old-owner protection; it explicitly labels its source as `离线固定 Fixture，非真实 DeepSeek 调用` and makes zero generation HTTP requests in fixture mode.
+
+Deterministic results: `npm run test:trusted-pomodoro-ui` 2/2; AppRuntime/AppSpec 53/53; trusted-interactive tests 31/31; principal/auth/gateway tests 14/14. The browser runs completed 2/2 viewports each. Invalid schema, provider error, timeout, disconnect, unauthorised identity, and exhausted budget cases fail closed and retain prior state in the tested harnesses. No external request was observed. No real model response was obtained in this run, so this is Mock/Fixture PASS only.
+
+GO/NO-GO: **NO-GO for live AI / production / public B-C acceptance**. Mock-only functional path is verified. Live DeepSeek, production identity, durable production budget, deployment, and public B/C remain unverified and require explicit owner approval. No source, key, deployment, merge, or production configuration was changed.
