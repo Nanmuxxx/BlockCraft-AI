@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { once } from 'node:events'
 import { EventEmitter } from 'node:events'
+import { spawn } from 'node:child_process'
 import { createServer as createTcpServer } from 'node:net'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -134,4 +135,99 @@ test('SIGINT and SIGTERM hooks invoke one idempotent shutdown task', async () =>
   signals.emit('SIGINT')
   await new Promise(resolve => setImmediate(resolve))
   assert.equal(calls, 1)
+})
+
+test('real process signals do not interrupt request drain or release the ledger early', { timeout: 10000, skip: process.platform === 'win32' ? 'Requires POSIX signal delivery' : false }, async t => {
+  const env = await tempEnvironment(t)
+  const moduleUrl = new URL('../../server/index.mjs', import.meta.url).href
+  const runtimeUrl = new URL('../../server/paid-gateway/runtime.mjs', import.meta.url).href
+  const childSource = `
+    import { startServer, installShutdownHandlers } from ${JSON.stringify(moduleUrl)}
+    import { createPaidGenerationRuntime } from ${JSON.stringify(runtimeUrl)}
+    const started = await startServer({
+      port: 0,
+      env: process.env,
+      resolveIdentity: () => true,
+      drainTimeoutMs: 800,
+      paidRuntimeFactory: options => createPaidGenerationRuntime({
+        ...options,
+        timeoutMs: 5000,
+        fetchImpl: async (_url, { signal }) => {
+          console.log('UPSTREAM_STARTED')
+          return new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(Object.assign(new Error('cancelled'), { code: 'UPSTREAM_CANCELLED' })), { once: true }))
+        },
+      }),
+    })
+    console.log('READY:' + started.server.address().port)
+    installShutdownHandlers(async () => {
+      console.log('DRAIN_STARTED')
+      await started.shutdown()
+      console.log('DRAIN_COMPLETED')
+    })
+  `
+  const child = spawn(process.execPath, ['--input-type=module', '-e', childSource], {
+    env: { PATH: process.env.PATH, NODE_ENV: 'test', DEEPSEEK_API_KEY: env.DEEPSEEK_API_KEY, DEEPSEEK_BUDGET_LEDGER_PATH: env.DEEPSEEK_BUDGET_LEDGER_PATH },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
+  const exited = once(child, 'close')
+  let output = ''
+  let stderr = ''
+  child.stdout.setEncoding('utf8')
+  child.stderr.setEncoding('utf8')
+  child.stdout.on('data', chunk => { output += chunk })
+  child.stderr.on('data', chunk => { stderr += chunk })
+  const waitForOutput = async marker => {
+    const deadline = Date.now() + 5000
+    while (!output.includes(marker)) {
+      if (child.exitCode !== null || child.signalCode) throw new Error(`Child exited before ${marker}: ${output}\n${stderr}`)
+      if (Date.now() >= deadline) throw new Error(`Timed out waiting for ${marker}: ${output}\n${stderr}`)
+      await new Promise(resolve => setTimeout(resolve, 10))
+    }
+  }
+  t.after(async () => {
+    if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL')
+    await exited.catch(() => {})
+  })
+
+  await waitForOutput('READY:')
+  const port = Number(output.match(/READY:(\d+)/)?.[1])
+  assert.ok(Number.isInteger(port) && port > 0)
+  const request = fetch(`http://127.0.0.1:${port}/api/ai/generate`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: '任务工具' }),
+  }).catch(() => null)
+  await waitForOutput('UPSTREAM_STARTED')
+  assert.throws(() => openLedger(env.DEEPSEEK_BUDGET_LEDGER_PATH), { code: 'LEDGER_LOCKED' })
+
+  child.kill('SIGTERM')
+  await waitForOutput('DRAIN_STARTED')
+  child.kill('SIGINT')
+  child.kill('SIGTERM')
+  let lockChecks = 0
+  const lockDeadline = Date.now() + 400
+  while (Date.now() < lockDeadline) {
+    assert.equal(child.signalCode, null, `Premature signal exit: ${output}`)
+    assert.equal(output.includes('DRAIN_COMPLETED'), false)
+    assert.throws(() => openLedger(env.DEEPSEEK_BUDGET_LEDGER_PATH), { code: 'LEDGER_LOCKED' })
+    lockChecks++
+    await new Promise(resolve => setTimeout(resolve, 20))
+  }
+  assert.ok(lockChecks >= 2)
+  await waitForOutput('DRAIN_COMPLETED')
+  const [exitCode, exitSignal] = await exited
+  await request
+  assert.equal(exitCode, 0, stderr)
+  assert.equal(exitSignal, null)
+  assert.equal(output.match(/DRAIN_STARTED/g)?.length, 1)
+  assert.equal(output.match(/DRAIN_COMPLETED/g)?.length, 1)
+
+  const reopened = openLedger(env.DEEPSEEK_BUDGET_LEDGER_PATH)
+  const snapshot = reopened.snapshot()
+  assert.equal(snapshot.halted, true)
+  assert.equal(snapshot.entries[0].status, 'uncertain')
+  reopened.close()
+
+  const releasedPort = createTcpServer()
+  releasedPort.listen(port, '127.0.0.1')
+  await once(releasedPort, 'listening')
+  await new Promise(resolve => releasedPort.close(resolve))
 })

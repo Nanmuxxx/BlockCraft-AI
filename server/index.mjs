@@ -431,18 +431,19 @@ export async function startServer({
 
 /** Install idempotent signal hooks without forcing an abrupt process exit. */
 export function installShutdownHandlers(shutdown, processLike = process) {
-  if (typeof shutdown !== 'function' || typeof processLike.once !== 'function' || typeof processLike.off !== 'function') {
+  if (typeof shutdown !== 'function' || typeof processLike.on !== 'function' || typeof processLike.off !== 'function') {
     throw new TypeError('Invalid shutdown handler configuration')
   }
   let task
   const onSignal = () => {
     if (task) return
-    processLike.off('SIGINT', onSignal)
-    processLike.off('SIGTERM', onSignal)
-    task = Promise.resolve().then(shutdown).catch(() => { processLike.exitCode = 1 })
+    task = Promise.resolve().then(shutdown).catch(() => { processLike.exitCode = 1 }).finally(() => {
+      processLike.off('SIGINT', onSignal)
+      processLike.off('SIGTERM', onSignal)
+    })
   }
-  processLike.once('SIGINT', onSignal)
-  processLike.once('SIGTERM', onSignal)
+  processLike.on('SIGINT', onSignal)
+  processLike.on('SIGTERM', onSignal)
   return () => {
     processLike.off('SIGINT', onSignal)
     processLike.off('SIGTERM', onSignal)
