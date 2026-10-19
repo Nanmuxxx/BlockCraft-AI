@@ -1,0 +1,19 @@
+
+> blockcraft-ai@0.1.0 build
+> tsc -b && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 2005 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                              0.62 kB │ gzip:   0.44 kB
+dist/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2    7.90 kB
+dist/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2    8.09 kB
+dist/assets/pixelify-sans-latin-700-normal-BctWAS0u.woff    10.49 kB
+dist/assets/pixelify-sans-latin-500-normal-Bq6pAlou.woff    10.68 kB
+dist/assets/mochi-Btfatr0K.png                             114.52 kB
+dist/assets/index-jCjpDxQz.css                              76.50 kB │ gzip:  15.07 kB
+dist/assets/index-7BswlFks.js                              430.56 kB │ gzip: 136.10 kB
+
+✓ built in 140ms
