@@ -1,17 +1,27 @@
-// Verified 2026-10-19 against the official CNY page. Always use PEAK, CACHE MISS.
-// Reverify before a later run; no automatic conversion from USD or cheap cache.
+// Verified 2026-10-20 against the official CNY page. Always use PEAK, CACHE MISS.
+// This short-lived snapshot is not automatically extended.
 export const PRICING = Object.freeze({
   source: 'https://api-docs.deepseek.com/zh-cn/quick_start/pricing/',
-  verifiedDate: '2026-10-19', expiresAt: Date.parse('2026-10-20T00:00:00+08:00'),
-  model: 'deepseek-flash', inputCnyPerMillion: 2, outputCnyPerMillion: 8,
-  inputNanoPerToken: 2000, outputNanoPerToken: 8000,
+  verifiedDate: '2026-10-20', expiresAt: Date.parse('2026-10-21T00:00:00+08:00'),
+  model: 'deepseek-flash', inputCnyPerMillion: 2, outputCnyPerMillion: 9,
+  inputNanoPerToken: 2000, outputNanoPerToken: 9000,
 })
 export const POLICY = Object.freeze({
+  id: 'PHASE2-USER-10-CNY-20261019',
   approval: 'PHASE2-USER-10-CNY-20261019',
   stopNano: 8_000_000_000, absoluteNano: 10_000_000_000,
   // Deliberately stricter than the authorized ¥8 stop: at most ¥1 reserved and
   // six attempts. An uncertain request halts all automatic calls immediately.
   conservativeNano: 1_000_000_000, maxCalls: 6, maxOutputTokens: 8192,
+  maxInputBytes: 65536, framingTokens: 8192, timeoutMs: 30000,
+  maxResponseBytes: 262144, retries: 0, concurrency: 1,
+})
+// Isolated local smoke allowance. Its separate version/approval prevents a
+// smoke ledger from being confused with the older production ledger.
+export const SMOKE_POLICY = Object.freeze({
+  id: 'OWNER-APPROVED-LOCAL-SMOKE-20261020', approval: 'OWNER-APPROVED-20-CNY-TEST-20261020',
+  stopNano: 20_000_000_000, absoluteNano: 20_000_000_000,
+  conservativeNano: 500_000_000, maxCalls: 3, maxOutputTokens: 2048,
   maxInputBytes: 65536, framingTokens: 8192, timeoutMs: 30000,
   maxResponseBytes: 262144, retries: 0, concurrency: 1,
 })

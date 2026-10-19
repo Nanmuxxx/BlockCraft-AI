@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { PRICING, POLICY, ensure, GatewayError } from './pricing.mjs'
+import { PRICING, POLICY, SMOKE_POLICY, ensure, GatewayError } from './pricing.mjs'
 
 const ENDPOINT = 'https://api.deepseek.com/chat/completions'
 const nativeFetch = globalThis.fetch
@@ -28,10 +28,11 @@ async function read(response, signal) {
 
 /** Sole production egress. No retries, redirects, tools, browser-provided URL,
  * key or model. Call reservation is synchronous and durable before fetch. */
-export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, timeoutMs = POLICY.timeoutMs, onResponse } = {}) {
+export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, timeoutMs = POLICY.timeoutMs, onResponse, policy = POLICY } = {}) {
   ensure(typeof apiKey === 'string' && apiKey.length >= 16 && apiKey.length <= 512 && !/\s/.test(apiKey), 'API_CONFIGURATION')
   ensure(ledger && typeof ledger.reserve === 'function', 'LEDGER_UNAVAILABLE')
-  ensure(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= POLICY.timeoutMs, 'TIMEOUT_CONFIGURATION')
+  ensure(ledger.policyId === policy.id && (policy === POLICY || policy === SMOKE_POLICY), 'LEDGER_PROFILE')
+  ensure(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= policy.timeoutMs, 'TIMEOUT_CONFIGURATION')
   let active = false
   const transport = async (url, init) => {
     ensure(!active, 'CONCURRENCY_LIMIT')
@@ -43,10 +44,10 @@ export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, t
     ensure(Array.isArray(body.messages) && body.messages.length === 2 && body.messages[0].role === 'system' && body.messages[1].role === 'user'
       && body.messages.every(m => typeof m.content === 'string' && Object.keys(m).every(k => ['role', 'content'].includes(k))), 'REQUEST_INVALID')
     ensure(body.stream === false && body.response_format?.type === 'json_object' && Object.keys(body.response_format).length === 1, 'REQUEST_INVALID')
-    ensure(body.model === PRICING.model && Number.isSafeInteger(body.max_tokens) && body.max_tokens > 0 && body.max_tokens <= POLICY.maxOutputTokens, 'REQUEST_INVALID')
+    ensure(body.model === PRICING.model && Number.isSafeInteger(body.max_tokens) && body.max_tokens > 0 && body.max_tokens <= policy.maxOutputTokens, 'REQUEST_INVALID')
     const inputBytes = Buffer.byteLength(JSON.stringify(body.messages))
-    ensure(inputBytes <= POLICY.maxInputBytes, 'INPUT_LIMIT')
-    const inputBound = inputBytes + POLICY.framingTokens
+    ensure(inputBytes <= policy.maxInputBytes, 'INPUT_LIMIT')
+    const inputBound = inputBytes + policy.framingTokens
     const requestHash = createHash('sha256').update(JSON.stringify(body)).digest('hex')
     const id = ledger.reserve(inputBound, body.max_tokens, requestHash)
     active = true
