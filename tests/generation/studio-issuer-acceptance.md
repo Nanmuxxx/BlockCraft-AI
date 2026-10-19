@@ -1,5 +1,25 @@
 # Studio issuer candidate acceptance — Mock only
 
+## Supplemental ledger preflight review
+
+All Studio launches, including configurations without the optional issuer, now
+require the existing canonical ledger before entering Gateway. The Studio layer
+checks path, parent privacy, regular file, same UID, mode0600 and nlink1 through
+metadata only; it neither reads nor parses ledger contents. Gateway retains
+locking and semantic validation. Nonblocking open prevents special-file hangs.
+The prior issuer-only preflight left the preprovisioned-session path uncovered.
+
+`npm run test:generation`:107/107 Mock PASS,0 skipped (32 issuer cases).
+See studio-ledger-preflight-generation.log. New tests remove both ledger and
+issuer state, with and without issuer enabled, and verify failed startup leaves
+the directory/approval unchanged, no ledger/state/lock or Mock provider call.
+Unsafe mode, hardlink, symlink and nonregular file also reject. The existing
+Studio test fixture now explicitly provisions its synthetic ledger; startup
+must never provision it. No real ledger/key was accessed. Approval maxCalls3
+does not renew the previously consumed call or establish budget continuity.
+Earlier105/105 and HTTPS browser results below remain historical results at
+the initial implementation; the supplemental full regression is the new107.
+
 Base: PR75 `c29b134a34e47c247e9f48d1a5e1ec640acde9e9`.
 Scope: `server/studio-launcher.mjs` and `tests/generation/studio-*` only.
 TL design release: #57 comment6275063739; Gateway handoff6275127558.
