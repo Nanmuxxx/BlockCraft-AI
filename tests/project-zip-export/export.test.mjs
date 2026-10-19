@@ -1,4 +1,6 @@
 import test from 'node:test'
+import ts from 'typescript'
+import { recordOperations } from '../../tools/project-zip-export/templates.mjs'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { builtin, mixed, rehash, unzip, createAppRuntime, createClubRegistrationExample } from './fixtures.mjs'
@@ -9,7 +11,7 @@ import { exportSessionSnapshot } from '../../tools/project-zip-export/integratio
 
 test('builtins produce a full standalone archive, fixed scripts and configured data', async () => {
   const input = builtin(), result = await exportProjectZip(input), files = unzip(result.bytes)
-  assert.equal(files.size, 14)
+  assert.equal(files.size, 15)
   for (const name of ['package.json', 'index.html', 'tsconfig.json', 'vite.config.ts', 'src/main.tsx', 'src/App.tsx', 'src/components/FormBlock.tsx', 'src/components/ListBlock.tsx', 'src/components/MetricBlock.tsx', 'src/styles.css', 'README.md']) assert.ok(files.has(name), name)
   const pkg = JSON.parse(files.get('package.json'))
   assert.equal(pkg.dependencies.react, '19.3.1'); assert.equal(pkg.scripts.build, 'tsc --noEmit && vite build')
@@ -17,6 +19,17 @@ test('builtins produce a full standalone archive, fixed scripts and configured d
   assert.ok(!files.get('src/App.tsx').includes('BlockCraft'))
   assert.ok(files.get('src/data.ts').includes('applicant-name'))
   assert.deepEqual(result.files.map(file => file.path), [...files.keys()])
+})
+test('exported list exposes update flow that preserves ids and clears stale editing state', async () => {
+  const files = unzip((await exportProjectZip(builtin())).bytes)
+  const app = files.get('src/App.tsx')
+  const list = files.get('src/components/ListBlock.tsx')
+  const form = files.get('src/components/FormBlock.tsx')
+  assert.match(list, /onClick=\{\(\) => onEdit\(row\.id\)\}/)
+  assert.match(list, /onUpdate\(editing\.id, values\)/)
+  assert.match(form, /initial \? '保存修改' : '保存'/)
+  assert.match(app, /updateRows\(own\(current, entity\)/)
+  assert.match(app, /current\?\.entity === entity && current\.id === id \? null : current/)
 })
 test('real TSX, helper module, exact digest, props, coordinates and interleaved order survive', async () => {
   const input = await mixed(), result = await exportProjectZip(input), files = unzip(result.bytes)
@@ -288,4 +301,20 @@ test('merged session registry exports only the current exact version after repla
   assert.equal([...files.values()].filter(text => text === current.artifact.sources['Counter.tsx']).length, 1)
   assert.ok(![...files.values()].includes(old.artifact.sources['Counter.tsx']))
   assert.strictEqual(owner.getSnapshot(), snapshot)
+})
+
+test('actual exported update function preserves identity, hidden fields, types and invalid-id safety', async () => {
+  const js = ts.transpileModule(recordOperations, { compilerOptions: { module: ts.ModuleKind.ESNext } }).outputText
+  const { updateRows } = await import('data:text/javascript;base64,' + Buffer.from(js).toString('base64'))
+  const rows = [{ id: 'one', values: { title: 'old', hidden: true, optional: 'remove' } }, { id: 'two', values: { title: 'untouched' } }]
+  const before = structuredClone(rows)
+  const next = updateRows(rows, 'one', { title: 'new', number: 0, enabled: false, optional: '' })
+  assert.deepEqual(rows, before)
+  assert.deepEqual(next, [{ id: 'one', values: { title: 'new', hidden: true, number: 0, enabled: false } }, rows[1]])
+  assert.equal(next[1], rows[1]); assert.equal(next.length, 2)
+  for (const id of ['', 'missing', '__proto__']) assert.deepEqual(updateRows(rows, id, { title: 'bad' }), before)
+  assert.deepEqual(updateRows([], 'missing', {}), [])
+  const special = updateRows([{ id: 'special', values: {} }], 'special', JSON.parse('{"__proto__":"safe","hasOwnProperty":"value"}'))
+  assert.equal(Object.getPrototypeOf(special[0].values), Object.prototype)
+  assert.equal(Object.hasOwn(special[0].values, '__proto__'), true)
 })

@@ -5,7 +5,7 @@ export class ProjectExportError extends Error {
 export function ensure(value, code) { if (!value) throw new ProjectExportError(code) }
 export const ZIP_LIMITS = Object.freeze({ maxFiles: 256, maxFileBytes: 524288, maxTotalBytes: 4194304, maxZipBytes: 4259840 })
 const encoder = new TextEncoder()
-const roots = new Set(['package.json', 'index.html', 'tsconfig.json', 'vite.config.ts', 'README.md', 'provenance.json'])
+const roots = new Set(['package.json', 'package-lock.json', 'index.html', 'tsconfig.json', 'vite.config.ts', 'README.md', 'provenance.json'])
 export function assertOutputPath(path) {
   ensure(typeof path === 'string' && path.length <= 240 && (roots.has(path) || /^src\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.(?:ts|tsx|css|json)$/.test(path)), 'OUTPUT_PATH')
   ensure(!path.split('/').some(part => /^(?:con|prn|aux|nul|com[0-9]|lpt[0-9])(?:\.|$)/i.test(part)), 'OUTPUT_PATH')
