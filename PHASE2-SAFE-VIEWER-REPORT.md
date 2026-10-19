@@ -2,17 +2,19 @@
 
 2026-10-19
 
-## 0. 最新主线复验
+## 0. 本轮编译隔离复验
 
-- 最新已确认 `main`：`b56a26a9803718d806bac3ddbd7fbe19e0c495c6`
-- PR #43 测试时最新 head：`ae825974aaf92e5670a44813f4722e3025080d70`
-- 受测 Viewer 代码 head：`753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd`（后续 `ae82597` 为报告/测试元数据提交）
-- PR #43 base：`main`；相对新 main 为 ahead 4 / behind 0，mergeable `CLEAN`
-- 复验源码：GitHub PR head tarball（不是旧基线工作树）
-- 复验结果：`npm ci`、safe-viewer 服务端 6/6、真实 Chromium 14/14、原有测试 194/194、`npm run build` 全部通过
-- GitHub Actions 生产容器构建与 smoke test：通过（1m16s，run `39188777134`）
+- 已实时核对 `main`：`b56a26a9803718d806bac3ddbd7fbe19e0c495c6`
+- PR #43 远端 Draft head：`2a7688480d1859c87762b46224b6ec81fe28d370`
+- 受测候选代码 head：`8eecb9399667e9ec03cb48fa2221d09251f111b5`
+- 受测代码 tree：`c9a0d881f4806afec7e9860f31c36aaaca416dc9`
+- 本地等价代码提交：`5e81b9024b39c86149340cae0491c4634f1d5cf0`，tree 与远端 head 相同
+- 分支：`phase2/pr43-compile-isolation`；本轮 worktree：`F:\BlockCraft-AI\pr43-process-hardening`
+- 起始代码基线：`2a7688480d1859c87762b46224b6ec81fe28d370`；本地修改前工作树干净
+- 复验结果：`npm ci`、Safe Viewer 16/16、进程级 9/9（连续 3 轮）、真实 Chromium 14/14、原有测试 194/194、`npm run build` 全部通过
+- 远端 head `8eecb93` 的 Docker acceptance run `39195580090` 成功；实际 Linux job 通过修改后的 `npm test` 执行了 Safe Viewer 测试
 
-新 main 的增量集中在 Docker/部署文件和 `server/index.mjs`，与本分支新增文件无重叠；PR 分支已通过 GitHub update-branch 以 rebase 方式更新，未合并 PR、未修改 main。
+历史 `ae82597`/`753dfc5` 的浏览器和容器结果仍保留为历史证据，但不代表本候选 head 的编译子进程终止能力。
 
 ## 1. 基线与工作树
 
@@ -20,8 +22,9 @@
 - 基线 `main`：`25773e6d65e4e5a2b29d125baa2510f4a10aa343`
 - 最新主线（本轮通知）：`b56a26a9803718d806bac3ddbd7fbe19e0c495c6`
 - PR #40：Draft、未合入，HEAD `692b7f56e1df094f4db95e35cc3be1fc72cc3dfc`，当前 base ref 为 `main`
-- 分支：`phase2/safe-tsx-viewer`
-- 工作树：`F:\BlockCraft-AI\phase2-safe-tsx-viewer`
+- 功能分支：`phase2/safe-tsx-viewer`（远端 PR #43）
+- 本轮隔离分支：`phase2/pr43-compile-isolation`
+- 本轮工作树：`F:\BlockCraft-AI\pr43-compile-isolation`
 
 本分支以最新 `main` 为基线，没有把 PR #40 未合入的工件事务变更混入安全 Viewer 分支。PR #40 的 AI Core 契约作为接口参考读取。
 
@@ -32,8 +35,8 @@
 ### 2.1 安全服务端
 
 - `server/safe-viewer/index.mjs`：编译/会话/runner/bundle/retire 路由；严格 Origin/Host/协议/摘要校验；runner 源站池和 quarantine。
-- `server/safe-viewer/compile.mjs`：编译缓存、内容摘要、并发/超时、LRU 限制。
-- `server/safe-viewer/compile-worker.mjs`：隔离 worker 中的 esbuild-wasm 打包；导入白名单；源/包体限制；用户组件惰性求值。
+- `server/safe-viewer/compile.mjs`：编译缓存、内容摘要、并发/超时、LRU 限制、子进程生命周期、进程树终止和 PID 存活验证。
+- `server/safe-viewer/compile-child.mjs`：专用编译子进程中的 esbuild-wasm 打包；导入白名单；源/包体限制；用户组件惰性求值；成功后等待 esbuild 服务进程退出。
 - `server/safe-viewer/source-policy.mjs`：在既有 `checkImports` 之上的静态能力 denylist 和 import 子集检查。
 - `server/safe-viewer/policy.mjs`：CSP、Permissions-Policy、大小/时间限制、错误模型。
 - `server/safe-viewer/assets/runtime-core.js`：iframe 内可信 runtime；CSP/sandbox 内的握手、硬化、ErrorBoundary、计时器清理和 dispose。
@@ -76,7 +79,7 @@
 npm run test:safe-viewer
 ```
 
-结果：6/6 通过。
+结果：16/16 通过。
 
 覆盖：
 
@@ -85,7 +88,30 @@ npm run test:safe-viewer
 - digest、非法 import、静态危险能力、bundle 上限。
 - 请求体上限、无效 session、错误 Host。
 - 默认关闭和同 hostname 拒绝。
-- 编译超时。
+- 编译超时、宿主断开取消和进程树终止。
+
+### 4.1.1 编译进程级验证
+
+命令：
+
+```text
+node --test tests/safe-viewer/compiler-process.test.mjs
+```
+
+结果：连续 3 轮均为 9/9 通过。
+
+覆盖：
+
+- 成功编译后，`compile PID` 和 `esbuild PID` 均退出。
+- 编译错误后，esbuild 进程退出；后续合法编译成功。
+- 运行中取消会终止进程树，宿主事件循环保持响应，随后重试成功。
+- 450ms 超时发生在 esbuild 启动后；返回 `COMPILE_TIMEOUT` 前已验证两个 PID 不再存活。
+- 连续 3 个不同制品编译后无进程累积，`compiler.stats().processes === 0`。
+- `dispose()` 会终止进行中的编译进程树。
+- 编译子进程在 esbuild 启动后崩溃时，宿主按 PID、父 PID、启动时间身份直接清理孤儿服务进程。
+- Windows `taskkill /T /F` 故障注入后，直接 PID 清理仍成功，随后合法编译可恢复。
+- 已知进程清理失败时，编译器进入持久 `COMPILER_QUARANTINED`，后续编译不再启动新进程。
+- PID 身份不匹配时拒绝终止，验证了 PID 复用下的防误杀行为。
 
 ### 4.2 浏览器
 
@@ -131,20 +157,25 @@ npm ci              # 全新安装，通过
 
 依赖说明：为保持既有 Artifact 策略的 esbuild `0.25.12`，同时避开 Vite 8 对原生 esbuild `^0.27 || ^0.28` 的可选 peer 冲突，本分支使用同版本 `esbuild-wasm`。裸 `npm ci`、`npm test`、安全 Viewer 测试和 `npm run build` 均已通过。若后续升级 esbuild/Vite，必须同步更新 Artifact 工具链策略并重新跑安全验收。
 
-### 4.4 新 main / 新 PR head 复验
+### 4.4 当前候选提交复验
 
-复验对象为 PR #43 最新 head `ae825974aaf92e5670a44813f4722e3025080d70` 的 GitHub tarball，其 base 为 `b56a26a9803718d806bac3ddbd7fbe19e0c495c6`；其中 Viewer 代码受测 head 为 `753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd`，`ae82597` 只增加报告/测试元数据。结果：
+本轮远端候选 head 为 `8eecb9399667e9ec03cb48fa2221d09251f111b5`，tree 为 `c9a0d881f4806afec7e9860f31c36aaaca416dc9`。结果：
 
 | 检查 | 结果 |
 | --- | --- |
 | `npm ci` | 通过，29 packages，0 vulnerabilities |
-| `npm run test:safe-viewer` | 6/6 通过 |
+| `npm run test:safe-viewer` | 16/16 通过 |
+| `node --test tests/safe-viewer/compiler-process.test.mjs` | 9/9 通过，连续 3 轮 |
 | `npm run test:safe-viewer:browser` | 14/14 通过；Chromium `153.0.8010.12` |
-| `npm test` | 194/194 通过 |
+| `npm test` | 默认 194/194 + Safe Viewer 16/16；Linux CI 中执行通过 |
 | `npm run build` | 通过 |
-| GitHub Actions docker acceptance | 通过，1m16s |
+| GitHub Actions docker acceptance | 成功；run `39195580090`，head `8eecb93`，Linux Ubuntu 24.04 |
 
 浏览器报告已写入 `testedMain` 和 `prHead` 字段；机器可读汇总见 `docs/acceptance/safe-viewer/verification.json`。
+
+Git 凭据缺少 `workflow` scope，因此新增独立 Linux/Windows workflow job 的本地改动不能推送；当前 CI 覆盖通过把 Safe Viewer 测试接入既有 `npm test` 实现。Windows `taskkill` 故障注入由本地 Windows 11 实测，尚未进入 GitHub CI。
+
+Linux 首次真实运行暴露虚拟入口无法从 `/` 解析 React，run `39195085076` 失败；加入诊断后 run `39195237439` 确认根因。修复为通过 `createRequire` 解析固定白名单包后，最终 run `39195580090` 成功。失败记录保留，不把旧 run 当作通过。
 
 ## 5. 开发中发现并修复的问题
 
@@ -154,6 +185,10 @@ npm ci              # 全新安装，通过
 4. 静态能力扫描把 `out.fetch` 等属性名误判为全局调用；修复 PropertyAccess/QualifiedName 名称处理。
 5. 同一 runner 源站的死循环进程可能污染后续同源挂载；引入源站池和 `RUNTIME_TIMEOUT` retire/quarantine。
 6. 测试宿主的 retire 路由未转发导致 404；补齐测试路由并验证 quarantine。
+7. 原超时逻辑只终止 Node `Worker`，而 esbuild-wasm 实际另起 `child_process` 服务进程；改为专用编译子进程，超时/取消/异常时按进程树终止，并验证 esbuild PID 退出。
+8. 编译子进程原先会继承宿主完整环境；改为最小环境白名单，避免认证秘密进入编译器。
+9. 新增进程身份核验与直接清理：Linux 使用 `/proc` 启动时间+boot ID，Windows 使用创建时间+父 PID；清理失败时编译服务持久熔断。
+10. Linux CI 首次失败暴露虚拟入口 `/` 无法解析 React 依赖；改为通过 `createRequire` 解析仓库内固定的三个白名单包，未扩大允许导入集合。
 
 跨源隔离的边界：本分支使用跨源 iframe、不透明 sandbox 源、独立源站池、COOP/OAC 响应头，并用死循环测试验证宿主响应性；因为 runner 需要被宿主嵌入，没有在宿主强制 COEP，因此不宣称完整的 COOP+COEP cross-origin isolated 上下文。生产部署应使用独立站点/源站池，并完成目标浏览器验收。
 

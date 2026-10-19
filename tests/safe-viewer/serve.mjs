@@ -111,7 +111,7 @@ export async function start({
     service,
     stats,
     async stop() {
-      service.dispose()
+      await service.dispose()
       await new Promise(resolve => server.close(resolve))
     },
   })

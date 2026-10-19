@@ -1,22 +1,66 @@
 {
-  "reportVersion": 1,
+  "reportVersion": 2,
   "testedMain": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
-  "prHead": "ae825974aaf92e5670a44813f4722e3025080d70",
-  "verifiedCodeHead": "753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd",
-  "testedAt": "2026-10-19T10:33:00+08:00",
-  "source": "GitHub PR head tarball",
+  "remotePrHead": "2a7688480d1859c87762b46224b6ec81fe28d370",
+  "prHead": "8eecb9399667e9ec03cb48fa2221d09251f111b5",
+  "verifiedCodeHead": "8eecb9399667e9ec03cb48fa2221d09251f111b5",
+  "verifiedTree": "c9a0d881f4806afec7e9860f31c36aaaca416dc9",
+  "testedAt": "2026-10-19T11:41:28+08:00",
+  "branch": "phase2/pr43-compile-isolation",
+  "worktree": "F:\\BlockCraft-AI\\pr43-process-hardening",
+  "source": "local isolated worktree; local code commit 5e81b90 has the same tree as remote 8eecb93",
+  "environment": {
+    "os": "Windows 11 10.0.26300",
+    "node": "24.19.0",
+    "npm": "11.17.0",
+    "chromium": "153.0.8010.12",
+    "esbuild-wasm": "0.25.12",
+    "react": "19.3.1"
+  },
   "commands": [
-    { "command": "npm ci", "result": "pass" },
-    { "command": "npm run test:safe-viewer", "result": "6/6 pass" },
-    { "command": "npm run test:safe-viewer:browser", "result": "14/14 pass", "browser": "153.0.8010.12" },
-    { "command": "npm test", "result": "194/194 pass" },
-    { "command": "npm run build", "result": "pass" },
-    { "command": "GitHub Actions docker acceptance", "result": "pass", "duration": "1m16s" }
+    { "command": "npm ci", "result": "pass", "packages": 28, "vulnerabilities": 0 },
+    { "command": "npm run test:safe-viewer", "result": "16/16 pass", "exitCode": 0 },
+    { "command": "node --test tests/safe-viewer/compiler-process.test.mjs", "result": "9/9 pass in each of 3 consecutive runs", "exitCode": 0 },
+    { "command": "npm run test:safe-viewer:browser", "result": "14/14 pass", "exitCode": 0 },
+    { "command": "npm test", "result": "default 194/194 plus Safe Viewer 16/16 pass", "exitCode": 0 },
+    { "command": "npm run build", "result": "pass", "exitCode": 0 },
+    { "command": "GitHub Actions docker acceptance", "result": "success", "head": "8eecb9399667e9ec03cb48fa2221d09251f111b5", "runId": 39195580090, "jobId": 117877509549, "platform": "Ubuntu 24.04" }
   ],
+  "processTerminationEvidence": {
+    "compilerProcessObserved": true,
+    "esbuildProcessObserved": true,
+    "successPidsGone": true,
+    "compileErrorPidsGone": true,
+    "cancellationPidsGone": true,
+    "timeoutObservedAfterEsbuildStart": true,
+    "timeoutPidsGone": true,
+    "repeatedCompileProcesses": 0,
+    "disposePidsGone": true,
+    "hostResponsive": true,
+    "consecutiveRuns": 3,
+    "crashAfterEsbuildPidsGone": true,
+    "taskkillFailureDirectCleanupPassed": true,
+    "cleanupFailureFused": true,
+    "quarantinedCompileSpawnedNoProcess": true,
+    "pidIdentityMismatchRefusedKill": true,
+    "linuxProcessGroupVerifiedInCi": true
+  },
   "browserEvidence": "browser-report.json",
   "notes": [
-    "The PR branch was rebased onto the latest main through GitHub update-branch; no PR merge or main modification was performed.",
     "The production C-mode remains unavailable; the safe viewer is default-off and not wired into Workshop.",
-    "Residual risks remain documented in TSX-VIEWER-THREAT-MODEL.md."
+    "No PR merge, main modification, deployment, real model call, or paid budget use occurred.",
+    "The remote code commit 8eecb93 and local commit 5e81b90 have identical tree c9a0d88.",
+    "Docker acceptance run 39195580090 passed for head 8eecb93 and executed Safe Viewer tests through the updated npm test script.",
+    "The separate Windows/Linux workflow jobs could not be published because the available Git credentials lack workflow scope."
+  ],
+  "residualRisks": [
+    "Windows taskkill failure and direct PID cleanup were exercised locally; a dedicated Windows GitHub CI job was not published because of missing workflow scope.",
+    "If both tree termination and identity-checked direct PID termination fail, the compiler stays persistently quarantined and rejects new compiles.",
+    "POSIX process-group cleanup was exercised by Linux CI run 39195580090.",
+    "Only Chromium 153.0.8010.12 was browser-tested; Firefox and Safari were not run."
+  ],
+  "failedCiEvidence": [
+    { "runId": 39195085076, "head": "01a06ab", "reason": "Linux could not resolve React from the virtual entry resolveDir and Safe Viewer tests failed" },
+    { "runId": 39195237439, "head": "213727f", "reason": "diagnostic run confirmed React resolution before the portable resolution fix" }
   ]
 }

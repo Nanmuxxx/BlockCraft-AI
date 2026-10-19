@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-10-19T02:33:19.316Z",
+  "generatedAt": "2026-10-19T03:40:59.374Z",
   "testedMain": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
-  "prHead": "ae825974aaf92e5670a44813f4722e3025080d70",
-  "verifiedCodeHead": "753dfc5a5b5205665b0a8c9c4c2ce2e00385e9cd",
+  "prHead": "5e81b9024b39c86149340cae0491c4634f1d5cf0",
+  "verifiedCodeHead": "5e81b9024b39c86149340cae0491c4634f1d5cf0",
   "browser": "153.0.8010.12",
-  "hostOrigin": "http://127.0.0.1:52182",
+  "hostOrigin": "http://127.0.0.1:57845",
   "runnerOrigins": [
-    "http://127.0.0.2:52182",
-    "http://127.0.0.3:52182",
-    "http://127.0.0.4:52182",
-    "http://127.0.0.5:52182",
-    "http://127.0.0.6:52182",
-    "http://127.0.0.7:52182"
+    "http://127.0.0.2:57845",
+    "http://127.0.0.3:57845",
+    "http://127.0.0.4:57845",
+    "http://127.0.0.5:57845",
+    "http://127.0.0.6:57845",
+    "http://127.0.0.7:57845"
   ],
   "checks": [
     {
@@ -78,7 +78,10 @@
         "hits": 16,
         "misses": 7,
         "builds": 6,
-        "evictions": 0
+        "evictions": 0,
+        "processes": 0,
+        "fused": false,
+        "cleanupFailures": 0
       }
     }
   ],
@@ -100,11 +103,14 @@
     "hits": 16,
     "misses": 7,
     "builds": 6,
-    "evictions": 0
+    "evictions": 0,
+    "processes": 0,
+    "fused": false,
+    "cleanupFailures": 0
   },
   "runnerPool": 6,
   "quarantined": [
-    "http://127.0.0.6:52182"
+    "http://127.0.0.6:57845"
   ],
   "runnerRetired": 1,
   "note": "Real Chromium interactions; no screenshot substituted for execution."

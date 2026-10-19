@@ -44,7 +44,7 @@
 - `props` 必须匹配 manifest `propsSchema`。
 - `requestedCapabilities` 必须为空，`events` 必须为空。
 - 只允许 `react`、`react/jsx-runtime` 和制品内相对源文件。
-- 不在宿主执行源码；编译在受限 worker 中完成。
+- 不在宿主执行源码；编译在专用子进程中完成。宿主保存根进程与 esbuild 服务进程的可验证身份；超时、取消或 dispose 会执行进程树终止及身份核验后的直接 PID 清理。
 
 ### 成功响应
 
@@ -77,6 +77,10 @@
 | `SOURCE_CAPABILITY_REJECTED` | 422 | 源级危险能力 denylist |
 | `BUNDLE_LIMIT` | 422 | bundle 超限 |
 | `COMPILE_TIMEOUT` | 504 | 编译超时 |
+| `COMPILE_CANCELLED` | 499 | 调用方取消或宿主断开 |
+| `COMPILER_TERMINATION_FAILED` | 503 | 无法证明编译进程树已退出，Fail closed |
+| `COMPILER_QUARANTINED` | 503 | 前次清理未解决，编译器持久拒绝新任务 |
+| `COMPILER_CONFIGURATION` | 503 | 编译超时/并发配置无效 |
 | `COMPILER_BUSY` | 429 | 编译并发已满 |
 | `RUNNER_CAPACITY` | 503 | 没有健康 Viewer 源站 |
 | `SESSION_EXPIRED` | 404 | session 不存在/过期/不匹配 |
@@ -160,6 +164,7 @@ Workshop 接入约束：
 - Viewer 只返回运行状态/错误；不直接写项目、记录、layout、history 或 auth store。
 - Workshop 负责 UI 状态呈现和生命周期；不得把 Viewer iframe 嵌进可写宿主表单或把宿主 token 放进 props。
 - 安全运行负责人保留 kill switch；正式接入前默认 `enabled=false`。
+- 若一次清理无法验证所有已知进程退出，编译器进入持久 quarantine；只能销毁旧 compiler/service 并由可信启动流程创建新实例，不能在同一实例上无限重试。
 
 ## 5. 接入闸门
 
