@@ -1,0 +1,27 @@
+{
+  "node": "v24.22.0",
+  "platform": "win32",
+  "realModelCalls": 0,
+  "probes": [
+    {
+      "checkout": "BlockCraft-AI",
+      "sha": "d6f2cb4f110d22f665690e3af1d818249cc03b99",
+      "status": "",
+      "crlfCount": 44,
+      "bytesSha256": "7f8db4b0b9bd64456bb5da9bfc4ed8bd3b328789f467e8fe0bc7cc5ccd4e9e5b",
+      "normalizedSha256": "691d51d0c7aeb5df79fe3c8193c79ab3aca48e3807712149a2d9d666c8e119d1",
+      "result": "FAIL",
+      "error": "Review v1 protocol projection",
+      "stack": "Error: Review v1 protocol projection\n    at Module.readV1GenerationProtocol (file:///<QA_WORKSPACE>/work/BlockCraft-AI/server/aiGenerationPrompt.mjs:19:81)\n    at <QA_WORKSPACE>\\work\\probe-newlines.cjs:14:18"
+    },
+    {
+      "checkout": "BlockCraft-AI-lf",
+      "sha": "d6f2cb4f110d22f665690e3af1d818249cc03b99",
+      "status": "",
+      "crlfCount": 0,
+      "bytesSha256": "691d51d0c7aeb5df79fe3c8193c79ab3aca48e3807712149a2d9d666c8e119d1",
+      "normalizedSha256": "691d51d0c7aeb5df79fe3c8193c79ab3aca48e3807712149a2d9d666c8e119d1",
+      "result": "PASS"
+    }
+  ]
+}

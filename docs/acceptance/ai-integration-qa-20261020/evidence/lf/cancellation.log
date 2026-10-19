@@ -1,0 +1,13 @@
+✔ pre-cancelled generation performs zero transport calls (6.9535ms)
+✔ cancellation wins over ignored abort and cancels a late response body (79.4065ms)
+✔ cancellation interrupts a stalled response body and releases its reader (8.127ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 934.7823
+
+STDERR:

@@ -1,0 +1,147 @@
+2026-10-19T16:34:53.4583387Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-19T16:34:53.9553520Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-19T16:34:54.1809683Z Complete job name: Build and smoke-test the production container
+2026-10-19T16:34:54.5740133Z hint:
+2026-10-19T16:34:54.6684461Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +dbcd9f7e08a756c26ebe7cd59fad741361bfaed2:refs/remotes/pull/68/merge
+2026-10-19T16:34:56.4684708Z  * [new ref]         dbcd9f7e08a756c26ebe7cd59fad741361bfaed2 -> pull/68/merge
+2026-10-19T16:34:56.5672954Z HEAD is now at dbcd9f7 Merge d6f2cb4f110d22f665690e3af1d818249cc03b99 into 4a95cae50f772cd242d932cdbd93366381d1df74
+2026-10-19T16:34:56.5746145Z dbcd9f7e08a756c26ebe7cd59fad741361bfaed2
+2026-10-19T16:34:56.6740443Z [36;1m: > artifacts/docker-acceptance/container-health.log[0m
+2026-10-19T16:34:56.7457711Z [36;1m  echo "command=npm ci"[0m
+2026-10-19T16:34:56.7460401Z [36;1m{[0m
+2026-10-19T16:34:56.7461104Z [36;1m  echo "command=npm test"[0m
+2026-10-19T16:34:56.7464331Z [36;1m  echo "command=npm run build"[0m
+2026-10-19T16:34:56.7467969Z [36;1m  echo "command=npm --prefix server test"[0m
+2026-10-19T16:34:56.7471700Z [36;1m  echo "command=npm run test:generation"[0m
+2026-10-19T16:34:56.7475247Z [36;1m  echo "command=npm run test:mochi-host"[0m
+2026-10-19T16:34:56.7479046Z [36;1m  echo "command=npm run test:trusted-interactive"[0m
+2026-10-19T16:34:56.7482936Z [36;1m  echo "command=npm run test:trusted-pomodoro-ui"[0m
+2026-10-19T16:34:56.7486779Z [36;1m  echo "command=npm run test:workshop-export"[0m
+2026-10-19T16:34:56.7653901Z command=npm ci
+2026-10-19T16:35:00.2265494Z command=npm test
+2026-10-19T16:35:02.1540155Z   ---
+2026-10-19T16:35:02.1540400Z   duration_ms: 60.07132
+2026-10-19T16:35:02.2321218Z   duration_ms: 0.436404
+2026-10-19T16:35:02.2357401Z ok 27 - independent scene assertions distinguish body overlap and clearance: horizontal 4px gap
+2026-10-19T16:35:02.2401276Z   type: 'test'
+2026-10-19T16:35:02.2401644Z   ...
+2026-10-19T16:35:02.2404137Z   duration_ms: 4.185943
+2026-10-19T16:35:02.2404542Z   type: 'test'
+2026-10-19T16:35:02.2404919Z   ...
+2026-10-19T16:35:04.2691401Z   duration_ms: 21.656138
+2026-10-19T16:35:04.2740118Z   ...
+2026-10-19T16:35:04.5027401Z   type: 'test'
+2026-10-19T16:35:04.5381905Z # Subtest: production owner isolates throwing observers and preserves a known successful receipt
+2026-10-19T16:35:04.5382846Z ok 119 - production owner isolates throwing observers and preserves a known successful receipt
+2026-10-19T16:35:04.5394434Z # Subtest: production provider fails closed and preserves the original runtime
+2026-10-19T16:35:04.5395207Z ok 123 - production provider fails closed and preserves the original runtime
+2026-10-19T16:35:04.5401067Z # Subtest: business text survives preview, confirmation and Runtime unchanged: "x < 10"
+2026-10-19T16:35:04.5401919Z ok 125 - business text survives preview, confirmation and Runtime unchanged: "x < 10"
+2026-10-19T16:35:04.5445401Z   ---
+2026-10-19T16:35:05.0341401Z   duration_ms: 1.054395
+2026-10-19T16:35:05.0464041Z   duration_ms: 1.131938
+2026-10-19T16:35:05.0484048Z   type: 'test'
+2026-10-19T16:35:05.0549401Z   duration_ms: 0.12863
+2026-10-19T16:35:05.0568401Z   ...
+2026-10-19T16:35:05.0578924Z # tests 205
+2026-10-19T16:35:05.0579288Z # pass 205
+2026-10-19T16:35:05.0579430Z # fail 0
+2026-10-19T16:35:05.0602698Z command=npm run build
+2026-10-19T16:35:08.8932492Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-10-19T16:35:09.1904892Z command=npm --prefix server test
+2026-10-19T16:35:09.9973890Z # Subtest: health works without a key and never calls upstream
+2026-10-19T16:35:09.9980451Z ok 1 - health works without a key and never calls upstream
+2026-10-19T16:35:10.0660404Z   type: 'test'
+2026-10-19T16:35:10.0880401Z   type: 'test'
+2026-10-19T16:35:10.0881401Z # Subtest: rejects wrong protocol with the existing validator and safe errors
+2026-10-19T16:35:10.1224014Z # Subtest: rejects ambiguous completion: legacy function call
+2026-10-19T16:35:10.2119661Z # Subtest: rate limit ignores forged forwarding headers and leaves health available
+2026-10-19T16:35:10.2120340Z ok 31 - rate limit ignores forged forwarding headers and leaves health available
+2026-10-19T16:35:10.3056567Z # tests 39
+2026-10-19T16:35:10.3060419Z # pass 39
+2026-10-19T16:35:10.3060662Z # fail 0
+2026-10-19T16:35:10.3169445Z command=npm run test:generation
+2026-10-19T16:35:12.6354041Z # Subtest: invalid principal rejects before request context construction
+2026-10-19T16:35:12.6378503Z # tests 59
+2026-10-19T16:35:12.6379353Z # pass 59
+2026-10-19T16:35:12.6379550Z # fail 0
+2026-10-19T16:35:12.6486623Z command=npm run test:mochi-host
+2026-10-19T16:35:13.6134049Z # Subtest: schema revision invalidates preview and preserves the external update
+2026-10-19T16:35:13.6269159Z   duration_ms: 0.44047
+2026-10-19T16:35:13.6276939Z # Subtest: production owner isolates throwing observers and preserves a known successful receipt
+2026-10-19T16:35:13.6277749Z ok 54 - production owner isolates throwing observers and preserves a known successful receipt
+2026-10-19T16:35:13.6369750Z # tests 57
+2026-10-19T16:35:13.6370372Z # pass 57
+2026-10-19T16:35:13.6370633Z # fail 0
+2026-10-19T16:35:13.6476629Z command=npm run test:trusted-interactive
+2026-10-19T16:35:15.8944011Z   ---
+2026-10-19T16:35:16.4240422Z   duration_ms: 1.829612
+2026-10-19T16:35:16.5376807Z # tests 31
+2026-10-19T16:35:16.5377256Z # pass 31
+2026-10-19T16:35:16.5377475Z # fail 0
+2026-10-19T16:35:16.5487915Z command=npm run test:trusted-pomodoro-ui
+2026-10-19T16:35:17.1375526Z # tests 2
+2026-10-19T16:35:17.1376358Z # pass 2
+2026-10-19T16:35:17.1376752Z # fail 0
+2026-10-19T16:35:17.1480863Z command=npm run test:workshop-export
+2026-10-19T16:35:18.9242662Z # tests 9
+2026-10-19T16:35:18.9243152Z # pass 9
+2026-10-19T16:35:18.9243387Z # fail 0
+2026-10-19T16:35:20.3401531Z #2 DONE 0.9s
+2026-10-19T16:35:31.4879931Z #14 3.048 vite v8.3.4 building client environment for production...
+2026-10-19T16:35:33.4244884Z #20 writing image sha256:95b3586aafbbe79940456756d5fccbf5089c6a72b5b31d8c17b78ae4dadf6f82 done
+2026-10-19T16:35:33.7352038Z [36;1m  docker inspect --format 'status={{.State.Status}} exit={{.State.ExitCode}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' \[0m
+2026-10-19T16:35:33.7364559Z [36;1m  --env NODE_ENV=production \[0m
+2026-10-19T16:35:33.7365907Z [36;1mhealthy=false[0m
+2026-10-19T16:35:33.7366979Z [36;1m  health=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$container" 2>/dev/null || true)[0m
+2026-10-19T16:35:33.7367791Z [36;1m  echo "attempt=$attempt running=$running health=$health" | tee -a artifacts/docker-acceptance/container-health.log[0m
+2026-10-19T16:35:33.7368206Z [36;1m  if [ "$health" = "healthy" ]; then[0m
+2026-10-19T16:35:33.7368428Z [36;1m    healthy=true[0m
+2026-10-19T16:35:33.7369878Z [36;1m    echo "container exited before becoming healthy" | tee -a artifacts/docker-acceptance/container-health.log[0m
+2026-10-19T16:35:33.7370893Z [36;1mif [ "$healthy" != "true" ]; then[0m
+2026-10-19T16:35:33.7371226Z [36;1m  echo "health check timed out" | tee -a artifacts/docker-acceptance/container-health.log[0m
+2026-10-19T16:35:33.7372137Z [36;1mdocker inspect --format 'status={{.State.Status}} exit={{.State.ExitCode}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' \[0m
+2026-10-19T16:35:33.7372844Z [36;1m  "$container" | tee -a artifacts/docker-acceptance/container-health.log[0m
+2026-10-19T16:35:33.7401221Z [36;1m    }[0m
+2026-10-19T16:35:33.7401378Z [36;1m  }[0m
+2026-10-19T16:35:33.7401532Z [36;1m}[0m
+2026-10-19T16:35:33.7401675Z [36;1m[0m
+2026-10-19T16:35:33.7401867Z [36;1mconst health = await localFetch('/api/health')[0m
+2026-10-19T16:35:33.7402129Z [36;1massert.equal(health.status, 200)[0m
+2026-10-19T16:35:33.7402448Z [36;1massert.match(health.headers.get('content-type') || '', /^application\/json/)[0m
+2026-10-19T16:35:33.7402819Z [36;1massert.deepEqual(await health.json(), { status: 'ok' })[0m
+2026-10-19T16:35:33.7403148Z [36;1mlog('GET /api/health -> 200 application/json {status:"ok"}')[0m
+2026-10-19T16:35:33.7404094Z [36;1m  const response = await localFetch(path)[0m
+2026-10-19T16:35:33.7404359Z [36;1m  assert.equal(response.status, 404, path)[0m
+2026-10-19T16:35:33.7404714Z [36;1m  assert.match(response.headers.get('content-type') || '', /^application\/json/, path)[0m
+2026-10-19T16:35:33.7405467Z [36;1m  log(`GET ${path} -> 404 application/json {error.code:"NOT_FOUND"}`)[0m
+2026-10-19T16:35:33.7409180Z [36;1m  assert.equal(response.status, 404, path)[0m
+2026-10-19T16:35:33.7411449Z [36;1m  zipLog(`PASS POST ${path} expected=404 actual=${response.status} content-type=${response.headers.get('content-type')} export=rejected`)[0m
+2026-10-19T16:35:33.7416595Z [36;1mconst deniedStatus = gatewayCandidate ? 401 : 503[0m
+2026-10-19T16:35:33.7424389Z [36;1mzipLog('PASS production image has no successful local-project-export route')[0m
+2026-10-19T16:35:33.7424839Z [36;1mlog(`PASS ${assets.length} local resources, routes, health, traversal, and no-key degradation`)[0m
+2026-10-19T16:35:33.7425764Z [36;1mdocker inspect --format 'status={{.State.Status}} exit={{.State.ExitCode}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' \[0m
+2026-10-19T16:35:33.7426440Z [36;1m  "$container" | tee -a artifacts/docker-acceptance/container-health.log[0m
+2026-10-19T16:35:33.7426828Z [36;1mgrep -q 'health=healthy' artifacts/docker-acceptance/container-health.log[0m
+2026-10-19T16:35:33.9594812Z attempt=1 running=true health=starting
+2026-10-19T16:35:35.9868180Z attempt=2 running=true health=starting
+2026-10-19T16:35:38.0137999Z attempt=3 running=true health=starting
+2026-10-19T16:35:40.0404524Z attempt=4 running=true health=healthy
+2026-10-19T16:35:40.0510038Z status=running exit=0 health=healthy
+2026-10-19T16:35:40.1958532Z GET /api/health -> 200 application/json {status:"ok"}
+2026-10-19T16:35:40.1977523Z GET /unknown -> 404 application/json {error.code:"NOT_FOUND"}
+2026-10-19T16:35:40.1989812Z GET /api/unknown -> 404 application/json {error.code:"NOT_FOUND"}
+2026-10-19T16:35:40.2027978Z GET /assets/missing.js -> 404 application/json {error.code:"NOT_FOUND"}
+2026-10-19T16:35:40.2049628Z GET /api/local-project-export -> 404 application/json {error.code:"NOT_FOUND"}
+2026-10-19T16:35:40.2092949Z PASS POST /api/local-project-export expected=404 actual=404 content-type=application/json; charset=utf-8 export=rejected
+2026-10-19T16:35:40.2104602Z PASS POST /api/local-project-export?probe=1 expected=404 actual=404 content-type=application/json; charset=utf-8 export=rejected
+2026-10-19T16:35:40.2246468Z POST /api/ai/generate without key/auth -> 401 UNAUTHORIZED; no paid credentials
+2026-10-19T16:35:40.2264425Z POST /api/ai/generate trusted-interactive/1 without server authorization -> 401 UNAUTHORIZED; no key, no upstream request
+2026-10-19T16:35:40.2265363Z PASS production image has no successful local-project-export route
+2026-10-19T16:35:40.2266057Z PASS 7 local resources, routes, health, traversal, and no-key degradation
+2026-10-19T16:35:40.2453293Z status=running exit=0 health=healthy
+2026-10-19T16:35:40.4224341Z [36;1m  echo "health_log_tail:"[0m
+2026-10-19T16:35:40.4224708Z [36;1m  tail -n 20 artifacts/docker-acceptance/container-health.log 2>/dev/null || true[0m
+2026-10-19T16:35:41.5414331Z Artifact docker-acceptance-39286576330-1.zip successfully finalized. Artifact ID 12202844012
+2026-10-19T16:35:41.5415349Z Artifact docker-acceptance-39286576330-1 has been successfully uploaded! Final size is 23336 bytes. Artifact ID is 12202844012
+2026-10-19T16:35:41.5419744Z Artifact download URL: https://github.com/Nanmuxxx/BlockCraft-AI/actions/runs/39286576330/artifacts/12202844012

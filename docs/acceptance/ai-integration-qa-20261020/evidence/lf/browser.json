@@ -1,0 +1,14 @@
+{
+  "name": "browser",
+  "started": "2026-10-19T16:49:37.170Z",
+  "args": [
+    "<QA_WORKSPACE>\\work\\launch-browser.cjs",
+    "<QA_WORKSPACE>\\work\\BlockCraft-AI-lf",
+    "<QA_WORKSPACE>\\outputs\\lf\\browser"
+  ],
+  "exit": 1,
+  "signal": null,
+  "node": "v24.22.0",
+  "platform": "win32",
+  "sha": "d6f2cb4f110d22f665690e3af1d818249cc03b99"
+}

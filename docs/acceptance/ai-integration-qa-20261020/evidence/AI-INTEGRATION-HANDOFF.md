@@ -1,6 +1,8 @@
 # AI integration QA — power-loss checkpoint
 
-Status: IN PROGRESS. Product fixes: none. Real model calls: 0.
+Historical first checkpoint: IN PROGRESS at initial save. Product fixes: none. Real model calls: 0.
+
+Superseding final round report: AI-INTEGRATION-QA-REPORT.md in this evidence directory. It adds the independently reproduced CRLF defect, LF generation46/12/1 and server39/39 results, cancellation3/3, blocked browser attempt, exact CI merge/tree verification, current blockers and takeover steps. Preserve the first checkpoint below as historical CRLF evidence; its pending items are resolved or updated in that report. Current status: one-round QA DONE; production/live BLOCKED / NO-GO. No background execution established.
 
 Repository: https://github.com/Nanmuxxx/BlockCraft-AI
 Lead coordination: https://github.com/Nanmuxxx/BlockCraft-AI/issues/57

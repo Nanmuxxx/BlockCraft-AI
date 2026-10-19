@@ -1,0 +1,242 @@
+✔ existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure (248.6664ms)
+✔ route rejects structurally legal but incomplete metric-only app without input, then recovers (18.0315ms)
+✔ route rejects structurally legal but incomplete unbound empty entity, then recovers (10.3951ms)
+✔ route rejects structurally legal but incomplete hidden optional field, then recovers (11.5488ms)
+✔ prompt embeds the exact live protocol boundary and keeps idea in its own user message (11.001ms)
+✔ club-app: independent requirement mapping and real runtime CRUD/aggregations (11.9574ms)
+✔ fitness-log: independent requirement mapping and real runtime CRUD/aggregations (10.5554ms)
+✔ study-log: independent requirement mapping and real runtime CRUD/aggregations (5.1994ms)
+✔ personal-tasks: independent requirement mapping and real runtime CRUD/aggregations (4.6758ms)
+✔ fitness-library: independent requirement mapping and real runtime CRUD/aggregations (4.5452ms)
+✔ money-app: independent requirement mapping and real runtime CRUD/aggregations (12.4801ms)
+✔ lost-found: independent requirement mapping and real runtime CRUD/aggregations (3.5871ms)
+✔ book-log: independent requirement mapping and real runtime CRUD/aggregations (1.7512ms)
+✔ movie-log: independent requirement mapping and real runtime CRUD/aggregations (2.52ms)
+✔ same domain, different goals change entities/fields; no mandatory form/list/metric set (0.592ms)
+✔ record count is supported with empty field evidence and reflects actual rows, not unique objects (2.7808ms)
+✔ base v1 empty specs stay legal; only the independent generation policy rejects them (0.5234ms)
+✔ separate completeness detects empty fields, unbound objects, missing input and inaccessible fields (0.5106ms)
+✔ bad binding, required field omission, cross-entity fields, illegal numeric metric and unknown types fail structure (1.064ms)
+✔ structure cannot prove semantics: valid unrelated apps need review; independent mappings expose the mismatch (0.867ms)
+✔ independent reviewer receives original goals, spec and actual operations as data without any API call (0.9915ms)
+✔ review must cover every goal and bind current input/spec/requirements; malformed evidence fails closed (2.0387ms)
+✔ only actual exposed operations count; list required fields are editable, hidden optional fields are not (0.7796ms)
+✔ unsupported operations remain unsupported despite plausible block names, including mixed and unsupported-only goals (2.6832ms)
+✔ legacy demos keep their original protocol and remain usable without requirement reviews (2.2399ms)
+✔ legacy protocol projection does not advertise trusted v2 primitives (1.7446ms)
+✔ generation rejects unfinished media type uploads and closes without waiting for body (98.2838ms)
+✔ generation rejects unfinished cross-origin uploads and closes without waiting for body (15.0279ms)
+✔ generation rejects unfinished declared size uploads and closes without waiting for body (16.8732ms)
+✔ generation rejects unfinished method uploads and closes without waiting for body (18.9513ms)
+✔ generation rejects unfinished route uploads and closes without waiting for body (11.401ms)
+✔ over-limit unfinished chunked upload is structured 413 and releases the generation slot (9.5879ms)
+✔ unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect (25.9393ms)
+✔ generation accepts valid multibyte JSON split inside a UTF-8 codepoint (7.9466ms)
+✔ unfinished request reaches its input deadline, returns structured 408 and releases admission (12.0292ms)
+✔ rate-limited unfinished upload receives 429 without reaching upstream or waiting for its body (52.2435ms)
+✔ ordinary start is closed by default and shuts down idempotently (99.0567ms)
+✖ key and ledger configuration cannot activate generation without trusted identity (29.2377ms)
+✖ explicit paid runtime keeps the ledger lock until an in-flight request is aborted (6.8033ms)
+✖ explicit paid runtime serves a validated Mock AppSpec and settles before shutdown closes the ledger (4.2868ms)
+✖ startup failure closes an explicitly opened paid runtime (6.4906ms)
+✖ listen failure closes an explicitly opened paid runtime (9.7061ms)
+✔ SIGINT and SIGTERM hooks invoke one idempotent shutdown task (1.8129ms)
+﹣ real process signals do not interrupt request drain or release the ledger early (0.2909ms) # Requires POSIX signal delivery
+✖ native-clock expired pricing denies before model egress (4.4953ms)
+✔ principal resolver is bounded and rejects boolean, malformed, errors and late results (16.9137ms)
+✔ boolean identity alone cannot construct a runtime even with key and ledger configuration (78.7686ms)
+✔ invalid principal rejects before request context construction (8.8848ms)
+✔ request contexts isolate principals, keys and normalized semantic payload under concurrency (46.6445ms)
+✔ invalid input and duplicate or malformed idempotency headers never construct request context (39.4324ms)
+✔ request context errors return a fixed sanitized response (6.878ms)
+✔ opaque cookie adapter rejects absent, expired, revoked, unknown and forged-header identities before runtime work (38.1698ms)
+✔ opaque cookie hashes resolve stable principals and isolate identical keys across principals (14.9891ms)
+✖ CLI identity mode stays closed by default and requires a private explicit allowlist (21.8496ms)
+✖ authenticated HTTP composition returns a generated AppSpec through the real Gateway runtime (14.8516ms)
+✖ missing session rejects before request context, reservation, or provider egress (10.113ms)
+✖ budget exhaustion maps to HTTP 503 without a seventh provider request (6.8403ms)
+✖ upstream timeout maps to HTTP 504 and records uncertain spend before shutdown (5.2539ms)
+✖ client disconnect aborts the Mock upstream and preserves the uncertain ledger claim (7.9139ms)
+ℹ tests 59
+ℹ suites 0
+ℹ pass 46
+ℹ fail 12
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 1181.5777
+
+✖ failing tests:
+
+test at tests\generation\lifecycle.test.mjs:52:1
+✖ key and ledger configuration cannot activate generation without trusted identity (29.2377ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/ledger.mjs:18:3)
+      at TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:72:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\generation\lifecycle.test.mjs:77:1
+✖ explicit paid runtime keeps the ledger lock until an in-flight request is aborted (6.8033ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/ledger.mjs:18:3)
+      at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/runtime.mjs:22:18)
+      at paidRuntimeFactory (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:85:41)
+      at startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:503:21)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:86:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\generation\lifecycle.test.mjs:107:1
+✖ explicit paid runtime serves a validated Mock AppSpec and settles before shutdown closes the ledger (4.2868ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/ledger.mjs:18:3)
+      at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/runtime.mjs:22:18)
+      at paidRuntimeFactory (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:110:41)
+      at startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:503:21)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:120:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\generation\lifecycle.test.mjs:133:1
+✖ startup failure closes an explicitly opened paid runtime (6.4906ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /startup failed/. Input:
+  
+  'Error: LEDGER_PERMISSIONS'
+  
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:136:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: LEDGER_PERMISSIONS
+        at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/pricing.mjs:21:60)
+        at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/ledger.mjs:18:3)
+        at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/runtime.mjs:22:18)
+        at paidRuntimeFactory (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:135:41)
+        at startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:503:21)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:136:3)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: /startup failed/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests\generation\lifecycle.test.mjs:144:1
+✖ listen failure closes an explicitly opened paid runtime (9.7061ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   code: 'LEDGER_PERMISSIONS'
+  -   code: 'EADDRINUSE'
+    }
+  
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:150:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: LEDGER_PERMISSIONS
+        at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/pricing.mjs:21:60)
+        at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/ledger.mjs:18:3)
+        at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/runtime.mjs:22:18)
+        at paidRuntimeFactory (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:152:36)
+        at startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:503:21)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:150:3)
+        at async Test.run (node:internal/test_runner/test:1409:7),
+    expected: { code: 'EADDRINUSE' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests\generation\lifecycle.test.mjs:269:1
+✖ native-clock expired pricing denies before model egress (4.4953ms)
+  Error: LEDGER_PERMISSIONS
+      at ensure (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/pricing.mjs:21:60)
+      at openLedger (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/ledger.mjs:18:3)
+      at createPaidGenerationRuntime (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/paid-gateway/runtime.mjs:22:18)
+      at paidRuntimeFactory (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:273:113)
+      at startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:503:21)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/lifecycle.test.mjs:273:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_PERMISSIONS'
+  }
+
+test at tests\generation\principal-entry.test.mjs:146:1
+✖ CLI identity mode stays closed by default and requires a private explicit allowlist (21.8496ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:495:51)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/principal-entry.test.mjs:163:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests\generation\principal-gateway-http.test.mjs:66:1
+✖ authenticated HTTP composition returns a generated AppSpec through the real Gateway runtime (14.8516ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:495:51)
+      at async post (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/principal-gateway-http.test.mjs:56:22)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/principal-gateway-http.test.mjs:74:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests\generation\principal-gateway-http.test.mjs:84:1
+✖ missing session rejects before request context, reservation, or provider egress (10.113ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:495:51)
+      at async post (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/principal-gateway-http.test.mjs:56:22)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/principal-gateway-http.test.mjs:87:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests\generation\principal-gateway-http.test.mjs:95:1
+✖ budget exhaustion maps to HTTP 503 without a seventh provider request (6.8403ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:495:51)
+      at async post (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/principal-gateway-http.test.mjs:56:22)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/principal-gateway-http.test.mjs:99:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests\generation\principal-gateway-http.test.mjs:116:1
+✖ upstream timeout maps to HTTP 504 and records uncertain spend before shutdown (5.2539ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:495:51)
+      at async post (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/principal-gateway-http.test.mjs:56:22)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/principal-gateway-http.test.mjs:120:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests\generation\principal-gateway-http.test.mjs:128:1
+✖ client disconnect aborts the Mock upstream and preserves the uncertain ledger claim (7.9139ms)
+  Error: Opaque session allowlist must be a private file (0600 or stricter)
+      at cliPrincipalResolver (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:314:83)
+      at async startServer (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/server/index.mjs:495:51)
+      at async TestContext.<anonymous> (file:///<QA_WORKSPACE>/work/BlockCraft-AI-lf/tests/generation/principal-gateway-http.test.mjs:135:22)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+STDERR:

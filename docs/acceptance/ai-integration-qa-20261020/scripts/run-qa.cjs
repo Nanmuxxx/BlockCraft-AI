@@ -1,8 +1,8 @@
 const { spawnSync } = require('node:child_process')
 const { mkdirSync, writeFileSync } = require('node:fs')
 const path = require('node:path')
-const root = path.resolve(__dirname, 'BlockCraft-AI')
-const output = path.resolve(__dirname, '../outputs')
+const root = path.resolve(__dirname, process.env.QA_CHECKOUT || 'BlockCraft-AI')
+const output = path.resolve(__dirname, '../outputs', process.env.QA_OUTPUT || '.')
 mkdirSync(output, { recursive: true })
 // Deliberately do not inherit application credentials or arbitrary NODE_OPTIONS.
 const env = {}
@@ -17,9 +17,13 @@ const tasks = {
   protocol: ['server/custom-block/build-protocol.mjs'],
   tsc: ['node_modules/typescript/bin/tsc', '-b'],
   vite: ['node_modules/vite/bin/vite.js', 'build'],
+  browser: [path.resolve(__dirname, 'launch-browser.cjs'), root, path.join(output, 'browser')],
+  cancellation: ['--test', path.resolve(__dirname, 'generation-cancellation.test.cjs')],
 }
 for (const name of process.argv.slice(2)) {
   const started = new Date().toISOString()
+  env.QA_SOURCE_ROOT = root
+  if (name === 'browser') env.NODE_PATH = path.resolve(__dirname, 'browser-deps/node_modules')
   const result = spawnSync(process.execPath, tasks[name], { cwd: root, env, encoding: 'utf8', timeout: 120000, maxBuffer: 10 * 1024 * 1024 })
   writeFileSync(path.join(output, name + '.log'), (result.stdout || '') + '\nSTDERR:\n' + (result.stderr || '') + (result.error ? '\n' + result.error : ''))
   const record = { name, started, args: tasks[name], exit: result.status, signal: result.signal, error: result.error?.message, node: process.version, platform: process.platform, sha: spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout.trim() }

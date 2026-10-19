@@ -1,0 +1,13 @@
+{
+  "name": "cancellation",
+  "started": "2026-10-19T16:52:07.246Z",
+  "args": [
+    "--test",
+    "<QA_WORKSPACE>\\work\\generation-cancellation.test.cjs"
+  ],
+  "exit": 0,
+  "signal": null,
+  "node": "v24.22.0",
+  "platform": "win32",
+  "sha": "d6f2cb4f110d22f665690e3af1d818249cc03b99"
+}
