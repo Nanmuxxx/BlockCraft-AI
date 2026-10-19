@@ -1,63 +1,200 @@
-# TSX Viewer Threat Model — Phase 2
+# TSX Viewer 安全威胁模型
 
-**Status:** Initial architecture audit; not a security approval.  
-**Baseline:** `Nanmuxxx/BlockCraft-AI` main at audit start: `25773e6d65e4e5a2b29d125baa2510f4a10aa343`.  
-**Related candidate:** PR #40 (`692b7f56e1df094f4db95e35cc3be1fc72cc3dfc`), open Draft at audit time.  
-**Security posture:** Arbitrary generated TSX execution remains DENIED. This document does not authorize enabling it.
+2026-10-19；基线 `main = 25773e6d65e4e5a2b29d125baa2510f4a10aa343`；参考 PR #40（未合入）HEAD `692b7f56e1df094f4db95e35cc3be1fc72cc3dfc`。本文描述的是 `phase2/safe-tsx-viewer` 分支中的实验模块，不代表正式 C 模式已经放行。
 
-## 1. Assets and trust boundaries
+本文取代远端分支早期 `5b5ed00` 的初始状态报告，并保留其信任边界与 launch gates；新增内容只反映本分支实际实现和已执行的真实 Chromium 测试。
 
-- Host editor DOM, JavaScript realm, application state, and project/session objects.
-- Authentication material: cookies, local/session storage, in-memory tokens, API keys, and authenticated same-origin endpoints.
-- User project/artifact data, generated TSX, compiler output, dependency metadata, and renderer state.
-- Availability of the host tab and its UI thread, memory, CPU, network, and storage.
-- Integrity of messages exchanged between host and viewer.
+## 1. 结论
 
-Trust zones:
-1. **Host application:** trusted application code; owns auth and project mutation authority.
-2. **Artifact ingress/installer:** accepts untrusted JSON/source and validates shape, ownership, revision, and capability constraints. Validation is not proof that source is safe to execute.
-3. **Compiler/build stage:** parses untrusted source. Treat parser, plugins, transforms, package resolution, and build output as attack surfaces.
-4. **Viewer realm:** untrusted code execution zone; must have no host credentials or host object references.
-5. **Network/dependency boundary:** all fetched modules and runtime services are explicit capabilities, not ambient authority.
+本分支把 TSX 运行拆成三层：
 
-## 2. Threats and required controls
+1. 宿主只提交已验证的 `SourceArtifact` 和实例 props，不执行模型源码。
+2. 受限编译 worker 只做语法/导入准入和打包，不运行用户组件。
+3. 运行发生在独立源站的 `sandbox="allow-scripts"`（无 `allow-same-origin`）iframe 内；iframe 使用严格 CSP、credentialless、运行时能力屏蔽和一次性 MessageChannel。
 
-| Threat | Example / impact | Required mitigation and evidence |
-|---|---|---|
-| Host DOM access | `parent.document`, DOM traversal, UI spoofing, key capture | Dedicated origin where possible; iframe sandbox without `allow-same-origin`; never combine `allow-scripts` and `allow-same-origin` for same-origin content; verify in a real browser that parent DOM access throws. |
-| Cookie/auth access | Reading host cookies, localStorage, sessionStorage, in-memory tokens, or authenticated endpoints | Viewer must not share host origin; opaque-origin sandbox where practical; no credentials in messages, props, source maps, or build payloads; use `credentials: 'omit'` for permitted fetches. Verify each storage surface in browser. |
-| Network exfiltration | `fetch`, XHR, WebSocket, EventSource, beacon, image/form navigation exfiltrate source or secrets | Strict CSP `default-src 'none'`; explicit `connect-src`, `img-src`, `form-action`, `navigate-to` policy; block unneeded network in the harness; CSP is defense-in-depth, not a substitute for origin separation. |
-| Malicious dependencies | Typosquatting, install scripts, transitive dependency compromise, import-time side effects | No arbitrary package installation or runtime bare imports; compile only against a fixed, reviewed dependency allowlist and pinned artifacts; reject dynamic import and external URLs. |
-| Import escape | `node:fs`, `process`, `vite`, absolute paths, URL imports, dynamic import | Parse AST and allow only explicit module specifiers; reject computed/dynamic imports, re-exports outside allowlist, and import attributes unless explicitly supported. String scanning alone is insufficient. |
-| Resource exhaustion | Infinite loop, recursion, memory blow-up, huge DOM, timer flood | A same-thread iframe does **not** guarantee CPU isolation: an infinite loop can still freeze the tab/browser process. Until a reproducible browser test proves host responsiveness under hostile loops, production execution stays disabled. Consider a separately-originated, separately-process browser context; enforce source/output/DOM/time quotas, while recognizing timers cannot interrupt a synchronous loop in the same renderer process. |
-| Message spoofing/replay | Any window sends fake ready/error/result messages; stale messages mutate host state | Strict schema and version checks; validate `event.source` against the exact iframe WindowProxy, expected origin (or documented opaque-origin `null` case plus source identity and nonce), session nonce, request ID, sequence, size and message type; reject stale/replayed messages. Never trust payload-provided origin fields. |
-| Protocol confusion | Invalid schemes, `javascript:`, `data:`, `blob:`, malformed URL or unexpected content type | Parse with URL API against an explicit allowlist; reject dangerous schemes and redirects; use exact origin/path policy; never place untrusted source in a host-origin script URL or HTML string. |
-| Renderer/compiler compromise | Malformed TSX exploits compiler/plugin or React renderer | Pin versions, minimize compiler features/plugins, no server-side execution, isolate compilation where possible, cap source and output sizes, patch promptly. |
-| Error escape | Exception/rejection tears down host or leaks internals | Catch compile and render errors in viewer; bounded, sanitized error messages; host-side protocol handler must itself be defensive. Errors are not a security boundary. |
-| Navigation/popups | Viewer navigates top, opens windows, submits forms, downloads files | Minimal sandbox tokens; no top-navigation/popups/forms/downloads; CSP `form-action 'none'`; validate any navigation request explicitly. |
-| Storage persistence | Viewer writes persistent data or reads another tenant's state | Opaque origin / dedicated origin; disable storage APIs by architecture where possible; do not grant shared origin; browser-test access failures. |
-| Cross-origin assumptions | Same-origin iframe mistakenly treated as isolated | Document actual origins and sandbox flags; inspect `location.origin`, `document.domain`, storage behavior and parent access in browser. iframe presence alone is not evidence. |
+正式 C 模式仍保持 `unavailable`。实验 Viewer 默认关闭，未接入 `AppSpecWorkshop` 或 `CustomBlockViewer`。只有独立验收和安全负责人放行后，才允许把该模块接到正式 C 模式。
 
-## 3. Current audit observations
+## 2. 范围与非目标
 
-- PR #40 describes Generated Artifact installation as `build: not-attempted` and `execution: denied`; the installer source also states that generated installs cannot grant host capabilities or events.
-- The installer validates artifact structure, captures JSON before asynchronous validation, checks project/session authorization and revision, and uses a session-bound confirmation ticket. These are integrity controls for installation, not a safe TSX execution sandbox.
-- The repository package manifest at the audit baseline includes React/React DOM and Vite, but the reviewed build setup alone does not establish a safe arbitrary-TSX runtime.
-- PR #40's own evidence says `test:trusted-interactive:browser` was blocked because Playwright was missing and no cases ran. Do not interpret archived fixture screenshots or offline tests as proof of arbitrary TSX isolation.
-- No successful hostile-source browser test has yet been established in this audit. CSP, iframe flags, origin layout, and message protocol must be verified against the actual viewer entry point before any execution claim.
+### 范围内
 
-## 4. Non-negotiable launch gates
+- 宿主 DOM、Cookie、LocalStorage、IndexedDB、认证信息和宿主网络能力的隔离。
+- TSX 源码准入、依赖白名单、编译、打包、缓存、错误边界和生命周期。
+- iframe sandbox、CSP、跨源部署、postMessage/MessageChannel 协议。
+- 恶意组件、恶意依赖、消息伪造、非法协议、渲染异常、资源耗尽和外部网络外传。
+- 真实 Chromium 中的交互验证与可复现测试。
 
-1. No arbitrary generated TSX in the host JS realm.
-2. No host auth/project objects or credentials cross the boundary.
-3. Dependency and import allowlists are enforced structurally.
-4. CSP and sandbox are tested in a real browser, including storage, DOM, navigation and network denial.
-5. Message origin/source/nonce/schema/replay checks have adversarial tests.
-6. A hostile infinite-loop test demonstrates the host remains responsive in the intended deployment architecture. If not, execution remains disabled.
-7. Repeated mount/unmount tests show listeners, timers, workers, blob URLs and iframe resources are cleaned up.
-8. Counter, Todo and Pomodoro fixtures pass real interaction tests; screenshots alone are insufficient.
-9. Security reviewer explicitly approves before C-mode integration or production enablement.
+### 非目标
 
-## 5. Safe fallback
+- 不证明浏览器或原生解析器没有 0-day。
+- 不提供任意文件系统访问、宿主数据库写入、宿主认证代理或跨源业务桥接。
+- 不把“编译成功”当作“业务正确”“模型质量合格”或“正式 C 模式已验收”。
+- 不在本分支实现正式付费模型调用。
 
-When any gate is missing, keep the viewer unavailable and render source as inert text or a non-executing preview. Do not silently fall back to `eval`, `new Function`, host-side transpilation followed by execution, or an iframe without tested origin and resource boundaries.
+## 3. 现有系统审计
+
+### 3.1 Viewer unavailable 策略
+
+- `src/integrations/custom-block-bc/viewer.ts:22` 在缺少匹配 observation 时返回 `status: 'unavailable'`，文案明确“当前没有经过验证并接线的隔离 Viewer”。
+- `src/integrations/custom-block-bc/CustomBlockViewer.tsx` 只有占位 UI；没有 iframe、`srcdoc`、源码 URL、动态 module 或生成组件槽位。
+- 现有 `tests/generated-artifact-ui/browser.cjs` 断言 C 模式不存在 iframe、动态脚本和可执行组件。
+
+### 3.2 Artifact Installer
+
+- `src/integrations/generated-artifact/install.ts` 使用一次性 ticket、preview/confirm、CAS 和 project session 绑定。
+- `resolveArtifact` 会重算内容摘要；预览不写入，确认才通过唯一 owner 写入。
+- 生成制品要求 `requestedCapabilities` 和 `events` 为空；安装成功文案仍是 `pending-build`，不宣称可执行。
+- 安装层是数据准入层，不是执行授权层。
+
+### 3.3 TSX 源码存储
+
+- `SourceArtifact` 是惰性数据：`manifest + sources + dependencies + build`。
+- `server/custom-block/store.mjs` 使用私有目录、文件大小上限和 UTF-8 严格解码；不把源码写成可执行 JS/TS 文件。
+- 源码不会在安装、预览或 metadata 投影中导入、`eval` 或挂载。
+
+### 3.4 编译入口
+
+- 既有的 `server/custom-block/build-protocol.mjs` 只编译可信协议模块，不接受源码路径。
+- 本分支新增 `server/safe-viewer/compile.mjs`、`compile-worker.mjs`；编译 worker 使用固定的源码集合、导入白名单、大小/复杂度限制和 5 秒超时。
+- 编译入口没有接入正式 HTTP 路由；测试服务器是独立实验宿主。
+
+### 3.5 import 与依赖机制
+
+- `server/custom-block/import-policy.mjs` 做语法准入、相对路径解析、动态 import/`require`/`eval`/`Function`/Worker/WebAssembly 等拒绝。
+- 本分支进一步把 Viewer 允许的裸包收窄为 `react` 和 `react/jsx-runtime`；相对导入只能落在制品自身的源码集合内。
+- React、React DOM 和 esbuild 使用仓库内固定版本；esbuild 版本 0.25.12，与既有 Artifact 策略一致。
+- 不访问 npm registry；编译只从本地 `node_modules` 读取包内容。
+
+### 3.6 C 模式
+
+- 正式 C 模式没有导入 `src/integrations/safe-viewer`。
+- `CustomBlockViewer` 和 `viewerState` 未修改。
+- 本分支的 `SafeTsxViewer.tsx` 是独立实验组件，不进入正式页面树。
+
+### 3.7 原有 CSP / iframe / 跨源状态
+
+- 原有正式 C 模式没有运行 iframe，因此之前没有可依赖的运行沙箱。
+- 本分支新增的 runner 响应使用：
+
+```text
+sandbox allow-scripts
+default-src 'none'
+script-src 'self' 'nonce-<per-response-nonce>'
+style-src 'self' 'unsafe-inline'
+img-src data:
+connect-src 'none'
+font-src 'none'
+media-src 'none'
+object-src 'none'
+frame-src 'none'
+child-src 'none'
+worker-src 'none'
+manifest-src 'none'
+base-uri 'none'
+form-action 'none'
+frame-ancestors <exact-parent-origin>
+```
+
+- iframe 属性为 `sandbox="allow-scripts"`、`credentialless`、`referrerpolicy="no-referrer"`；没有 `allow-same-origin`、`allow-forms`、`allow-popups` 或顶层导航权限。
+- runner 使用独立源站池（测试中为 `127.0.0.2` 到 `127.0.0.7`），宿主为 `127.0.0.1`。生产必须使用专用的 Viewer 源站或源站池，不能仅用同主机不同端口伪装隔离。
+
+跨源隔离说明：runner 文档设置 `Cross-Origin-Opener-Policy: same-origin` 和 `Origin-Agent-Cluster: ?1`，并使用不同站点/不透明 sandbox 源。由于 runner 必须被宿主嵌入，本分支没有在宿主上强制 `Cross-Origin-Embedder-Policy`，因此不宣称完整的 COOP+COEP “cross-origin isolated”上下文；实际保证是跨源 iframe + sandbox + 独立源站/进程池，并由真实 Chromium 的宿主响应性测试验证。生产部署应优先使用独立站点，而不是同一站点下的不同端口。
+
+### 3.8 postMessage 与运行时边界
+
+- 宿主 `client.ts` 检查 `event.source === iframe.contentWindow`、`event.origin === 'null'`、session、nonce、协议、精确字段和消息大小。
+- 通过一次性 `MessageChannel` 传递后续消息；端口是能力，消息仍校验 session/nonce/seq/type/字段。
+- 运行器只接收 props；不接受认证 token、cookie、宿主 DOM 句柄、文件句柄或业务写能力。
+- 运行时在加载用户组件前屏蔽网络 API、存储 API、Worker、WebSocket、WebRTC、`eval`/`Function`、`postMessage`、`parent`/`top`/`opener` 等；并对计时器做清理跟踪。
+
+## 4. 信任边界
+
+| 边界 | 可信侧 | 不可信侧 | 结论 |
+| --- | --- | --- | --- |
+| 宿主页面 | 宿主 UI、session、Cookie、LocalStorage、网络监听 | 生成 TSX、props、消息内容 | 模型代码不得进入宿主 JS 上下文 |
+| 编译服务 | 协议校验、导入准入、esbuild worker | 源码、manifest、props | 编译成功不等于执行授权 |
+| runner 文档 | runner runtime、CSP、sandbox | bundle 内的用户组件 | 运行在独立源站、不透明源、无宿主凭据 |
+| 消息通道 | 宿主 controller、一次性 MessageChannel | iframe 内消息 | 来源、目标、session、nonce、seq、结构均校验 |
+| 部署 | 专用 Viewer 源站、证书、进程/源站池 | 浏览器进程调度和同源复用 | 需要独立部署与监控；死循环源站要退役 |
+
+## 5. 威胁与控制
+
+| ID | 威胁 | 影响 | 控制 | 验证 | 残余风险 |
+| --- | --- | --- | --- | --- | --- |
+| T1 | 模型代码访问宿主 DOM | 读取宿主页面、伪造 UI、窃取数据 | 不透明 sandbox 源 + 跨源 iframe + 无 `allow-same-origin`；运行时屏蔽 `parent/top/opener` | 攻击夹具读取父 DOM 得到 `SafeViewerCapabilityError`；iframe HTML 不含宿主 secret | 浏览器 sandbox 0-day |
+| T2 | 读取宿主 Cookie/LocalStorage/认证 | 账号接管、数据泄露 | 独立源站 + `credentialless` + 不透明源 + 运行时存储 getter 屏蔽 | 宿主设置 cookie/localStorage；iframe 读取被拒绝；runner 请求无 Cookie | 同站部署配置错误会削弱隔离 |
+| T3 | 外部网络外传 | 数据泄露、回连 C2 | `connect-src 'none'`、`img-src data:`、`font/media/frame/worker-src 'none'`；fetch/WebSocket/beacon/WebRTC 运行时屏蔽 | 外部图片请求被 CSP 拦截，记录为 `error: csp`；无外部响应；fetch/ws/beacon 抛 `SafeViewerCapabilityError` | 浏览器漏洞、导航型外传（见 T12） |
+| T4 | 恶意依赖 | 供应链执行、隐藏后门 | 裸包白名单仅 React；锁定版本；本地打包；不访问 registry；源码 digest 重算 | `node:fs`、`react-dom` 等导入被 `IMPORT_REJECTED`；工具链版本不匹配会失败 | 锁定包本身可能有漏洞 |
+| T5 | 资源耗尽/死循环 | 阻塞宿主、拖垮 Viewer 源站 | 跨源 OOPIF + 源站池；3 秒 boot watchdog；remove iframe；编译 worker 128MB/5 秒；源/包体/缓存上限；超时源站 quarantine | Chromium 中死循环 iframe 被移除，宿主 ping 耗时 1ms，状态为 `RUNTIME_TIMEOUT`；源站进入 quarantine | 源站池可被反复耗尽；需要容量监控和重置策略 |
+| T6 | 伪造 postMessage | 伪造 ready/error、注入状态 | source/origin/session/nonce/seq/精确字段/大小；后续使用一次性 MessageChannel | 从宿主窗口伪造 ready/boot，rejected 计数增加，accepted 不变，仍为 ready | 同源 runner 进程内的恶意 bundle 可发合法形状消息，但只有自己会话能力 |
+| T7 | 非法协议/导入/摘要 | 绕过准入、加载非预期代码 | 精确协议、digest 重算、事件/能力为空、导入白名单、bundle 上限、源能力 denylist | `INVALID_PROTOCOL`、`IMPORT_REJECTED`、`SOURCE_CAPABILITY_REJECTED`、`DIGEST_MISMATCH`、`BUNDLE_LIMIT` 均被测试 | 静态扫描可被动态字符串绕过；运行时/CSP 兜底 |
+| T8 | 渲染异常 | 白屏、错误扩散 | React ErrorBoundary、`onUncaughtError`、`onCaughtError`、父级 watchdog、remove iframe | 渲染错误夹具返回 `RENDER_ERROR`；宿主继续响应 | 极端 React/浏览器崩溃 |
+| T9 | 编译期 DoS | CPU/内存耗尽、请求堆积 | worker `resourceLimits`、超时、并发上限、请求体上限、源复杂度限制、缓存 | 1ms 超时测试返回 `COMPILE_TIMEOUT`；超限返回 `BUNDLE_LIMIT`/`REQUEST_TOO_LARGE` | esbuild/原生二进制漏洞 |
+| T10 | 供应链/缓存投毒 | 执行非预期 bundle | 内容摘要、版本化缓存 key、session 绑定 bundle、Host+session 校验、ACAO 仅限代码资源 | 第二次编译 `cache: hit`；bundle 摘要与内容一致；错误 session/Host 被拒 | 服务器被攻破时无法保护 |
+| T11 | 点击劫持/嵌入 | 诱导宿主用户操作 | `frame-ancestors` 精确父源；CSP sandbox；host CSP `frame-src` 仅列出 runner 源站 | runner 响应头断言通过；host 只能嵌入配置的 runner | 部署 CSP 配置错误 |
+| T12 | 导航/弹窗 | 离开宿主、钓鱼、参数外传 | 无 `allow-top-navigation`/`allow-popups`/`allow-forms`；`form-action/base-uri 'none'`；运行时 `open/location/postMessage` 屏蔽 | `target="_top"` 点击后宿主 URL 不变；控制台显示 sandbox 阻止 | 计算属性 `location` 的 self-navigation 仍可能发生；不携带宿主秘密 |
+| T13 | 宿主认证凭据泄露 | 会话劫持 | `credentialless`、独立 host、不向 iframe 发送 token、不提供宿主 fetch 代理 | runner 请求 Cookie 头计数为 0；iframe 读取宿主 storage/cookie 失败 | 部署在共享父域时需额外审计 |
+| T14 | 错误/日志泄露 | 源码、路径、内部信息外泄 | 父级只显示错误码和通用文案；错误 payload 有长度上限；不返回堆栈 | 页面无未处理异常；错误夹具只暴露 `RENDER_ERROR` | 浏览器控制台仍可能看到组件自身错误文本 |
+| T15 | 浏览器/沙箱逃逸 | 完全突破隔离 | 最小 sandbox、严格 CSP、独立源站、credentialless、Origin-Agent-Cluster/COOP、kill switch | 仅 Chromium 验证；不声称跨浏览器证明 | 任何浏览器 0-day 都可能突破；必须独立安全评审 |
+| T16 | 源站复用污染 | 前一个死循环拖死后续会话 | 每次编译从健康源站池选择；`RUNTIME_TIMEOUT` 后调用 retire/quarantine，不复用该源站 | 死循环后源站进入 quarantined；后续 attack 在另一源站 ready | 池耗尽会返回 `RUNNER_CAPACITY`，需要运维重置 |
+| T17 | 会话/包猜测 | 未授权加载 runner | 192-bit 随机 session/nonce、60 秒 TTL、bundle digest、Host/session 绑定、frame-ancestors | 无效 session 返回 `SESSION_EXPIRED`；错误 Host 返回 `ORIGIN_REJECTED` | 同源宿主被攻破时无法保护 |
+| T18 | 跨会话数据持久化 | 数据残留 | 不透明源、无 cookie、runner 不提供存储 API；每次会话短生命周期 | iframe 存储访问失败 | 浏览器进程内存可能短暂残留，需进程回收策略 |
+
+## 6. 消息协议
+
+### 6.1 启动握手
+
+1. runner bundle 读取自身 HTML 的 `parentOrigin/session/nonce`。
+2. runner 向 `window.parent` 发送 `boot`，目标 origin 为精确父源。
+3. 宿主校验 `event.source` 是当前 iframe、`event.origin === 'null'`（不透明 sandbox 源）、session/nonce/协议/字段。
+4. 宿主创建一次性 `MessageChannel`，把 `port2` 随 `init` 发送给 iframe；`init` 只含 session/nonce/props，不含凭据。
+5. runtime 在硬化环境后惰性加载用户组件；提交后通过 `port1` 发送 `ready`。
+6. 错误或 `dispose` 通过同一端口传递；父级移除 iframe 并清理监听器。
+
+### 6.2 校验规则
+
+- 只接受精确字段集合；未知字段、缺失字段、超长字符串、超深对象、非法 seq 全部拒绝。
+- `ready` 只接受一次；`error` 只接受运行时产生的形状；重复/过期消息被拒绝。
+- 父级对 boot 使用 source + origin + session + nonce；对端口消息使用端口能力 + session + nonce + seq。
+- 由于 sandbox 无同源权限，iframe 的 origin 序列化为 `null`；init 的目标 origin 使用 `*`，但 init 不含任何宿主秘密，且必须先通过 boot 的 nonce 校验。
+
+## 7. 资源限制
+
+| 资源 | 限制 |
+| --- | --- |
+| 请求体 | 512 KiB |
+| 源文件 | 8 个，单文件 64 KiB，总计 256 KiB |
+| 源 token/嵌套 | 24,000 / 96 |
+| bundle | 512 KiB |
+| 编译 | 5 秒，2 并发，worker 128 MB old generation |
+| 缓存 | 32 条 / 8 MiB LRU |
+| session | 64 个，60 秒 TTL |
+| boot watchdog | 默认 5 秒；测试 3 秒 |
+| 消息 | 16 KiB，字符串 1 KiB |
+
+## 8. 已执行的验证
+
+- 服务端：`npm run test:safe-viewer`，6/6 通过，覆盖摘要、导入、静态能力、包体、请求体、session、Host、禁用开关和编译超时。
+- 浏览器：`npm run test:safe-viewer:browser`，真实 Chromium 153.0.8010.12，14/14 场景通过。
+- 构建：`npm run build` 通过；原有默认测试 `npm test` 194/194 通过。
+- 证据：[`docs/acceptance/safe-viewer/browser-report.json`](docs/acceptance/safe-viewer/browser-report.json)。
+- 关键证据：死循环时宿主 ping 1ms；外部图片请求被 CSP 拦截且无外部响应；runner Cookie 头为 0；伪造消息 rejected 计数增加；死循环源站进入 quarantine。
+
+## 9. 残余风险与放行条件
+
+必须保留的残余风险：
+
+- 只在 Chromium 验证；Firefox/Safari 未验收。
+- Chromium 日志提示 `Origin-Agent-Cluster` 在已 site-keyed 的源上未能 origin-key；测试通过独立 IP 源站池和源站退役获得宿主响应，但生产必须部署专用源站并监控进程隔离。
+- sandbox 的 self-navigation 不能由 CSP `navigate-to` 在所有浏览器中可靠禁止；顶层导航已由 sandbox 阻断，且 iframe 不持有宿主秘密。
+- CSS/data URI/大量 DOM 仍可能消耗 Viewer 进程资源；需要进程级限额和容量监控。
+- 编译器和浏览器漏洞不能由应用层完全消除。
+- 源站池可被反复死循环耗尽；`RUNNER_CAPACITY` 必须有运维告警和显式重置流程。
+
+正式 C 模式放行前必须完成：
+
+1. 独立安全评审确认本分支精确提交、部署 headers、源站池和证书配置。
+2. 至少 Chromium 外的目标浏览器完成真实交互与死循环测试。
+3. AI Core 和 Workshop 负责人签署 Artifact → Viewer 与 UI 状态契约。
+4. 生产监控覆盖 `RUNTIME_TIMEOUT`、`RUNNER_CAPACITY`、CSP 违规、外传尝试和源站 quarantine。
+5. 保留 `enabled=false` kill switch；任何异常默认回到 `unavailable`，不得静默降级到宿主执行。
