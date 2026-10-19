@@ -5,7 +5,7 @@
 ## 当前交接检查点（2026-10-20 04:10 Beijing，覆盖下文历史候选）
 
 - 写Owner已从Docker既有聊天明确交给Supervisor；PR65仍为部署文档PR，按正常FF保存，不覆盖产品分支。
-- 当前组合PR75 `7a2adbbfaa1d8bfd3c8853a4d204d1d6532bbe8a` / tree `f3d6757dd3880eba3426c96fb33e1b18a53e49f0`；main仍4a95cae。保留三条Docker launcher打包改动，只导入TL已审Core3abd hardening。源代码本地326e961/tree4df727已跑Python/OpenSSL、generation109/109、build、HTTPS番茄钟Mock、精确7860启动/401/通用失败/0upstream；证据在候选docs/acceptance/studio-hardening-composite-20261020/。云CI39316292354本检查时IN PROGRESS，旧39312992630不证明新SHA。
+- 当前组合PR75 `7a2adbbfaa1d8bfd3c8853a4d204d1d6532bbe8a` / tree `f3d6757dd3880eba3426c96fb33e1b18a53e49f0`；main仍4a95cae。保留三条Docker launcher打包改动，只导入TL已审Core3abd hardening。源代码本地326e961/tree4df727已跑Python/OpenSSL、generation109/109、build、HTTPS番茄钟Mock、精确7860启动/401/通用失败/0upstream；证据在候选docs/acceptance/studio-hardening-composite-20261020/。云CI39316292354现已completed SUCCESS，实际checkout `8f4f82729c2dc104018a3e970560fd467c36d456` 与PR75候选tree `f3d6757dd3880eba3426c96fb33e1b18a53e49f0` 一致。旧39312992630不证明新SHA。
 - 历史Run39312992630实际checkout为合成merge e7673eaf1f9a994ab1e88c0bd38c370fe567e1e3，同tree7b33d0b；不是直接checkout PR HEAD。下文7bc5/20aa仅历史范围。
 - 当前源码清单见docs/modelscope-candidate-7a2adbb-manifest.json：746普通blob/20,732,372bytes，最大495,835bytes，无LFS pointer/symlink/submodule。保留平台README并合并.gitattributes时预期747项（745new+2preserved/merged）。这不是完整内容/镜像secret扫描，也不是上传成功。
 - 最新可执行步骤以[首次部署说明](docs/docker-modelscope-initial-deployment-20261020.md)为准。默认CMD仍关闭；经QA验证的可选7860命令不是平台已支持或部署授权。

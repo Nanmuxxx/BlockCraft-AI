@@ -15,7 +15,7 @@
 
 组合源代码326e961/tree4df727与候选的产品代码一致，后续仅添加证据：Python/OpenSSL向量、generation109/109、TypeScript/Vite build、HTTPS Chromium登录→自然语言Mock生成→B→C25分钟启动/暂停/重置→B/C保留→replay401均PASS。精确0.0.0.0:7860启动/health200/匿名401、缺失损坏配置和缺失账本统一失败、0upstream也PASS。证据位于候选docs/acceptance/studio-hardening-composite-20261020/。
 
-新候选云Docker CI39316292354发布时仍IN PROGRESS，待独立读取完整Job/实际checkout/tree。旧CI39312992630只覆盖7bc5/tree7b33，实际checkout为e7673eaf合成merge。不得用旧绿灯为新SHA背书。
+新候选云Docker CI [39316292354](https://github.com/Nanmuxxx/BlockCraft-AI/actions/runs/39316292354) 已completed SUCCESS；实际checkout为 `8f4f82729c2dc104018a3e970560fd467c36d456`，其tree `f3d6757dd3880eba3426c96fb33e1b18a53e49f0` 与PR75候选一致。旧CI39312992630只覆盖7bc5/tree7b33，实际checkout为e7673eaf合成merge。不得用旧绿灯为新SHA背书。
 
 历史本地REAL AI PASS单独绑定e4d65ac，1真实请求/616tokens；不是当前Studio候选的真实或公网验收。PUBLIC PASS BLOCKED。完整镜像/secret内容扫描、目标ACL/存储/TLS/实际启动、费用连续性未验。
 
