@@ -1,0 +1,161 @@
+✔ existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure (42.503375ms)
+✔ route rejects structurally legal but incomplete metric-only app without input, then recovers (5.037292ms)
+✔ route rejects structurally legal but incomplete unbound empty entity, then recovers (3.358125ms)
+✔ route rejects structurally legal but incomplete hidden optional field, then recovers (3.591209ms)
+✔ prompt embeds the exact live protocol boundary and keeps idea in its own user message (1.151042ms)
+✔ club-app: independent requirement mapping and real runtime CRUD/aggregations (2.372458ms)
+✔ fitness-log: independent requirement mapping and real runtime CRUD/aggregations (1.425792ms)
+✔ study-log: independent requirement mapping and real runtime CRUD/aggregations (0.699916ms)
+✔ personal-tasks: independent requirement mapping and real runtime CRUD/aggregations (0.804666ms)
+✔ fitness-library: independent requirement mapping and real runtime CRUD/aggregations (0.959583ms)
+✔ money-app: independent requirement mapping and real runtime CRUD/aggregations (1.150584ms)
+✔ lost-found: independent requirement mapping and real runtime CRUD/aggregations (0.986916ms)
+✔ book-log: independent requirement mapping and real runtime CRUD/aggregations (1.938792ms)
+✔ movie-log: independent requirement mapping and real runtime CRUD/aggregations (0.454917ms)
+✔ same domain, different goals change entities/fields; no mandatory form/list/metric set (0.13125ms)
+✔ record count is supported with empty field evidence and reflects actual rows, not unique objects (0.590625ms)
+✔ base v1 empty specs stay legal; only the independent generation policy rejects them (0.096667ms)
+✔ separate completeness detects empty fields, unbound objects, missing input and inaccessible fields (0.099125ms)
+✔ bad binding, required field omission, cross-entity fields, illegal numeric metric and unknown types fail structure (0.259542ms)
+✔ structure cannot prove semantics: valid unrelated apps need review; independent mappings expose the mismatch (0.127125ms)
+✔ independent reviewer receives original goals, spec and actual operations as data without any API call (0.168916ms)
+✔ review must cover every goal and bind current input/spec/requirements; malformed evidence fails closed (0.470875ms)
+✔ only actual exposed operations count; list required fields are editable, hidden optional fields are not (0.11075ms)
+✔ unsupported operations remain unsupported despite plausible block names, including mixed and unsupported-only goals (0.3995ms)
+✔ legacy demos keep their original protocol and remain usable without requirement reviews (0.41175ms)
+✔ legacy protocol projection does not advertise trusted v2 primitives (0.113958ms)
+✔ generation rejects unfinished media type uploads and closes without waiting for body (20.012584ms)
+✔ generation rejects unfinished cross-origin uploads and closes without waiting for body (6.011833ms)
+✔ generation rejects unfinished declared size uploads and closes without waiting for body (4.587125ms)
+✔ generation rejects unfinished method uploads and closes without waiting for body (2.945833ms)
+✔ generation rejects unfinished route uploads and closes without waiting for body (3.558208ms)
+✔ over-limit unfinished chunked upload is structured 413 and releases the generation slot (3.107ms)
+✔ unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect (5.852875ms)
+✔ generation accepts valid multibyte JSON split inside a UTF-8 codepoint (3.632ms)
+✔ unfinished request reaches its input deadline, returns structured 408 and releases admission (3.187959ms)
+✔ rate-limited unfinished upload receives 429 without reaching upstream or waiting for its body (6.624209ms)
+✔ ordinary start is closed by default and shuts down idempotently (15.4055ms)
+✔ key and ledger configuration cannot activate generation without trusted identity (50.954792ms)
+✖ explicit paid runtime keeps the ledger lock until an in-flight request is aborted (5003.066708ms)
+✖ explicit paid runtime serves a validated Mock AppSpec and settles before shutdown closes the ledger (23.730541ms)
+✖ startup failure closes an explicitly opened paid runtime (24.316458ms)
+✖ listen failure closes an explicitly opened paid runtime (24.892208ms)
+✔ SIGINT and SIGTERM hooks invoke one idempotent shutdown task (0.299334ms)
+✖ real process signals do not interrupt request drain or release the ledger early (5067.285458ms)
+✖ native-clock expired pricing denies before model egress (28.159292ms)
+
+Interrupted while running:
+
+⚠ tests/generation/lifecycle.test.mjs (tests/generation/lifecycle.test.mjs:1:1)
+⚠ tests/generation/local-owner-launcher.test.mjs (tests/generation/local-owner-launcher.test.mjs:1:1)
+⚠ tests/generation/principal-entry.test.mjs (tests/generation/principal-entry.test.mjs:1:1)
+⚠ tests/generation/principal-gateway-http.test.mjs (tests/generation/principal-gateway-http.test.mjs:1:1)
+⚠ tests/generation/protocol-prompt.test.mjs (tests/generation/protocol-prompt.test.mjs:1:1)
+✖ tests/generation/lifecycle.test.mjs (63805.828458ms)
+✔ local paid startup refuses expired and over-cap Gateway profiles before touching runtime inputs (0.481333ms)
+✔ owner launcher requires explicit approval and rejects an explicitly expired profile (0.217333ms)
+✔ private identity state persists across startup without replacing the binding key (7.75425ms)
+✔ principal resolver is bounded and rejects boolean, malformed, errors and late results (13.603167ms)
+✔ boolean identity alone cannot construct a runtime even with key and ledger configuration (18.481708ms)
+✔ invalid principal rejects before request context construction (2.9675ms)
+✔ request contexts isolate principals, keys and normalized semantic payload under concurrency (24.220667ms)
+✔ invalid input and duplicate or malformed idempotency headers never construct request context (5.663542ms)
+✔ request context errors return a fixed sanitized response (1.228625ms)
+✔ opaque cookie adapter rejects absent, expired, revoked, unknown and forged-header identities before runtime work (3.922667ms)
+✔ opaque cookie hashes resolve stable principals and isolate identical keys across principals (1.818167ms)
+✔ CLI identity mode stays closed by default and requires a private explicit allowlist (22.13625ms)
+✔ authenticated HTTP composition returns a generated AppSpec through the real Gateway runtime (121.709541ms)
+✔ missing session rejects before request context, reservation, or provider egress (35.900333ms)
+✔ trusted v2 admission uses principal identity and leaves the sole durable reservation to Gateway (58.78725ms)
+✔ budget exhaustion maps to HTTP 503 without provider egress beyond POLICY.maxCalls (118.93975ms)
+✔ upstream timeout maps to HTTP 504 and records uncertain spend before shutdown (101.696375ms)
+✔ client disconnect aborts the Mock upstream and preserves the uncertain ledger claim (59.75075ms)
+✔ protocol projection treats LF and CRLF source bytes equivalently (0.51725ms)
+✔ protocol projection still rejects actual AppSpec extension changes (0.556166ms)
+ℹ tests 66
+ℹ suites 0
+ℹ pass 59
+ℹ fail 5
+ℹ cancelled 2
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 63811.145209
+
+✖ failing tests:
+
+test at tests/generation/lifecycle.test.mjs:77:1
+✖ explicit paid runtime keeps the ledger lock until an in-flight request is aborted (5003.066708ms)
+  'test timed out after 5000ms'
+
+test at tests/generation/lifecycle.test.mjs:107:1
+✖ explicit paid runtime serves a validated Mock AppSpec and settles before shutdown closes the ledger (23.730541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  401 !== 200
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/tests/generation/lifecycle.test.mjs:124:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 401,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/generation/lifecycle.test.mjs:133:1
+✖ startup failure closes an explicitly opened paid runtime (24.316458ms)
+  Error: LEDGER_INVALID
+      at ensure (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/server/paid-gateway/pricing.mjs:29:60)
+      at openLedger (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/server/paid-gateway/ledger.mjs:44:5)
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/tests/generation/lifecycle.test.mjs:140:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_INVALID'
+  }
+
+test at tests/generation/lifecycle.test.mjs:144:1
+✖ listen failure closes an explicitly opened paid runtime (24.892208ms)
+  Error: LEDGER_INVALID
+      at ensure (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/server/paid-gateway/pricing.mjs:29:60)
+      at openLedger (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/server/paid-gateway/ledger.mjs:44:5)
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/tests/generation/lifecycle.test.mjs:154:20)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'LEDGER_INVALID'
+  }
+
+test at tests/generation/lifecycle.test.mjs:172:1
+✖ real process signals do not interrupt request drain or release the ledger early (5067.285458ms)
+  Error: Timed out waiting for UPSTREAM_STARTED: READY:59562
+  
+  
+      at waitForOutput (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/tests/generation/lifecycle.test.mjs:217:41)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/tests/generation/lifecycle.test.mjs:232:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/generation/lifecycle.test.mjs:269:1
+✖ native-clock expired pricing denies before model egress (28.159292ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  401 !== 503
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/tests/generation/lifecycle.test.mjs:276:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 401,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/generation/lifecycle.test.mjs:1:1
+✖ tests/generation/lifecycle.test.mjs (63805.828458ms)
+  'Promise resolution is still pending but the event loop has already resolved'

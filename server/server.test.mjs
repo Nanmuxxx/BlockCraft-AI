@@ -96,7 +96,7 @@ test('mock valid result uses official endpoint, default model, JSON mode, and ac
       assert.equal(body.model, 'deepseek-v4-flash')
       assert.deepEqual(body.response_format, { type: 'json_object' })
       assert.equal(body.stream, false)
-      assert.equal(body.max_tokens, 8192)
+      assert.equal(body.max_tokens, 2048)
       assert.match(body.messages[0].content, /JSON/)
       assert.match(body.messages[0].content, /export interface AppSpec/)
       assert.equal(body.messages[1].content, '做一个任务管理工具')

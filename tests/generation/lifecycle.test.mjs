@@ -8,16 +8,26 @@ import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createPaidGenerationRuntime } from '../../server/paid-gateway/runtime.mjs'
-import { openLedger } from '../../server/paid-gateway/ledger.mjs'
+import { openLedger as openGatewayLedger } from '../../server/paid-gateway/ledger.mjs'
+import { PRICING, SMOKE_POLICY } from '../../server/paid-gateway/pricing.mjs'
 import { startServer, installShutdownHandlers } from '../../server/index.mjs'
 
 const key = 'offline-lifecycle-key-1234'
-const nativeNow = Date.now.bind(Date)
-// Only historical Mock settlement paths use this clock. Production policy is unchanged.
+const openLedger = path => openGatewayLedger(path, { policy: SMOKE_POLICY, profile: 'local-smoke' })
+// Explicit test adapter: the isolated runtime no longer supplies HTTP identity.
+function mockHttpRuntime(options) {
+  const runtime = createPaidGenerationRuntime(options)
+  return { ...runtime, appServerOptions: { apiKey: key, model: runtime.model, fetchImpl: runtime.fetch, generationAccess: () => true } }
+}
+// Deterministic offline clocks cover both sides of the installed expiry boundary.
+// This changes neither the installed pricing nor the runtime policy.
 beforeEach(t => {
-  if (t.name === 'native-clock expired pricing denies before model egress') return
+  if (t.name === 'expired pricing denies before model egress') {
+    t.mock.method(Date, 'now', () => PRICING.expiresAt)
+    return
+  }
   const start = performance.now()
-  t.mock.method(Date, 'now', () => Date.parse('2026-10-19T12:00:00Z') + performance.now() - start)
+  t.mock.method(Date, 'now', () => PRICING.expiresAt - 60_000 + performance.now() - start)
 })
 const spec = {
   version: 1, id: 'lifecycle-app', name: '生命周期回归',
@@ -82,7 +92,7 @@ test('explicit paid runtime keeps the ledger lock until an in-flight request is 
     upstreamStarted()
     return new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(Object.assign(new Error('cancelled'), { code: 'UPSTREAM_CANCELLED' })), { once: true }))
   }
-  const paidRuntimeFactory = options => createPaidGenerationRuntime({ ...options, fetchImpl: neverSettlingFetch, timeoutMs: 1000 })
+  const paidRuntimeFactory = options => mockHttpRuntime({ ...options, fetchImpl: neverSettlingFetch, timeoutMs: 1000 })
   const started = await startServer({
     port: 0, env, resolveIdentity: () => true, paidRuntimeFactory, drainTimeoutMs: 30,
   })
@@ -91,7 +101,7 @@ test('explicit paid runtime keeps the ledger lock until an in-flight request is 
   const request = fetch(`http://127.0.0.1:${address.port}/api/ai/generate`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: '任务工具' }),
   }).catch(() => null)
-  await upstream
+  await Promise.race([upstream, request.then(() => { throw new Error('Request ended before Mock upstream admission') })])
   assert.throws(() => openLedger(env.DEEPSEEK_BUDGET_LEDGER_PATH), { code: 'LEDGER_LOCKED' })
   const shutdown = started.shutdown()
   assert.strictEqual(shutdown, started.shutdown())
@@ -107,7 +117,7 @@ test('explicit paid runtime keeps the ledger lock until an in-flight request is 
 test('explicit paid runtime serves a validated Mock AppSpec and settles before shutdown closes the ledger', async t => {
   const env = await tempEnvironment(t)
   let calls = 0
-  const paidRuntimeFactory = options => createPaidGenerationRuntime({
+  const paidRuntimeFactory = options => mockHttpRuntime({
     ...options,
     fetchImpl: async () => {
       calls++
@@ -118,6 +128,7 @@ test('explicit paid runtime serves a validated Mock AppSpec and settles before s
     },
   })
   const started = await startServer({ port: 0, env, resolveIdentity: () => true, paidRuntimeFactory })
+  t.after(() => started.shutdown())
   const response = await fetch(`http://127.0.0.1:${started.server.address().port}/api/ai/generate`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: '任务清单' }),
   })
@@ -132,7 +143,7 @@ test('explicit paid runtime serves a validated Mock AppSpec and settles before s
 
 test('startup failure closes an explicitly opened paid runtime', async t => {
   const env = await tempEnvironment(t)
-  const paidRuntimeFactory = options => createPaidGenerationRuntime({ ...options, fetchImpl: async () => { throw new Error('unused') } })
+  const paidRuntimeFactory = options => mockHttpRuntime({ ...options, fetchImpl: async () => { throw new Error('unused') } })
   await assert.rejects(startServer({
     port: 0, env, resolveIdentity: () => true, paidRuntimeFactory,
     appServerFactory: () => { throw new Error('startup failed') },
@@ -149,7 +160,7 @@ test('listen failure closes an explicitly opened paid runtime', async t => {
   t.after(() => new Promise(resolve => occupied.close(resolve)))
   await assert.rejects(startServer({
     port: occupied.address().port, host: '127.0.0.1', env, resolveIdentity: () => true,
-    paidRuntimeFactory: options => createPaidGenerationRuntime({ ...options, fetchImpl: async () => { throw new Error('unused') } }),
+    paidRuntimeFactory: options => mockHttpRuntime({ ...options, fetchImpl: async () => { throw new Error('unused') } }),
   }), { code: 'EADDRINUSE' })
   const reopened = openLedger(env.DEEPSEEK_BUDGET_LEDGER_PATH)
   reopened.close()
@@ -173,24 +184,29 @@ test('real process signals do not interrupt request drain or release the ledger 
   const env = await tempEnvironment(t)
   const moduleUrl = new URL('../../server/index.mjs', import.meta.url).href
   const runtimeUrl = new URL('../../server/paid-gateway/runtime.mjs', import.meta.url).href
+  const pricingUrl = new URL('../../server/paid-gateway/pricing.mjs', import.meta.url).href
   const childSource = `
     import { startServer, installShutdownHandlers } from ${JSON.stringify(moduleUrl)}
     import { createPaidGenerationRuntime } from ${JSON.stringify(runtimeUrl)}
+    import { PRICING } from ${JSON.stringify(pricingUrl)}
     const testClockStart = performance.now()
-    Date.now = () => Date.parse('2026-10-19T12:00:00Z') + performance.now() - testClockStart
+    Date.now = () => PRICING.expiresAt - 60_000 + performance.now() - testClockStart
     const started = await startServer({
       port: 0,
       env: process.env,
       resolveIdentity: () => true,
       drainTimeoutMs: 800,
-      paidRuntimeFactory: options => createPaidGenerationRuntime({
-        ...options,
-        timeoutMs: 5000,
-        fetchImpl: async (_url, { signal }) => {
-          console.log('UPSTREAM_STARTED')
-          return new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(Object.assign(new Error('cancelled'), { code: 'UPSTREAM_CANCELLED' })), { once: true }))
-        },
-      }),
+      paidRuntimeFactory: options => {
+        const runtime = createPaidGenerationRuntime({
+          ...options,
+          timeoutMs: 5000,
+          fetchImpl: async (_url, { signal }) => {
+            console.log('UPSTREAM_STARTED')
+            return new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(Object.assign(new Error('cancelled'), { code: 'UPSTREAM_CANCELLED' })), { once: true }))
+          },
+        })
+        return { ...runtime, appServerOptions: { apiKey: 'offline-lifecycle-key-1234', model: runtime.model, fetchImpl: runtime.fetch, generationAccess: () => true } }
+      },
     })
     console.log('READY:' + started.server.address().port)
     installShutdownHandlers(async () => {
@@ -266,11 +282,11 @@ test('real process signals do not interrupt request drain or release the ledger 
   await new Promise(resolve => releasedPort.close(resolve))
 })
 
-test('native-clock expired pricing denies before model egress', async t => {
-  assert.equal(Date.now(), nativeNow())
+test('expired pricing denies before model egress', async t => {
+  assert.equal(Date.now(), PRICING.expiresAt)
   const env = await tempEnvironment(t)
   let calls = 0
-  const started = await startServer({ port: 0, env, resolveIdentity: () => true, paidRuntimeFactory: options => createPaidGenerationRuntime({ ...options, fetchImpl: async () => { calls++; throw new Error('must not egress') } }) })
+  const started = await startServer({ port: 0, env, resolveIdentity: () => true, paidRuntimeFactory: options => mockHttpRuntime({ ...options, fetchImpl: async () => { calls++; throw new Error('must not egress') } }) })
   t.after(() => started.shutdown())
   const response = await fetch(`http://127.0.0.1:${started.server.address().port}/api/ai/generate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: '任务工具' }) })
   assert.equal(response.status, 503)

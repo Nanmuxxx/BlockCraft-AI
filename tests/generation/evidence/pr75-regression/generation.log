@@ -1,0 +1,81 @@
+
+> blockcraft-ai@0.1.0 test:generation
+> npm --prefix server run build && node --test tests/generation/*.test.mjs
+
+
+> build
+> tsc -p tsconfig.json
+
+✔ existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure (50.944042ms)
+✔ route rejects structurally legal but incomplete metric-only app without input, then recovers (6.73475ms)
+✔ route rejects structurally legal but incomplete unbound empty entity, then recovers (2.574375ms)
+✔ route rejects structurally legal but incomplete hidden optional field, then recovers (1.495791ms)
+✔ prompt embeds the exact live protocol boundary and keeps idea in its own user message (1.166708ms)
+✔ club-app: independent requirement mapping and real runtime CRUD/aggregations (2.937625ms)
+✔ fitness-log: independent requirement mapping and real runtime CRUD/aggregations (1.468958ms)
+✔ study-log: independent requirement mapping and real runtime CRUD/aggregations (0.693833ms)
+✔ personal-tasks: independent requirement mapping and real runtime CRUD/aggregations (1.570584ms)
+✔ fitness-library: independent requirement mapping and real runtime CRUD/aggregations (1.289875ms)
+✔ money-app: independent requirement mapping and real runtime CRUD/aggregations (2.694958ms)
+✔ lost-found: independent requirement mapping and real runtime CRUD/aggregations (0.742292ms)
+✔ book-log: independent requirement mapping and real runtime CRUD/aggregations (0.342291ms)
+✔ movie-log: independent requirement mapping and real runtime CRUD/aggregations (0.373333ms)
+✔ same domain, different goals change entities/fields; no mandatory form/list/metric set (0.113167ms)
+✔ record count is supported with empty field evidence and reflects actual rows, not unique objects (0.864291ms)
+✔ base v1 empty specs stay legal; only the independent generation policy rejects them (0.102167ms)
+✔ separate completeness detects empty fields, unbound objects, missing input and inaccessible fields (0.111625ms)
+✔ bad binding, required field omission, cross-entity fields, illegal numeric metric and unknown types fail structure (0.249625ms)
+✔ structure cannot prove semantics: valid unrelated apps need review; independent mappings expose the mismatch (0.14125ms)
+✔ independent reviewer receives original goals, spec and actual operations as data without any API call (0.172333ms)
+✔ review must cover every goal and bind current input/spec/requirements; malformed evidence fails closed (0.343667ms)
+✔ only actual exposed operations count; list required fields are editable, hidden optional fields are not (0.115042ms)
+✔ unsupported operations remain unsupported despite plausible block names, including mixed and unsupported-only goals (0.411792ms)
+✔ legacy demos keep their original protocol and remain usable without requirement reviews (0.425458ms)
+✔ legacy protocol projection does not advertise trusted v2 primitives (0.144584ms)
+✔ generation rejects unfinished media type uploads and closes without waiting for body (23.066667ms)
+✔ generation rejects unfinished cross-origin uploads and closes without waiting for body (7.730291ms)
+✔ generation rejects unfinished declared size uploads and closes without waiting for body (4.631875ms)
+✔ generation rejects unfinished method uploads and closes without waiting for body (3.767916ms)
+✔ generation rejects unfinished route uploads and closes without waiting for body (2.474792ms)
+✔ over-limit unfinished chunked upload is structured 413 and releases the generation slot (3.584834ms)
+✔ unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect (6.717375ms)
+✔ generation accepts valid multibyte JSON split inside a UTF-8 codepoint (2.465125ms)
+✔ unfinished request reaches its input deadline, returns structured 408 and releases admission (3.111ms)
+✔ rate-limited unfinished upload receives 429 without reaching upstream or waiting for its body (8.716458ms)
+✔ ordinary start is closed by default and shuts down idempotently (17.339875ms)
+✔ key and ledger configuration cannot activate generation without trusted identity (51.859417ms)
+✔ explicit paid runtime keeps the ledger lock until an in-flight request is aborted (109.881125ms)
+✔ explicit paid runtime serves a validated Mock AppSpec and settles before shutdown closes the ledger (101.327459ms)
+✔ startup failure closes an explicitly opened paid runtime (64.557583ms)
+✔ listen failure closes an explicitly opened paid runtime (65.113375ms)
+✔ SIGINT and SIGTERM hooks invoke one idempotent shutdown task (0.485458ms)
+✔ real process signals do not interrupt request drain or release the ledger early (945.419875ms)
+✔ expired pricing denies before model egress (36.518833ms)
+✔ local paid startup refuses expired and over-cap Gateway profiles before touching runtime inputs (0.473417ms)
+✔ owner launcher requires explicit approval and rejects an explicitly expired profile (0.217333ms)
+✔ private identity state persists across startup without replacing the binding key (6.878667ms)
+✔ principal resolver is bounded and rejects boolean, malformed, errors and late results (12.89225ms)
+✔ boolean identity alone cannot construct a runtime even with key and ledger configuration (16.50925ms)
+✔ invalid principal rejects before request context construction (4.355584ms)
+✔ request contexts isolate principals, keys and normalized semantic payload under concurrency (30.105916ms)
+✔ invalid input and duplicate or malformed idempotency headers never construct request context (7.011667ms)
+✔ request context errors return a fixed sanitized response (2.819875ms)
+✔ opaque cookie adapter rejects absent, expired, revoked, unknown and forged-header identities before runtime work (6.882458ms)
+✔ opaque cookie hashes resolve stable principals and isolate identical keys across principals (1.896375ms)
+✔ CLI identity mode stays closed by default and requires a private explicit allowlist (21.849542ms)
+✔ authenticated HTTP composition returns a generated AppSpec through the real Gateway runtime (117.997167ms)
+✔ missing session rejects before request context, reservation, or provider egress (45.473875ms)
+✔ trusted v2 admission uses principal identity and leaves the sole durable reservation to Gateway (112.157541ms)
+✔ budget exhaustion maps to HTTP 503 without provider egress beyond POLICY.maxCalls (186.951958ms)
+✔ upstream timeout maps to HTTP 504 and records uncertain spend before shutdown (124.581625ms)
+✔ client disconnect aborts the Mock upstream and preserves the uncertain ledger claim (62.82075ms)
+✔ protocol projection treats LF and CRLF source bytes equivalently (0.837542ms)
+✔ protocol projection still rejects actual AppSpec extension changes (0.595667ms)
+ℹ tests 65
+ℹ suites 0
+ℹ pass 65
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1464.013542
