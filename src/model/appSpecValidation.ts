@@ -30,6 +30,13 @@ function field(value: unknown) {
   ensure(['text', 'number', 'boolean', 'date', 'select'].includes(value.type as string), 'Unsupported field type')
   if (value.type === 'select') { array(value.options); ensure(value.options.length > 0, 'Empty select options'); value.options.forEach(label); unique(value.options) }
 }
+function presentation(value: unknown) {
+  object(value); keys(value, [], ['buttonText', 'backgroundColor', 'textColor', 'borderRadius'])
+  ensure(Object.keys(value).length > 0, 'Empty presentation patch')
+  if (hasOwn(value, 'buttonText')) { label(value.buttonText); ensure((value.buttonText as string).length <= 120, 'Button text too long') }
+  for (const key of ['backgroundColor', 'textColor']) if (hasOwn(value, key)) ensure(typeof value[key] === 'string' && /^#[0-9a-fA-F]{6}$/.test(value[key] as string), 'Expected six-digit hex color')
+  if (hasOwn(value, 'borderRadius')) ensure(Number.isInteger(value.borderRadius) && (value.borderRadius as number) >= 0 && (value.borderRadius as number) <= 32, 'Radius outside 0–32')
+}
 function block(value: unknown) {
   object(value)
   if (value.type === 'pomodoro') {
@@ -38,12 +45,16 @@ function block(value: unknown) {
     ensure(Number.isInteger(value.durationSeconds) && (value.durationSeconds as number) >= 1 && (value.durationSeconds as number) <= 7200, 'Duration must be 1–7200 seconds')
     ensure(typeof value.name === 'string' && value.name.length <= 120, 'Title too long')
   } else if (value.type === 'list' || value.type === 'form') {
-    keys(value, ['id', 'name', 'type', 'fieldIds']); ids(value.fieldIds); ensure(value.fieldIds.length > 0, 'Empty display fields')
+    keys(value, ['id', 'name', 'type', 'fieldIds'], ['presentation']); ids(value.fieldIds); ensure(value.fieldIds.length > 0, 'Empty display fields')
   } else {
     ensure(value.type === 'metric', 'Unsupported block type')
-    keys(value, ['id', 'name', 'type', 'aggregation'], value.aggregation === 'count' ? [] : ['fieldId'])
+    keys(value, ['id', 'name', 'type', 'aggregation'], value.aggregation === 'count' ? ['presentation'] : ['fieldId', 'presentation'])
     ensure(['count', 'sum', 'average'].includes(value.aggregation as string), 'Unsupported aggregation')
     if (value.aggregation !== 'count') id(value.fieldId)
+  }
+  if (hasOwn(value, 'presentation')) {
+    presentation(value.presentation)
+    ensure(value.type === 'form' || !(value.presentation as Obj).buttonText, 'Button text requires form')
   }
   id(value.id); label(value.name)
 }
@@ -139,6 +150,7 @@ export function assertCommandRequest(value: unknown): asserts value is CommandRe
       case 'addField': keys(c, ['type', 'entityId', 'field']); id(c.entityId); field(c.field); break
       case 'updateField': keys(c, ['type', 'entityId', 'fieldId', 'field']); id(c.entityId); id(c.fieldId); field(c.field); break
       case 'removeField': keys(c, ['type', 'entityId', 'fieldId']); id(c.entityId); id(c.fieldId); break
+      case 'configureBlockPresentation': keys(c, ['type', 'blockId', 'presentation']); id(c.blockId); presentation(c.presentation); break
       case 'configureBlockFields': keys(c, ['type', 'blockId', 'fieldIds']); id(c.blockId); ids(c.fieldIds); break
       case 'undo': keys(c, ['type']); ensure(value.commands.length === 1, 'Undo must be a standalone request'); break
       default: ensure(false, 'Unsupported command')

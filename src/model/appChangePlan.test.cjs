@@ -262,8 +262,11 @@ test('entity and direct block permissions are both required; model cannot grant 
   assert.equal(app.notifications(), 0)
 })
 
-test('four-command allowlist rejects updateField/removeField/undo and unknown commands atomically', () => {
-  assert.deepEqual([...AI_CHANGE_COMMANDS], ['addField', 'configureBlockFields', 'addBlock', 'removeBlock'])
+test('five-command contract includes controlled presentation edits and rejects forbidden commands atomically', () => {
+  // Presentation editing is the approved AppSpec text/color/radius extension;
+  // membership does not grant scope, confirmation, or Runtime authorization.
+  assert.deepEqual([...AI_CHANGE_COMMANDS], ['addField', 'configureBlockFields', 'configureBlockPresentation', 'addBlock', 'removeBlock'])
+  assert.ok(Object.isFrozen(AI_CHANGE_COMMANDS))
   const app = setup()
   const before = app.runtime.getSnapshot()
   for (const command of [

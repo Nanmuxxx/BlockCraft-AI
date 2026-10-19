@@ -6,7 +6,13 @@ export type FieldSpec = {
 } & ({ type: 'text' | 'number' | 'boolean' | 'date' } | { type: 'select'; options: string[] })
 
 export interface EntitySpec { id: string; name: string; fields: FieldSpec[] }
-export type BlockSpec = { id: string; name: string } & (
+export interface BlockPresentation {
+  buttonText?: string
+  backgroundColor?: string
+  textColor?: string
+  borderRadius?: number
+}
+export type BlockSpec = { id: string; name: string; presentation?: BlockPresentation } & (
   | { type: 'list' | 'form'; fieldIds: string[] }
   | { type: 'pomodoro'; protocolVersion: 1; durationSeconds: number }
   | { type: 'metric'; aggregation: 'count' }
@@ -27,6 +33,7 @@ export interface ProjectState {
   blockPositions: Record<string, { x: number; y: number }>
 }
 export type AppCommand =
+  | { type: 'configureBlockPresentation'; blockId: string; presentation: BlockPresentation }
   | { type: 'addBlock'; block: BlockSpec; binding: RelationSpec; position?: { x: number; y: number } }
   | { type: 'removeBlock'; blockId: string }
   | { type: 'addField'; entityId: string; field: FieldSpec }

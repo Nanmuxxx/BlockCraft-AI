@@ -60,6 +60,7 @@ function freeze<T>(value: T): T {
 }
 function projection(planId: string, plan: DeepReadonly<AppChangePlan>): HostPreview {
   const changes: HostPreview['changes'] = [
+    ...plan.diff.presentationChanges.map(change => ({ operation: 'configureBlockPresentation', target: change.blockId, description: '调整展示属性', before: JSON.stringify(change.before ?? {}), after: JSON.stringify(change.after) })),
     ...plan.diff.addedFields.map(({ entityId, field }) => ({ operation: 'addField', target: entityId, description: `新增字段：${field.name}`, after: JSON.stringify(field) })),
     ...plan.diff.blockFieldChanges.map(change => ({ operation: 'configureBlockFields', target: change.blockId, description: '调整显示字段', before: change.before.join(', '), after: change.after.join(', ') })),
     ...plan.diff.addedBlocks.map(block => ({ operation: 'addBlock', target: block.id, description: `新增积木：${block.name}`, after: JSON.stringify({ block, binding: plan.after.spec.relations.find(item => item.blockId === block.id), position: plan.after.blockPositions[block.id] }) })),
