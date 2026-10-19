@@ -1,7 +1,15 @@
 import { openSync, closeSync, writeFileSync, fsyncSync, renameSync, unlinkSync, lstatSync, readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { PRICING, POLICY, ensure, price } from './pricing.mjs'
+
+const openLedgerDirectories = new WeakMap()
+
+export function assertLedgerLease(ledger, directory) {
+  const lease = openLedgerDirectories.get(ledger)
+  ensure(lease && lease.isOpen(), 'LEDGER_LEASE_REQUIRED')
+  ensure(lease.directory === directory, 'SIDECAR_DIRECTORY_MISMATCH')
+}
 
 // The canonical CLI path is shared across worktrees. Hold an exclusive process
 // lease throughout the run. Crashed/stale leases are NEVER auto-recovered.
@@ -45,7 +53,7 @@ export function openLedger(path) {
   } catch (error) { closeSync(lock); unlinkSync(path + '.lock'); throw error }
   const check = () => { ensure(!closed && !broken, 'LEDGER_UNAVAILABLE') }
   function save() { try { persist() } catch { broken = true; throw Object.assign(new Error('LEDGER_UNAVAILABLE'), { code: 'LEDGER_UNAVAILABLE' }) } }
-  return Object.freeze({
+  const ledger = {
     reserve(inputBound, outputBound, requestHash) {
       check()
       ensure(Date.now() < PRICING.expiresAt, 'PRICING_EXPIRED')
@@ -71,5 +79,7 @@ export function openLedger(path) {
     uncertain(id) { check(); const entry = state.entries.find(e => e.id === id); if (entry?.status === 'reserved') { entry.status = 'uncertain'; state.halted = true; save() } },
     snapshot() { check(); return structuredClone(state) },
     close() { if (closed) return; closed = true; closeSync(lock); if (!broken) unlinkSync(path + '.lock') },
-  })
+  }
+  openLedgerDirectories.set(ledger, { directory: resolve(dirname(path)), isOpen: () => !closed && !broken })
+  return Object.freeze(ledger)
 }
