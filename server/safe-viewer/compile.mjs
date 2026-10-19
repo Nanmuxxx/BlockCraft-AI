@@ -1,4 +1,4 @@
-import { execFile, fork } from 'node:child_process'
+import { fork } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { createRequire } from 'node:module'
 import { readFileSync } from 'node:fs'
@@ -6,6 +6,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { version as esbuildVersion } from 'esbuild-wasm'
 import { LIMITS, POLICY_VERSION, SafeViewerError, check } from './policy.mjs'
+import { createProcessReaper } from './process-reaper.mjs'
 
 const require = createRequire(import.meta.url)
 const packageVersion = name => JSON.parse(readFileSync(require.resolve(`${name}/package.json`), 'utf8')).version
@@ -16,7 +17,6 @@ check(esbuildVersion === '0.25.12', 'TOOLCHAIN_VERSION_MISMATCH', 'esbuild versi
 check(reactVersion === '19.3.1' && reactDomVersion === '19.3.1', 'TOOLCHAIN_VERSION_MISMATCH', 'React version is not pinned')
 
 const compileChildPath = fileURLToPath(new URL('./compile-child.mjs', import.meta.url))
-const taskkillPath = path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'taskkill.exe')
 const runtimeSource = readFileSync(new URL('./assets/runtime-core.js', import.meta.url), 'utf8')
 const runtimeDigest = `sha256:${createHash('sha256').update(runtimeSource).digest('hex')}`
 
@@ -32,7 +32,7 @@ function copy(value) {
   return Buffer.from(value)
 }
 
-function compilerEnvironment() {
+function compilerEnvironment({ testFaults = false } = {}) {
   const allowed = [
     'PATH', 'Path', 'PATHEXT', 'ComSpec', 'SystemRoot', 'SYSTEMROOT', 'WINDIR',
     'TEMP', 'TMP', 'TMPDIR', 'HOME', 'USERPROFILE', 'LANG', 'LC_ALL',
@@ -41,17 +41,8 @@ function compilerEnvironment() {
   for (const key of allowed) {
     if (typeof process.env[key] === 'string') environment[key] = process.env[key]
   }
+  if (testFaults) environment.BLOCKCRAFT_SAFE_VIEWER_TEST_FAULTS = '1'
   return environment
-}
-
-function processAlive(pid) {
-  if (!Number.isSafeInteger(pid) || pid <= 0) return false
-  try {
-    process.kill(pid, 0)
-    return true
-  } catch (error) {
-    return error?.code !== 'ESRCH'
-  }
 }
 
 function waitForExit(child, timeoutMs) {
@@ -71,43 +62,23 @@ function waitForExit(child, timeoutMs) {
   })
 }
 
-async function terminateTree(child) {
-  if (!child?.pid) return true
-  if (processAlive(child.pid)) {
-    if (process.platform === 'win32') {
-      try {
-        await new Promise(resolve => execFile(taskkillPath, ['/PID', String(child.pid), '/T', '/F'], {
-          windowsHide: true,
-          timeout: 3_000,
-          maxBuffer: 64 * 1024,
-        }, () => resolve()))
-      } catch {}
-    } else {
-      try { process.kill(-child.pid, 'SIGKILL') }
-      catch { try { child.kill('SIGKILL') } catch {} }
-    }
-  }
-  if (await waitForExit(child, 3_000)) return true
-  try { child.kill('SIGKILL') } catch {}
-  return waitForExit(child, 1_000)
-}
 
-async function waitForProcessesGone(pids, timeoutMs = 2_000) {
-  const deadline = Date.now() + timeoutMs
-  let alive = pids.filter(processAlive)
-  while (alive.length > 0 && Date.now() < deadline) {
-    await new Promise(resolve => setTimeout(resolve, 50))
-    alive = alive.filter(processAlive)
-  }
-  return alive
-}
-
-function compileInProcess(artifact, maxBundleBytes, compileTimeoutMs, signal, observer, activeChildren) {
+function compileInProcess(
+  artifact,
+  maxBundleBytes,
+  compileTimeoutMs,
+  signal,
+  observer,
+  activeChildren,
+  processReaper,
+  testHooks,
+) {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
       reject(new SafeViewerError('COMPILE_CANCELLED', 'Compilation cancelled'))
       return
     }
+    const testFault = testHooks?.nextFault?.() ?? null
     let child
     try {
       child = fork(compileChildPath, [], {
@@ -116,7 +87,7 @@ function compileInProcess(artifact, maxBundleBytes, compileTimeoutMs, signal, ob
         stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
         serialization: 'advanced',
         execArgv: ['--max-old-space-size=128', '--max-semi-space-size=32', '--stack-size=4096'],
-        env: compilerEnvironment(),
+        env: compilerEnvironment({ testFaults: Boolean(testHooks) }),
         cwd: path.resolve(path.dirname(compileChildPath), '../..'),
       })
     } catch {
@@ -126,9 +97,59 @@ function compileInProcess(artifact, maxBundleBytes, compileTimeoutMs, signal, ob
     activeChildren.add(child)
 
     let settled = false
-    const esbuildPids = new Set()
+    const esbuildProcesses = new Map()
     const notify = event => {
       try { observer(Object.freeze({ ...event })) } catch {}
+    }
+    const trackKnownProcess = pid => {
+      if (!Number.isSafeInteger(pid) || pid <= 0 || esbuildProcesses.has(pid)) return
+      const inspection = Promise.resolve()
+        .then(() => processReaper.inspect(pid))
+        .then(identity => ({ ok: true, identity }))
+        .catch(() => ({ ok: false, identity: null }))
+      esbuildProcesses.set(pid, inspection)
+      void inspection.then(report => {
+        notify({
+          type: 'process-identity',
+          pid,
+          ok: report.ok,
+          identity: report.identity?.identity ?? null,
+          parentPid: report.identity?.parentPid ?? null,
+        })
+      })
+      return inspection
+    }
+    const reapKnownProcesses = async () => {
+      let ok = true
+      for (const [pid, inspection] of esbuildProcesses) {
+        const report = await inspection
+        if (!report.ok) {
+          notify({ type: 'process-reaped', pid, ok: false, status: 'identity-inspection-failed' })
+          ok = false
+          continue
+        }
+        if (!report.identity) {
+          notify({ type: 'process-reaped', pid, ok: true, status: 'already-gone' })
+          continue
+        }
+        const result = await processReaper.terminatePid(pid, report.identity)
+        notify({ type: 'process-reaped', pid, ...result })
+        if (!result.ok) ok = false
+      }
+      return ok
+    }
+    const stopRoot = async () => {
+      if (child.exitCode !== null || child.signalCode !== null) {
+        notify({ type: 'root-tree-signal', pid: child.pid, ok: true, status: 'already-exited' })
+        return true
+      }
+      const tree = await processReaper.terminateTree(child.pid)
+      notify({ type: 'root-tree-signal', pid: child.pid, ...tree })
+      if (!(await waitForExit(child, 2_000))) {
+        try { child.kill('SIGKILL') } catch {}
+        if (!(await waitForExit(child, 1_000))) return false
+      }
+      return true
     }
     const finish = (error, result) => {
       if (settled) return
@@ -137,26 +158,17 @@ function compileInProcess(artifact, maxBundleBytes, compileTimeoutMs, signal, ob
       signal?.removeEventListener('abort', onAbort)
       void (async () => {
         let failure = error
-        if (error) {
-          const exited = await terminateTree(child)
-          const leaked = await waitForProcessesGone([...esbuildPids])
-          if (!exited || leaked.length > 0) {
-            failure = new SafeViewerError('COMPILER_TERMINATION_FAILED', 'Compilation process tree did not terminate')
-          }
-          activeChildren.delete(child)
-          reject(failure)
-        } else {
-          const exited = await waitForExit(child, 2_000)
-          const leaked = exited ? await waitForProcessesGone([...esbuildPids]) : []
-          if (!exited || leaked.length > 0) {
-            await terminateTree(child)
-            activeChildren.delete(child)
-            reject(new SafeViewerError('COMPILER_TERMINATION_FAILED', 'Compilation process tree did not terminate'))
-          } else {
-            activeChildren.delete(child)
-            resolve(result)
-          }
+        const rootGone = error ? await stopRoot() : await waitForExit(child, 2_000)
+        if (!rootGone) {
+          try { child.kill('SIGKILL') } catch {}
         }
+        const knownGone = await reapKnownProcesses()
+        if (!rootGone || !knownGone) {
+          failure = new SafeViewerError('COMPILER_TERMINATION_FAILED', 'Compilation process tree did not terminate')
+        }
+        activeChildren.delete(child)
+        if (failure) reject(failure)
+        else resolve(result)
       })()
     }
     const onAbort = () => finish(new SafeViewerError('COMPILE_CANCELLED', 'Compilation cancelled'))
@@ -166,10 +178,18 @@ function compileInProcess(artifact, maxBundleBytes, compileTimeoutMs, signal, ob
     )
 
     notify({ type: 'compile-spawn', pid: child.pid })
+    if (Number.isSafeInteger(testHooks?.extraPid)) trackKnownProcess(testHooks.extraPid)
     child.on('message', message => {
       if (message?.type === 'esbuild-child' && Number.isSafeInteger(message.pid) && message.pid > 0) {
-        esbuildPids.add(message.pid)
+        const inspection = trackKnownProcess(message.pid)
         notify({ type: 'esbuild-spawn', pid: message.pid })
+        void inspection.then(report => notify({
+          type: 'esbuild-identity',
+          pid: message.pid,
+          ok: report.ok,
+          identity: report.identity?.identity ?? null,
+          parentPid: report.identity?.parentPid ?? null,
+        }))
         return
       }
       if (message?.type === 'result' && message.code instanceof Uint8Array) {
@@ -201,6 +221,7 @@ function compileInProcess(artifact, maxBundleBytes, compileTimeoutMs, signal, ob
       entry: artifact.manifest.entry,
       maxBundleBytes,
       runtimeSource,
+      testFault,
     }, error => {
       if (error) finish(new SafeViewerError('BUILD_FAILED', 'Compilation task could not be delivered'))
     })
@@ -266,6 +287,8 @@ export function createCompiler({
   concurrency = LIMITS.compileConcurrency,
   cache = createBundleCache(),
   processObserver = () => {},
+  processReaper = createProcessReaper(),
+  testHooks = null,
 } = {}) {
   check(Number.isSafeInteger(compileTimeoutMs) && compileTimeoutMs > 0, 'COMPILER_CONFIGURATION', 'Invalid compile timeout')
   check(Number.isSafeInteger(concurrency) && concurrency > 0, 'COMPILER_CONFIGURATION', 'Invalid compiler concurrency')
@@ -274,6 +297,8 @@ export function createCompiler({
   let active = 0
   let disposed = false
   let disposal
+  let fused = false
+  let cleanupFailures = 0
 
   function waitForJob(job, signal, cacheState) {
     if (signal?.aborted) return Promise.reject(new SafeViewerError('COMPILE_CANCELLED', 'Compilation cancelled'))
@@ -301,9 +326,15 @@ export function createCompiler({
 
   return Object.freeze({
     cache,
-    stats: () => Object.freeze({ ...cache.snapshot(), processes: children.size }),
+    stats: () => Object.freeze({
+      ...cache.snapshot(),
+      processes: children.size,
+      fused,
+      cleanupFailures,
+    }),
     async compile(artifact, { signal } = {}) {
       check(!disposed, 'VIEWER_DISPOSED', 'Compiler disposed')
+      check(!fused, 'COMPILER_QUARANTINED', 'Compiler cleanup is unresolved')
       if (signal?.aborted) throw new SafeViewerError('COMPILE_CANCELLED', 'Compilation cancelled')
       const key = bundleKey(artifact.versionDigest)
       const cached = cache.get(key)
@@ -322,6 +353,8 @@ export function createCompiler({
             job.controller.signal,
             processObserver,
             children,
+            processReaper,
+            testHooks,
           )
           const digest = sha256(code)
           return cache.put(key, {
@@ -330,6 +363,12 @@ export function createCompiler({
             digest: `sha256:${digest}`,
             versionDigest: artifact.versionDigest,
           })
+        } catch (error) {
+          if (error?.code === 'COMPILER_TERMINATION_FAILED') {
+            fused = true
+            cleanupFailures++
+          }
+          throw error
         } finally {
           job.done = true
           if (inFlight.get(key) === job) inFlight.delete(key)
@@ -342,11 +381,17 @@ export function createCompiler({
     dispose() {
       if (disposal) return disposal
       disposed = true
-      for (const job of inFlight.values()) job.controller.abort()
-      disposal = Promise.all([...children].map(child => terminateTree(child))).finally(() => {
+      const jobs = [...inFlight.values()]
+      for (const job of jobs) job.controller.abort()
+      disposal = (async () => {
+        await Promise.all([...children].map(child =>
+          child.exitCode !== null || child.signalCode !== null
+            ? true
+            : processReaper.terminateTree(child.pid)))
+        await Promise.allSettled(jobs.map(job => job.promise))
         children.clear()
         cache.clear()
-      })
+      })()
       return disposal
     },
   })

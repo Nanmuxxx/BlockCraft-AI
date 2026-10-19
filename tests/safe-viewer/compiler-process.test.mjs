@@ -1,6 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { spawn } from 'node:child_process'
+import { once } from 'node:events'
 import { createCompiler } from '../../server/safe-viewer/compile.mjs'
+import { createProcessReaper } from '../../server/safe-viewer/process-reaper.mjs'
 import { createFixtures } from './fixtures.mjs'
 
 const fixtures = await createFixtures()
@@ -40,6 +43,12 @@ async function waitForProcessGone(pid, timeoutMs = 3_000) {
     await new Promise(resolve => setTimeout(resolve, 25))
   }
   assert.equal(processAlive(pid), false, `process ${pid} must be gone`)
+}
+
+async function startDecoy() {
+  const child = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1_000)'], { stdio: 'ignore' })
+  await once(child, 'spawn')
+  return child
 }
 
 test('successful compile closes both the compile process and its esbuild service process', { timeout: 10_000 }, async t => {
@@ -191,4 +200,115 @@ test('dispose retires an in-flight busy compile process tree', { timeout: 10_000
   await waitForProcessGone(compilePid)
   await waitForProcessGone(esbuildPid)
   assert.equal(compiler.stats().processes, 0)
+})
+
+test('a compile child crash after esbuild starts is reaped through the known service identity', { timeout: 15_000 }, async t => {
+  const events = []
+  const faults = ['crash-after-esbuild']
+  const compiler = createCompiler({
+    processObserver: event => events.push(event),
+    testHooks: { nextFault: () => faults.shift() ?? null },
+  })
+  t.after(() => compiler.dispose())
+  await assert.rejects(compiler.compile(artifactOf('counter')), { code: 'BUILD_FAILED' })
+  const compilePid = eventOf(events, 'compile-spawn').pid
+  const esbuildPid = eventOf(events, 'esbuild-spawn').pid
+  assert.notEqual(compilePid, esbuildPid)
+  await waitForProcessGone(compilePid)
+  await waitForProcessGone(esbuildPid)
+  assert.equal(eventOf(events, 'esbuild-identity').ok, true)
+  const reaped = eventOf(events, 'process-reaped')
+  assert.equal(reaped.ok, true)
+  assert.ok(['gone', 'already-gone'].includes(reaped.status))
+  assert.equal(compiler.stats().processes, 0)
+  assert.equal(compiler.stats().fused, false)
+
+  const retry = await compiler.compile(artifactOf('todo'))
+  assert.ok(retry.code.byteLength > 0)
+  assert.equal(compiler.stats().processes, 0)
+})
+
+test('taskkill failure falls back to identity-checked direct PID cleanup and safely recovers', {
+  timeout: 15_000,
+  skip: process.platform !== 'win32',
+}, async t => {
+  const events = []
+  let markRunning
+  const running = new Promise(resolve => { markRunning = resolve })
+  const processReaper = createProcessReaper({
+    runTaskkill: async () => { throw new Error('forced taskkill failure') },
+  })
+  const compiler = createCompiler({
+    processReaper,
+    compileTimeoutMs: 5_000,
+    processObserver(event) {
+      events.push(event)
+      if (event.type === 'esbuild-spawn') markRunning()
+    },
+  })
+  t.after(() => compiler.dispose())
+  const controller = new AbortController()
+  const pending = compiler.compile(artifactOf('counter', busySource()), { signal: controller.signal })
+  await running
+  controller.abort()
+  await assert.rejects(pending, { code: 'COMPILE_CANCELLED' })
+  assert.equal(eventOf(events, 'root-tree-signal').ok, false)
+  const compilePid = eventOf(events, 'compile-spawn').pid
+  const esbuildPid = eventOf(events, 'esbuild-spawn').pid
+  await waitForProcessGone(compilePid)
+  await waitForProcessGone(esbuildPid)
+  const reaped = eventOf(events, 'process-reaped')
+  assert.equal(reaped.ok, true)
+  assert.ok(['gone', 'already-gone'].includes(reaped.status))
+  assert.equal(compiler.stats().fused, false)
+
+  const retry = await compiler.compile(artifactOf('todo'))
+  assert.ok(retry.code.byteLength > 0)
+  assert.equal(compiler.stats().processes, 0)
+})
+
+test('a surviving tracked process fuses the compiler and starts no further processes', { timeout: 15_000 }, async t => {
+  const events = []
+  const baseReaper = createProcessReaper()
+  const decoy = await startDecoy()
+  let refuseCleanup = true
+  const processReaper = Object.freeze({
+    ...baseReaper,
+    terminatePid(pid, identity) {
+      if (refuseCleanup) return Promise.resolve({ ok: false, status: 'forced-cleanup-failure' })
+      return baseReaper.terminatePid(pid, identity)
+    },
+  })
+  const compiler = createCompiler({
+    processReaper,
+    compileTimeoutMs: 300,
+    testHooks: { extraPid: decoy.pid },
+    processObserver(event) {
+      events.push(event)
+    },
+  })
+  t.after(() => compiler.dispose())
+  let surviving
+  t.after(async () => {
+    if (surviving) await baseReaper.terminatePid(surviving.pid, surviving.identity)
+    if (decoy.exitCode === null && decoy.signalCode === null) {
+      try { decoy.kill('SIGKILL') } catch {}
+    }
+  })
+  await assert.rejects(compiler.compile(artifactOf('counter')), { code: 'COMPILER_TERMINATION_FAILED' })
+  const identityEvent = events.find(event => event.type === 'process-identity' && event.pid === decoy.pid)
+  assert.equal(identityEvent.ok, true)
+  surviving = { pid: identityEvent.pid, identity: { pid: identityEvent.pid, identity: identityEvent.identity } }
+  assert.equal((await baseReaper.inspect(surviving.pid))?.identity, identityEvent.identity)
+  assert.equal(compiler.stats().fused, true)
+  assert.equal(compiler.stats().cleanupFailures, 1)
+  const spawnCount = events.filter(event => event.type === 'compile-spawn').length
+  await assert.rejects(compiler.compile(artifactOf('todo')), { code: 'COMPILER_QUARANTINED' })
+  assert.equal(events.filter(event => event.type === 'compile-spawn').length, spawnCount)
+  assert.equal(compiler.stats().processes, 0)
+  refuseCleanup = false
+  const cleaned = await baseReaper.terminatePid(surviving.pid, surviving.identity)
+  assert.equal(cleaned.ok, true)
+  assert.equal(await baseReaper.inspect(surviving.pid), null)
+  surviving = null
 })

@@ -4,6 +4,7 @@ import { build, initialize, stop } from 'esbuild-wasm'
 
 const children = new Set()
 const originalSpawn = childProcess.spawn
+let testFault = null
 
 function report(message) {
   return new Promise(resolve => {
@@ -38,7 +39,12 @@ childProcess.spawn = function guardedSpawn(command, args, options) {
     children.add(child)
     child.once('exit', () => children.delete(child))
     if (Number.isSafeInteger(child.pid) && child.pid > 0) {
-      void report({ type: 'esbuild-child', pid: child.pid })
+      const message = { type: 'esbuild-child', pid: child.pid }
+      if (testFault === 'crash-after-esbuild') {
+        void report(message).then(() => process.exit(70))
+      } else {
+        void report(message)
+      }
     }
   }
   return child
@@ -150,6 +156,7 @@ async function compile(task) {
 }
 
 process.once('message', task => {
+  testFault = process.env.BLOCKCRAFT_SAFE_VIEWER_TEST_FAULTS === '1' ? task.testFault : null
   void (async () => {
     try {
       const code = await compile(task)
