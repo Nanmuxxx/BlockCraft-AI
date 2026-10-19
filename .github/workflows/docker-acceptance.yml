@@ -389,8 +389,9 @@ jobs:
           })
           assert.equal(trustedGeneration.status, deniedStatus)
           assert.match(trustedGeneration.headers.get('content-type') || '', /^application\/json/)
-          assert.equal((await trustedGeneration.json()).error.code, deniedCode)
-          log(`POST /api/ai/generate trusted-interactive/1 without server authorization -> ${deniedStatus} ${deniedCode}; no key, no upstream request`)
+          const trustedDeniedCode = gatewayCandidate ? 'UNAUTHORIZED' : 'AI_DISABLED'
+          assert.equal((await trustedGeneration.json()).error.code, trustedDeniedCode)
+          log(`POST /api/ai/generate trusted-interactive/1 without server authorization -> ${deniedStatus} ${trustedDeniedCode}; no key, no upstream request`)
           zipLog('PASS production image has no successful local-project-export route')
           log(`PASS ${assets.length} local resources, routes, health, traversal, and no-key degradation`)
           NODE
