@@ -1,0 +1,63 @@
+{
+  "checked_at": "2026-10-20T00:40:01.166981+08:00",
+  "files": {
+    "bp_pdf": {
+      "exists": true,
+      "bytes": 567735,
+      "sha256": "9a11a755f28ab4c15b40a563ca269edede5c3831b13480c16396aa2e805c10ca",
+      "pages": 15
+    },
+    "bp_pptx": {
+      "exists": true,
+      "bytes": 2243606,
+      "sha256": "c70a8975e24a1a2595039a68dd126edafe08b4477c9b34920940038f26b70918",
+      "zip_crc_error": null,
+      "slides": 15
+    },
+    "b_original": {
+      "exists": true,
+      "bytes": 4835036,
+      "sha256": "aecee491073a07740cf2fd8755d9b177ff97a8b3f66877cb01a6f7cfa5633ee9",
+      "stream_summary": [
+        "Duration: 00:00:41.92, start: 0.000000, bitrate: 922 kb/s",
+        "Stream #0:0: Video: vp8, yuv420p(progressive), 1920x1080, SAR 1:1 DAR 16:9, 25 fps, 25 tbr, 1k tbn"
+      ],
+      "full_decode_exit": 0,
+      "decode_errors": ""
+    },
+    "zip_original": {
+      "exists": true,
+      "bytes": 2457742,
+      "sha256": "a2da0d49f79fe81fed78f00940a6bba4a40cb910a610894b743f274fa8e3282b",
+      "stream_summary": [
+        "Duration: 00:00:27.12, start: 0.000000, bitrate: 724 kb/s",
+        "Stream #0:0: Video: vp8, yuv420p(progressive), 1920x1080, SAR 1:1 DAR 16:9, 25 fps, 25 tbr, 1k tbn"
+      ],
+      "full_decode_exit": 0,
+      "decode_errors": ""
+    },
+    "historical_video_105": {
+      "exists": true,
+      "bytes": 3764441,
+      "sha256": "933e754103dae97654d937a2a05126dd27cb5c0fa67bbec5288bb8072e7feeb1",
+      "stream_summary": [
+        "Duration: 00:01:45.00, start: 0.000000, bitrate: 286 kb/s",
+        "Stream #0:0[0x1](und): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(progressive), 1280x720, 227 kb/s, SAR 1:1 DAR 16:9, 30 fps, 30 tbr, 15360 tbn (default)",
+        "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 52 kb/s (default)"
+      ],
+      "full_decode_exit": 0,
+      "decode_errors": ""
+    },
+    "historical_video_66": {
+      "exists": true,
+      "bytes": 3389640,
+      "sha256": "efcda6936ea99b79ee7dfdabf3062f3b379f9cdb8ac2f863a1bb9517528ac9bf",
+      "stream_summary": [
+        "Duration: 00:01:06.27, start: 0.000000, bitrate: 409 kb/s",
+        "Stream #0:0[0x1](und): Video: hevc (Main) (hvc1 / 0x31637668), yuv420p(tv, bt709), 1088x720, 405 kb/s, 30 fps, 30 tbr, 600 tbn (default)"
+      ],
+      "full_decode_exit": 0,
+      "decode_errors": ""
+    }
+  }
+}

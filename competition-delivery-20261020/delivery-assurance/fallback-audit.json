@@ -1,0 +1,11 @@
+{
+  "file": "BlockCraftAI-OFFLINE-FALLBACK-105s-R01.mp4",
+  "bytes": 4620783,
+  "sha256": "9167633543ccaf30dd779770abc44cb253b43c0efdf3368f6ab0a4782c8381f2",
+  "duration_seconds": 105,
+  "full_decode_exit": 0,
+  "audio": "Intentional silent AAC; no narration",
+  "native_player_review": "NOT VERIFIED: computer control stopped by policy",
+  "real_model_calls": 0,
+  "status": "OFFLINE FALLBACK CANDIDATE / NOT SUBMITTED"
+}
