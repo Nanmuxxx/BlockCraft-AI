@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlockCraft 安全 Viewer 验收宿主</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #2d241f; background: #f4ede5; }
+    body { margin: 0; padding: 20px; }
+    main { max-width: 900px; margin: 0 auto; display: grid; gap: 14px; }
+    section { background: #fffdf9; border: 1px solid #dcc8b7; border-radius: 16px; padding: 16px; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+    button { border: 1px solid #b99c85; background: #fff; border-radius: 9px; padding: 7px 10px; cursor: pointer; }
+    button:hover { background: #f8eee4; }
+    #viewer-host { min-height: 180px; border: 1px dashed #cbb5a2; border-radius: 12px; padding: 8px; margin-top: 12px; }
+    #viewer-host iframe { width: 100%; min-height: 180px; border: 0; border-radius: 10px; background: #fff; }
+    code, output { background: #f5ece3; border-radius: 5px; padding: 2px 5px; }
+    #host-secret { display: none; }
+  </style>
+</head>
+<body>
+<main>
+  <section>
+    <h1>BlockCraft 安全 Viewer 验收宿主</h1>
+    <p>宿主持有 DOM、Cookie、LocalStorage 和网络监听。模型代码只能进入独立源站的沙箱 iframe。</p>
+    <div id="host-secret">HOST_DOM_SECRET</div>
+    <p>宿主状态：<output id="viewer-status-label" data-testid="viewer-status">初始化</output></p>
+    <p>宿主说明：<span id="viewer-message"></span></p>
+    <p>宿主 ping：<output id="host-ping" data-testid="host-ping">0</output> <button type="button" id="ping">宿主仍可响应</button></p>
+    <p>协议诊断：<code id="viewer-diagnostics" data-testid="diagnostics">{}</code></p>
+  </section>
+  <section>
+    <h2>已审核 TSX 夹具</h2>
+    <div class="buttons">
+      <button type="button" data-fixture="counter">Counter</button>
+      <button type="button" data-fixture="todo">Todo List</button>
+      <button type="button" data-fixture="pomodoro">Pomodoro</button>
+      <button type="button" data-fixture="error">渲染错误</button>
+      <button type="button" data-fixture="loop">死循环</button>
+      <button type="button" data-fixture="attack-dynamic">动态攻击</button>
+    </div>
+    <div class="buttons" style="margin-top:8px">
+      <button type="button" id="dispose">卸载 Viewer</button>
+      <button type="button" id="restart">重新挂载</button>
+    </div>
+  </section>
+  <section>
+    <h2>隔离运行区</h2>
+    <div id="viewer-host" data-safe-viewer-host></div>
+  </section>
+</main>
+<script type="module" src="/host.js"></script>
+</body>
+</html>
