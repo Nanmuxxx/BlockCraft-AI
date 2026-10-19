@@ -5,7 +5,7 @@ import { createCommandSession, processCommand } from './appCommands'
 import { AppSpecError, assertCommandRequest, assertProjectState, ensure } from './appSpecValidation'
 import { getAppCapability, getBlockCapabilityId } from './appCapabilities'
 
-export const AI_CHANGE_COMMANDS = Object.freeze(['addField', 'configureBlockFields', 'addBlock', 'removeBlock'] as const)
+export const AI_CHANGE_COMMANDS = Object.freeze(['addField', 'configureBlockFields', 'configureBlockPresentation', 'addBlock', 'removeBlock'] as const)
 export type AiChangeCommand = Extract<AppCommand, { type: typeof AI_CHANGE_COMMANDS[number] }>
 export type AiChangeRequest = Omit<CommandRequest, 'commands'> & { commands: AiChangeCommand[] }
 export type DeepReadonly<T> = T extends object ? { readonly [K in keyof T]: DeepReadonly<T[K]> } : T
@@ -26,6 +26,7 @@ export interface AppChangeScope {
 }
 export interface UnsupportedOperation { capabilityId: string; reason: string }
 export interface AppChangeDiff {
+  presentationChanges: { blockId: string; before: BlockSpec['presentation']; after: BlockSpec['presentation'] }[]
   addedBlocks: BlockSpec[]
   removedBlocks: BlockSpec[]
   addedFields: { entityId: string; field: FieldSpec }[]
@@ -188,7 +189,11 @@ function diff(before: ProjectState, after: ProjectState, request: AiChangeReques
       retainedRecordCount: (before.records[entityId] ?? []).length }
   })
   ensure(JSON.stringify(before.records) === JSON.stringify(after.records), 'Plan must preserve all records', 'SCOPE_VIOLATION')
-  return { addedBlocks, removedBlocks, addedFields, blockFieldChanges, affectedEntityIds: [...affectedEntityIds], affectedBlockIds: [...affectedBlockIds], sharedEntityImpacts, recordsPreserved: true }
+  const presentationChanges = after.spec.blocks.flatMap(block => {
+    const old = before.spec.blocks.find(old => old.id === block.id)
+    return old && JSON.stringify(old.presentation) !== JSON.stringify(block.presentation) ? [{ blockId: block.id, before: old.presentation, after: block.presentation }] : []
+  })
+  return { presentationChanges, addedBlocks, removedBlocks, addedFields, blockFieldChanges, affectedEntityIds: [...affectedEntityIds], affectedBlockIds: [...affectedBlockIds], sharedEntityImpacts, recordsPreserved: true }
 }
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`

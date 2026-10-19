@@ -4,8 +4,8 @@ import { metricValue, parseFieldDraft, type AppRuntime, type FieldDraft } from '
 import './app-renderer.css'
 import { Pomodoro } from './Pomodoro'
 
-function RecordEditor({ fields, initial, onSave, onCancel }: {
-  fields: FieldSpec[]; initial?: EntityRecord
+function RecordEditor({ fields, initial, onSave, onCancel, buttonText }: {
+  fields: FieldSpec[]; initial?: EntityRecord; buttonText?: string
   onSave: (values: EntityRecord['values']) => void; onCancel?: () => void
 }) {
   const [draft, setDraft] = useState<FieldDraft>(() => Object.fromEntries(fields.map(field => {
@@ -41,7 +41,7 @@ function RecordEditor({ fields, initial, onSave, onCancel }: {
     </label>)}
     {error && <p role="alert">{error}</p>}
     {notice && <p role="status">{notice}</p>}
-    <div className="renderer-actions"><button type="submit">{initial ? '保存修改' : '提交'}</button>{onCancel && <button type="button" onClick={onCancel}>取消</button>}</div>
+    <div className="renderer-actions"><button type="submit">{initial ? '保存修改' : buttonText ?? '提交'}</button>{onCancel && <button type="button" onClick={onCancel}>取消</button>}</div>
   </form>
 }
 
@@ -86,11 +86,11 @@ export function BuiltinBlockRenderer({ runtime, blockId }: { runtime: AppRuntime
   const entity = state.spec.entities.find(entity => entity.id === binding?.entityId)
   if (block?.type === 'pomodoro') return <Pomodoro runtime={runtime} block={block} />
   if (!block || !entity) return null
-  return <section className={`renderer-block renderer-block--${block.type}`} aria-label={block.name}>
+  return <section className={`renderer-block renderer-block--${block.type}`} aria-label={block.name} style={{ backgroundColor: block.presentation?.backgroundColor, color: block.presentation?.textColor, borderRadius: block.presentation?.borderRadius }}>
     <h2>{block.name}</h2>
     {block.type === 'metric' ? <output className="renderer-metric" aria-live="polite">{metricValue(state, block).toLocaleString('zh-CN', { maximumFractionDigits: 2 })}</output>
       : block.type === 'list' ? <RecordList runtime={runtime} entityId={entity.id} fieldIds={block.fieldIds} />
-        : <RecordEditor fields={block.fieldIds.map(id => entity.fields.find(field => field.id === id)!)} onSave={values => runtime.dispatch({ type: 'create', entityId: entity.id, record: { id: `record-${crypto.randomUUID()}`, values } })} />}
+        : <RecordEditor buttonText={block.presentation?.buttonText} fields={block.fieldIds.map(id => entity.fields.find(field => field.id === id)!)} onSave={values => runtime.dispatch({ type: 'create', entityId: entity.id, record: { id: `record-${crypto.randomUUID()}`, values } })} />}
   </section>
 }
 

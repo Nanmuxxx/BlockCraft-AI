@@ -23,6 +23,13 @@ export function createCommandSession(state: ProjectState): CommandSession {
 function apply(state: ProjectState, command: Exclude<AppCommand, { type: 'undo' }>) {
   const { spec } = state
   switch (command.type) {
+    case 'configureBlockPresentation': {
+      const block = spec.blocks.find(block => block.id === command.blockId)
+      ensure(block && block.type !== 'pomodoro', 'Unsupported presentation target')
+      ensure(command.presentation.buttonText === undefined || block.type === 'form', 'Button text requires a form')
+      block.presentation = { ...block.presentation, ...clone(command.presentation) }
+      break
+    }
     case 'addBlock':
       ensure(command.binding.blockId === command.block.id, 'Binding must target the added block')
       spec.blocks.push(clone(command.block)); spec.relations.push(clone(command.binding))
