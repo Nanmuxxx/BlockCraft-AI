@@ -87,7 +87,34 @@ ModelScope 官方部署参考：<https://modelscope.cn/docs/studios/docker>（�
 | `DEEPSEEK_API_KEY` | 不设置 | 无授权密钥；不得占位、粘贴或写入构建参数/仓库 |
 | `PUBLIC_ORIGIN` | 不设置 | 空值是安全默认值；它只约束来源，不是身份凭据 |
 | `DEEPSEEK_MODEL` | 不设置 | 不需要模型选择；缺密钥且缺服务端授权时，不能产生模型调用 |
-| Studio secrets / variables | 留空 | 此轮没有任何秘密或运行配置需要注入 |
+| Studio secrets / variables | 不配置 | 此轮没有任何秘密或运行配置需要注入；平台权限边界未验收 |
+
+## Secret、代码执行与日志权限边界
+
+ModelScope 官方 `modelscope-studio` 技能文档描述了 Studio Secret 接口：列表只返回 Secret 键、不返回值；普通变量列表会返回值。该接口行为说明 Secret 值不可经列表 API 读回，但不能证明所有有权修改代码、部署空间、执行容器或查看运行日志的主体都与 Secret 管理权限隔离。官方文档同时列有部署/停止和 build/run 日志读取接口。当前没有目标空间的角色权限矩阵、成员清单或运行时访问控制证据。
+
+| 能力/边界 | 当前证据 | 判定 |
+| --- | --- | --- |
+| Secret 列表不返回已保存的 Secret 值 | 官方 Studio 文档说明 Secret list 只返回 key；此处没有实际调用目标空间 API | 文档能力已核对；目标空间 `NOT VERIFIED` |
+| 普通变量是否可能暴露值 | 官方文档说明普通 variable list 会返回 key/value | 不得将普通变量用于凭据 |
+| 谁可新增/替换 Secret、同步代码或部署 | API 文档提供相应操作，但目标空间成员/角色 ACL 未核实 | `NOT VERIFIED` |
+| 谁能 exec/进入容器或读取进程环境 | 未找到目标空间权限配置或实测证据 | `NOT VERIFIED`；不能以 Secret 列表隐藏值推断运行时隔离 |
+| 谁能读取 build/run 日志，以及日志是否脱敏 | 官方文档提供日志接口；目标空间授权和脱敏行为未核实 | `NOT VERIFIED` |
+| 代码是否能读取运行时环境变量 | 部署代码在运行时执行；平台 Secret 是否以环境变量注入及其进程可见性未针对目标空间验证 | `NOT VERIFIED`；允许不受信任 Agent 修改/执行代码时，视为 Secret 可被该代码读取 |
+
+因此，**仅配置平台 Secret 或环境变量不足以形成 Agent 与密钥的安全边界**。在负责人实际确认平台 ACL 前，不得在 ModelScope 配置 DeepSeek key，也不得让可读取环境、执行命令、修改运行代码或查看未脱敏敏感日志的 Agent 账号接触该空间。Secret 只由负责人在其独占控制面输入；不得通过聊天、Issue、PR、命令参数、日志或仓库传递。
+
+若平台无法证明所需隔离，使用负责人独占控制的独立后端控制面：负责人独占云账号、代码部署、shell/exec、环境和日志管理权限；Secret 只注入该后端，Agent 不得拥有该后端的 shell、环境变量、Secret 或敏感日志权限。Agent 仅调用经过认证、固定路由的 API；后端验证调用身份并在服务端访问模型，不向 Agent 返回密钥或上游 Authorization。该替代方案需要单独设计、独立验收和负责人授权，不表示目前已建成或可用。
+
+官方能力参考：[ModelScope Studio 文档](https://modelscope.cn/skills/modelscope/modelscope-studio)。本次核对的是公开 API/技能说明，不是目标空间 UI/ACL 检查；因此目标空间的 Secret 保护、exec、日志读取和成员权限仍全部标记 `NOT VERIFIED`。
+
+## 真实调用预算策略准备（未启用）
+
+负责人最新决定约束任何未来候选策略：共享预算总上限人民币 `¥20`；首轮最多 3 次上游请求、并发 1、每次输出最多 2048 tokens，禁止自动重试。真实账本不可由 Agent 修改、清空或重置。此处只记录候选政策边界，不是已实现的 Gateway 限额、真实账本配置、Key 注入、付费授权或部署批准。
+
+负责人提供的首轮子限额建议为 `¥0.50`。按其价格快照与保守输入上界 73728 tokens 估算：若 cache-miss 输入为 `¥2/百万 tokens`、输出 `¥8/百万 tokens`，且输出上限 2048，则单次理论上界 `¥0.16384`，3 次合计 `¥0.49152`。这只是待核验的算术建议；输入上界、计费口径、usage 可信性和运行时硬限制均未独立验证，不能视为可靠的费用上限。
+
+价格页：[DeepSeek 官方定价](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)。负责人报告的抓取快照为 deepseek-flash / V4.1-Flash-1017，HTML SHA-256 `556097caba8adfeeed6455714bffd731c7f60db520fcee06a922eba5840663a3`，保守价格为输入 `¥2/M`、输出 `¥8/M`。须由 Gateway 与 Tech Lead 独立复核并给出短有效期候选政策；旧政策的 `PRICING_EXPIRED` 不自动延长。核验完成前，实际 Key 和付费调用继续 `NO-GO`。
 
 精确 main 的 `server/index.mjs` 在解析请求体和访问 Provider 前，对 v1 与 `trusted-interactive/1` 都调用 `authorizeGeneration`；可执行入口 `createAppServer()` 未注入 `generationAccess`，因此默认匿名拒绝。服务端还要求 `apiKey` 非空才会调用生成。此结论限定于冻结 SHA 的源码和默认启动方式；不能推论未来配置了授权 adapter 后仍然匿名拒绝。`PUBLIC_ORIGIN`、CORS、Host、Origin 或 XFF 都不能替代身份验证。
 
@@ -136,7 +163,7 @@ ModelScope 官方部署参考：<https://modelscope.cn/docs/studios/docker>（�
 | ModelScope 网页目录/ZIP 上传与 `.dockerignore` 保留 | NOT TESTED | 必须由 Owner 登录目标 Space 后按实际 UI 验证；不得假定 ZIP 自动解包或隐藏文件保留 |
 | ModelScope 平台构建、运行状态、健康、页面与 API smoke | BLOCKED / NOT TESTED | 空间尚无部署内容，实际应用 origin 未提供；必须等单独部署授权 |
 | DeepSeek / 付费模型请求 | NOT RUN | 无 Key；此包不需要/不要求密钥 |
-| HTTPS、公网 URL、ACL、公开切换、平台 Secrets、回滚 | NOT TESTED | 部署前和授权后分别验证；当前无旧 revision |
+| HTTPS、公网 URL、ACL、公开切换、平台 Secrets、exec/日志权限隔离、回滚 | NOT TESTED | 部署前和授权后分别验证；平台 Secret API 说明不证明目标空间 ACL；当前无旧 revision |
 
 ## 责任边界与交接
 
