@@ -1,0 +1,14 @@
+{"name": "root-tests", "command": ["npm", "test"], "exitCode": 0, "utc": "2026-10-19T07:55:15.250006+00:00"}
+{"name": "host-tests", "command": ["npm", "run", "test:mochi-host"], "exitCode": 0, "utc": "2026-10-19T07:55:15.670493+00:00"}
+{"name": "typescript", "command": ["./node_modules/.bin/tsc", "-b"], "exitCode": 0, "utc": "2026-10-19T07:55:17.553470+00:00"}
+{"name": "build", "command": ["npm", "run", "build"], "exitCode": 0, "utc": "2026-10-19T07:55:21.344951+00:00"}
+{"name": "plan-build", "command": ["node", "server/mochi-plan/build.mjs"], "exitCode": 0, "utc": "2026-10-19T08:03:46.278984+00:00"}
+{"name": "plan-provider", "command": ["node", "--experimental-transform-types", "--test", "tests/mochi-plan/provider.test.mjs"], "exitCode": 0, "utc": "2026-10-19T08:03:50.697833+00:00"}
+{"name": "gateway", "command": ["node", "--test", "tests/paid-gateway/security.test.mjs", "tests/paid-gateway/admission.test.mjs"], "exitCode": 1, "utc": "2026-10-19T08:03:51.513795+00:00"}
+{"name": "generation", "command": ["npm", "run", "test:generation"], "exitCode": 0, "utc": "2026-10-19T08:03:52.061964+00:00"}
+{"name": "trusted-interactive", "command": ["npm", "run", "test:trusted-interactive"], "exitCode": 0, "utc": "2026-10-19T08:03:52.883339+00:00"}
+{"name": "native-provider", "command": ["node", "--test", "tests/mochi-ai/provider.test.mjs", "tests/custom-block/provider.test.mjs"], "exitCode": 0, "utc": "2026-10-19T08:03:52.997481+00:00"}
+{"name": "gateway-after-build", "command": ["node", "--test", "tests/paid-gateway/security.test.mjs", "tests/paid-gateway/admission.test.mjs"], "exitCode": 0, "utc": "2026-10-19T08:04:21.386816+00:00"}
+{"name": "full-provider-regression", "command": ["node", "--test", "server/server.test.mjs", "tests/generation/compatibility.test.mjs", "tests/generation/ingress.test.mjs", "tests/generation/generation.test.mjs", "tests/trusted-interactive/export.test.mjs", "tests/trusted-interactive/gate.test.mjs", "tests/trusted-interactive/server.test.mjs", "tests/custom-block-generation/provider.test.mjs", "tests/mochi-ai/provider.test.mjs"], "exitCode": 0, "utc": "2026-10-19T08:04:21.789566+00:00"}
+{"name": "gateway-all", "command": ["node", "--test", "tests/paid-gateway/audit-boundary.test.mjs", "tests/paid-gateway/admission.test.mjs", "tests/paid-gateway/model-contract.test.mjs", "tests/paid-gateway/security.test.mjs"], "exitCode": 0, "utc": "2026-10-19T08:05:49.611771+00:00"}
+{"name": "diff-check", "command": ["git", "diff", "--check"], "exitCode": 0, "utc": "2026-10-19T08:05:49.627712+00:00"}

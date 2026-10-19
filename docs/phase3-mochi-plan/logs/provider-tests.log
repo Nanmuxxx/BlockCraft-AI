@@ -1,0 +1,54 @@
+(node:7993) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ HTTP -> existing branded gateway -> strict plan -> Host Preview zero writes -> Confirm/CAS once (74.567791ms)
+✔ default disabled fails before reserve/egress (24.091334ms)
+✔ unbranded bypass transport fails before reserve/egress (22.822333ms)
+✔ missing identity fails before reserve/egress (21.949542ms)
+✔ wrong owner fails before reserve/egress (22.4515ms)
+✔ unknown writable flag fails before reserve/egress (23.082375ms)
+✔ stale revision fails before reserve/egress (23.491167ms)
+✔ wrong instance fails before reserve/egress (22.114ms)
+✔ expired approval fails before reserve/egress (21.996541ms)
+✔ invalid snapshot fails before reserve/egress (22.327375ms)
+✔ extra authority rejected before model (22.143167ms)
+✔ unbounded prompt rejected before model (21.826791ms)
+✔ unknown block rejected before model (22.498625ms)
+✔ cross origin rejects before authentication and payment (22.107209ms)
+✔ forbidden command rejected after model without Runtime writes (38.981959ms)
+✔ stale request id rejected after model without Runtime writes (39.834ms)
+✔ foreign target rejected after model without Runtime writes (41.563583ms)
+✔ unsafe color rejected after model without Runtime writes (41.865292ms)
+✔ auth revocation and canonical project changes after model reject plans (91.13525ms)
+✔ duplicate request and process/ledger cap do not reset with project requests (137.00225ms)
+✔ upstream failure consumes durable reservation and halts later attempts, with safe error (41.262541ms)
+✔ total deadline bounds slow project resolver with no late egress (156.649583ms)
+✔ late model response is ignored; active concurrency remains bounded (168.349334ms)
+✔ client default disabled performs zero HTTP requests (0.376417ms)
+✔ revocation while reading canonical context refuses before reservation (22.449791ms)
+✔ process approval cap is additional to the shared durable ledger (39.546459ms)
+✔ shared ledger reservations from another caller exhaust this provider without egress (119.22125ms)
+✔ slow auth deadline and input size limit do not consume payment (181.609458ms)
+✔ client cancellation retires request even if canonical resolver completes late (172.527958ms)
+✔ live lease denies revoked admission without using cached identity (69.061875ms)
+✔ missing trusted lease adapter keeps handler disabled (23.531375ms)
+✔ final authentication is followed by canonical resolution, then synchronous live check (41.907542ms)
+✔ authentication deadline is server AUTH_TIMEOUT, not client cancellation (2025.41575ms)
+✔ unfinished upload timeout closes the real request and permits the next request (124.931583ms)
+✔ revocation before-reserve prevents wire and releases only unsent money (22.809917ms)
+ℹ {"phase":"before-reserve","mockWireCalls":0,"entries":[],"halted":false}
+✔ revocation after-reserve prevents wire and releases only unsent money (38.892833ms)
+ℹ {"phase":"after-reserve","mockWireCalls":0,"entries":[{"status":"not-sent","reserveNano":38092000,"releasedNano":38092000}],"halted":false}
+✔ revocation before-fetch prevents wire and releases only unsent money (38.690375ms)
+ℹ {"phase":"before-fetch","mockWireCalls":0,"entries":[{"status":"not-sent","reserveNano":38092000,"releasedNano":38092000}],"halted":false}
+✔ client abort after reservation but before fetch releases unsent reservation (37.786084ms)
+✔ delayed canonical resolution cannot reuse an initial session after revocation (22.217875ms)
+{"REAL_MODEL_CALLS":0,"mockWireCalls":18}
+✔ late admission acquisition is released after timeout and cannot reserve (103.279875ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4331.140083

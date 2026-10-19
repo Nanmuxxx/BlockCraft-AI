@@ -1,0 +1,36 @@
+✔ current lease is checked before durable reserve and again immediately before fetch (83.176458ms)
+✔ required synchronous lease denies absent/false/throw/Promise/thenable before money or network (40.472459ms)
+✔ revocation after canonical resolve but before reservation denies each authoritative binding (272.845ms)
+✔ revocation during reserve and in the pre-fetch microtask releases only money, survives reopen (484.705708ms)
+✔ guard-capability brand is unforgeable by properties; shared concurrency and slot release stay enforced (37.792042ms)
+✔ not-sent releases cannot reset durable attempt cap, even with nominal reservations above money ceiling (132.662417ms)
+✔ fetch invocation is point of no refund, including sync throw, abort and unknown response (113.332875ms)
+✔ malformed released reservation cannot manufacture free money on reopen (41.525084ms)
+✔ hung audit callback obeys deadline; concurrency releases without refunding settled usage (119.935667ms)
+✔ cancel during audit rejects promptly and late callback resolution/rejection cannot succeed (196.081541ms)
+✔ untrusted model metadata never enters callback/response; only configured priced model is emitted (474.875542ms)
+✔ audit callback exception is sanitized; trustworthy usage remains settled with reservation retained (82.030417ms)
+✔ legacy model names fail before reservation/network in all three consumers; no alias rewriting (93.225125ms)
+✔ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (350.347625ms)
+✔ branded paid transport selects the priced default in all three consumers without a model override (202.188083ms)
+✔ explicit invalid environment or constructor model never falls back for a paid transport (55.307375ms)
+✔ ordinary injected offline adapters keep the historical default in all consumers (3.448ms)
+✔ anonymous legacy and v2 (no Origin, forged Host/XFF/Origin/body approval) reject before Provider (21.565667ms)
+✔ default disabled even with injected Provider/key; untrusted auth exceptions and late identity fail closed (2008.891292ms)
+✔ all native Provider defaults blocked without controlled transport (5.350625ms)
+✔ durable reserve precedes one fixed official request; no caller headers, tools, retries or secret audit (41.573625ms)
+✔ concurrent attempts rejected before Provider and before a second reservation (40.227458ms)
+✔ request policy rejects other endpoint/model/tools/token limits and oversized input with zero network (22.332958ms)
+✔ durable call cap survives reopen and reservations never refunded (128.919875ms)
+✔ conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10 (84.917375ms)
+✔ missing or over-bound usage halts automatic calls permanently; no refund (196.82125ms)
+✔ sent failures retain reservation/halt; cancellation before fetch invocation releases money only (549.14ms)
+✔ exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed (48.815125ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3305.883459
