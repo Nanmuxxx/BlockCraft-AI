@@ -42,6 +42,31 @@ test('ordinary start is closed by default and shuts down idempotently', async t 
   assert.equal(started.server.listening, false)
 })
 
+test('key and ledger configuration cannot activate generation without trusted identity', async t => {
+  const configured = await tempEnvironment(t)
+  for (const env of [{ DEEPSEEK_API_KEY: key }, configured]) {
+    let runtimeCalls = 0
+    const started = await startServer({
+      port: 0, env,
+      paidRuntimeFactory: () => { runtimeCalls++; throw new Error('must remain closed') },
+    })
+    try {
+      const response = await fetch(`http://127.0.0.1:${started.server.address().port}/api/ai/generate`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: '健身训练记录' }),
+      })
+      assert.equal(response.status, 401)
+      const body = await response.text()
+      assert.equal(JSON.parse(body).error.code, 'UNAUTHORIZED')
+      assert.equal(body.includes(key), false)
+      assert.equal(runtimeCalls, 0)
+    } finally { await started.shutdown() }
+  }
+  // No runtime construction means no budget reservation or model transport.
+  const ledger = openLedger(configured.DEEPSEEK_BUDGET_LEDGER_PATH)
+  assert.equal(ledger.snapshot().entries.length, 0)
+  ledger.close()
+})
+
 test('explicit paid runtime keeps the ledger lock until an in-flight request is aborted', async t => {
   const env = await tempEnvironment(t)
   let upstreamStarted
