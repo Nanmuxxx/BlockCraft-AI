@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { chmodSync, lstatSync, mkdirSync, mkdtempSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
+import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { openLedger } from '../../server/paid-gateway/ledger.mjs'
@@ -48,6 +48,7 @@ test('same principal/key is single-use concurrently and remains claimed after re
   assert.equal(ledger.snapshot().entries.length, 1)
   assert.equal(JSON.stringify(store.snapshot()).includes('opaque-account-17'), false)
   assert.equal(JSON.stringify(store.snapshot()).includes(idempotencyKey), false)
+  assert.equal(readFileSync(join(directory, '.paid-idempotency.json'), 'utf8').includes(bindingKey.toString()), false)
   assert.equal(lstatSync(join(directory, '.paid-idempotency.json')).mode & 0o077, 0)
   store.close()
   ledger.close()
