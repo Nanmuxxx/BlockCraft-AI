@@ -91,10 +91,13 @@ test('sidecar persist failure, lock and exhausted durable budget deny before egr
   f.reopen()
   for (let i = 0; i < 6; i++) await request(f.runtime, { principal: 'p' + i })(endpoint, init())
   await assert.rejects(request(f.runtime, { principal: 'over-budget' })(endpoint, init()), { code: 'BUDGET_EXHAUSTED' })
-  assert.equal(calls, 6); assert.equal(f.state().entries.length, 6)
+  assert.equal(calls, 6); assert.equal(f.state().entries.length, 6); assert.equal(f.claims().claims.length, 7)
+  f.reopen()
+  await assert.rejects(request(f.runtime, { principal: 'over-budget' })(endpoint, init()), { code: 'IDEMPOTENCY_REPLAY' })
+  assert.equal(calls, 6); assert.equal(f.state().entries.length, 6); assert.equal(f.claims().claims.length, 7)
 })
 
-test('native clock is never extended: expiry denies real ledger and composed runtime with zero reserve/egress', t => {
+test('native clock is never extended: expiry denies real ledger and composed runtime with zero reserve/egress', async t => {
   t.mock.timers.reset()
   if (Date.now() < PRICING.expiresAt) t.mock.timers.enable({ apis: ['Date'], now: PRICING.expiresAt })
   let calls = 0; const f = fixture(t, async () => { calls++; return response() })
@@ -102,7 +105,14 @@ test('native clock is never extended: expiry denies real ledger and composed run
   const source = `import {openLedger} from './server/paid-gateway/ledger.mjs'; import {PRICING} from './server/paid-gateway/pricing.mjs'; if(Date.now()<PRICING.expiresAt) process.exit(2); const l=openLedger(process.argv[1]); try { l.reserve(100,100,'mock'); process.exitCode=3 } catch(e) { if(e.code!=='PRICING_EXPIRED') throw e; if(l.snapshot().entries.length) process.exitCode=4 } finally {l.close()}`
   const child = spawnSync(process.execPath, ['--input-type=module', '-e', source, join(f.dir, 'native.json')], { encoding: 'utf8' })
   assert.equal(child.status, 0, child.stderr)
-  return assert.rejects(request(f.runtime)(endpoint, init()), e => { assert.equal(e.code, 'PRICING_EXPIRED'); assert.equal(paidGatewayHttpStatus(e), 503); assert.equal(calls, 0); assert.equal(f.state().entries.length, 0); return true })
+  await assert.rejects(request(f.runtime)(endpoint, init()), e => {
+    assert.equal(e.code, 'PRICING_EXPIRED'); assert.equal(paidGatewayHttpStatus(e), 503)
+    assert.equal(calls, 0); assert.equal(f.state().entries.length, 0); assert.equal(f.claims().claims.length, 1)
+    return true
+  })
+  f.reopen()
+  await assert.rejects(request(f.runtime)(endpoint, init()), { code: 'IDEMPOTENCY_REPLAY' })
+  assert.equal(calls, 0); assert.equal(f.state().entries.length, 0); assert.equal(f.claims().claims.length, 1)
 })
 
 test('HTTP mapping is explicit and unknown/storage/config/pricing errors default503', () => {
