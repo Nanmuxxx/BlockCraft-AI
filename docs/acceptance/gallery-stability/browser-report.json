@@ -1,0 +1,1925 @@
+{
+  "codeSha": "a5392394b44c1d5702888af6f80e25195a3cc137",
+  "scope": "Additional stability coverage for #55; OFFLINE FIXTURES and browser-intercepted Mock errors only",
+  "started": "2026-10-19T16:01:56.928Z",
+  "liveModelCalls": 0,
+  "cases": [
+    {
+      "id": "1440-cycle1-club-registration",
+      "started": "2026-10-19T16:01:58.142Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "club-registration",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle1-learning-log",
+      "started": "2026-10-19T16:01:59.049Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "learning-log",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle1-fitness-checkin",
+      "started": "2026-10-19T16:01:59.592Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "fitness-checkin",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle1-expense-tracker",
+      "started": "2026-10-19T16:02:00.200Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "expense-tracker",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle1-task-manager",
+      "started": "2026-10-19T16:02:00.830Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "task-manager",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle1-habit-tracker",
+      "started": "2026-10-19T16:02:01.482Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "habit-tracker",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle2-club-registration",
+      "started": "2026-10-19T16:02:02.093Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "club-registration",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle2-learning-log",
+      "started": "2026-10-19T16:02:02.663Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "learning-log",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle2-fitness-checkin",
+      "started": "2026-10-19T16:02:03.357Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "fitness-checkin",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle2-expense-tracker",
+      "started": "2026-10-19T16:02:03.890Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "expense-tracker",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle2-task-manager",
+      "started": "2026-10-19T16:02:04.486Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "task-manager",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle2-habit-tracker",
+      "started": "2026-10-19T16:02:05.146Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "habit-tracker",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle3-club-registration",
+      "started": "2026-10-19T16:02:05.783Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "club-registration",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle3-learning-log",
+      "started": "2026-10-19T16:02:06.437Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "learning-log",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle3-fitness-checkin",
+      "started": "2026-10-19T16:02:07.076Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "fitness-checkin",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle3-expense-tracker",
+      "started": "2026-10-19T16:02:07.791Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "expense-tracker",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle3-task-manager",
+      "started": "2026-10-19T16:02:08.560Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "task-manager",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-cycle3-habit-tracker",
+      "started": "2026-10-19T16:02:09.353Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "habit-tracker",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 1440,
+          "scroll": 1440
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-offline-loaded-page",
+      "started": "2026-10-19T16:02:10.354Z",
+      "evidence": {
+        "network": "Playwright context offline; already loaded JS",
+        "operations": "B/C, create, fixture switch and return succeeded"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-whitespace-required-input",
+      "started": "2026-10-19T16:02:11.030Z",
+      "evidence": {
+        "error": "请填写科目",
+        "preserved": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-invalid-number-input",
+      "started": "2026-10-19T16:02:11.101Z",
+      "evidence": {
+        "typed": "1e309",
+        "browserValue": "",
+        "error": "请填写学习时长（分钟）",
+        "preserved": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-mock-network",
+      "started": "2026-10-19T16:02:11.195Z",
+      "evidence": {
+        "fault": "network",
+        "mockPosts": 1,
+        "error": "无法连接生成服务，请检查后端是否已启动。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-mock-http503",
+      "started": "2026-10-19T16:02:11.783Z",
+      "evidence": {
+        "fault": "http503",
+        "mockPosts": 1,
+        "error": "生成失败（HTTP 503），请稍后重试。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-mock-http504",
+      "started": "2026-10-19T16:02:12.290Z",
+      "evidence": {
+        "fault": "http504",
+        "mockPosts": 1,
+        "error": "AI 生成超时，请重试。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-mock-json",
+      "started": "2026-10-19T16:02:12.778Z",
+      "evidence": {
+        "fault": "json",
+        "mockPosts": 1,
+        "error": "服务未返回有效 JSON，请检查后端是否已启动。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-mock-spec",
+      "started": "2026-10-19T16:02:13.268Z",
+      "evidence": {
+        "fault": "spec",
+        "mockPosts": 1,
+        "error": "AI 返回的应用未通过 AppSpec 校验，请重试。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-mock-oversize",
+      "started": "2026-10-19T16:02:13.778Z",
+      "evidence": {
+        "fault": "oversize",
+        "mockPosts": 1,
+        "error": "生成响应过大，请重试。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-pending-double-generate-cancel-recover",
+      "started": "2026-10-19T16:02:14.227Z",
+      "evidence": {
+        "duplicateGenerationPosts": 1,
+        "cancellation": "old app preserved; Gallery fallback works"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "1440-refresh-and-new-tab",
+      "started": "2026-10-19T16:02:14.642Z",
+      "evidence": {
+        "refresh": "in-memory edits cleared as disclosed; reload fixture restores initial data",
+        "malformedStatus": "Gallery usable",
+        "newPage": "no row contamination"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle1-club-registration",
+      "started": "2026-10-19T16:02:15.635Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "club-registration",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle1-learning-log",
+      "started": "2026-10-19T16:02:16.274Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "learning-log",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle1-fitness-checkin",
+      "started": "2026-10-19T16:02:16.833Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "fitness-checkin",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle1-expense-tracker",
+      "started": "2026-10-19T16:02:17.383Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "expense-tracker",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle1-task-manager",
+      "started": "2026-10-19T16:02:17.947Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "task-manager",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle1-habit-tracker",
+      "started": "2026-10-19T16:02:18.548Z",
+      "evidence": {
+        "round": 1,
+        "fixture": "habit-tracker",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle2-club-registration",
+      "started": "2026-10-19T16:02:19.156Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "club-registration",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle2-learning-log",
+      "started": "2026-10-19T16:02:19.660Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "learning-log",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle2-fitness-checkin",
+      "started": "2026-10-19T16:02:20.158Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "fitness-checkin",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle2-expense-tracker",
+      "started": "2026-10-19T16:02:20.740Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "expense-tracker",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle2-task-manager",
+      "started": "2026-10-19T16:02:21.343Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "task-manager",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle2-habit-tracker",
+      "started": "2026-10-19T16:02:21.878Z",
+      "evidence": {
+        "round": 2,
+        "fixture": "habit-tracker",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle3-club-registration",
+      "started": "2026-10-19T16:02:22.492Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "club-registration",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle3-learning-log",
+      "started": "2026-10-19T16:02:23.169Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "learning-log",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle3-fitness-checkin",
+      "started": "2026-10-19T16:02:23.861Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "fitness-checkin",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle3-expense-tracker",
+      "started": "2026-10-19T16:02:24.458Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "expense-tracker",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle3-task-manager",
+      "started": "2026-10-19T16:02:25.136Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "task-manager",
+        "initialRows": 2,
+        "repeatedSubmitRows": 3,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-cycle3-habit-tracker",
+      "started": "2026-10-19T16:02:25.866Z",
+      "evidence": {
+        "round": 3,
+        "fixture": "habit-tracker",
+        "initialRows": 1,
+        "repeatedSubmitRows": 2,
+        "sameFixtureReload": "fresh initial rows and metrics",
+        "overflow": {
+          "width": 390,
+          "scroll": 390
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-offline-loaded-page",
+      "started": "2026-10-19T16:02:26.758Z",
+      "evidence": {
+        "network": "Playwright context offline; already loaded JS",
+        "operations": "B/C, create, fixture switch and return succeeded"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-whitespace-required-input",
+      "started": "2026-10-19T16:02:27.362Z",
+      "evidence": {
+        "error": "请填写科目",
+        "preserved": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-invalid-number-input",
+      "started": "2026-10-19T16:02:27.432Z",
+      "evidence": {
+        "typed": "1e309",
+        "browserValue": "",
+        "error": "请填写学习时长（分钟）",
+        "preserved": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-mock-network",
+      "started": "2026-10-19T16:02:27.534Z",
+      "evidence": {
+        "fault": "network",
+        "mockPosts": 1,
+        "error": "无法连接生成服务，请检查后端是否已启动。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-mock-http503",
+      "started": "2026-10-19T16:02:28.088Z",
+      "evidence": {
+        "fault": "http503",
+        "mockPosts": 1,
+        "error": "生成失败（HTTP 503），请稍后重试。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-mock-http504",
+      "started": "2026-10-19T16:02:28.630Z",
+      "evidence": {
+        "fault": "http504",
+        "mockPosts": 1,
+        "error": "AI 生成超时，请重试。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-mock-json",
+      "started": "2026-10-19T16:02:29.190Z",
+      "evidence": {
+        "fault": "json",
+        "mockPosts": 1,
+        "error": "服务未返回有效 JSON，请检查后端是否已启动。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-mock-spec",
+      "started": "2026-10-19T16:02:29.719Z",
+      "evidence": {
+        "fault": "spec",
+        "mockPosts": 1,
+        "error": "AI 返回的应用未通过 AppSpec 校验，请重试。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-mock-oversize",
+      "started": "2026-10-19T16:02:30.265Z",
+      "evidence": {
+        "fault": "oversize",
+        "mockPosts": 1,
+        "error": "生成响应过大，请重试。 当前应用和数据已保留。",
+        "preserved": true,
+        "galleryFallback": "PASS"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-pending-double-generate-cancel-recover",
+      "started": "2026-10-19T16:02:30.805Z",
+      "evidence": {
+        "duplicateGenerationPosts": 1,
+        "cancellation": "old app preserved; Gallery fallback works"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "390-refresh-and-new-tab",
+      "started": "2026-10-19T16:02:31.225Z",
+      "evidence": {
+        "refresh": "in-memory edits cleared as disclosed; reload fixture restores initial data",
+        "malformedStatus": "Gallery usable",
+        "newPage": "no row contamination"
+      },
+      "status": "PASS"
+    }
+  ],
+  "screenshots": [
+    "screenshots/1440-cycle3-club-registration.png",
+    "screenshots/1440-cycle3-learning-log.png",
+    "screenshots/1440-cycle3-fitness-checkin.png",
+    "screenshots/1440-cycle3-expense-tracker.png",
+    "screenshots/1440-cycle3-task-manager.png",
+    "screenshots/1440-cycle3-habit-tracker.png",
+    "screenshots/1440-offline-switch.png",
+    "screenshots/1440-mock-network.png",
+    "screenshots/1440-mock-http503.png",
+    "screenshots/1440-mock-http504.png",
+    "screenshots/1440-mock-json.png",
+    "screenshots/1440-mock-spec.png",
+    "screenshots/1440-mock-oversize.png",
+    "screenshots/1440-refresh-recovered.png",
+    "screenshots/390-cycle3-club-registration.png",
+    "screenshots/390-cycle3-learning-log.png",
+    "screenshots/390-cycle3-fitness-checkin.png",
+    "screenshots/390-cycle3-expense-tracker.png",
+    "screenshots/390-cycle3-task-manager.png",
+    "screenshots/390-cycle3-habit-tracker.png",
+    "screenshots/390-offline-switch.png",
+    "screenshots/390-mock-network.png",
+    "screenshots/390-mock-http503.png",
+    "screenshots/390-mock-http504.png",
+    "screenshots/390-mock-json.png",
+    "screenshots/390-mock-spec.png",
+    "screenshots/390-mock-oversize.png",
+    "screenshots/390-refresh-recovered.png"
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    {
+      "width": 1440,
+      "fault": "network",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "width": 1440,
+      "fault": "http503",
+      "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "width": 1440,
+      "fault": "http504",
+      "text": "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)"
+    },
+    {
+      "width": 390,
+      "fault": "network",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "width": 390,
+      "fault": "http503",
+      "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "width": 390,
+      "fault": "http504",
+      "text": "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)"
+    }
+  ],
+  "network": [
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/ai-create",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/favicon.svg",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "network"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "network"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "network"
+    },
+    {
+      "width": 1440,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "http503"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "http503"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "http503"
+    },
+    {
+      "width": 1440,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "http504"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "http504"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "http504"
+    },
+    {
+      "width": 1440,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "json"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "json"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "json"
+    },
+    {
+      "width": 1440,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "spec"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "spec"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "spec"
+    },
+    {
+      "width": 1440,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "oversize"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "oversize"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "oversize"
+    },
+    {
+      "width": 1440,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "hold"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/ai-create",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/favicon.svg",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/ai-create",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/favicon.svg",
+      "fault": "none"
+    },
+    {
+      "width": 1440,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/ai-create",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/favicon.svg",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "network"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "network"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "network"
+    },
+    {
+      "width": 390,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "http503"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "http503"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "http503"
+    },
+    {
+      "width": 390,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "http504"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "http504"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "http504"
+    },
+    {
+      "width": 390,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "json"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "json"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "json"
+    },
+    {
+      "width": 390,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "spec"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "spec"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "spec"
+    },
+    {
+      "width": 390,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "oversize"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "oversize"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "oversize"
+    },
+    {
+      "width": 390,
+      "method": "POST",
+      "path": "/api/ai/generate",
+      "fault": "hold"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/ai-create",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/favicon.svg",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "status-invalid"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/ai-create",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/index-i4We-Did.js",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/index-D2grDxY9.css",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/mochi-Btfatr0K.png",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/favicon.svg",
+      "fault": "none"
+    },
+    {
+      "width": 390,
+      "method": "GET",
+      "path": "/api/mochi-ai/status",
+      "fault": "none"
+    }
+  ],
+  "externalAttempts": [],
+  "browser": "155.0.4283.62",
+  "expectedConsoleErrors": [
+    {
+      "width": 1440,
+      "fault": "network",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "width": 1440,
+      "fault": "http503",
+      "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "width": 1440,
+      "fault": "http504",
+      "text": "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)"
+    },
+    {
+      "width": 390,
+      "fault": "network",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "width": 390,
+      "fault": "http503",
+      "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "width": 390,
+      "fault": "http504",
+      "text": "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)"
+    }
+  ],
+  "unexpectedConsoleErrors": [],
+  "finished": "2026-10-19T16:02:32.029Z",
+  "summary": {
+    "pass": 58,
+    "fail": 0
+  }
+}
