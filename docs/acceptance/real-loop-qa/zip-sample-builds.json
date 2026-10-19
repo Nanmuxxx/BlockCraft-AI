@@ -1,0 +1,167 @@
+{
+  "realModelCalls": 0,
+  "scope": "fixed repository-owned builtin scaffold; sample AppSpecs are JSON data only",
+  "directory": "/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/blockcraft-real-loop-build-MktyaU",
+  "cases": [
+    {
+      "id": "todo",
+      "archive": "/Users/nanmuxun/BlockAI/BlockCraft-AI-real-loop-qa/docs/acceptance/real-loop-qa/todo-1440.zip",
+      "projectId": "personal-todo",
+      "commands": [
+        {
+          "command": [
+            "npm",
+            "ci",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund",
+            "--userconfig",
+            "/dev/null"
+          ],
+          "exitCode": 0,
+          "stdout": "\nadded 23 packages in 335ms\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "stdout": "\n> blockcraft-export@1.0.0 build\n> tsc --noEmit && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 20 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.36 kB │ gzip:  0.26 kB\ndist/assets/index-ChP0rGjP.css    0.96 kB │ gzip:  0.53 kB\ndist/assets/index-DawCNUiJ.js   226.04 kB │ gzip: 71.10 kB\n\n✓ built in 505ms\n",
+          "stderr": ""
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "club",
+      "archive": "/Users/nanmuxun/BlockAI/BlockCraft-AI-real-loop-qa/docs/acceptance/real-loop-qa/club-1440.zip",
+      "projectId": "club-registration",
+      "commands": [
+        {
+          "command": [
+            "npm",
+            "ci",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund",
+            "--userconfig",
+            "/dev/null"
+          ],
+          "exitCode": 0,
+          "stdout": "\nadded 23 packages in 251ms\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "stdout": "\n> blockcraft-export@1.0.0 build\n> tsc --noEmit && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 20 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.36 kB │ gzip:  0.26 kB\ndist/assets/index-ChP0rGjP.css    0.96 kB │ gzip:  0.53 kB\ndist/assets/index-C1tMEW_a.js   226.22 kB │ gzip: 71.16 kB\n\n✓ built in 510ms\n",
+          "stderr": ""
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "fitness-log",
+      "archive": "/Users/nanmuxun/BlockAI/BlockCraft-AI-real-loop-qa/docs/acceptance/real-loop-qa/fitness-log-1440.zip",
+      "projectId": "fitness-log",
+      "commands": [
+        {
+          "command": [
+            "npm",
+            "ci",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund",
+            "--userconfig",
+            "/dev/null"
+          ],
+          "exitCode": 0,
+          "stdout": "\nadded 23 packages in 250ms\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "stdout": "\n> blockcraft-export@1.0.0 build\n> tsc --noEmit && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 20 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.36 kB │ gzip:  0.27 kB\ndist/assets/index-ChP0rGjP.css    0.96 kB │ gzip:  0.53 kB\ndist/assets/index-CIbKbL9Z.js   226.24 kB │ gzip: 71.15 kB\n\n✓ built in 493ms\n",
+          "stderr": ""
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "money-app",
+      "archive": "/Users/nanmuxun/BlockAI/BlockCraft-AI-real-loop-qa/docs/acceptance/real-loop-qa/money-app-1440.zip",
+      "projectId": "money-app",
+      "commands": [
+        {
+          "command": [
+            "npm",
+            "ci",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund",
+            "--userconfig",
+            "/dev/null"
+          ],
+          "exitCode": 0,
+          "stdout": "\nadded 23 packages in 247ms\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "stdout": "\n> blockcraft-export@1.0.0 build\n> tsc --noEmit && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 20 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.36 kB │ gzip:  0.27 kB\ndist/assets/index-ChP0rGjP.css    0.96 kB │ gzip:  0.53 kB\ndist/assets/index-C8g8ORIM.js   226.75 kB │ gzip: 71.21 kB\n\n✓ built in 479ms\n",
+          "stderr": ""
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "learning",
+      "archive": "/Users/nanmuxun/BlockAI/BlockCraft-AI-real-loop-qa/docs/acceptance/real-loop-qa/learning-1440.zip",
+      "projectId": "reading-log",
+      "commands": [
+        {
+          "command": [
+            "npm",
+            "ci",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund",
+            "--userconfig",
+            "/dev/null"
+          ],
+          "exitCode": 0,
+          "stdout": "\nadded 23 packages in 247ms\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "stdout": "\n> blockcraft-export@1.0.0 build\n> tsc --noEmit && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 20 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.36 kB │ gzip:  0.27 kB\ndist/assets/index-ChP0rGjP.css    0.96 kB │ gzip:  0.53 kB\ndist/assets/index-DZUsi_Yo.js   226.66 kB │ gzip: 71.25 kB\n\n✓ built in 490ms\n",
+          "stderr": ""
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

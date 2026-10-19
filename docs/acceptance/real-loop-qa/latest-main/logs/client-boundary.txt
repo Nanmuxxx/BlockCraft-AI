@@ -1,0 +1,19 @@
+✔ v1: unused oversized and late response streams are cancelled (8.586791ms)
+✔ v1: synchronous transport cancellation consumes a late rejection (0.325958ms)
+✔ v1: deadline terminates uncooperative fetch without retry (0.3885ms)
+✔ v1: abort before fetch, while fetch ignores abort, and while body ignores abort (3.119583ms)
+✔ v1: byte bounds apply to declared and chunked bodies; malformed data never installs (1.024166ms)
+✔ v2: unused oversized and late response streams are cancelled (1.802084ms)
+✔ v2: synchronous transport cancellation consumes a late rejection (0.206041ms)
+✔ v2: deadline terminates uncooperative fetch without retry (0.116875ms)
+✔ v2: abort before fetch, while fetch ignores abort, and while body ignores abort (0.622958ms)
+✔ v2: byte bounds apply to declared and chunked bodies; malformed data never installs (0.48575ms)
+✔ v1 cannot accept raw v2 or trusted envelope; v2 cannot accept v1 or oversized provenance (0.376208ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 191.264583
