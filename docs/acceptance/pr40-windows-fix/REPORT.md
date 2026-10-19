@@ -54,7 +54,7 @@ Windows ACL 首次并行复跑暴露了 `PSModulePath` 混入 PowerShell 7 模�
 
 ## 5. 远端状态与限制
 
-- 修复分支已非强制推送为 `phase2/pr40-windows-fix`，head 为 `45317c2a3df3c787dd8bea60437dcb8c21ca5f3a`。
+- 修复分支已非强制推送为 `phase2/pr40-windows-fix`；创建 PR #47 时 head 为 `45317c2a3df3c787dd8bea60437dcb8c21ca5f3a`，功能代码提交固定为 `3cd545f3d1ed66ca68ca449179a16b098cdc132f`。
 - 已创建堆叠 Draft PR #47，base 为 PR #40 分支 `agent-a/ai-core-night-20261019`，只审查本轮增量。
 - PR #40 本身未被改写，仍为 Draft/open/conflicting。
 - 基线分支 `692b7f5` 不包含 main 上的 `.github/workflows/docker-acceptance.yml`，因此 PR #47 没有对应 Docker CI；本地测试结果按 tree/commit 单独记录。
