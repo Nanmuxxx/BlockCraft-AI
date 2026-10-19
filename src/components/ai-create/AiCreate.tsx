@@ -4,6 +4,8 @@ import { AppSpecWorkshop } from '../app-builder/AppSpecWorkshop'
 import { createGeneratedArtifactUI, type GeneratedArtifactUI } from '../../integrations/generated-artifact/ui'
 import { generateProject } from './generateApp'
 import { loadTrustedPomodoroFixture, trustedPomodoroSource } from './trustedPomodoroFixture'
+import { DEMO_GALLERY, type DemoGalleryId } from '../../model/appSpecExamples'
+import { assertProjectState } from '../../model/appSpecValidation'
 import { Logo } from '../Logo'
 import { MochiCat } from '../MochiCat'
 import { ArrowRight, LoaderCircle, Sparkles } from 'lucide-react'
@@ -14,6 +16,8 @@ export function AiCreate() {
   const [idea, setIdea] = useState('')
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
+  const [galleryOpen, setGalleryOpen] = useState(() => new URLSearchParams(window.location.search).has('gallery'))
+  const [pendingGalleryId, setPendingGalleryId] = useState<DemoGalleryId | null>(null)
   const [app, setApp] = useState<{ runtime: AppRuntime; generation: number; installation: GeneratedArtifactUI; source: string } | null>(null)
   const currentApp = useRef(app)
   const active = useRef<AbortController | null>(null)
@@ -31,6 +35,45 @@ export function AiCreate() {
     active.current = null
     setPending(false)
     setError('已取消生成。')
+  }
+
+  function chooseGallery(id: DemoGalleryId) {
+    if (active.current) return
+    if (app) setPendingGalleryId(id)
+    else void loadGallery(id)
+  }
+
+  function cancelGalleryChoice() {
+    setPendingGalleryId(null)
+  }
+
+  function confirmGalleryChoice() {
+    if (pendingGalleryId) void loadGallery(pendingGalleryId)
+  }
+
+  async function loadGallery(id: DemoGalleryId) {
+    const item = DEMO_GALLERY.find(candidate => candidate.id === id)
+    if (!item) return
+    setPendingGalleryId(null)
+    try {
+      currentApp.current?.installation.beforeContextChange()
+      const state = item.create()
+      assertProjectState(state)
+      const runtime = createAppRuntime(state)
+      currentApp.current?.installation.dispose()
+      const next = {
+        runtime,
+        generation: (currentApp.current?.generation ?? 0) + 1,
+        installation: createGeneratedArtifactUI(runtime.customProject),
+        source: `离线应用示例 · ${item.name} · AppSpec Fixture（非实时 AI 生成）`,
+      }
+      currentApp.current = next
+      setApp(next)
+      setGalleryOpen(false)
+      setError('')
+    } catch (failure) {
+      setError(failure instanceof Error ? failure.message : '示例加载失败，当前应用和数据已保留。')
+    }
   }
 
   async function generate(event: FormEvent) {
@@ -87,7 +130,29 @@ export function AiCreate() {
     {pending && <p className="ai-create-status" role="status">{mode === 'trusted-fixture' ? '正在验证离线配置' : 'AI 正在设计应用'}，请稍候。已有应用仍可使用。</p>}
     {error && <p role="alert" className="ai-create-error">{error}{app && ' 当前应用和数据已保留。'}</p>}
     {app && <p className="ai-create-source" aria-label="当前应用来源">{app.source}</p>}
+    <DemoGallery open={galleryOpen} onToggle={() => setGalleryOpen(value => !value)} onChoose={chooseGallery} />
+    {pendingGalleryId && <GalleryConfirm item={DEMO_GALLERY.find(item => item.id === pendingGalleryId)!} onCancel={cancelGalleryChoice} onConfirm={confirmGalleryChoice} />}
     {app && <AppSpecWorkshop key={app.generation} runtime={app.runtime} installation={app.installation} />}
     {!app && <footer className="footer">BlockCraft AI · 把想法，搭成现实</footer>}
   </main>
+}
+
+function DemoGallery({ open, onToggle, onChoose }: { open: boolean; onToggle: () => void; onChoose: (id: DemoGalleryId) => void }) {
+  return <section className="demo-gallery" aria-labelledby="demo-gallery-title">
+    <div className="demo-gallery__bar">
+      <div><p className="demo-gallery__eyebrow">OFFLINE APP EXAMPLES</p><h2 id="demo-gallery-title">探索应用案例</h2><p>在同一个 BlockCraft AI 工作流里，试试不同类型的离线应用示例。</p></div>
+      <button type="button" className="demo-gallery__toggle" aria-expanded={open} aria-controls="demo-gallery-list" onClick={onToggle}>{open ? '收起案例' : '查看案例'} <span aria-hidden="true">{open ? '−' : '+'}</span></button>
+    </div>
+    {open && <div id="demo-gallery-list" className="demo-gallery__list">{DEMO_GALLERY.map(item => <article className={`demo-gallery__card demo-gallery__card--${item.tone}`} key={item.id}>
+      <div className="demo-gallery__preview" aria-hidden="true"><span /><span /><span /></div>
+      <div className="demo-gallery__copy"><div className="demo-gallery__title-row"><h3>{item.name}</h3><span>{item.detail}</span></div><p>{item.description}</p><small>离线应用示例</small></div>
+      <button type="button" className="demo-gallery__open" onClick={() => onChoose(item.id)}>加载到工作台 <ArrowRight size={15} aria-hidden="true" /></button>
+    </article>)}</div>}
+  </section>
+}
+
+function GalleryConfirm({ item, onCancel, onConfirm }: { item: { name: string }; onCancel: () => void; onConfirm: () => void }) {
+  return <div className="gallery-confirm" role="dialog" aria-modal="true" aria-labelledby="gallery-confirm-title">
+    <div className="gallery-confirm__card"><p className="demo-gallery__eyebrow">替换当前应用</p><h2 id="gallery-confirm-title">要加载「{item.name}」吗？</h2><p>当前工作台中的编辑内容和本地数据会被替换。此操作不会影响已保存的其他项目。</p><div className="gallery-confirm__actions"><button type="button" className="gallery-confirm__cancel" onClick={onCancel}>取消</button><button type="button" className="gallery-confirm__confirm" onClick={onConfirm}>确认加载</button></div></div>
+  </div>
 }

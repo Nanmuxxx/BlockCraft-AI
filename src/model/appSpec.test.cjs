@@ -7,7 +7,7 @@ require.extensions['.ts'] = (module, filename) => module._compile(ts.transpileMo
 }).outputText, filename)
 const { assertAppSpec, assertProjectState, assertCommandRequest } = require('./appSpecValidation.ts')
 const { createCommandSession, processCommand } = require('./appCommands.ts')
-const { createClubRegistrationExample, createReadingLogExample } = require('./appSpecExamples.ts')
+const { createClubRegistrationExample, createReadingLogExample, DEMO_GALLERY } = require('./appSpecExamples.ts')
 const fresh = () => createCommandSession(createReadingLogExample())
 const run = (session, commands, requestId = 'request-1', baseRevision = session.state.revision) => processCommand(session, { requestId, baseRevision, commands })
 const add = { type: 'addField', entityId: 'books', field: { id: 'author', name: '作者', type: 'text', required: false } }
@@ -22,6 +22,19 @@ test('both handwritten examples validate and fresh examples are isolated', () =>
     const state = factory(); assertAppSpec(state.spec); assertProjectState(state)
     state.spec.name = 'changed'; assert.notEqual(factory().spec.name, 'changed')
   }
+})
+test('offline demo gallery fixtures validate as distinct, interactive AppSpecs', () => {
+  assert.equal(DEMO_GALLERY.length, 6)
+  const ids = new Set()
+  for (const item of DEMO_GALLERY) {
+    assert.ok(!ids.has(item.id)); ids.add(item.id)
+    const state = item.create()
+    assertAppSpec(state.spec); assertProjectState(state)
+    assert.ok(state.spec.blocks.some(block => block.type === 'form'))
+    assert.ok(state.spec.blocks.some(block => block.type === 'list'))
+    assert.equal(state.spec.id, item.id)
+  }
+  assert.deepEqual(DEMO_GALLERY.map(item => item.name), ['社团报名', '学习记录', '健身打卡', '个人记账', '任务管理', '习惯养成'])
 })
 test('atomic addField and display configuration, inputs are never mutated', () => {
   const session = freeze(fresh())
