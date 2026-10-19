@@ -14,7 +14,7 @@
     "LOCAL REAL DEEPSEEK",
     "ONE LOCAL CALL - PUBLIC NOT VERIFIED"
   ],
-  "real_local_evidence_commit": "7fb98ffd401d08fcc4188a03619fb420860cc2eb",
+  "real_local_evidence_commit": "5942311725a3d5fbb413eca8b537630e5164d2e3:docs/acceptance/local-real-20261020/",
   "tested_code_sha": "e4d65ac77e02d41668d260c082dc2788c64b5975",
   "scope": "one real local DeepSeek deepseek-flash request; no Mock/Replay/Fixture injected",
   "public_deployment": "NOT_VERIFIED",
