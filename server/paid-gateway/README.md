@@ -1,5 +1,49 @@
 # Controlled Phase 2 DeepSeek gateway
 
+## Principal-aware request runtime (Mock integration API)
+
+`createPrincipalPaidGenerationRuntime({ env, bindingKey, fetchImpl, timeoutMs })`
+is an explicit opt-in export from `runtime.mjs`. It opens one durable ledger and
+one directory-wide idempotency sidecar for a single process/replica. `bindingKey`
+is a stable server-managed `Buffer` of at least 32 random bytes, distinct from
+`DEEPSEEK_API_KEY`. The HTTP owner must authenticate and resolve a stable,
+opaque principal before calling `forRequest`; there is no default activation.
+
+```js
+const requestOptions = paidRuntime.forRequest({
+  principal, idempotencyKey,
+  payload: { idea: validatedIdea, protocol: 'v1' },
+})
+await generate(validatedIdea, requestOptions)
+```
+
+Each call returns frozen `{ apiKey, model, fetchImpl }` options whose transport
+captures that request's immutable principal, idempotency key, and semantic
+payload. Never store a principal globally or share request options. Payload keys
+are limited to `idea` and optional `protocol`; protocol defaults to `v1`. The
+claim binds a canonicalized copy of the actual fixed-model provider request. A
+request context is one-shot. The sidecar claim is durably written before the
+single ledger reservation; the returned reservation ID is passed to the
+provider and no second reservation is made. Same-key replay returns
+`IDEMPOTENCY_REPLAY`, changed payload returns `IDEMPOTENCY_CONFLICT`; both map
+to HTTP 409. Invalid principal maps 401, invalid key/payload 400, provider
+deadline 504. Disconnect aborts transport and should produce no synthetic
+response. Unknown upstream outcomes halt the ledger. Other configuration,
+price-expiry, budget, storage and lock failures map to opaque 503. Core must
+serialize only its fixed safe error, never the error message/cause.
+
+The runtime shares one concurrency gate across transports. `close()` throws
+`RUNTIME_BUSY` while upstream work remains active. The server must stop
+admission, finish or abort in-flight requests, call runtime `close()` (sidecar
+then ledger), and only then release process resources. Stale locks are never
+automatically removed. This contract supports one process on a persistent POSIX
+volume; it makes no cross-instance or network-filesystem consistency claim.
+
+`paidGatewayHttpStatus(error)` returns the status mapping above. Production
+pricing expiry uses native `Date.now()`. Tests freeze time only inside their
+test scope and separately verify native-time expiry denies before reservation
+and egress. No production pricing window or budget is extended by this API.
+
 The ordinary executable denies legacy v1 and v2 before Provider access because it starts without `generationAccess`; Origin/CORS never grant identity. PR #44's local evaluator was a single-operator loopback test harness and is not present in current `main`. Mochi remains disabled and CustomBlock native egress is blocked. Trusted injected transports are server-code configuration, not a browser-controlled permission.
 
 The historical PR #44 evaluator read the developer's primary repository `server/.env` in process and fixed model `deepseek-flash`; it was not production configuration. Never expose a local evaluator/proxy as a public service.

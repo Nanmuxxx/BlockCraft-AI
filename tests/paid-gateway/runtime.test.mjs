@@ -1,4 +1,4 @@
-import test from 'node:test'
+import test, { beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { chmodSync, mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -63,3 +63,5 @@ test('composed app server authenticates before a mock DeepSeek call and persists
   assert.equal(ledger.entries[0].status, 'settled')
   assert.ok(!JSON.stringify(ledger).includes(key))
 })
+// Historical policy window for Mock tests only; real timers remain active.
+beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-10-19T12:00:00+08:00') }))

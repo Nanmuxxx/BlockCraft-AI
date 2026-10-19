@@ -98,20 +98,27 @@ export function openIdempotencySidecar({ ledger, directory, bindingKey, maxClaim
     assertLedgerLease(ledger, resolvedDirectory)
   }
 
+  const inspect = ({ principal, idempotencyKey, payload }) => {
+    check()
+    ensure(typeof principal === 'string' && Buffer.byteLength(principal, 'utf8') > 0 && Buffer.byteLength(principal, 'utf8') <= 256, 'PRINCIPAL_INVALID')
+    ensure(typeof idempotencyKey === 'string' && /^[A-Za-z0-9_-]{32,128}$/.test(idempotencyKey), 'IDEMPOTENCY_KEY_INVALID')
+    ensure(Buffer.isBuffer(payload) || payload instanceof Uint8Array, 'IDEMPOTENCY_PAYLOAD_INVALID')
+    const principalTag = tag(bindingKey, principal)
+    const keyTag = tag(bindingKey, idempotencyKey)
+    const payloadHash = createHash('sha256').update(payload).digest('hex')
+    const existing = state.claims.find(claim => claim.principalTag === principalTag && claim.keyTag === keyTag)
+    if (existing) {
+      if (existing.payloadHash !== payloadHash) failClosed('IDEMPOTENCY_CONFLICT')
+      failClosed('IDEMPOTENCY_REPLAY')
+    }
+    return { principalTag, keyTag, payloadHash }
+  }
+
   return Object.freeze({
-    reserve({ principal, idempotencyKey, payload, inputBound, outputBound, requestHash }) {
-      check()
-      ensure(typeof principal === 'string' && Buffer.byteLength(principal, 'utf8') > 0 && Buffer.byteLength(principal, 'utf8') <= 256, 'PRINCIPAL_INVALID')
-      ensure(typeof idempotencyKey === 'string' && /^[A-Za-z0-9_-]{32,128}$/.test(idempotencyKey), 'IDEMPOTENCY_KEY_INVALID')
-      ensure(Buffer.isBuffer(payload) || payload instanceof Uint8Array, 'IDEMPOTENCY_PAYLOAD_INVALID')
-      const principalTag = tag(bindingKey, principal)
-      const keyTag = tag(bindingKey, idempotencyKey)
-      const payloadHash = createHash('sha256').update(payload).digest('hex')
-      const existing = state.claims.find(claim => claim.principalTag === principalTag && claim.keyTag === keyTag)
-      if (existing) {
-        if (existing.payloadHash !== payloadHash) failClosed('IDEMPOTENCY_CONFLICT')
-        failClosed('IDEMPOTENCY_REPLAY')
-      }
+    check: inspect,
+    reserve(options) {
+      const { inputBound, outputBound, requestHash } = options
+      const { principalTag, keyTag, payloadHash } = inspect(options)
       ensure(state.claims.length < maxClaims, 'IDEMPOTENCY_STORE_FULL')
 
       const next = { version: VERSION, keyCheck, claims: [...state.claims, { principalTag, keyTag, payloadHash }] }
