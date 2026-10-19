@@ -1,0 +1,75 @@
+
+> blockcraft-ai@0.1.0 test:generation
+> npm --prefix server run build && node --test tests/generation/*.test.mjs
+
+
+> build
+> tsc -p tsconfig.json
+
+✔ existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure (38.93825ms)
+✔ route rejects structurally legal but incomplete metric-only app without input, then recovers (3.113375ms)
+✔ route rejects structurally legal but incomplete unbound empty entity, then recovers (1.470792ms)
+✔ route rejects structurally legal but incomplete hidden optional field, then recovers (1.997542ms)
+✔ prompt embeds the exact live protocol boundary and keeps idea in its own user message (1.053042ms)
+✔ club-app: independent requirement mapping and real runtime CRUD/aggregations (2.473333ms)
+✔ fitness-log: independent requirement mapping and real runtime CRUD/aggregations (1.980833ms)
+✔ study-log: independent requirement mapping and real runtime CRUD/aggregations (0.8745ms)
+✔ personal-tasks: independent requirement mapping and real runtime CRUD/aggregations (2.763333ms)
+✔ fitness-library: independent requirement mapping and real runtime CRUD/aggregations (0.679375ms)
+✔ money-app: independent requirement mapping and real runtime CRUD/aggregations (0.878833ms)
+✔ lost-found: independent requirement mapping and real runtime CRUD/aggregations (0.708875ms)
+✔ book-log: independent requirement mapping and real runtime CRUD/aggregations (0.359292ms)
+✔ movie-log: independent requirement mapping and real runtime CRUD/aggregations (0.48375ms)
+✔ same domain, different goals change entities/fields; no mandatory form/list/metric set (0.116708ms)
+✔ record count is supported with empty field evidence and reflects actual rows, not unique objects (0.582542ms)
+✔ base v1 empty specs stay legal; only the independent generation policy rejects them (0.08225ms)
+✔ separate completeness detects empty fields, unbound objects, missing input and inaccessible fields (0.101084ms)
+✔ bad binding, required field omission, cross-entity fields, illegal numeric metric and unknown types fail structure (0.236417ms)
+✔ structure cannot prove semantics: valid unrelated apps need review; independent mappings expose the mismatch (0.122958ms)
+✔ independent reviewer receives original goals, spec and actual operations as data without any API call (0.168166ms)
+✔ review must cover every goal and bind current input/spec/requirements; malformed evidence fails closed (0.344375ms)
+✔ only actual exposed operations count; list required fields are editable, hidden optional fields are not (0.122792ms)
+✔ unsupported operations remain unsupported despite plausible block names, including mixed and unsupported-only goals (0.410667ms)
+✔ legacy demos keep their original protocol and remain usable without requirement reviews (0.391833ms)
+✔ legacy protocol projection does not advertise trusted v2 primitives (0.092167ms)
+✔ generation rejects unfinished media type uploads and closes without waiting for body (18.913583ms)
+✔ generation rejects unfinished cross-origin uploads and closes without waiting for body (3.857416ms)
+✔ generation rejects unfinished declared size uploads and closes without waiting for body (2.138ms)
+✔ generation rejects unfinished method uploads and closes without waiting for body (2.657375ms)
+✔ generation rejects unfinished route uploads and closes without waiting for body (4.30325ms)
+✔ over-limit unfinished chunked upload is structured 413 and releases the generation slot (3.635334ms)
+✔ unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect (4.044833ms)
+✔ generation accepts valid multibyte JSON split inside a UTF-8 codepoint (2.185833ms)
+✔ unfinished request reaches its input deadline, returns structured 408 and releases admission (3.714375ms)
+✔ rate-limited unfinished upload receives 429 without reaching upstream or waiting for its body (9.7ms)
+✔ ordinary start is closed by default and shuts down idempotently (14.538333ms)
+✔ key and ledger configuration cannot activate generation without trusted identity (40.452833ms)
+✔ explicit paid runtime keeps the ledger lock until an in-flight request is aborted (115.075542ms)
+✔ explicit paid runtime serves a validated Mock AppSpec and settles before shutdown closes the ledger (103.912084ms)
+✔ startup failure closes an explicitly opened paid runtime (67.949959ms)
+✔ listen failure closes an explicitly opened paid runtime (67.102875ms)
+✔ SIGINT and SIGTERM hooks invoke one idempotent shutdown task (0.441ms)
+✔ real process signals do not interrupt request drain or release the ledger early (944.144458ms)
+✔ native-clock expired pricing denies before model egress (42.359292ms)
+✔ principal resolver is bounded and rejects boolean, malformed, errors and late results (13.480167ms)
+✔ boolean identity alone cannot construct a runtime even with key and ledger configuration (18.228416ms)
+✔ invalid principal rejects before request context construction (6.241333ms)
+✔ request contexts isolate principals, keys and normalized semantic payload under concurrency (25.536584ms)
+✔ invalid input and duplicate or malformed idempotency headers never construct request context (5.435ms)
+✔ request context errors return a fixed sanitized response (1.164291ms)
+✔ opaque cookie adapter rejects absent, expired, revoked, unknown and forged-header identities before runtime work (4.086084ms)
+✔ opaque cookie hashes resolve stable principals and isolate identical keys across principals (1.669833ms)
+✔ CLI identity mode stays closed by default and requires a private explicit allowlist (25.285834ms)
+✔ authenticated HTTP composition returns a generated AppSpec through the real Gateway runtime (110.021625ms)
+✔ missing session rejects before request context, reservation, or provider egress (40.755042ms)
+✔ budget exhaustion maps to HTTP 503 without a seventh provider request (330.1555ms)
+✔ upstream timeout maps to HTTP 504 and records uncertain spend before shutdown (114.678583ms)
+✔ client disconnect aborts the Mock upstream and preserves the uncertain ledger claim (61.431ms)
+ℹ tests 59
+ℹ suites 0
+ℹ pass 59
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1464.6235
