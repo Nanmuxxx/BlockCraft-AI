@@ -53,7 +53,12 @@ async function startDecoy() {
 
 test('successful compile closes both the compile process and its esbuild service process', { timeout: 10_000 }, async t => {
   const events = []
-  const compiler = createCompiler({ processObserver: event => events.push(event) })
+  const compiler = createCompiler({
+    processObserver(event) {
+      events.push(event)
+      if (event.type === 'compile-diagnostic') console.error(`compile diagnostic: ${event.detail}`)
+    },
+  })
   t.after(() => compiler.dispose())
   const artifact = artifactOf('counter')
   const result = await compiler.compile(artifact)

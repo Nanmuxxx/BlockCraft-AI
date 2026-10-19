@@ -162,7 +162,11 @@ process.once('message', task => {
       const code = await compile(task)
       await finish({ type: 'result', code }, 0)
     } catch (error) {
-      await finish({ type: 'error', code: error?.code === 'BUNDLE_LIMIT' ? 'BUNDLE_LIMIT' : 'BUILD_FAILED' }, 1)
+      await finish({
+        type: 'error',
+        code: error?.code === 'BUNDLE_LIMIT' ? 'BUNDLE_LIMIT' : 'BUILD_FAILED',
+        detail: String(error?.message ?? error).slice(0, 500),
+      }, 1)
     }
   })()
 })

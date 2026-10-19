@@ -202,6 +202,7 @@ function compileInProcess(
         return
       }
       if (message?.type === 'error') {
+        notify({ type: 'compile-diagnostic', detail: typeof message.detail === 'string' ? message.detail : null })
         finish(new SafeViewerError(
           message.code === 'BUNDLE_LIMIT' ? 'BUNDLE_LIMIT' : message.code === 'CHILD_TERMINATION_FAILED' ? 'COMPILER_TERMINATION_FAILED' : 'BUILD_FAILED',
           'Compilation failed',
