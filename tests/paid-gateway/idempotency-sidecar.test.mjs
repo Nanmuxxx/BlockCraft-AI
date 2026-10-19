@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { openLedger } from '../../server/paid-gateway/ledger.mjs'
 import { openIdempotencySidecar } from '../../server/paid-gateway/idempotency-sidecar.mjs'
+import { PRICING } from '../../server/paid-gateway/pricing.mjs'
 
 const bindingKey = Buffer.alloc(32, 0x5a)
 const idempotencyKey = '0123456789abcdefghijklmnopqrstuv'
@@ -217,4 +218,4 @@ test('ledger close cannot transfer sidecar ownership; stale sidecar locks deny s
 })
 
 // Historical policy window for Mock tests only; real timers remain active.
-beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-10-19T12:00:00+08:00') }))
+beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: PRICING.expiresAt - 1 }))

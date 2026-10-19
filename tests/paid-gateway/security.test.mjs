@@ -17,7 +17,7 @@ const key = 'offline-key-not-a-real-secret'
 const endpoint = 'https://api.deepseek.com/chat/completions'
 const spec = { version: 1, id: 'tasks', name: '任务', entities: [{ id: 'items', name: '任务', fields: [{ id: 'title', name: '名称', type: 'text', required: true }] }], blocks: [{ id: 'list', name: '清单', type: 'list', fieldIds: ['title'] }], relations: [{ id: 'binding', type: 'dataBinding', blockId: 'list', entityId: 'items' }] }
 const envelope = (usage = { prompt_tokens: 50, completion_tokens: 100, total_tokens: 150 }) => ({ model: 'deepseek-flash', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: JSON.stringify(spec) } }], usage })
-const init = extra => ({ method: 'POST', body: JSON.stringify({ model: PRICING.model, messages: [{ role: 'system', content: 'JSON only' }, { role: 'user', content: 'tasks' }], stream: false, response_format: { type: 'json_object' }, max_tokens: 8192, ...extra }) })
+const init = extra => ({ method: 'POST', body: JSON.stringify({ model: PRICING.model, messages: [{ role: 'system', content: 'JSON only' }, { role: 'user', content: 'tasks' }], stream: false, response_format: { type: 'json_object' }, max_tokens: POLICY.maxOutputTokens, ...extra }) })
 function ledger(t) {
   const dir = mkdtempSync(join(tmpdir(), 'blockcraft-budget-test-')); chmodSync(dir, 0o700)
   const path = join(dir, 'ledger.json'), store = openLedger(path)
@@ -66,7 +66,7 @@ test('durable reserve precedes one fixed official request; no caller headers, to
     calls++; assert.equal(url, endpoint); assert.equal(wire.redirect, 'error')
     const disk = JSON.parse(readFileSync(path)); assert.equal(disk.entries[0].status, 'reserved')
     assert.equal(wire.headers.Authorization, 'Bearer ' + key)
-    const body = JSON.parse(wire.body); assert.deepEqual(body.thinking, { type: 'disabled' }); assert.equal(body.max_tokens, 8192); assert.equal(body.model, PRICING.model)
+    const body = JSON.parse(wire.body); assert.deepEqual(body.thinking, { type: 'disabled' }); assert.equal(body.max_tokens, POLICY.maxOutputTokens); assert.equal(body.model, PRICING.model)
     return Response.json(envelope())
   } })
   assert.equal(isPaidTransport(transport), true)
@@ -91,22 +91,22 @@ test('request policy rejects other endpoint/model/tools/token limits and oversiz
 })
 test('durable call cap survives reopen and reservations never refunded', t => {
   const { store, path } = ledger(t)
-  for (let n = 0; n < POLICY.maxCalls; n++) { const id = store.reserve(100, 8192, 'hash'); store.settle(id, { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 }) }
-  assert.throws(() => store.reserve(100, 8192, 'hash'), { code: 'BUDGET_EXHAUSTED' })
+  for (let n = 0; n < POLICY.maxCalls; n++) { const id = store.reserve(100, POLICY.maxOutputTokens, 'hash'); store.settle(id, { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 }) }
+  assert.throws(() => store.reserve(100, POLICY.maxOutputTokens, 'hash'), { code: 'BUDGET_EXHAUSTED' })
   store.close(); const other = openLedger(path); t.after(() => other.close())
-  assert.throws(() => other.reserve(100, 8192, 'hash'), { code: 'BUDGET_EXHAUSTED' })
-  assert.equal(other.snapshot().entries.reduce((s, e) => s + e.reserveNano, 0), 6 * price(100, 8192))
+  assert.throws(() => other.reserve(100, POLICY.maxOutputTokens, 'hash'), { code: 'BUDGET_EXHAUSTED' })
+  assert.equal(other.snapshot().entries.reduce((s, e) => s + e.reserveNano, 0), POLICY.maxCalls * price(100, POLICY.maxOutputTokens))
 })
-test('conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10', t => {
+test('conservative money ceiling bounds all reservations under the current ¥0.50 cap', t => {
   const { store } = ledger(t)
   const input = POLICY.maxInputBytes + POLICY.framingTokens
   let count = 0
-  while ((count + 1) * price(input, 8192) <= POLICY.conservativeNano) {
-    const id = store.reserve(input, 8192, 'hash'); store.settle(id, { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 }); count++
+  while ((count + 1) * price(input, POLICY.maxOutputTokens) <= POLICY.conservativeNano && count < POLICY.maxCalls) {
+    const id = store.reserve(input, POLICY.maxOutputTokens, 'hash'); store.settle(id, { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 }); count++
   }
-  assert.ok(count < POLICY.maxCalls)
-  assert.throws(() => store.reserve(input, 8192, 'hash'), { code: 'BUDGET_EXHAUSTED' })
-  assert.ok(store.snapshot().entries.reduce((s, e) => s + e.reserveNano, 0) < 1_000_000_000)
+  assert.equal(count, POLICY.maxCalls)
+  assert.throws(() => store.reserve(input, POLICY.maxOutputTokens, 'hash'), { code: 'BUDGET_EXHAUSTED' })
+  assert.ok(store.snapshot().entries.reduce((s, e) => s + e.reserveNano, 0) <= POLICY.conservativeNano)
 })
 test('missing or over-bound usage halts automatic calls permanently; no refund', async t => {
   for (const usage of [null, {}, { prompt_tokens: 1, completion_tokens: 8193, total_tokens: 8194 }, { prompt_tokens: 1, completion_tokens: 2, total_tokens: 4 }]) {
@@ -137,11 +137,11 @@ test('unknown upstream failures, bounded body, timeout, cancel and late results 
 test('exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed', t => {
   const { store, path } = ledger(t)
   assert.throws(() => openLedger(path), { code: 'LEDGER_LOCKED' })
-  store.reserve(100, 8192, 'hash'); store.close()
+  store.reserve(100, POLICY.maxOutputTokens, 'hash'); store.close()
   const again = openLedger(path); assert.equal(again.snapshot().halted, true); again.close()
   writeFileSync(path, '{bad', { mode: 0o600 }); assert.throws(() => openLedger(path)); assert.equal(existsSync(path + '.lock'), false)
   chmodSync(path, 0o644); assert.throws(() => openLedger(path), { code: 'LEDGER_PERMISSIONS' })
 })
 
 // Historical policy window for Mock tests only; real timers remain active.
-beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-10-19T12:00:00+08:00') }))
+beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: PRICING.expiresAt - 1 }))

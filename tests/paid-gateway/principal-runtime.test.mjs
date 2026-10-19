@@ -15,7 +15,7 @@ const idempotencyKey = '0123456789abcdefghijklmnopqrstuv'
 const payload = { idea: 'task list' }
 const init = signal => ({ method: 'POST', signal, body: JSON.stringify({ model: PRICING.model, messages: [{ role: 'system', content: 'JSON' }, { role: 'user', content: 'task list' }], stream: false, response_format: { type: 'json_object' }, max_tokens: 100 }) })
 const response = () => Response.json({ choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: '{}' } }], usage: { prompt_tokens: 10, completion_tokens: 10, total_tokens: 20 } })
-beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-10-19T12:00:00+08:00') }))
+beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: PRICING.expiresAt - 1 }))
 function fixture(t, fetchImpl = async () => response(), options = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'principal-runtime-')); chmodSync(dir, 0o700)
   const env = { DEEPSEEK_API_KEY: key, DEEPSEEK_BUDGET_LEDGER_PATH: join(dir, 'ledger.json') }
