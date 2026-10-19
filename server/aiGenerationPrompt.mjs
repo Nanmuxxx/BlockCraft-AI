@@ -1,8 +1,12 @@
 import { readFileSync } from 'node:fs'
 
+function normalizeSource(source) {
+  return source.replace(/\r\n?/g, '\n')
+}
+
 /** Same source and boundary as the existing route; never maintain a parallel schema. */
 export function readGenerationProtocol() {
-  const source = readFileSync(new URL('../src/model/appSpec.ts', import.meta.url), 'utf8')
+  const source = normalizeSource(readFileSync(new URL('../src/model/appSpec.ts', import.meta.url), 'utf8'))
   const boundary = source.indexOf('export type FieldValue')
   if (boundary < 0 || !source.slice(0, boundary).includes('export interface AppSpec')) {
     throw new Error('AppSpec source boundary changed; review generation constraints before use')
@@ -13,8 +17,8 @@ export function readGenerationProtocol() {
 /** Source-derived v1 projection: the legacy route must never advertise v2 behavior.
  * Fail closed if extension spelling changes; no independent hand-maintained v1 schema.
  */
-export function readV1GenerationProtocol() {
-  const source = readGenerationProtocol()
+export function readV1GenerationProtocol(input = readGenerationProtocol()) {
+  const source = normalizeSource(input)
   const extension = "  | { type: 'pomodoro'; protocolVersion: 1; durationSeconds: number }\n"
   if (!source.includes(extension) || !source.includes('version: 1 | 2;')) throw new Error('Review v1 protocol projection')
   return source.replace(extension, '').replace('version: 1 | 2;', 'version: 1;')
