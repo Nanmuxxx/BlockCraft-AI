@@ -74,10 +74,21 @@ export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, t
         && choice.message?.role === 'assistant' && typeof choice.message.content === 'string'
         && !choice.message.tool_calls && !choice.message.function_call && !choice.message.refusal && !envelope.error, 'UPSTREAM_INVALID')
       ensure(!choice.message.content.includes(apiKey), 'PRIVATE_RESPONSE')
-      const safe = { model: typeof envelope.model === 'string' ? envelope.model.slice(0, 128) : PRICING.model,
+      // Upstream metadata is untrusted too. Emit our approved request model,
+      // never a provider-controlled label that could echo private material.
+      const safe = { model: PRICING.model,
         choices: [{ finish_reason: choice.finish_reason, message: { role: 'assistant', content: choice.message.content } }],
         usage: ledger.snapshot().entries.find(e => e.id === id).usage }
-      await onResponse?.(structuredClone(safe), { id, requestHash })
+      if (onResponse) {
+        const auditing = Promise.resolve().then(() => {
+          controller.signal.throwIfAborted()
+          return onResponse(structuredClone(safe), { id, requestHash, signal: controller.signal })
+        })
+        // The same connection/body deadline includes asynchronous auditing.
+        // A trusted callback may ignore the signal; its late result is ignored.
+        await abortable(auditing, controller.signal)
+      }
+      controller.signal.throwIfAborted()
       return Response.json(safe)
     } catch (error) {
       ledger.uncertain(id) // Completed trustworthy usage stays settled; unknown usage halts all calls.

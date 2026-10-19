@@ -1,0 +1,28 @@
+✔ hung audit callback obeys deadline; concurrency releases without refunding settled usage (95.003416ms)
+✔ cancel during audit rejects promptly and late callback resolution/rejection cannot succeed (92.685458ms)
+✔ untrusted model metadata never enters callback/response; only configured priced model is emitted (293.215833ms)
+✔ audit callback exception is sanitized; trustworthy usage remains settled with reservation retained (36.544917ms)
+✔ legacy model names fail before reservation/network in all three consumers; no alias rewriting (59.944333ms)
+✔ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (236.62725ms)
+✔ todo: preserved real output validates and drives the existing Runtime (4.23125ms)
+✔ club: preserved real output validates and drives the existing Runtime (3.102583ms)
+✔ real evidence has exactly two settled calls, no duplicate mobile/failure charge, distinct requirement structures (0.270458ms)
+✔ anonymous legacy and v2 (no Origin, forged Host/XFF/Origin/body approval) reject before Provider (28.106584ms)
+✔ default disabled even with injected Provider/key; untrusted auth exceptions and late identity fail closed (2006.332458ms)
+✔ all native Provider defaults blocked without controlled transport (2.795291ms)
+✔ durable reserve precedes one fixed official request; no caller headers, tools, retries or secret audit (40.532375ms)
+✔ concurrent attempts rejected before Provider and before a second reservation (37.658625ms)
+✔ request policy rejects other endpoint/model/tools/token limits and oversized input with zero network (21.459083ms)
+✔ durable call cap survives reopen and reservations never refunded (130.165791ms)
+✔ conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10 (84.212208ms)
+✔ missing or over-bound usage halts automatic calls permanently; no refund (193.152584ms)
+✔ unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt (553.603458ms)
+✔ exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed (48.673417ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3336.334625
