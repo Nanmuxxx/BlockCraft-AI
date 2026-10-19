@@ -136,9 +136,9 @@ jobs:
           const visited = new Set()
           const pending = [...roots]
           const patterns = [
-            /\\bfrom\\s*['"]([^'"]+)['"]/g,
-            /\\bimport\\s*['"]([^'"]+)['"]/g,
-            /\\bimport\\s*\\(\\s*['"]([^'"]+)['"]\\s*\\)/g,
+            /\bfrom\s*['"]([^'"]+)['"]/g,
+            /\bimport\s*['"]([^'"]+)['"]/g,
+            /\bimport\s*\(\s*['"]([^'"]+)['"]\s*\)/g,
           ]
           while (pending.length) {
             const file = path.resolve(pending.pop())
@@ -381,7 +381,7 @@ jobs:
             body: JSON.stringify({ idea: 'docker acceptance smoke test' }),
           })
           assert.equal(generation.status, deniedStatus)
-          assert.match(generation.headers.get('content-type') || '', /^application\\/json/)
+          assert.match(generation.headers.get('content-type') || '', /^application\/json/)
           assert.equal((await generation.json()).error.code, deniedCode)
           log(`POST /api/ai/generate without key/auth -> ${deniedStatus} ${deniedCode}; no paid credentials`)
           const trustedGeneration = await localFetch('/api/ai/generate', {
@@ -390,7 +390,7 @@ jobs:
             body: JSON.stringify({ idea: 'offline trusted timer smoke test', protocol: 'trusted-interactive/1' }),
           })
           assert.equal(trustedGeneration.status, deniedStatus)
-          assert.match(trustedGeneration.headers.get('content-type') || '', /^application\\/json/)
+          assert.match(trustedGeneration.headers.get('content-type') || '', /^application\/json/)
           assert.equal((await trustedGeneration.json()).error.code, deniedCode)
           log(`POST /api/ai/generate trusted-interactive/1 without server authorization -> ${deniedStatus} ${deniedCode}; no key, no upstream request`)
           zipLog('PASS production image has no successful local-project-export route')
