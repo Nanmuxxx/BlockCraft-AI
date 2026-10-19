@@ -2,7 +2,7 @@
   "reportVersion": 2,
   "testedMain": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
   "remotePrHead": "2a7688480d1859c87762b46224b6ec81fe28d370",
-  "prHead": "df8a5f91341ffb936400488375e30cc6c8e14b82",
+  "prHead": "f6c88a2bedddca255fd8711d1f2483046defd8dd",
   "verifiedCodeHead": "df8a5f91341ffb936400488375e30cc6c8e14b82",
   "testedAt": "2026-10-19T11:02:25+08:00",
   "branch": "phase2/pr43-compile-isolation",
@@ -22,7 +22,8 @@
     { "command": "node --test tests/safe-viewer/compiler-process.test.mjs", "result": "6/6 pass in each of 3 consecutive runs", "exitCode": 0 },
     { "command": "npm run test:safe-viewer:browser", "result": "14/14 pass", "exitCode": 0 },
     { "command": "npm test", "result": "194/194 pass", "exitCode": 0 },
-    { "command": "npm run build", "result": "pass", "exitCode": 0 }
+    { "command": "npm run build", "result": "pass", "exitCode": 0 },
+    { "command": "GitHub Actions docker acceptance", "result": "success", "head": "f6c88a2bedddca255fd8711d1f2483046defd8dd", "runId": 39192837775, "durationSeconds": 75 }
   ],
   "processTerminationEvidence": {
     "compilerProcessObserved": true,
@@ -41,7 +42,7 @@
   "notes": [
     "The production C-mode remains unavailable; the safe viewer is default-off and not wired into Workshop.",
     "No PR merge, main modification, deployment, real model call, or paid budget use occurred.",
-    "The local candidate commit has not been pushed, so no GitHub Actions result exists for df8a5f9."
+    "The code commit df8a5f9 is included in evidence head f6c88a2; Docker acceptance run 39192837775 passed for that head."
   ],
   "residualRisks": [
     "Windows process-tree termination depends on taskkill /T /F; failure is surfaced as COMPILER_TERMINATION_FAILED.",

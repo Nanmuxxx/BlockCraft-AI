@@ -7,10 +7,11 @@
 - 已实时核对 `main`：`b56a26a9803718d806bac3ddbd7fbe19e0c495c6`
 - PR #43 远端 Draft head：`2a7688480d1859c87762b46224b6ec81fe28d370`
 - 受测候选代码 head：`df8a5f91341ffb936400488375e30cc6c8e14b82`
+- 包含证据文档的受测/CI head：`f6c88a2bedddca255fd8711d1f2483046defd8dd`
 - 分支：`phase2/pr43-compile-isolation`；worktree：`F:\BlockCraft-AI\pr43-compile-isolation`
 - 起始代码基线：`2a7688480d1859c87762b46224b6ec81fe28d370`；本地修改前工作树干净
 - 复验结果：`npm ci`、Safe Viewer 服务端 12/12、进程级 6/6（连续 3 轮）、真实 Chromium 14/14、原有测试 194/194、`npm run build` 全部通过
-- 候选提交尚未推送，因此不存在该 commit 的 GitHub CI 结果；不得引用旧 head/旧 commit 的 CI 作为本轮证明
+- 代码提交 `df8a5f9` 已推送到堆叠 Draft PR #48；`f6c88a2` 的 Docker acceptance run `39192837775` 成功，耗时约 75 秒
 
 历史 `ae82597`/`753dfc5` 的浏览器和容器结果仍保留为历史证据，但不代表本候选 head 的编译子进程终止能力。
 
@@ -163,7 +164,7 @@ npm ci              # 全新安装，通过
 | `npm run test:safe-viewer:browser` | 14/14 通过；Chromium `153.0.8010.12` |
 | `npm test` | 194/194 通过 |
 | `npm run build` | 通过 |
-| GitHub Actions docker acceptance | 本候选未推送，无对应结果 |
+| GitHub Actions docker acceptance | 成功；run `39192837775`，head `f6c88a2`，约 75 秒 |
 
 浏览器报告已写入 `testedMain` 和 `prHead` 字段；机器可读汇总见 `docs/acceptance/safe-viewer/verification.json`。
 
