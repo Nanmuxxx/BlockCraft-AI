@@ -1,0 +1,79 @@
+Warning: fs was declared with const; use let for reassignable variables.
+Warning: b was declared with const; use let for reassignable variables.
+{
+  "scope": "LOCAL runtime simulation of exact Docker COPY instructions, not an actual Docker image or public ModelScope instance",
+  "source_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+  "status": "PASS",
+  "esm_files": 15,
+  "http": [
+    {
+      "route": "/api/health",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8"
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "route": "/ai-create",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "route": "/app-renderer",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "route": "/assets/index-D02MuZGA.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8"
+    },
+    {
+      "route": "/assets/index-jCjpDxQz.css",
+      "status": 200,
+      "content_type": "text/css; charset=utf-8"
+    },
+    {
+      "route": "/api/ai/generate",
+      "status": 401,
+      "content_type": "application/json; charset=utf-8"
+    },
+    {
+      "route": "/api/ai/generate",
+      "status": 401,
+      "content_type": "application/json; charset=utf-8"
+    },
+    {
+      "route": "/api/ai/generate",
+      "status": 401,
+      "content_type": "application/json; charset=utf-8"
+    },
+    {
+      "route": "/api/ai/generate",
+      "status": 401,
+      "content_type": "application/json; charset=utf-8"
+    },
+    {
+      "route": "/api/mochi-ai/status",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8"
+    },
+    {
+      "route": "/api/local-project-export",
+      "status": 404,
+      "content_type": "application/json; charset=utf-8"
+    }
+  ],
+  "outbound_fetch_attempts": 0,
+  "real_model_calls": 0,
+  "credentials_injected": false,
+  "mochi_status": {
+    "enabled": false,
+    "proactiveEnabled": false,
+    "modificationsEnabled": false,
+    "reason": "ACCESS_UNAVAILABLE"
+  }
+}
