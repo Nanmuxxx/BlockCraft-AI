@@ -1,0 +1,26 @@
+✔ local paid startup refuses expired and over-cap Gateway profiles before touching runtime inputs (0.435041ms)
+✔ owner launcher requires explicit approval and rejects an explicitly expired profile (0.203875ms)
+✔ private identity state persists across startup without replacing the binding key (4.925333ms)
+✔ principal resolver is bounded and rejects boolean, malformed, errors and late results (13.76475ms)
+✔ boolean identity alone cannot construct a runtime even with key and ledger configuration (12.809125ms)
+✔ invalid principal rejects before request context construction (2.40825ms)
+✔ request contexts isolate principals, keys and normalized semantic payload under concurrency (22.970084ms)
+✔ invalid input and duplicate or malformed idempotency headers never construct request context (5.236791ms)
+✔ request context errors return a fixed sanitized response (1.094458ms)
+✔ opaque cookie adapter rejects absent, expired, revoked, unknown and forged-header identities before runtime work (3.806791ms)
+✔ opaque cookie hashes resolve stable principals and isolate identical keys across principals (1.45525ms)
+✔ CLI identity mode stays closed by default and requires a private explicit allowlist (5.407333ms)
+✔ authenticated HTTP composition returns a generated AppSpec through the real Gateway runtime (76.667875ms)
+✔ missing session rejects before request context, reservation, or provider egress (36.592125ms)
+✔ trusted v2 admission uses principal identity and leaves the sole durable reservation to Gateway (58.74225ms)
+✔ budget exhaustion maps to HTTP 503 without provider egress beyond POLICY.maxCalls (121.24825ms)
+✔ upstream timeout maps to HTTP 504 and records uncertain spend before shutdown (103.409625ms)
+✔ client disconnect aborts the Mock upstream and preserves the uncertain ledger claim (61.027917ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 507.912666
