@@ -1,0 +1,8 @@
+{
+  "liveCalls": 0,
+  "dist": 9,
+  "buildLogs": 11,
+  "exportedFiles": 150,
+  "independentlyBuiltExportFiles": 15,
+  "dockerImage": "BLOCKED: docker executable unavailable; no image claim"
+}

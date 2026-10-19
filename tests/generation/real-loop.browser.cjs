@@ -10,6 +10,8 @@ const path = require('node:path')
 const root = path.resolve(__dirname, '../..')
 const evidence = path.join(root, 'docs/acceptance/real-loop-qa/source-pr44')
 const output = path.resolve(process.env.GENERATION_QA_OUTPUT || path.join(root, 'docs/acceptance/real-loop-qa'))
+const canary = process.env.REAL_LOOP_SECRET_CANARY
+const assertNoCanary = value => { if (canary) assert.ok(!String(value).includes(canary), 'synthetic canary leaked') }
 
 async function run() {
   const { createServer: createViteServer } = await import('vite')
@@ -35,7 +37,7 @@ async function run() {
     envelopes[id] = JSON.parse(bytes)
   }
   for (const item of mocks) envelopes[item.id] = { choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(item.spec) } }] }
-  const options = { aiTimeoutMs: 500, generationAccess: () => mode !== 'unauthorized', apiKey: 'offline-replay-only', model: 'offline-replay', fetchImpl: async () => {
+  const options = { aiTimeoutMs: 500, generationAccess: () => mode !== 'unauthorized', apiKey: canary || 'offline-replay-only', model: 'offline-replay', fetchImpl: async () => {
     upstreamCalls++
     if (mode === 'timeout') return new Promise(() => {})
     if (mode === 'failure') return new Response('', { status: 503 })
@@ -49,6 +51,8 @@ async function run() {
   const vite = await createViteServer({ root, mode: 'local-export', server: { host: '127.0.0.1', port: 5195, strictPort: true, fs: { allow: [root, require('node:fs').realpathSync(path.join(root, 'node_modules'))] }, proxy: { '/api': { target: `http://127.0.0.1:${server.address().port}` } } } })
   let browser
   const report = { repositoryHead: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), provenance: 'two recorded real responses + three hand-authored fixtures; no live inference', sourceFiles: ['PR #44 sanitized todo.response.json', 'PR #44 sanitized club.response.json'], responseSha256: Object.fromEntries(Object.entries(live.cases).map(item => [item[1].id, item[1].responseSha256])), liveCalls: 0, replayProviderInvocations: 0, screenshots: [], cases: [] }
+  const scans = []
+  report.canary = { enabled: Boolean(canary), scope: 'offline replay server API credential; local browser responses, DOM, console and downloaded ZIP; not final paid principal composition', responseBodies: 0, responseHeaders: 0, dom: 0, zipFiles: 0, consoleMessages: 0 }
   try {
     await mkdir(output, { recursive: true }); await vite.listen()
     browser = await chromium.launch({ headless: true, executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE })
@@ -59,6 +63,16 @@ async function run() {
       page.setDefaultTimeout(10000)
       page.setDefaultNavigationTimeout(15000)
       page.on('pageerror', error => errors.push(error.message))
+      if (canary) {
+        page.on('console', msg => { assertNoCanary(msg.text()); report.canary.consoleMessages++ })
+        page.on('response', response => scans.push((async () => {
+          assertNoCanary(JSON.stringify(await response.allHeaders())); report.canary.responseHeaders++
+          const type = response.headers()['content-type'] || ''
+          if (/json|javascript|text|svg/.test(type) && response.status() !== 304) {
+            assertNoCanary((await response.body()).toString('utf8')); report.canary.responseBodies++
+          }
+        })().then(() => null, error => ({ url: response.url(), status: response.status(), error: error.message }))))
+      }
       await page.route('**/*', route => {
         if (new URL(route.request().url()).origin === 'http://127.0.0.1:5195') return route.continue()
         external.push(route.request().url()); return route.abort('blockedbyclient')
@@ -140,6 +154,7 @@ async function run() {
             await download.saveAs(archive)
             assert.equal(await download.failure(), null)
             const bytes = await readFile(archive), files = unzip(bytes)
+            for (const value of files.values()) { assertNoCanary(value); if (canary) report.canary.zipFiles++ }
             const dataText = files.get('src/data.ts')
             const data = JSON.parse(dataText.slice(dataText.indexOf(' = ') + 3, dataText.lastIndexOf(';')))
             assert.equal(data.base.spec.id, spec.id)
@@ -168,7 +183,10 @@ async function run() {
           await expect(region.locator('tbody tr')).toHaveCount(0); await metrics()
         }
         report.cases.push({ id, width, height: width === 390 ? 844 : 900, source: item.source, validatedFromAssistantContent: true, bSelectedAndEdited: true, cCreateReadUpdateDelete: true, metricsUpdatedAndRestored: true, bCRoundTrips: 3, failures: checks, errors, external })
+        assertNoCanary(await page.content()); if (canary) report.canary.dom++
       }
+      await page.waitForLoadState('networkidle')
+      assert.deepEqual((await Promise.all(scans)).filter(Boolean), [], 'all local textual response bodies must be scanned')
       assert.deepEqual(errors, []); assert.deepEqual(external, [])
       await context.close()
     }

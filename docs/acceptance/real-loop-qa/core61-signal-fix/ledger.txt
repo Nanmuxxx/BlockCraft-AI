@@ -1,0 +1,20 @@
+{"case":"401","calls":0,"reservations":0}
+✔ 401 denies before reservation and egress; reopen after shutdown (49.084875ms)
+{"case":"settle-repeat-exhaust","calls":6,"reservations":6,"repeatedKeyDeduplication":"NOT IMPLEMENTED","status":503}
+✔ success settles; identical client request key is NOT idempotent (negative evidence); exhausted ledger returns 503 before egress (143.762917ms)
+{"case":"timeout","calls":1,"reservations":1,"status":504,"ledger":"uncertain+halt"}
+✔ gateway timeout ignoring abort returns 504 then uncertain+halt; no second reservation/egress (93.730209ms)
+{"case":"disconnect","calls":1,"reservations":1,"abort":true,"ledger":"uncertain+halt"}
+✔ real client disconnect aborts egress, marks uncertain and halts (65.281083ms)
+{"case":"shutdown","lockProbes":21,"calls":1,"reservations":1,"lockReleasedAfterHandlers":true,"ledger":"uncertain+halt"}
+✔ shutdown retains exclusive lock throughout handler drain with noncooperative fetch (179.607709ms)
+{"case":"OS-signals","code":0,"signal":null,"complete":true,"lockProbes":38,"stdout":"","stderr":""}
+✔ real OS SIGTERM then SIGINT cannot interrupt full server/ledger drain (337.934083ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 920.548333
