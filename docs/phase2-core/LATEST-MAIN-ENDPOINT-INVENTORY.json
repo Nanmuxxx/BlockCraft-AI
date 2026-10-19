@@ -1,0 +1,2032 @@
+[
+  {
+    "path": ".dockerignore",
+    "added": "0",
+    "deleted": "38"
+  },
+  {
+    "path": ".github/workflows/docker-acceptance.yml",
+    "added": "0",
+    "deleted": "363"
+  },
+  {
+    "path": "AGENT-A-NIGHT-QUEUE.md",
+    "added": "187",
+    "deleted": "0"
+  },
+  {
+    "path": "AGENT-B-NIGHT-QUEUE.md",
+    "added": "0",
+    "deleted": "17"
+  },
+  {
+    "path": "AI-CORE-GAP-MATRIX.md",
+    "added": "153",
+    "deleted": "0"
+  },
+  {
+    "path": "Dockerfile",
+    "added": "0",
+    "deleted": "34"
+  },
+  {
+    "path": "NIGHT-AGENT-A-REPORT.md",
+    "added": "158",
+    "deleted": "0"
+  },
+  {
+    "path": "NIGHT-AGENT-B-REPORT.md",
+    "added": "0",
+    "deleted": "78"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/standalone/build.log",
+    "added": "0",
+    "deleted": "14"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/standalone/builtin-production-desktop.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/standalone/builtin-production-mobile.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/standalone/builtin.zip",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/standalone/offline.log",
+    "added": "0",
+    "deleted": "2"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/standalone/online.log",
+    "added": "0",
+    "deleted": "2"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/standalone/trusted-browser-report.json",
+    "added": "0",
+    "deleted": "126"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/workshop/browser-report.json",
+    "added": "0",
+    "deleted": "159"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/workshop/refused-1366.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/workshop/refused-390.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/workshop/workshop-b-1366.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/workshop/workshop-b-390.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/workshop/workshop-c-1366.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/acceptance/night-agent-b/workshop/workshop-c-390.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/agent-a-night/.gitignore",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/AI-CORE-INTERFACE-CONTRACT.md",
+    "added": "44",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/COMMIT-MAPPING.json",
+    "added": "536",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/DEPLOYMENT-INTERFACE-NOTE.md",
+    "added": "28",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/LOCAL-COMMITS.txt",
+    "added": "82",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/TEST-COMMANDS.md",
+    "added": "281",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser-inventory.json",
+    "added": "1587",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/adapter-errors/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/admission-artifact/report.json",
+    "added": "48",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/advice-publication/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/artifact-cancel/report.json",
+    "added": "46",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/artifact-production/report.json",
+    "added": "46",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/artifact-races/offline-pomodoro.install.json",
+    "added": "102",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/artifact-races/report.json",
+    "added": "77",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/artifact-utf8/report.json",
+    "added": "48",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/consent-lifecycle/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/consent-timer/report.json",
+    "added": "58",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/context-atomic/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/custom-workshop/report.json",
+    "added": "76",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/custom-workshop/workshop-b-1366.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/agent-a-night/browser/custom-workshop/workshop-c-390.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-cancel/report.json",
+    "added": "37",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-generation/report.json",
+    "added": "60",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/final-text-safety/report.json",
+    "added": "39",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/focus-epoch/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-cancellation/report.json",
+    "added": "37",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-http-mobile/report.json",
+    "added": "60",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/generation-text-safety/report.json",
+    "added": "39",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/host-retirement/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/metadata-observer/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-advice-final/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-advice/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-client-cancel/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model-final/report.json",
+    "added": "902",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/mochi-model/report.json",
+    "added": "898",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/model-deadline/report.json",
+    "added": "912",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/status-consent/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/suggestion-actions/report.json",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/trusted-races/report.json",
+    "added": "49",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/browser/trusted/entry-390.png",
+    "added": "-",
+    "deleted": "-"
+  },
+  {
+    "path": "docs/agent-a-night/browser/trusted/report.json",
+    "added": "87",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/adapter-errors-after-2026-10-18T20-42-32-953Z.txt",
+    "added": "45",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/adapter-errors-before-2026-10-18T20-42-24-625Z.txt",
+    "added": "211",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/admission-cancel-before-2026-10-18T19-34-11-762Z.txt",
+    "added": "43",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/admission-cancel-fixed-2026-10-18T19-34-23-467Z.txt",
+    "added": "39",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/admission-revocation-fixed-2026-10-18T19-34-44-904Z.txt",
+    "added": "40",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-access-snapshot-before-2026-10-18T19-26-40-628Z.txt",
+    "added": "40",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-access-snapshot-fixed-2026-10-18T19-26-47-997Z.txt",
+    "added": "38",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-client-after-2026-10-18T18-25-35-322Z.txt",
+    "added": "38",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-client-before-2026-10-18T18-25-18-333Z.txt",
+    "added": "79",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-client-complete-2026-10-18T18-26-02-685Z.txt",
+    "added": "31",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-client-fixed-2026-10-18T18-25-44-654Z.txt",
+    "added": "28",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-context-reentry-before-2026-10-18T19-23-07-891Z.txt",
+    "added": "63",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-context-reentry-fixed-2026-10-18T19-23-23-008Z.txt",
+    "added": "43",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-egress-project-before-2026-10-18T19-23-37-425Z.txt",
+    "added": "63",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-egress-project-fixed-2026-10-18T19-23-50-967Z.txt",
+    "added": "45",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-http-after-2026-10-18T18-31-04-386Z.txt",
+    "added": "30",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-http-before-2026-10-18T18-30-35-942Z.txt",
+    "added": "55",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-http-disconnect-2026-10-18T18-31-20-309Z.txt",
+    "added": "31",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-http-valid-before-2026-10-18T18-30-45-419Z.txt",
+    "added": "41",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-observer-before-2026-10-18T19-24-05-296Z.txt",
+    "added": "58",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-observer-fixed-2026-10-18T19-24-17-967Z.txt",
+    "added": "46",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-project-reentry-before-2026-10-18T19-22-38-246Z.txt",
+    "added": "26",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-publication-after-2026-10-18T18-44-03-502Z.txt",
+    "added": "35",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-publication-before-2026-10-18T18-43-52-306Z.txt",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/advice-publication-final-2026-10-18T18-44-19-769Z.txt",
+    "added": "36",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-byte-final-2026-10-18T18-38-26-993Z.txt",
+    "added": "43",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-formal-browser-2026-10-18T17-57-08-841Z.txt",
+    "added": "46",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-observer-before-2026-10-18T19-28-22-166Z.txt",
+    "added": "44",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-observer-fixed-2026-10-18T19-28-31-932Z.txt",
+    "added": "44",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-observer-receipt-before-2026-10-18T19-28-31-641Z.txt",
+    "added": "50",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-race-browser-2026-10-18T18-02-19-795Z.txt",
+    "added": "78",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-read-after-2026-10-18T18-36-55-404Z.txt",
+    "added": "38",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-read-before-2026-10-18T18-36-31-773Z.txt",
+    "added": "49",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-read-final-2026-10-18T18-37-15-082Z.txt",
+    "added": "40",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-utf8-after-2026-10-18T18-37-48-702Z.txt",
+    "added": "41",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/artifact-utf8-before-2026-10-18T18-37-35-628Z.txt",
+    "added": "45",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/baseline-suite-2026-10-18T18-16-36-779Z.txt",
+    "added": "204",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-admission-artifact-2026-10-18T19-35-34-325Z.txt",
+    "added": "49",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-advice-client-2026-10-18T18-29-20-705Z.txt",
+    "added": "8",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-advice-client-retry-2026-10-18T18-30-05-912Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-advice-publication-2026-10-18T18-44-37-191Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-artifact-utf8-2026-10-18T18-38-04-490Z.txt",
+    "added": "49",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-consent-lifecycle-2026-10-18T19-43-38-559Z.txt",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-context-atomic-2026-10-18T19-24-31-106Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-final-cancel-2026-10-18T21-04-27-385Z.txt",
+    "added": "37",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-final-generation-2026-10-18T21-04-08-521Z.txt",
+    "added": "61",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-final-text-safety-2026-10-18T21-05-02-040Z.txt",
+    "added": "39",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-focus-epoch-2026-10-18T20-30-59-772Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-host-retirement-2026-10-18T19-39-44-605Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-installer-cancel-2026-10-18T18-29-20-706Z.txt",
+    "added": "47",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-metadata-observer-2026-10-18T19-56-19-277Z.txt",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-model-deadline-2026-10-18T19-14-38-555Z.txt",
+    "added": "912",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-status-consent-2026-10-18T19-54-54-262Z.txt",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-suggestion-actions-2026-10-18T20-18-26-105Z.txt",
+    "added": "24",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/browser-suggestion-actions-2026-10-18T20-18-34-893Z.txt",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-adapter-errors-2026-10-18T20-42-43-276Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-admission-2026-10-18T18-16-37-614Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-admission-final-2026-10-18T19-35-34-324Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-after-source-2026-10-18T18-07-53-654Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-artifact-read-2026-10-18T18-37-15-413Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-artifact-utf8-2026-10-18T18-37-49-017Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-client-cancel-2026-10-18T18-26-43-077Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-consent-lifecycle-2026-10-18T19-43-38-559Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-consent-timer-2026-10-18T20-44-40-202Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-context-atomic-2026-10-18T19-24-24-563Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-focus-epoch-2026-10-18T20-30-59-772Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-host-retirement-2026-10-18T19-39-44-607Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-initial.txt",
+    "added": "5",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-installer-cancel-2026-10-18T18-29-20-709Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-metadata-observer-2026-10-18T19-56-19-278Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-model-deadline-2026-10-18T19-14-40-892Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-source-deadline-2026-10-18T19-11-35-956Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-source-publication-2026-10-18T18-44-38-326Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-status-consent-2026-10-18T19-54-54-262Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-suggestion-actions-2026-10-18T20-18-15-505Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/build-suggestion-focus-2026-10-18T20-27-39-714Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/commands.jsonl",
+    "added": "272",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/compiler-cache-2026-10-18T18-02-00-343Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/compiler-deps-2026-10-18T18-01-52-526Z.txt",
+    "added": "2",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/consent-atomic-before-2026-10-18T19-52-45-450Z.txt",
+    "added": "31",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/consent-atomic-fixed-2026-10-18T19-53-25-735Z.txt",
+    "added": "44",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/consent-disabled-race-before-2026-10-18T19-51-25-642Z.txt",
+    "added": "30",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/consent-disabled-race-fixed-2026-10-18T19-52-10-000Z.txt",
+    "added": "43",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/consent-lifecycle-before-2026-10-18T19-42-40-897Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/consent-lifecycle-fixed-2026-10-18T19-43-19-925Z.txt",
+    "added": "45",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/consent-lifecycle-reproduction-2026-10-18T19-43-09-631Z.txt",
+    "added": "26",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/consent-reentrant-order-before-2026-10-18T19-53-50-167Z.txt",
+    "added": "37",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/consent-reentrant-order-fixed-2026-10-18T19-54-33-309Z.txt",
+    "added": "45",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/context-observer-before-2026-10-18T19-55-54-995Z.txt",
+    "added": "34",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/context-observer-fixed-2026-10-18T19-56-06-388Z.txt",
+    "added": "50",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/conversation-cancel-after-2026-10-18T18-26-32-240Z.txt",
+    "added": "33",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/conversation-cancel-before-2026-10-18T18-26-19-784Z.txt",
+    "added": "44",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-artifact-ingress-2026-10-18T18-40-07-333Z.txt",
+    "added": "0",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-artifact-ingress-fixed-2026-10-18T18-40-31-914Z.txt",
+    "added": "645",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-caller-cancel-2026-10-18T18-47-23-644Z.txt",
+    "added": "657",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-checkpoint-2026-10-18T18-29-20-727Z.txt",
+    "added": "630",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-complete-2026-10-18T18-07-53-654Z.txt",
+    "added": "576",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-consent-timer-2026-10-18T20-43-55-279Z.txt",
+    "added": "821",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T18-53-18-240Z.txt",
+    "added": "724",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T18-59-10-263Z.txt",
+    "added": "734",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T18-59-10-882Z.txt",
+    "added": "729",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T19-03-16-853Z.txt",
+    "added": "732",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T19-11-16-416Z.txt",
+    "added": "741",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T19-14-40-420Z.txt",
+    "added": "744",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T19-24-25-290Z.txt",
+    "added": "754",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T19-35-09-558Z.txt",
+    "added": "762",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T19-39-45-527Z.txt",
+    "added": "767",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T19-43-39-438Z.txt",
+    "added": "769",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T19-54-55-220Z.txt",
+    "added": "780",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T19-56-20-203Z.txt",
+    "added": "782",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T20-09-34-029Z.txt",
+    "added": "783",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T20-24-09-682Z.txt",
+    "added": "787",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T20-31-00-747Z.txt",
+    "added": "794",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T20-41-49-380Z.txt",
+    "added": "805",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T20-43-55-994Z.txt",
+    "added": "816",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-discovered-2026-10-18T20-49-42-921Z.txt",
+    "added": "818",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-export-independent-2026-10-18T20-50-12-358Z.txt",
+    "added": "127",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-ignore-ingress-2026-10-18T20-41-48-662Z.txt",
+    "added": "810",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-ingress-deadline-final-2026-10-18T20-49-42-220Z.txt",
+    "added": "823",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T18-53-17-888Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T18-59-10-549Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-03-16-522Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-11-16-083Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-14-40-019Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-24-24-909Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-35-09-226Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-39-44-990Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-43-38-940Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-54-54-669Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T19-56-19-674Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-09-33-541Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-24-09-320Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-31-00-161Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-41-49-021Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-43-55-632Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-protocol-prerequisite-2026-10-18T20-49-42-563Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-publication-2026-10-18T18-45-50-915Z.txt",
+    "added": "652",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-regression-2026-10-18T17-55-58-012Z.txt",
+    "added": "541",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T18-53-17-623Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T18-59-10-301Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-03-16-272Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-11-15-820Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-14-39-710Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-24-24-586Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-35-08-976Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-39-44-629Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-43-38-582Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-54-54-290Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T19-56-19-301Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-09-32-939Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-24-09-039Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-30-59-800Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-41-48-742Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-43-55-350Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/core-server-prerequisite-2026-10-18T20-49-42-288Z.txt",
+    "added": "4",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/custom-caller-after-2026-10-18T18-46-37-548Z.txt",
+    "added": "20",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/custom-caller-before-2026-10-18T18-46-28-377Z.txt",
+    "added": "83",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/custom-caller-final-2026-10-18T18-47-14-223Z.txt",
+    "added": "39",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/custom-protocol-build-2026-10-18T17-56-21-132Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/custom-provider-cancel-after-2026-10-18T18-47-01-829Z.txt",
+    "added": "38",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/custom-provider-cancel-before-2026-10-18T18-46-44-680Z.txt",
+    "added": "52",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/custom-provider-cleanup-2026-10-18T18-04-32-551Z.txt",
+    "added": "34",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/custom-workshop-browser-2026-10-18T18-07-53-654Z.txt",
+    "added": "77",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/default-suite-final-2026-10-18T20-50-30-818Z.txt",
+    "added": "204",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/delivery-default-suite-2026-10-18T20-09-32-915Z.txt",
+    "added": "204",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/delivery-isolation-quality-2026-10-18T20-10-57-875Z.txt",
+    "added": "101",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/evidence-baseline-check-2026-10-18T19-46-07-606Z.txt",
+    "added": "18",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/export-assets-prepare-2026-10-18T17-56-21-481Z.txt",
+    "added": "0",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-artifact-retry-boundaries-2026-10-18T21-12-13-137Z.txt",
+    "added": "68",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-artifact-retry-build-2026-10-18T21-12-31-136Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-artifact-retry-default-2026-10-18T21-12-21-856Z.txt",
+    "added": "204",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-artifact-security-2026-10-18T17-59-30-093Z.txt",
+    "added": "257",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-browser-2026-10-18T17-55-56-855Z.txt",
+    "added": "2",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-cancellation-browser-2026-10-18T20-24-01-871Z.txt",
+    "added": "38",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-client.txt",
+    "added": "16",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-http-latest-2026-10-18T20-26-23-221Z.txt",
+    "added": "1",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-http-mobile-2026-10-18T20-27-38-569Z.txt",
+    "added": "60",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-ingress-2026-10-18T20-40-48-814Z.txt",
+    "added": "118",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-ingress-deadline-2026-10-18T20-45-53-373Z.txt",
+    "added": "55",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-ingress-fixed-2026-10-18T20-41-40-948Z.txt",
+    "added": "53",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-install-edit-2026-10-18T18-59-03-656Z.txt",
+    "added": "9",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-predispatch-after-2026-10-18T18-39-51-699Z.txt",
+    "added": "52",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-predispatch-before-2026-10-18T18-39-38-611Z.txt",
+    "added": "64",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/generation-text-safety-2026-10-18T20-33-37-585Z.txt",
+    "added": "40",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/host-retirement-before-2026-10-18T19-37-19-031Z.txt",
+    "added": "30",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/host-retirement-commit-2026-10-18T19-38-10-987Z.txt",
+    "added": "119",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/host-retirement-final-2026-10-18T19-37-54-286Z.txt",
+    "added": "86",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/host-retirement-fixed-2026-10-18T19-37-41-497Z.txt",
+    "added": "95",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/host-retirement-sync-final-2026-10-18T19-38-36-201Z.txt",
+    "added": "87",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/http-access-body-before-2026-10-18T19-57-42-864Z.txt",
+    "added": "45",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/http-access-body-fixed-2026-10-18T19-57-55-229Z.txt",
+    "added": "41",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/installer-cancel-after-2026-10-18T18-28-31-824Z.txt",
+    "added": "46",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/installer-cancel-before-2026-10-18T18-28-14-203Z.txt",
+    "added": "37",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/installer-cancel-final-2026-10-18T18-29-09-014Z.txt",
+    "added": "71",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/installer-cancel-fixture-fixed-2026-10-18T18-28-44-729Z.txt",
+    "added": "32",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/installer-cancel-valid-before-2026-10-18T18-28-54-636Z.txt",
+    "added": "37",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/interactive-admission-before-2026-10-18T18-15-17-665Z.txt",
+    "added": "29",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/interactive-admission-fixed-2026-10-18T18-15-39-168Z.txt",
+    "added": "54",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/interactive-disconnect-2026-10-18T18-16-25-488Z.txt",
+    "added": "56",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/interactive-errors-after-2026-10-18T18-51-56-763Z.txt",
+    "added": "63",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/interactive-errors-before-2026-10-18T18-51-48-008Z.txt",
+    "added": "195",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/interactive-errors-http-2026-10-18T18-52-49-063Z.txt",
+    "added": "27",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/interop-audit-2026-10-18T21-03-52-644Z.txt",
+    "added": "218",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/metadata-recovery-2026-10-18T20-11-29-476Z.txt",
+    "added": "51",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/missing-prerequisites-retry-2026-10-18T17-56-21-742Z.txt",
+    "added": "21",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/mochi-admission-metadata-before-2026-10-18T19-25-30-766Z.txt",
+    "added": "80",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/mochi-admission-metadata-fixed-2026-10-18T19-25-39-697Z.txt",
+    "added": "45",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/mochi-advice-final-2026-10-18T18-21-55-199Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/mochi-advice-formal-browser-2026-10-18T17-59-30-092Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/mochi-chunked-bound-before-2026-10-18T19-21-14-007Z.txt",
+    "added": "20",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/mochi-chunked-compatibility-2026-10-18T19-21-27-602Z.txt",
+    "added": "22",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/mochi-incomplete-upload-before-2026-10-18T19-19-30-294Z.txt",
+    "added": "28",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/mochi-incomplete-upload-fixed-2026-10-18T19-19-40-669Z.txt",
+    "added": "40",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/mochi-model-browser-2026-10-18T17-56-57-030Z.txt",
+    "added": "898",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/mochi-model-final-2026-10-18T18-21-55-197Z.txt",
+    "added": "902",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/model-plan-cancellation-2026-10-18T18-03-28-324Z.txt",
+    "added": "27",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/model-plan-cancellation-fixed-2026-10-18T18-03-51-503Z.txt",
+    "added": "21",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/model-plan-deadline-before-2026-10-18T19-13-50-512Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/model-plan-deadline-compatible-2026-10-18T19-14-17-735Z.txt",
+    "added": "81",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/model-plan-deadline-fixed-2026-10-18T19-14-05-430Z.txt",
+    "added": "87",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/model-plan-deadline-reentry-2026-10-18T19-14-30-269Z.txt",
+    "added": "24",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/model-request-bound-2026-10-18T18-12-13-393Z.txt",
+    "added": "35",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/model-request-bound-fixed-2026-10-18T18-12-27-740Z.txt",
+    "added": "22",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/proactive-sync-revoke-before-2026-10-18T19-34-35-592Z.txt",
+    "added": "27",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/production-build-2026-10-18T17-59-17-060Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/production-build-final-2026-10-18T20-50-31-688Z.txt",
+    "added": "19",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/quality-v1-2026-10-18T18-01-52-527Z.txt",
+    "added": "69",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/reinstall-boundaries-2026-10-18T18-53-45-905Z.txt",
+    "added": "34",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/response-cleanup-2026-10-18T18-03-11-420Z.txt",
+    "added": "64",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/runtime-inventory-2026-10-18T20-05-37-069Z.txt",
+    "added": "30",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/security-prerequisites-fixed-2026-10-18T18-02-19-796Z.txt",
+    "added": "195",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/server-deadline-fixed-2026-10-18T17-58-38-079Z.txt",
+    "added": "51",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/server-deadline-regression-2026-10-18T17-58-25-168Z.txt",
+    "added": "71",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/server-disconnect-2026-10-18T17-59-16-795Z.txt",
+    "added": "43",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/server-protocol-2026-10-18T17-55-42-173Z.txt",
+    "added": "47",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/service-cancel-before-2026-10-18T18-13-50-915Z.txt",
+    "added": "30",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/service-cancel-fixed-2026-10-18T18-14-01-277Z.txt",
+    "added": "66",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-admission-boundary-2026-10-18T18-55-28-097Z.txt",
+    "added": "33",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-deadline-before-2026-10-18T19-09-25-115Z.txt",
+    "added": "62",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-deadline-fixed-2026-10-18T19-10-39-489Z.txt",
+    "added": "55",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-deadline-owner-2026-10-18T19-11-08-018Z.txt",
+    "added": "58",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-deadline-reentry-2026-10-18T19-10-56-504Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-plan-cancellation-2026-10-18T18-05-42-769Z.txt",
+    "added": "74",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-plan-cancellation-fixed-2026-10-18T18-05-56-200Z.txt",
+    "added": "44",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-provider-after-2026-10-18T18-42-32-953Z.txt",
+    "added": "51",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-provider-before-2026-10-18T18-42-14-426Z.txt",
+    "added": "65",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-reentrant-before-2026-10-18T18-06-11-225Z.txt",
+    "added": "61",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-reentrant-fixed-2026-10-18T18-06-24-063Z.txt",
+    "added": "45",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-registry-after-2026-10-18T18-24-23-014Z.txt",
+    "added": "47",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/source-registry-before-2026-10-18T18-22-36-595Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/status-capability-final-2026-10-18T19-50-55-007Z.txt",
+    "added": "42",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/status-invalid-before-2026-10-18T19-49-50-471Z.txt",
+    "added": "74",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/status-invalid-fixed-2026-10-18T19-50-25-029Z.txt",
+    "added": "37",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/store-lease-boundaries-2026-10-18T19-02-55-844Z.txt",
+    "added": "40",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/store-quota-race-after-2026-10-18T19-02-28-467Z.txt",
+    "added": "23",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/store-quota-race-before-2026-10-18T19-02-07-169Z.txt",
+    "added": "41",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/store-read-limit-2026-10-18T19-08-16-423Z.txt",
+    "added": "27",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/store-short-read-before-2026-10-18T19-07-57-983Z.txt",
+    "added": "52",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/store-short-read-fixed-2026-10-18T19-08-04-202Z.txt",
+    "added": "45",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/suggestion-actions-after-2026-10-18T20-15-58-266Z.txt",
+    "added": "48",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/suggestion-actions-before-2026-10-18T20-15-41-217Z.txt",
+    "added": "55",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/suggestion-focus-after-2026-10-18T20-26-07-346Z.txt",
+    "added": "52",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/suggestion-focus-before-2026-10-18T20-25-52-692Z.txt",
+    "added": "59",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/suggestion-focus-epoch-2026-10-18T20-30-37-914Z.txt",
+    "added": "55",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/suggestion-focus-retirement-after-2026-10-18T20-30-24-350Z.txt",
+    "added": "54",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/suggestion-focus-retirement-before-2026-10-18T20-28-56-326Z.txt",
+    "added": "47",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/suggestion-focus-selection-2026-10-18T20-26-23-015Z.txt",
+    "added": "38",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/suggestion-ignore-epoch-after-2026-10-18T20-37-28-973Z.txt",
+    "added": "49",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/suggestion-ignore-epoch-before-2026-10-18T20-37-20-309Z.txt",
+    "added": "65",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/trusted-formal-browser-2026-10-18T17-57-08-841Z.txt",
+    "added": "2",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/trusted-races-browser-2026-10-18T17-58-38-370Z.txt",
+    "added": "2",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/workshop-adapter-errors-2026-10-18T20-42-53-605Z.txt",
+    "added": "57",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/workshop-consent-timer-2026-10-18T20-43-44-322Z.txt",
+    "added": "58",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/workshop-consent-timer-after-2026-10-18T20-43-28-887Z.txt",
+    "added": "39",
+    "deleted": "0"
+  },
+  {
+    "path": "docs/agent-a-night/logs/workshop-consent-timer-before-2026-10-18T20-43-18-520Z.txt",
+    "added": "47",
+    "deleted": "0"
+  },
+  {
+    "path": "ms_deploy.json",
+    "added": "0",
+    "deleted": "6"
+  },
+  {
+    "path": "server/ai-abort.mjs",
+    "added": "17",
+    "deleted": "0"
+  },
+  {
+    "path": "server/custom-block/generator.mjs",
+    "added": "13",
+    "deleted": "4"
+  },
+  {
+    "path": "server/custom-block/provider.mjs",
+    "added": "22",
+    "deleted": "13"
+  },
+  {
+    "path": "server/custom-block/store.mjs",
+    "added": "28",
+    "deleted": "11"
+  },
+  {
+    "path": "server/index.mjs",
+    "added": "43",
+    "deleted": "114"
+  },
+  {
+    "path": "server/mochi-ai/http.mjs",
+    "added": "25",
+    "deleted": "6"
+  },
+  {
+    "path": "server/mochi-ai/provider.mjs",
+    "added": "22",
+    "deleted": "9"
+  },
+  {
+    "path": "server/mochi-ai/service.mjs",
+    "added": "20",
+    "deleted": "5"
+  },
+  {
+    "path": "server/server.test.mjs",
+    "added": "93",
+    "deleted": "0"
+  },
+  {
+    "path": "server/trusted-interactive.mjs",
+    "added": "28",
+    "deleted": "15"
+  },
+  {
+    "path": "src/components/ai-create/generateApp.ts",
+    "added": "88",
+    "deleted": "29"
+  },
+  {
+    "path": "src/integrations/generated-artifact/install.ts",
+    "added": "43",
+    "deleted": "19"
+  },
+  {
+    "path": "src/integrations/generated-artifact/ui.ts",
+    "added": "39",
+    "deleted": "13"
+  },
+  {
+    "path": "src/integrations/mochi-ai/client.mjs",
+    "added": "124",
+    "deleted": "36"
+  },
+  {
+    "path": "src/integrations/mochi-ai/context.mjs",
+    "added": "7",
+    "deleted": "1"
+  },
+  {
+    "path": "src/integrations/mochi-ai/workshop.mjs",
+    "added": "7",
+    "deleted": "1"
+  },
+  {
+    "path": "src/integrations/mochi-source/planning.ts",
+    "added": "36",
+    "deleted": "9"
+  },
+  {
+    "path": "src/integrations/mochi-source/providers.ts",
+    "added": "37",
+    "deleted": "4"
+  },
+  {
+    "path": "src/integrations/mochi/host.test.cjs",
+    "added": "2",
+    "deleted": "38"
+  },
+  {
+    "path": "src/integrations/mochi/host.ts",
+    "added": "13",
+    "deleted": "2"
+  },
+  {
+    "path": "src/integrations/mochi/modelPlanProvider.ts",
+    "added": "80",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/ai-core-night/check.mjs",
+    "added": "30",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/ai-core-night/regression.mjs",
+    "added": "27",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/ai-core-night/runtime-inventory.mjs",
+    "added": "33",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/ai-quality/evaluate.cjs",
+    "added": "9",
+    "deleted": "2"
+  },
+  {
+    "path": "tests/ai-quality/quality.test.cjs",
+    "added": "10",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/custom-block-generation/installation.test.cjs",
+    "added": "91",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/custom-block-generation/pipeline.test.mjs",
+    "added": "167",
+    "deleted": "2"
+  },
+  {
+    "path": "tests/custom-block-generation/provider.test.mjs",
+    "added": "46",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/custom-block-workshop/reinstall.test.cjs",
+    "added": "55",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/generated-artifact-ui/production-browser.cjs",
+    "added": "9",
+    "deleted": "1"
+  },
+  {
+    "path": "tests/generated-artifact-ui/ui.test.cjs",
+    "added": "94",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/generated-artifact/install.test.cjs",
+    "added": "32",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/generation/browser.cjs",
+    "added": "29",
+    "deleted": "7"
+  },
+  {
+    "path": "tests/generation/cancellation.browser.cjs",
+    "added": "140",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/generation/client-boundary.test.cjs",
+    "added": "101",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/generation/ingress.test.mjs",
+    "added": "134",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/generation/service-runtime.test.cjs",
+    "added": "60",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/generation/text-safety.browser.cjs",
+    "added": "133",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/adapter-errors.test.mjs",
+    "added": "43",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/admission-cancellation.test.mjs",
+    "added": "48",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/client-transport.test.mjs",
+    "added": "48",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/client.test.mjs",
+    "added": "155",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/consent-lifecycle.test.mjs",
+    "added": "110",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/context.test.mjs",
+    "added": "30",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/host-cancellation.test.cjs",
+    "added": "54",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/http.test.mjs",
+    "added": "138",
+    "deleted": "1"
+  },
+  {
+    "path": "tests/mochi-ai/model-plan.test.cjs",
+    "added": "169",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/provider.test.mjs",
+    "added": "42",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/service.test.mjs",
+    "added": "35",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/status-validation.test.mjs",
+    "added": "65",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/suggestion-actions.test.mjs",
+    "added": "115",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-ai/workshop-browser.cjs",
+    "added": "10",
+    "deleted": "2"
+  },
+  {
+    "path": "tests/mochi-ai/workshop.test.mjs",
+    "added": "23",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-source/planning.test.cjs",
+    "added": "87",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi-source/provider.test.cjs",
+    "added": "98",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/mochi/browser.cjs",
+    "added": "2",
+    "deleted": "1"
+  },
+  {
+    "path": "tests/mochi/fixture.tsx",
+    "added": "15",
+    "deleted": "1"
+  },
+  {
+    "path": "tests/project-zip-export/export.test.mjs",
+    "added": "1",
+    "deleted": "30"
+  },
+  {
+    "path": "tests/trusted-interactive/gate.test.mjs",
+    "added": "49",
+    "deleted": "0"
+  },
+  {
+    "path": "tests/trusted-interactive/server.test.mjs",
+    "added": "40",
+    "deleted": "1"
+  },
+  {
+    "path": "tests/workshop-export/browser.cjs",
+    "added": "2",
+    "deleted": "2"
+  },
+  {
+    "path": "tests/workshop-export/http.test.mjs",
+    "added": "2",
+    "deleted": "2"
+  },
+  {
+    "path": "tools/project-zip-export/export.mjs",
+    "added": "0",
+    "deleted": "2"
+  },
+  {
+    "path": "tools/project-zip-export/package-lock.mjs",
+    "added": "0",
+    "deleted": "907"
+  },
+  {
+    "path": "tools/project-zip-export/templates.mjs",
+    "added": "22",
+    "deleted": "45"
+  },
+  {
+    "path": "tools/project-zip-export/zip.mjs",
+    "added": "1",
+    "deleted": "1"
+  }
+]

@@ -1,5 +1,7 @@
 # Phase 2 AI Core 集成候选报告
 
+> 最终复核更新：main 已在发布期间前进到 **`b56a26a9803718d806bac3ddbd7fbe19e0c495c6`**（#35 已合并）。Draft **[#42](https://github.com/Nanmuxxx/BlockCraft-AI/pull/42)** 已创建。最新组合在 `server/index.mjs` 有一处准入取消冲突，merge exit 1；按共享入口所有权约定未在生产文件解决，已 abort（exit 0）。**最终总体结论 BLOCKED / merge NO-GO**，不存在已验证的最新 main 组合 SHA。以下通过记录绑定旧基线 25773e6，不代表新 main 组合通过。详细冲突、建议和最新 406 文件两端差异见 `docs/phase2-core/LATEST-MAIN-HANDOFF.md`；它更新下文 #35 open 和零冲突快照。
+
 ## 结论
 
 **READY FOR REVIEW（代码审查）；BLOCKED（正式集成验收）**。
