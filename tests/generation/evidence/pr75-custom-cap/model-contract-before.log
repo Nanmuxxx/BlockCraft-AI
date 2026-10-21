@@ -1,0 +1,37 @@
+✔ legacy model names fail before reservation/network in all three consumers; no alias rewriting (42.762292ms)
+✖ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (60.899208ms)
+✖ branded paid transport selects the priced default in all three consumers without a model override (64.937917ms)
+✔ explicit invalid environment or constructor model never falls back for a paid transport (28.631042ms)
+✔ ordinary injected offline adapters keep the historical default in all consumers (2.087292ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 3
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 328.7265
+
+✖ failing tests:
+
+test at tests/paid-gateway/model-contract.test.mjs:55:1
+✖ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (60.899208ms)
+  Error [GenerationError]: UPSTREAM_INVALID
+      at Object.generate (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/server/custom-block/provider.mjs:71:13)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/tests/paid-gateway/model-contract.test.mjs:62:58)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'UPSTREAM_INVALID'
+  }
+
+test at tests/paid-gateway/model-contract.test.mjs:69:1
+✖ branded paid transport selects the priced default in all three consumers without a model override (64.937917ms)
+  Error [GenerationError]: UPSTREAM_INVALID
+      at Object.generate (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/server/custom-block/provider.mjs:71:13)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-core-pr75-regression/tests/paid-gateway/model-contract.test.mjs:76:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'UPSTREAM_INVALID'
+  }

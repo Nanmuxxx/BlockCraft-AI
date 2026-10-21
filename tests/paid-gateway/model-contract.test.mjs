@@ -1,5 +1,5 @@
 // Offline integration only: no credentials, native egress, TSX build or execution.
-import test from 'node:test'
+import test, { beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtempSync, chmodSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -105,3 +105,6 @@ test('ordinary injected offline adapters keep the historical default in all cons
   content = { mock: 'inert' }; assert.equal(await custom({ ...options, allowPaid: true }).generate(customRequest()), '{"mock":"inert"}')
   assert.equal(calls, 3)
 })
+
+// Historical policy window for Mock tests only; real timers remain active.
+beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: PRICING.expiresAt - 1 }))

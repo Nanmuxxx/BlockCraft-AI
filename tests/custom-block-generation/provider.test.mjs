@@ -38,7 +38,7 @@ test('mock transport receives fixed HTTPS endpoint, no redirects, bounded JSON r
     assert.equal(init.headers.Authorization, `Bearer ${key}`)
     const body = JSON.parse(init.body)
     assert.equal(body.stream, false)
-    assert.equal(body.max_tokens, 8192)
+    assert.equal(body.max_tokens, 2048)
     assert.deepEqual(body.response_format, { type: 'json_object' })
     assert.equal(body.messages[1].content, request().requirement)
     assert.ok(!init.body.includes(key))

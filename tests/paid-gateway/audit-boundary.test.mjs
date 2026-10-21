@@ -1,15 +1,15 @@
-import test from 'node:test'
+import test, { beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtempSync, chmodSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createPaidTransport } from '../../server/paid-gateway/provider.mjs'
 import { openLedger } from '../../server/paid-gateway/ledger.mjs'
-import { PRICING } from '../../server/paid-gateway/pricing.mjs'
+import { PRICING, POLICY } from '../../server/paid-gateway/pricing.mjs'
 
 const key = 'OFFLINE_AUDIT_PRIVATE_SENTINEL_12345678'
 const url = 'https://api.deepseek.com/chat/completions'
-const init = () => ({ method: 'POST', body: JSON.stringify({ model: PRICING.model, messages: [{ role: 'system', content: 'JSON only' }, { role: 'user', content: 'synthetic test' }], stream: false, response_format: { type: 'json_object' }, max_tokens: 8192 }) })
+const init = () => ({ method: 'POST', body: JSON.stringify({ model: PRICING.model, messages: [{ role: 'system', content: 'JSON only' }, { role: 'user', content: 'synthetic test' }], stream: false, response_format: { type: 'json_object' }, max_tokens: POLICY.maxOutputTokens }) })
 const envelope = model => ({ model, choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: '{}' } }], usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 } })
 function store(t) {
   const dir = mkdtempSync(join(tmpdir(), 'blockcraft-audit-boundary-')); chmodSync(dir, 0o700)
@@ -68,3 +68,6 @@ test('audit callback exception is sanitized; trustworthy usage remains settled w
   assert.equal(ledger.snapshot().entries[0].status, 'settled')
   assert.ok(ledger.snapshot().entries[0].reserveNano > 0)
 })
+
+// Historical policy window for Mock tests only; real timers remain active.
+beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: PRICING.expiresAt - 1 }))

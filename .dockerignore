@@ -18,6 +18,7 @@
 !server/trusted-interactive.mjs
 !server/aiGenerationPrompt.mjs
 !server/aiGenerationQuality.mjs
+!server/studio-launcher.mjs
 !server/mochi-ai/
 !server/mochi-ai/**
 !server/project-export/

@@ -1,0 +1,42 @@
+✔ independent fixed known-answer actual LF state is accepted before listening (79.089875ms)
+✔ independent fixed backslash+n MAC is rejected before any listen or state change (46.425084ms)
+✔ all Studio launches refuse missing ledger before creating ledger, issuer state or authorization (42.579625ms)
+✔ Studio ledger metadata preflight rejects unsafe mode, hardlink, symlink and nonregular file (22.899542ms)
+✔ issuer commits consume+hash before exact Secure cookie, then actual v2 Mock works across restart (148.038125ms)
+✔ five durable attempts including malformed fields survive restart; no recovery or reset (115.942125ms)
+✔ simultaneous redemption issues at most one session; second process cannot lock ledger (67.494792ms)
+✔ grant field order is canonical, live expiry/revocation and fixed scope fail closed (54.94475ms)
+✔ header/path rejects consume no attempt and never reflect credentials (57.239125ms)
+✔ missing/corrupt/unsafe state or missing/invalid ledger refuses startup without resetting state (187.6815ms)
+✔ fault before-open commit 1: no cookie, halted; restart respects committed consumption (98.236875ms)
+✔ fault after-open commit 1: no cookie, halted; restart respects committed consumption (91.88425ms)
+✔ fault before-write commit 1: no cookie, halted; restart respects committed consumption (87.425ms)
+✔ fault after-write commit 1: no cookie, halted; restart respects committed consumption (84.349208ms)
+✔ fault before-file-fsync commit 1: no cookie, halted; restart respects committed consumption (88.399458ms)
+✔ fault after-file-fsync commit 1: no cookie, halted; restart respects committed consumption (96.264667ms)
+✔ fault before-rename commit 1: no cookie, halted; restart respects committed consumption (96.801541ms)
+✔ fault after-rename commit 1: no cookie, halted; restart respects committed consumption (101.50325ms)
+✔ fault before-dir-fsync commit 1: no cookie, halted; restart respects committed consumption (97.655209ms)
+✔ fault after-dir-fsync commit 1: no cookie, halted; restart respects committed consumption (101.852ms)
+✔ fault before-open commit 2: no cookie, halted; restart respects committed consumption (103.740708ms)
+✔ fault after-open commit 2: no cookie, halted; restart respects committed consumption (99.722834ms)
+✔ fault before-write commit 2: no cookie, halted; restart respects committed consumption (98.921375ms)
+✔ fault after-write commit 2: no cookie, halted; restart respects committed consumption (99.364042ms)
+✔ fault before-file-fsync commit 2: no cookie, halted; restart respects committed consumption (103.34325ms)
+✔ fault after-file-fsync commit 2: no cookie, halted; restart respects committed consumption (104.160834ms)
+✔ fault before-rename commit 2: no cookie, halted; restart respects committed consumption (104.02475ms)
+✔ fault after-rename commit 2: no cookie, halted; restart respects committed consumption (90.638875ms)
+✔ fault before-dir-fsync commit 2: no cookie, halted; restart respects committed consumption (87.006791ms)
+✔ fault after-dir-fsync commit 2: no cookie, halted; restart respects committed consumption (86.144583ms)
+✔ shutdown aborts outstanding issuer body before releasing Gateway lifetime lock (89.351542ms)
+✔ body concurrency, 1KiB ceiling, two-second deadline and disconnect are bounded without spending attempts (2075.992208ms)
+✔ issuer session expiry and duplicate cookies deny without extra upstream calls (73.810834ms)
+✔ shutdown during synchronous consume commit retains lock until admitted transition settles (85.220916ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5115.562833

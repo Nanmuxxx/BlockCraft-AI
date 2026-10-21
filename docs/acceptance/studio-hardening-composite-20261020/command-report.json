@@ -1,0 +1,41 @@
+{
+  "result": "Studio command Mock startup smoke PASS",
+  "sourceCommit": "326e961732c74a4f62f9e12a76703788dd585ad3",
+  "sourceTree": "4df7272567cab88f7917b67c13b4c4c845b82de2",
+  "startupCommand": "node --input-type=module -e \"import { startStudioServer } from './server/studio-launcher.mjs'; startStudioServer({host:'0.0.0.0',port:7860}).catch(()=>{console.error('STUDIO_START_REFUSED');process.exitCode=1})\"",
+  "realCalls": 0,
+  "realStateOrKey": false,
+  "scenarios": [
+    {
+      "scenario": "synthetic-preexisting-state-start-health-anonymous",
+      "status": "PASS",
+      "port": 7860,
+      "substitutedPort": false,
+      "bind": "0.0.0.0",
+      "health": 200,
+      "anonymous": 401,
+      "upstreamCalls": 0
+    },
+    {
+      "scenario": "missing-approval",
+      "status": "PASS",
+      "exitCode": 1,
+      "output": "STUDIO_START_REFUSED",
+      "upstreamCalls": 0
+    },
+    {
+      "scenario": "malformed-approval",
+      "status": "PASS",
+      "exitCode": 1,
+      "output": "STUDIO_START_REFUSED",
+      "upstreamCalls": 0
+    },
+    {
+      "scenario": "missing-ledger",
+      "status": "PASS",
+      "exitCode": 1,
+      "output": "STUDIO_START_REFUSED",
+      "upstreamCalls": 0
+    }
+  ]
+}

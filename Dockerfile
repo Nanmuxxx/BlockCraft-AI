@@ -21,6 +21,7 @@ RUN set -eu; \
     cp -R server/.generated /app/runtime-server/.generated; \
     if [ -f server/ai-abort.mjs ]; then cp server/ai-abort.mjs /app/runtime-server/; fi; \
     if [ -d server/paid-gateway ]; then mkdir -p /app/runtime-server/paid-gateway; cp server/paid-gateway/*.mjs /app/runtime-server/paid-gateway/; fi
+RUN cp server/studio-launcher.mjs /app/runtime-server/
 
 FROM node:24-bookworm-slim AS runtime
 WORKDIR /app
@@ -30,6 +31,7 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/runtime-server/ ./server/
 COPY --from=build /app/src/model/appSpec.ts /app/src/model/trustedInteractive.schema.json ./src/model/
 COPY --from=build /app/src/integrations/mochi-ai/protocol.mjs ./src/integrations/mochi-ai/protocol.mjs
+RUN node --input-type=module -e "await import('./server/studio-launcher.mjs')"
 
 USER node
 EXPOSE 7860

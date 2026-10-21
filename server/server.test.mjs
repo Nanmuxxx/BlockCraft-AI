@@ -96,7 +96,7 @@ test('mock valid result uses official endpoint, default model, JSON mode, and ac
       assert.equal(body.model, 'deepseek-v4-flash')
       assert.deepEqual(body.response_format, { type: 'json_object' })
       assert.equal(body.stream, false)
-      assert.equal(body.max_tokens, 8192)
+      assert.equal(body.max_tokens, 2048)
       assert.match(body.messages[0].content, /JSON/)
       assert.match(body.messages[0].content, /export interface AppSpec/)
       assert.equal(body.messages[1].content, '做一个任务管理工具')
@@ -176,6 +176,14 @@ test('timeout aborts an upstream call and returns safe 504', async t => {
   const s = await setup(t, { aiTimeoutMs: 25, fetchImpl: async (_url, { signal }) => new Promise((_resolve, reject) => {
     signal.addEventListener('abort', () => reject(signal.reason), { once: true })
   }) })
+  await errorIs(await s.post(), 504, 'AI_TIMEOUT')
+})
+test('paid gateway budget failures remain service-unavailable and opaque', async t => {
+  const s = await setup(t, { fetchImpl: async () => { throw Object.assign(new Error('private ledger detail'), { code: 'BUDGET_EXHAUSTED' }) } })
+  await errorIs(await s.post(), 503, 'BUDGET_EXHAUSTED')
+})
+test('paid transport timeout is a safe 504 even when the HTTP deadline is longer', async t => {
+  const s = await setup(t, { aiTimeoutMs: 1000, fetchImpl: async () => { throw Object.assign(new Error('bounded transport timer'), { code: 'UPSTREAM_CANCELLED' }) } })
   await errorIs(await s.post(), 504, 'AI_TIMEOUT')
 })
 test('timeout also covers upstream body consumption', async t => {

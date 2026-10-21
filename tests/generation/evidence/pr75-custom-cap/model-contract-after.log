@@ -1,0 +1,13 @@
+✔ legacy model names fail before reservation/network in all three consumers; no alias rewriting (45.43125ms)
+✔ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (73.30825ms)
+✔ branded paid transport selects the priced default in all three consumers without a model override (70.889833ms)
+✔ explicit invalid environment or constructor model never falls back for a paid transport (27.728459ms)
+✔ ordinary injected offline adapters keep the historical default in all consumers (2.293709ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 349.159625
