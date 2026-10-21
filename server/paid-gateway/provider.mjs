@@ -28,13 +28,11 @@ async function read(response, signal) {
 
 /** Sole production egress. No retries, redirects, tools, browser-provided URL,
  * key or model. Call reservation is synchronous and durable before fetch. */
-export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, timeoutMs = POLICY.timeoutMs, onResponse } = {}) {
+export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, timeoutMs = POLICY.timeoutMs, onResponse, reservationStore, concurrencyGate = { active: false } } = {}) {
   ensure(typeof apiKey === 'string' && apiKey.length >= 16 && apiKey.length <= 512 && !/\s/.test(apiKey), 'API_CONFIGURATION')
   ensure(ledger && typeof ledger.reserve === 'function', 'LEDGER_UNAVAILABLE')
   ensure(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= POLICY.timeoutMs, 'TIMEOUT_CONFIGURATION')
-  let active = false
   const transport = async (url, init) => {
-    ensure(!active, 'CONCURRENCY_LIMIT')
     ensure(url === ENDPOINT && init?.method === 'POST', 'EGRESS_DENIED')
     ensure(!init.signal?.aborted, 'CANCELLED')
     let body
@@ -48,8 +46,10 @@ export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, t
     ensure(inputBytes <= POLICY.maxInputBytes, 'INPUT_LIMIT')
     const inputBound = inputBytes + POLICY.framingTokens
     const requestHash = createHash('sha256').update(JSON.stringify(body)).digest('hex')
-    const id = ledger.reserve(inputBound, body.max_tokens, requestHash)
-    active = true
+    reservationStore?.check(body)
+    ensure(!concurrencyGate.active, 'CONCURRENCY_LIMIT')
+    const id = reservationStore ? reservationStore.reserve(body, inputBound, body.max_tokens, requestHash) : ledger.reserve(inputBound, body.max_tokens, requestHash)
+    concurrencyGate.active = true
     const controller = new AbortController()
     const cancel = () => controller.abort()
     init.signal?.addEventListener('abort', cancel, { once: true })
@@ -97,7 +97,7 @@ export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, t
     } finally {
       clearTimeout(timer); controller.abort(); init.signal?.removeEventListener('abort', cancel)
       if (response?.body && !response.body.locked) void response.body.cancel().catch(() => {})
-      active = false
+      concurrencyGate.active = false
     }
   }
   paidTransports.add(transport)

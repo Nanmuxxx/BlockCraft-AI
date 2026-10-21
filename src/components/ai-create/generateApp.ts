@@ -80,7 +80,7 @@ async function requestGeneration(idea: string, signal?: AbortSignal, interactive
   try {
     controller.signal.throwIfAborted()
     const fetching = fetch('/api/ai/generate', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': crypto.randomUUID() },
       credentials: 'same-origin', redirect: 'error',
       body: JSON.stringify({ idea: input, ...(interactive ? { protocol: 'trusted-interactive/1' } : {}) }), signal: controller.signal,
     })
