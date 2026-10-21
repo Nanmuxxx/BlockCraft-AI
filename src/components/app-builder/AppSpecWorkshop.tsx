@@ -12,6 +12,8 @@ import { useInstallLifecycle } from '../../integrations/generated-artifact/useIn
 import { useWorkshopAdapter } from '../../integrations/custom-block-bc/useWorkshopAdapter'
 import { AppSpecInspector } from './AppSpecInspector'
 import { ExportProjectButton } from '../../integrations/project-export/ExportProjectButton'
+import { ProjectJsonControls } from '../../integrations/project-json/ProjectJsonControls'
+import type { RestoredProject } from '../../integrations/project-json/format'
 import { createMochiHost } from '../../integrations/mochi/host'
 import { createHttpPlanProvider, fieldPlanningStatus } from '../../integrations/mochi/httpPlanProvider'
 import { WorkshopMochi, type MochiHost, type WorkshopMochiProps } from '../../integrations/mochi/WorkshopMochi'
@@ -27,7 +29,7 @@ export interface WorkshopPanelMount {
   installation?: GeneratedArtifactUI
 }
 
-export function AppSpecWorkshop({ runtime, renderMochi, installation }: { runtime: AppRuntime } & WorkshopPanelMount) {
+export function AppSpecWorkshop({ runtime, renderMochi, installation, onImportProject }: { runtime: AppRuntime; onImportProject?: (restored: RestoredProject) => void | Promise<void> } & WorkshopPanelMount) {
   const [owner, setOwner] = useState<{ runtime: AppRuntime; host: MochiHost } | null>(null)
   const [planningDisabledReason, setPlanningDisabledReason] = useState<string | undefined>('正在检查字段计划服务…')
   useEffect(() => {
@@ -43,12 +45,12 @@ export function AppSpecWorkshop({ runtime, renderMochi, installation }: { runtim
     return () => { controller.abort(); host.dispose() }
   }, [runtime])
   if (!owner || owner.runtime !== runtime) return null
-  return <MochiWorkshop runtime={runtime} host={owner.host} installation={installation} renderMochi={renderMochi} planningDisabledReason={planningDisabledReason} />
+  return <MochiWorkshop runtime={runtime} host={owner.host} installation={installation} renderMochi={renderMochi} planningDisabledReason={planningDisabledReason} onImportProject={onImportProject} />
 }
 
 /** Internal composition seam for offline integration tests; production uses the wrapper above. */
-export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMochi, installation: suppliedInstallation }: {
-  runtime: AppRuntime; host: MochiHost; planningDisabledReason?: string
+export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMochi, installation: suppliedInstallation, onImportProject }: {
+  runtime: AppRuntime; host: MochiHost; planningDisabledReason?: string; onImportProject?: (restored: RestoredProject) => void | Promise<void>
 } & WorkshopPanelMount) {
   const root = useRef<HTMLElement>(null)
   const installation = useMemo(() => suppliedInstallation ?? createGeneratedArtifactUI(runtime.customProject), [runtime, suppliedInstallation])
@@ -81,7 +83,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
         <button type="button" aria-label="B 模式 · 编辑积木" aria-pressed={mode === 'blocks'} aria-controls="generated-blocks" onClick={() => setMode('blocks')}><span>B</span> 功能积木</button>
         <button type="button" aria-label="C 模式 · 运行应用" aria-pressed={mode === 'run'} aria-controls="generated-preview" onClick={() => setMode('run')}><span>C</span> 应用预览</button>
       </div>
-      <ExportProjectButton owner={runtime.customProject} />
+      <div className="workshop__project-actions">{onImportProject && <ProjectJsonControls owner={runtime.customProject} onImportProject={onImportProject} />}<ExportProjectButton owner={runtime.customProject} /></div>
     </header>
     <div className="workshop__body">
       <nav className="workshop__nav" aria-label="工坊导航">
