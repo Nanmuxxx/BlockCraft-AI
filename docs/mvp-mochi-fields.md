@@ -6,7 +6,6 @@
 
 ```sh
 npm ci
-npm --prefix server ci
 npm run dev:mvp-fields
 ```
 
