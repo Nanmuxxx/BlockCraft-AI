@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "test:layout-order": "node --test tests/custom-block-bc/layout-order.test.cjs tests/custom-block-bc/adapter.test.cjs",
+    "test:layout-order:browser": "node tests/layout-order/browser.cjs",
     "dev": "vite",
     "dev:export": "node tools/project-zip-export/prepare.mjs && vite --mode local-export --host 127.0.0.1 --port 5173 --strictPort",
     "test:workshop-export": "node tools/project-zip-export/prepare.mjs && node --test tests/workshop-export/*.test.*",

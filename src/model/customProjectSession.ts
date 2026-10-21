@@ -1,4 +1,5 @@
 import type { ProjectState } from './appSpec'
+import { syncLayoutOrder } from './layoutOrder'
 import type { RuntimeResult } from './appRuntime'
 import type { ArtifactReference, ArtifactRegistry, CustomBlockInstance, CustomProject, RegisteredArtifact } from '../custom-block'
 import { assertArtifactReference, migrateProjectState, parseCustomProject, resolveArtifact } from '../custom-block'
@@ -121,6 +122,10 @@ export function createProjectSession(initial: ProjectState, onCustomCommit: () =
       const renderOrder = expected.renderOrder.filter(item => item.kind === 'custom' || ids.delete(item.id))
       ids.forEach(id => renderOrder.push({ kind: 'builtin', id }))
       const candidate = { ...expected, revision: nextRevision, base: nextBase, renderOrder }
+      if (Object.entries(next.blockPositions).some(([id, point]) => {
+        const previous = expected.base.blockPositions[id]
+        return !previous || previous.x !== point.x || previous.y !== point.y
+      })) syncLayoutOrder(candidate)
       effects.set(candidate, beforePublish)
       try { return owner.compareAndSwap(expected, candidate, authorization) }
       finally { effects.delete(candidate) }
