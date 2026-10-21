@@ -10,8 +10,9 @@ export const POLICY = Object.freeze({
   approval: 'MVP-FIELDS-USER-5-CNY-20261021',
   stopNano: 5_000_000_000, absoluteNano: 5_000_000_000,
   // Deliberately stricter than the authorized CNY 5 stop: at most CNY 1 reserved and
-  // six attempts. An uncertain request halts all automatic calls immediately.
-  conservativeNano: 1_000_000_000, maxCalls: 6, maxOutputTokens: 8192,
+  // eight attempts, including one acceptance rerun on the SAME ledger.
+  // An uncertain request halts all automatic calls immediately.
+  conservativeNano: 1_000_000_000, maxCalls: 8, maxOutputTokens: 8192,
   maxInputBytes: 65536, framingTokens: 8192, timeoutMs: 30000,
   maxResponseBytes: 262144, retries: 0, concurrency: 1,
 })

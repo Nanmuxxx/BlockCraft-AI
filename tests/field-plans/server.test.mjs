@@ -108,7 +108,7 @@ test('MVP pricing approval never permits more than user-authorized CNY 5', () =>
   assert.equal(POLICY.absoluteNano, 5_000_000_000)
   assert.ok(POLICY.stopNano <= POLICY.absoluteNano)
   assert.ok(POLICY.conservativeNano <= POLICY.stopNano)
-  assert.equal(POLICY.maxCalls, 6); assert.equal(POLICY.retries, 0)
+  assert.equal(POLICY.maxCalls, 8); assert.equal(POLICY.retries, 0)
   assert.equal(PRICING.model, 'deepseek-flash'); assert.equal(PRICING.verifiedDate, '2026-10-21')
 })
 test('field endpoint shares the paid gateway reservation and stops before network when budget is exhausted', async t => {

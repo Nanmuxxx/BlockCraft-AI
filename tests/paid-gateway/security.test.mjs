@@ -95,7 +95,7 @@ test('durable call cap survives reopen and reservations never refunded', t => {
   assert.throws(() => store.reserve(100, 8192, 'hash'), { code: 'BUDGET_EXHAUSTED' })
   store.close(); const other = openLedger(path); t.after(() => other.close())
   assert.throws(() => other.reserve(100, 8192, 'hash'), { code: 'BUDGET_EXHAUSTED' })
-  assert.equal(other.snapshot().entries.reduce((s, e) => s + e.reserveNano, 0), 6 * price(100, 8192))
+  assert.equal(other.snapshot().entries.reduce((s, e) => s + e.reserveNano, 0), POLICY.maxCalls * price(100, 8192))
 })
 test('conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10', t => {
   const { store } = ledger(t)

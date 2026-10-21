@@ -28,13 +28,16 @@ async function run() {
       context = await browser.newContext({ viewport: { width, height: 1000 }, recordVideo: { dir: output }, serviceWorkers: 'block' })
       const page = await context.newPage()
       page.on('pageerror', e => report.errors.push(e.message))
-      page.on('response', async r => {
-        if (r.url().endsWith('/api/mochi-plan') || r.url().endsWith('/api/ai/generate')) {
-          try { const body = await r.json(); report.modelResponses.push({ path: new URL(r.url()).pathname, status: r.status(), source: body.source, candidate: body.candidate }) } catch {}
-        }
-      })
+      const capture = async response => {
+        const body = await response.json()
+        report.modelResponses.push({ path: new URL(response.url()).pathname, status: response.status(), source: body.source, candidate: body.candidate })
+      }
       await page.goto(origin + '/__field-plans' + (live ? '?generate' : ''))
-      if (live) await page.getByRole('button', { name: '生成社团报名应用', exact: true }).click()
+      if (live) {
+        const response = page.waitForResponse(r => r.url().endsWith('/api/ai/generate'))
+        await page.getByRole('button', { name: '生成社团报名应用', exact: true }).click()
+        await capture(await response)
+      }
       await expect.poll(() => page.evaluate(() => Boolean(window.fieldQA?.runtime)), { timeout: 40000 }).toBe(true)
       const snapshot = () => page.evaluate(() => ({ base: window.fieldQA.runtime.getSnapshot(), project: window.fieldQA.runtime.customProject.getSnapshot() }))
       const initial = await snapshot(), form = initial.base.spec.blocks.find(b => b.type === 'form')
@@ -75,7 +78,10 @@ async function run() {
       ]
       for (const [action, prompt] of prompts) {
         const before = await snapshot()
-        await input.fill(prompt); await page.locator('.mochi-ai').getByRole('button', { name: '发送', exact: true }).click()
+        await input.fill(prompt)
+        const response = page.waitForResponse(r => r.url().endsWith('/api/mochi-plan'))
+        await page.locator('.mochi-ai').getByRole('button', { name: '发送', exact: true }).click()
+        await capture(await response)
         const preview = page.getByRole('region', { name: '修改计划预览' })
         await expect(preview).toBeVisible({ timeout: 40000 })
         assert.deepEqual(await snapshot(), before, 'preview must not write project')
@@ -115,7 +121,7 @@ async function run() {
     report.budget = await fetch(origin + '/api/mvp-audit').then(r => r.json())
     if (live) {
       assert.equal(report.budget.source, 'deepseek'); assert.equal(report.budget.halted, false)
-      assert.ok(report.budget.calls >= 4 && report.budget.calls <= 6)
+      assert.ok(report.budget.calls >= 4 && report.budget.calls <= report.budget.maxCalls)
       assert.ok(report.budget.reservedCny <= 1 && report.budget.estimatedCny <= 5)
       assert.equal(report.modelResponses.filter(r => r.path === '/api/mochi-plan' && r.source === 'deepseek' && r.status === 200).length, 3)
     }

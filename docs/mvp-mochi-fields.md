@@ -15,7 +15,7 @@ npm run dev:mvp-fields
 
 ## 本次真实调用预算
 
-用户授权上限为人民币 5 元，启动器进一步限制为最多预留 1 元、6 次调用、并发 1、无自动重试。所有 worktree 共用 Git common directory 下的私有持久化账本；每次请求先落盘预留，结果不确定即停止后续调用。不能重置或复制账本获取额外额度。
+用户授权上限为人民币 5 元，启动器进一步限制为最多预留 1 元、8 次调用（包含一次验收报告修复后的完整复验）、并发 1、无自动重试。所有 worktree 共用 Git common directory 下的私有持久化账本；每次请求先落盘预留，结果不确定即停止后续调用。不能重置或复制账本获取额外额度。
 
 价格来源：[DeepSeek 官方定价](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)。本次核价有效期到 2026-10-22 00:00（UTC+8）；之后需重新核价和授权运行配置。报告的费用是按照 usage 和缓存未命中峰值价格计算的保守估算，不是供应商账单。
 
@@ -32,3 +32,11 @@ NODE_PATH=/path/to/playwright/node_modules npm run test:field-plans:browser
 真实模型验收使用正式 Workshop、HTTP provider、计划宿主和 runtime。先运行 `npm --prefix server run build`，再启动 `node tools/mvp-fields/serve.mjs --live --fixture`，最后设置其输出的 `MVP_ORIGIN` 运行 `node tests/field-plans/browser.cjs --live`。验收入口会真实生成社团报名应用，并执行新增、隐藏、恢复三次字段方案。浏览器报告、预览截图、C 模式截图和视频写入 `.cache/field-plans/live/`。
 
 真实验收中还会拖动表单并核对 C 模式顺序，因此完整演示需同时集成 B/C 顺序持久化 PR。字段 PR 的离线桌面和窄屏浏览器测试可独立运行。
+
+## 2026-10-21 真实集成验收
+
+在 main `4a95cae` 的独立排序与字段分支组合上，使用 `deepseek-flash` 真实生成社团报名应用，再通过 Mochi 依次新增、隐藏、恢复备注字段。三次字段响应均为 `source: deepseek`；预览不写入，确认后生效，已有记录、B/C 展示顺序和项目 JSON 往返均通过。最终浏览器报告 `passed: true`，无页面错误。
+
+包含一次证据采集修复后的完整复验，共 8 次真实调用，全部 settled；usage 按峰值单价估算 CNY 0.019736，累计预留 CNY 0.411046，未熔断，未超过用户授权 CNY 5。费用为保守估算，不是供应商账单。临时服务已正常停止，账本保留，8 次调用额度已用完。
+
+最终集成回归：原有 205/205、排序 33/33、字段/宿主/预算 103/103、server 37/37，构建成功。完整浏览器报告、截图和 WebM 保留于集成 worktree 的 `.cache/field-plans/live/`。
