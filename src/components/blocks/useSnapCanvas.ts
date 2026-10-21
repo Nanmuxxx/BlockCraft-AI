@@ -7,11 +7,12 @@ interface Input {
   saved: Readonly<Record<string, BlockPosition | undefined>>
   localIds: readonly string[]
   onMove: (id: string, position: BlockPosition) => void
+  onLayout?: (positions: Readonly<Record<string, BlockPosition>>) => void
   onSelect: (id: string) => void
   disabled: boolean
 }
 
-export function useSnapCanvas({ ids, saved, localIds, onMove, onSelect, disabled }: Input) {
+export function useSnapCanvas({ ids, saved, localIds, onMove, onLayout, onSelect, disabled }: Input) {
   const canvasRef = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState(720)
   const [local, setLocal] = useState<Scene>({})
@@ -46,7 +47,8 @@ export function useSnapCanvas({ ids, saved, localIds, onMove, onSelect, disabled
   const commit = (next: Scene, moved: readonly string[]) => {
     const normalized = Object.fromEntries(ids.map((id) => [id, { x: next[id].x / board.width, y: next[id].y / board.height }]))
     setLocal(Object.fromEntries(localIds.map((id) => [id, normalized[id]])))
-    moved.forEach((id) => onMove(id, normalized[id]))
+    if (onLayout) onLayout(normalized)
+    else moved.forEach((id) => onMove(id, normalized[id]))
   }
   const startDrag = (event: PointerEvent<HTMLButtonElement>, id: string) => {
     if (event.button !== 0 || dragRef.current || disabled) return

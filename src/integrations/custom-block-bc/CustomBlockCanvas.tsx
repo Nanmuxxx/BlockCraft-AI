@@ -24,6 +24,11 @@ export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
     ids: items.map(item => item.id),
     saved: { ...snapshot.base.blockPositions, ...snapshot.custom.positions }, localIds: [], disabled: authorization.readOnly,
     onSelect: id => { gesture.current = { snapshot: adapter.getSnapshot(), authorization: adapter.getAuthorization() }; onSelect(id); setError('') },
+    // Persist the resolved scene too: a narrow board can reflow saved positions.
+    // The batch owner commits all coordinates and reading order in one revision.
+    onLayout: positions => {
+      items.forEach(item => queueMove(gesture.current.snapshot, item.kind, item.id, positions[item.id], gesture.current.authorization))
+    },
     onMove: (id, position) => {
       const item = items.find(item => item.id === id)
       if (item) queueMove(gesture.current.snapshot, item.kind, id, position, gesture.current.authorization)
@@ -77,7 +82,7 @@ export function CustomBlockCanvas({ adapter, selectedId, onSelect }: {
         </button>
       })}
     </div>
-    <div className="block-canvas-bottom"><p className="block-canvas-note" id={helpId}>拖动到积木上方或下方即可拼接。拼接只调整布局。</p><span>自由搭建</span></div>
+    <div className="block-canvas-bottom"><p className="block-canvas-note" id={helpId}>拖动到积木上方或下方即可拼接；保存后，应用预览按从上到下、同高从左到右展示。</p><span>自由搭建</span></div>
     <p className="block-canvas-feedback" role="status" aria-live="polite">{snap.message}</p>
     {error && <p className="custom-block-bc__error" role="alert">{error}</p>}
   </section>

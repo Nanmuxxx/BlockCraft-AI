@@ -1,4 +1,5 @@
 import type { BlockSpec } from '../../model/appSpec'
+import { syncLayoutOrder } from '../../model/layoutOrder'
 import type { RuntimeResult } from '../../model/appRuntime'
 import type { ArtifactReference, ArtifactRegistry, CustomBlockInstance, CustomBlockManifest, CustomProject } from '../../custom-block'
 import { assertArtifactReference, parseCustomProject, resolveArtifact } from '../../custom-block'
@@ -108,6 +109,7 @@ export async function createCustomBlockBCAdapter(owner: ProjectRevisionOwner, re
         const positions = move.kind === 'custom' ? next.custom.positions : next.base.blockPositions
         positions[move.id] = cloneJson(move.position) as { x: number; y: number }
       }
+      syncLayoutOrder(next)
     }, authorization),
   })
 }
