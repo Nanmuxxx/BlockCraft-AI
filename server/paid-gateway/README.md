@@ -1,5 +1,7 @@
 # Controlled Phase 2 DeepSeek gateway
 
+Current MVP approval (2026-10-21): use `tools/mvp-fields/serve.mjs --live` as described in [the field MVP guide](../../docs/mvp-mochi-fields.md). The authorization is CNY 5 total, further limited to CNY 1 reserved and eight attempts across the same canonical ledger, including one full acceptance rerun after fixing browser evidence collection. No uncertain calls may be retried. The Phase 2 operator flow below is historical and does not grant a separate allowance.
+
 Only the explicitly authorized operator may run `node tools/real-deepseek/evaluate.mjs --live`. The ordinary server has no generation identity adapter and denies legacy v1 and v2 before Provider access. Origin/CORS never grant identity. The local evaluator generates a random 256-bit bearer token, keeps it in server memory, and injects it only in its server-side loopback Vite proxy. No token or API key enters the webpage bundle, URL, report or Git. No proxy listener is exposed beyond IPv4 loopback. Mochi remains disabled and CustomBlock native egress is blocked. Trusted injected transports are server-code configuration, not a browser-controlled permission.
 
 The evaluator reads the existing primary repository `server/.env` in process, never prints its content, and uses only `DEEPSEEK_API_KEY`. It fixes model `deepseek-flash` and the official HTTPS completion endpoint. It does not modify production or Docker configuration. Never deploy this local evaluator/proxy as a public service.

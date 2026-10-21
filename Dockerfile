@@ -17,6 +17,7 @@ RUN npm run build && npm --prefix server run build
 RUN set -eu; \
     mkdir -p /app/runtime-server; \
     cp server/index.mjs server/trusted-interactive.mjs server/aiGenerationPrompt.mjs server/aiGenerationQuality.mjs /app/runtime-server/; \
+    if [ -f server/mochi-plan.mjs ]; then cp server/mochi-plan.mjs /app/runtime-server/; fi; \
     cp -R server/mochi-ai /app/runtime-server/mochi-ai; \
     cp -R server/.generated /app/runtime-server/.generated; \
     if [ -f server/ai-abort.mjs ]; then cp server/ai-abort.mjs /app/runtime-server/; fi; \
