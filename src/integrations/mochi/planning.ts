@@ -22,6 +22,7 @@ export function toMinimalPlanInput(request: PlanRequest) {
     requestId: request.requestId, baseRevision: context.revision,
     prompt: request.prompt,
     block: { id: block.id, name: block.name, type: block.type, fieldIds: [...(block.fieldIds ?? [])] },
-    entity: { id: entity.id, name: entity.name, fields: entity.fields.map(({ id, name, type }) => ({ id, name, type })) },
+    entity: { id: entity.id, name: entity.name, fields: entity.fields.map(({ id, name, type }) => ({ id, name, type,
+      required: request.snapshot.spec.entities.find(item => item.id === entity.id)!.fields.find(field => field.id === id)!.required })) },
   }
 }

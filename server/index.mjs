@@ -9,6 +9,7 @@ import { readFile, realpath, stat } from 'node:fs/promises'
 import { extname, isAbsolute, relative, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createMochiIntegration } from './mochi-ai/index.mjs'
+import { createMochiPlanHandler } from './mochi-plan.mjs'
 import { assertAppSpec } from './.generated/appSpecValidation.js'
 import { buildGenerationMessages } from './aiGenerationPrompt.mjs'
 import { checkGeneratedApplication } from './aiGenerationQuality.mjs'
@@ -238,6 +239,7 @@ export function createAppServer({
   mochi,
   interactive,
   generationAccess,
+  fieldPlanning,
 } = {}) {
   if (publicOrigin) {
     const origin = new URL(publicOrigin)
@@ -248,11 +250,13 @@ export function createAppServer({
   // Trusted deployment injection only; CLI/env cannot manufacture access or
   // money authorization. Shared existing key/model/fetch; disabled by default.
   const mochiAi = createMochiIntegration({ ...mochi, apiKey, model, fetchImpl, timeoutMs: aiTimeoutMs })
+  const handleFieldPlan = createMochiPlanHandler({ ...fieldPlanning, apiKey, model, fetchImpl, timeoutMs: aiTimeoutMs })
   const admitInteractive = createInteractiveGate(interactive)
   const clients = new Map()
   let inFlight = 0
   const server = createServer(async (req, res) => {
     try {
+      if (await handleFieldPlan(req, res)) return
       if (await mochiAi.handle(req, res)) return
       const pathname = requestPath(req.url)
       if (pathname === '/api/health' && req.method === 'GET') {

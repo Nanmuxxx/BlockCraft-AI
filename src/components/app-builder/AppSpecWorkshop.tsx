@@ -13,7 +13,7 @@ import { useWorkshopAdapter } from '../../integrations/custom-block-bc/useWorksh
 import { AppSpecInspector } from './AppSpecInspector'
 import { ExportProjectButton } from '../../integrations/project-export/ExportProjectButton'
 import { createMochiHost } from '../../integrations/mochi/host'
-import { AI_MODIFICATION_DISABLED, unavailablePlanProvider } from '../../integrations/mochi/planning'
+import { createHttpPlanProvider, fieldPlanningStatus } from '../../integrations/mochi/httpPlanProvider'
 import { WorkshopMochi, type MochiHost, type WorkshopMochiProps } from '../../integrations/mochi/WorkshopMochi'
 import { MochiConversationPanel } from '../../integrations/mochi-ai/MochiConversationPanel'
 import '../workshop.css'
@@ -29,15 +29,21 @@ export interface WorkshopPanelMount {
 
 export function AppSpecWorkshop({ runtime, renderMochi, installation }: { runtime: AppRuntime } & WorkshopPanelMount) {
   const [owner, setOwner] = useState<{ runtime: AppRuntime; host: MochiHost } | null>(null)
+  const [planningDisabledReason, setPlanningDisabledReason] = useState<string | undefined>('正在检查字段计划服务…')
   useEffect(() => {
     // Acquire only after commit. StrictMode cleanup disposes this instance; replay
     // acquires a new live one. B/C never acquires another host or Runtime.
-    const host = createMochiHost(runtime, unavailablePlanProvider)
+    const host = createMochiHost(runtime, createHttpPlanProvider())
+    const controller = new AbortController()
+    setPlanningDisabledReason('正在检查字段计划服务…')
+    void fieldPlanningStatus(controller.signal).then(enabled => {
+      if (!controller.signal.aborted) setPlanningDisabledReason(enabled ? undefined : '字段计划服务尚未启用，请启动已授权的本地 DeepSeek 服务。')
+    }).catch(() => { if (!controller.signal.aborted) setPlanningDisabledReason('字段计划服务不可用，请检查本地服务后重新打开项目。') })
     setOwner({ runtime, host })
-    return () => host.dispose()
+    return () => { controller.abort(); host.dispose() }
   }, [runtime])
   if (!owner || owner.runtime !== runtime) return null
-  return <MochiWorkshop runtime={runtime} host={owner.host} installation={installation} renderMochi={renderMochi} planningDisabledReason={AI_MODIFICATION_DISABLED} />
+  return <MochiWorkshop runtime={runtime} host={owner.host} installation={installation} renderMochi={renderMochi} planningDisabledReason={planningDisabledReason} />
 }
 
 /** Internal composition seam for offline integration tests; production uses the wrapper above. */

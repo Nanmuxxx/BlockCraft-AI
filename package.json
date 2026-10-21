@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "test:field-plans": "npm --prefix server run build && node server/custom-block/build-protocol.mjs && node --test tests/field-plans/*.test.* src/integrations/mochi/host.test.cjs tests/paid-gateway/*.test.*",
+    "test:field-plans:browser": "npm --prefix server run build && node tests/field-plans/browser.cjs",
+    "dev:mvp-fields": "npm --prefix server run build && node tools/mvp-fields/serve.mjs --live",
     "dev": "vite",
     "dev:export": "node tools/project-zip-export/prepare.mjs && vite --mode local-export --host 127.0.0.1 --port 5173 --strictPort",
     "test:workshop-export": "node tools/project-zip-export/prepare.mjs && node --test tests/workshop-export/*.test.*",

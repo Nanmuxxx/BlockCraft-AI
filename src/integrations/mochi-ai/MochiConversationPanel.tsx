@@ -56,6 +56,6 @@ function ConversationView({ host, conversation, connectionError }: { host: Conve
       <button type="button" disabled={state.busy} onClick={() => act(() => conversation.refreshStatus())}>检查连接</button>
     </form>
     {(state.error || actionError || connectionError) && <p role="status">{state.error?.message || actionError || connectionError}</p>}
-    <small>这里只提供解释、建议和定位，不会修改应用。应用修改计划尚未接通。</small>
+    <small>这里提供解释、建议和定位。表单字段修改请使用上方 Mochi 修改计划，并在预览后确认。</small>
   </section>
 }
