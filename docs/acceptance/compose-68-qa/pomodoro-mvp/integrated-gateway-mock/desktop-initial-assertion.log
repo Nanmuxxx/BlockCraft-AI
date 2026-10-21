@@ -1,0 +1,18 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+429 !== 409
+
+    at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-pomodoro-mvp/docs/acceptance/compose-68-qa/pomodoro-mvp/integrated-gateway-mock/gateway-browser.mjs:58:120 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 429,
+  expected: 409,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.22.0

@@ -1,4 +1,4 @@
-import test from 'node:test'
+import test, { beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, chmodSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -142,3 +142,6 @@ test('exclusive lease, private permissions, corrupted ledger and unresolved rese
   writeFileSync(path, '{bad', { mode: 0o600 }); assert.throws(() => openLedger(path)); assert.equal(existsSync(path + '.lock'), false)
   chmodSync(path, 0o644); assert.throws(() => openLedger(path), { code: 'LEDGER_PERMISSIONS' })
 })
+
+// Historical policy window for Mock tests only; real timers remain active.
+beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-10-19T12:00:00+08:00') }))

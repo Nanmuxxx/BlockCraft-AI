@@ -1,0 +1,11 @@
+✔ local paid startup refuses expired and over-cap Gateway profiles before touching runtime inputs (0.411291ms)
+✔ owner launcher requires explicit approval and rejects an explicitly expired profile (0.185292ms)
+✔ private identity state persists across startup without replacing the binding key (5.563792ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 52.59075

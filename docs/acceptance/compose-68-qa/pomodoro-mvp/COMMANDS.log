@@ -1,0 +1,14 @@
+# Environment
+Node v24.22.0; Chromium 156.0.8078.4; macOS POSIX local; REAL_MODEL_CALLS=0; paid API=0; external requests=0.
+# Dependency setup (node_modules ignored, no source mutation)
+npm ci --ignore-scripts                         # root PASS (26 packages)
+npm --prefix server run build                    # PASS
+# Deterministic unit/schema/runtime checks
+npm run test:trusted-pomodoro-ui                 # 2/2 PASS
+node --test src/model/appRuntime.test.cjs src/model/appSpec.test.cjs  # 53/53 PASS
+node --test tests/trusted-interactive/*.test.*   # 31/31 PASS
+node --test tests/generation/principal-entry.test.mjs tests/generation/principal-gateway-http.test.mjs # 14/14 PASS
+# Real local HTTP + Chromium, provider fetch is Mock fixture only
+NODE_PATH=/Users/nanmuxun/BlockAI/reports/workshop-pr51-main-20261019/browser-runtime/node_modules node tests/trusted-interactive/browser.cjs # 2 viewports PASS; fixtureCalls=8; paidCalls=0
+NODE_PATH=/Users/nanmuxun/BlockAI/reports/workshop-pr51-main-20261019/browser-runtime/node_modules TRUSTED_UI_EVIDENCE=$PWD/docs/acceptance/compose-68-qa/pomodoro-mvp/browser node tests/trusted-pomodoro-ui/browser.cjs # 2 viewports PASS
+NODE_PATH=/Users/nanmuxun/BlockAI/reports/workshop-pr51-main-20261019/browser-runtime/node_modules TRUSTED_UI_RACE_EVIDENCE=$PWD/docs/acceptance/compose-68-qa/pomodoro-mvp/races node tests/trusted-pomodoro-ui/races.browser.cjs # 2 viewports PASS

@@ -1,0 +1,10 @@
+repository_head=d6f2cb4f110d22f665690e3af1d818249cc03b99
+base=4a95cae50f772cd242d932cdbd93366381d1df74
+node=v24.22.0
+npm=11.19.1
+platform=local POSIX Mac
+provider=controlled Mock only
+real_calls=0
+clock=native current clock; no historical-clock injection
+command=node --test tests/paid-gateway/*.test.mjs
+result=41/41 PASS exit 0

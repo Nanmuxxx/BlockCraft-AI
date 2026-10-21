@@ -8,7 +8,7 @@ import { cases } from './fixtures.mjs'
 test('existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure', async t => {
   let candidate
   let upstreamCalls = 0
-  const server = createAppServer({ generationAccess: () => true, apiKey: 'offline-test-key', fetchImpl: async (url, options) => {
+  const server = createAppServer({ requestsPerMinute: 20, generationAccess: () => true, apiKey: 'offline-test-key', fetchImpl: async (url, options) => {
     upstreamCalls++
     // This fake fetch NEVER makes an upstream request.
     assert.equal(url, 'https://api.deepseek.com/chat/completions')
@@ -41,7 +41,7 @@ test('existing route accepts variable offline AppSpecs unchanged, keeps response
   assert.deepEqual(await failed.json(), { error: { code: 'AI_INVALID_SPEC', message: 'AI 结果不符合 AppSpec 协议，请重试。' } })
   candidate = cases.find(c => c.id === 'movie-log')
   assert.deepEqual(await (await post()).json(), candidate.spec)
-  assert.equal(upstreamCalls, 10)
+  assert.equal(upstreamCalls, cases.length + 3)
 })
 
 for (const [name, mutate] of [
