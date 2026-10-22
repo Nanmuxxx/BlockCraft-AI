@@ -1,0 +1,119 @@
+✖ same principal/key is single-use concurrently and remains claimed after restart (47.627333ms)
+✖ same principal/key with different payload conflicts without a second reservation (43.351917ms)
+✔ invalid identity or idempotency key fails closed before claim and reservation (33.895083ms)
+✔ claim-store creation failure and corruption happen before any reservation (50.840083ms)
+✔ claim persistence failure poisons the sidecar before reservation and later retries (33.860292ms)
+✖ capacity and binding-key mismatch fail closed before reserve (41.440041ms)
+✖ unknown outcome keeps claim and ledger halt across restart (42.215333ms)
+✖ a second handle cannot retain stale claims; close/reopen reloads settled claims (40.89325ms)
+✖ directory-wide ownership excludes different ledgers, aliases and another process (121.171209ms)
+✔ ledger close cannot transfer sidecar ownership; stale sidecar locks deny startup (50.1185ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 4
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 546.521083
+
+✖ failing tests:
+
+test at tests/paid-gateway/idempotency-sidecar.test.mjs:31:1
+✖ same principal/key is single-use concurrently and remains claimed after restart (47.627333ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:39:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/paid-gateway/idempotency-sidecar.test.mjs:58:1
+✖ same principal/key with different payload conflicts without a second reservation (43.351917ms)
+  Error: PRICING_EXPIRED
+      at ensure (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/pricing.mjs:21:60)
+      at Object.reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/ledger.mjs:59:7)
+      at Object.reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/idempotency-sidecar.mjs:122:27)
+      at reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:28:16)
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:62:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    code: 'PRICING_EXPIRED'
+  }
+
+test at tests/paid-gateway/idempotency-sidecar.test.mjs:113:1
+✖ capacity and binding-key mismatch fail closed before reserve (41.440041ms)
+  Error: PRICING_EXPIRED
+      at ensure (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/pricing.mjs:21:60)
+      at Object.reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/ledger.mjs:59:7)
+      at Object.reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/idempotency-sidecar.mjs:122:27)
+      at reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:28:16)
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:117:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    code: 'PRICING_EXPIRED'
+  }
+
+test at tests/paid-gateway/idempotency-sidecar.test.mjs:130:1
+✖ unknown outcome keeps claim and ledger halt across restart (42.215333ms)
+  Error: PRICING_EXPIRED
+      at ensure (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/pricing.mjs:21:60)
+      at Object.reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/ledger.mjs:59:7)
+      at Object.reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/idempotency-sidecar.mjs:122:27)
+      at reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:28:16)
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:134:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    code: 'PRICING_EXPIRED'
+  }
+
+test at tests/paid-gateway/idempotency-sidecar.test.mjs:148:1
+✖ a second handle cannot retain stale claims; close/reopen reloads settled claims (40.89325ms)
+  Error: PRICING_EXPIRED
+      at ensure (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/pricing.mjs:21:60)
+      at Object.reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/ledger.mjs:59:7)
+      at Object.reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/idempotency-sidecar.mjs:122:27)
+      at reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:28:16)
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:153:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    code: 'PRICING_EXPIRED'
+  }
+
+test at tests/paid-gateway/idempotency-sidecar.test.mjs:168:1
+✖ directory-wide ownership excludes different ledgers, aliases and another process (121.171209ms)
+  Error: PRICING_EXPIRED
+      at ensure (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/pricing.mjs:21:60)
+      at Object.reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/ledger.mjs:59:7)
+      at Object.reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/server/paid-gateway/idempotency-sidecar.mjs:122:27)
+      at reserve (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:28:16)
+      at TestContext.<anonymous> (file:///Users/nanmuxun/BlockAI/BlockCraft-AI-security-live-qa/tests/paid-gateway/idempotency-sidecar.test.mjs:189:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    code: 'PRICING_EXPIRED'
+  }

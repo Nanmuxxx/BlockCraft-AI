@@ -1,0 +1,18 @@
+✔ same principal/key is single-use concurrently and remains claimed after restart (77.266167ms)
+✔ same principal/key with different payload conflicts without a second reservation (50.346833ms)
+✔ invalid identity or idempotency key fails closed before claim and reservation (33.466042ms)
+✔ claim-store creation failure and corruption happen before any reservation (51.09225ms)
+✔ claim persistence failure poisons the sidecar before reservation and later retries (33.927167ms)
+✔ capacity and binding-key mismatch fail closed before reserve (69.5605ms)
+✔ unknown outcome keeps claim and ledger halt across restart (74.432083ms)
+✔ a second handle cannot retain stale claims; close/reopen reloads settled claims (64.04325ms)
+✔ directory-wide ownership excludes different ledgers, aliases and another process (147.375125ms)
+✔ ledger close cannot transfer sidecar ownership; stale sidecar locks deny startup (50.028208ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 694.855125

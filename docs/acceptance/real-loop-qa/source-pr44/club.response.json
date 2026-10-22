@@ -1,0 +1,17 @@
+{
+  "model": "deepseek-flash",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "message": {
+        "role": "assistant",
+        "content": "{\"version\":1,\"id\":\"club-registration\",\"name\":\"社团报名系统\",\"entities\":[{\"id\":\"applicant\",\"name\":\"报名记录\",\"fields\":[{\"id\":\"name\",\"name\":\"姓名\",\"required\":true,\"type\":\"text\"},{\"id\":\"department\",\"name\":\"意向部门\",\"required\":true,\"type\":\"select\",\"options\":[\"技术部\",\"宣传部\",\"策划部\"]},{\"id\":\"interview\",\"name\":\"是否参加面试\",\"required\":true,\"type\":\"boolean\"}]}],\"blocks\":[{\"id\":\"applicant-form\",\"name\":\"填写报名\",\"type\":\"form\",\"fieldIds\":[\"name\",\"department\",\"interview\"]},{\"id\":\"applicant-list\",\"name\":\"报名管理\",\"type\":\"list\",\"fieldIds\":[\"name\",\"department\",\"interview\"]},{\"id\":\"applicant-count\",\"name\":\"报名总人数\",\"type\":\"metric\",\"aggregation\":\"count\"}],\"relations\":[{\"id\":\"rel-form\",\"type\":\"dataBinding\",\"blockId\":\"applicant-form\",\"entityId\":\"applicant\"},{\"id\":\"rel-list\",\"type\":\"dataBinding\",\"blockId\":\"applicant-list\",\"entityId\":\"applicant\"},{\"id\":\"rel-count\",\"type\":\"dataBinding\",\"blockId\":\"applicant-count\",\"entityId\":\"applicant\"}]}"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 1401,
+    "completion_tokens": 253,
+    "total_tokens": 1654
+  }
+}

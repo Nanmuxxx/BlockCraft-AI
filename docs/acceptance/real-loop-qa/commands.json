@@ -1,0 +1,104 @@
+{
+  "head": "8cfa37f5112adaab1e0adbb4cb4086240111d436",
+  "node": "v24.22.0",
+  "startedAt": "2026-10-19T13:55:00.411Z",
+  "realModelCalls": 0,
+  "sourceChanges": "?? docs/acceptance/real-loop-qa/\n?? tests/generation/real-loop-qa.cjs\n?? tests/generation/real-loop-zip-build.mjs\n?? tests/generation/real-loop.browser.cjs\n",
+  "commands": [
+    {
+      "name": "root",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "startedAt": "2026-10-19T13:55:00.429Z",
+      "endedAt": "2026-10-19T13:55:01.514Z",
+      "exitCode": 0,
+      "log": "logs/root.txt"
+    },
+    {
+      "name": "generation",
+      "command": [
+        "npm",
+        "run",
+        "test:generation"
+      ],
+      "startedAt": "2026-10-19T13:55:01.515Z",
+      "endedAt": "2026-10-19T13:55:02.161Z",
+      "exitCode": 0,
+      "log": "logs/generation.txt"
+    },
+    {
+      "name": "client-boundary",
+      "command": [
+        "/usr/local/bin/node",
+        "--test",
+        "tests/generation/client-boundary.test.cjs"
+      ],
+      "startedAt": "2026-10-19T13:55:02.161Z",
+      "endedAt": "2026-10-19T13:55:02.387Z",
+      "exitCode": 0,
+      "log": "logs/client-boundary.txt"
+    },
+    {
+      "name": "zip",
+      "command": [
+        "npm",
+        "run",
+        "test:workshop-export"
+      ],
+      "startedAt": "2026-10-19T13:55:02.387Z",
+      "endedAt": "2026-10-19T13:55:03.021Z",
+      "exitCode": 0,
+      "log": "logs/zip.txt"
+    },
+    {
+      "name": "gateway",
+      "command": [
+        "/usr/local/bin/node",
+        "--test",
+        "tests/paid-gateway/security.test.mjs",
+        "tests/paid-gateway/model-contract.test.mjs",
+        "tests/paid-gateway/audit-boundary.test.mjs"
+      ],
+      "startedAt": "2026-10-19T13:55:03.021Z",
+      "endedAt": "2026-10-19T13:55:06.345Z",
+      "exitCode": 0,
+      "log": "logs/gateway.txt"
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "startedAt": "2026-10-19T13:55:06.345Z",
+      "endedAt": "2026-10-19T13:55:07.817Z",
+      "exitCode": 0,
+      "log": "logs/build.txt"
+    },
+    {
+      "name": "browser",
+      "command": [
+        "/usr/local/bin/node",
+        "tests/generation/real-loop.browser.cjs"
+      ],
+      "startedAt": "2026-10-19T13:55:07.817Z",
+      "endedAt": "2026-10-19T13:55:35.351Z",
+      "exitCode": 0,
+      "log": "logs/browser.txt"
+    },
+    {
+      "name": "zip-samples",
+      "command": [
+        "/usr/local/bin/node",
+        "tests/generation/real-loop-zip-build.mjs"
+      ],
+      "startedAt": "2026-10-19T13:55:35.351Z",
+      "endedAt": "2026-10-19T13:55:53.995Z",
+      "exitCode": 0,
+      "log": "logs/zip-samples.txt"
+    }
+  ]
+}

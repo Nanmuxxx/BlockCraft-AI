@@ -1,0 +1,172 @@
+9:48:29 PM [vite] http proxy error: /api/mochi-ai/status
+Error: connect ECONNREFUSED 127.0.0.1:3001
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2083:16)
+9:48:29 PM [vite] http proxy error: /api/local-project-export
+Error: connect ECONNREFUSED 127.0.0.1:3001
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2083:16)
+9:48:30 PM [vite] http proxy error: /api/mochi-ai/status
+Error: connect ECONNREFUSED 127.0.0.1:3001
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2083:16)
+9:48:30 PM [vite] http proxy error: /api/local-project-export
+Error: connect ECONNREFUSED 127.0.0.1:3001
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2083:16)
+{
+  "sha": "8cfa37f5112adaab1e0adbb4cb4086240111d436",
+  "browser": "Chromium",
+  "generation": "fixed offline HTTP response on real /ai-create; no model calls",
+  "cases": [
+    {
+      "width": 1366,
+      "passed": true,
+      "builtinZip": {
+        "label": "builtin-c",
+        "revision": 4,
+        "bytes": 39519,
+        "sha256": "cd6056533e17d81018c79bb112b47368ded363d0ff827dd2def34786a2385d8f",
+        "files": [
+          "README.md",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "mixedZip": {
+        "label": "mixed-b",
+        "revision": 6,
+        "bytes": 40595,
+        "sha256": "e61c1a6f5b465b33a75aa2eafb8fb35615f1cdd1d93ccc9f129061763a1c4367",
+        "files": [
+          "README.md",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/components/custom/a0/Counter.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "checks": [
+        "creation",
+        "Inspector field edit",
+        "form/list create-update-delete",
+        "metric updates",
+        "B/C retention",
+        "B and C real ZIP downloads + CRC + central directory + required files",
+        "package build scripts and pinned versions",
+        "exact digest, project revision and edited props",
+        "export revision unchanged",
+        "stale snapshot blocks download",
+        "non-empty stateSchema blocks whole ZIP",
+        "Mochi conversation panel remains visible and disabled",
+        "single Mochi mount",
+        "no CustomBlock execution",
+        "no horizontal overflow",
+        "no external requests"
+      ]
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "builtinZip": {
+        "label": "builtin-c",
+        "revision": 4,
+        "bytes": 39519,
+        "sha256": "057e35d6cdc2d0fcfc50a934a00c5c3997897c1cef921546c2680cb024c905ed",
+        "files": [
+          "README.md",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "mixedZip": {
+        "label": "mixed-b",
+        "revision": 6,
+        "bytes": 40595,
+        "sha256": "bd785d7e4cea279339f1bbe90e754aa7647438160dbca53f585398b5320c7c3e",
+        "files": [
+          "README.md",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "provenance.json",
+          "src/App.tsx",
+          "src/components/FormBlock.tsx",
+          "src/components/ListBlock.tsx",
+          "src/components/MetricBlock.tsx",
+          "src/components/custom/a0/Counter.tsx",
+          "src/data.ts",
+          "src/main.tsx",
+          "src/model.ts",
+          "src/styles.css",
+          "tsconfig.json",
+          "vite.config.ts"
+        ]
+      },
+      "checks": [
+        "creation",
+        "Inspector field edit",
+        "form/list create-update-delete",
+        "metric updates",
+        "B/C retention",
+        "B and C real ZIP downloads + CRC + central directory + required files",
+        "package build scripts and pinned versions",
+        "exact digest, project revision and edited props",
+        "export revision unchanged",
+        "stale snapshot blocks download",
+        "non-empty stateSchema blocks whole ZIP",
+        "Mochi conversation panel remains visible and disabled",
+        "single Mochi mount",
+        "no CustomBlock execution",
+        "no horizontal overflow",
+        "no external requests"
+      ]
+    },
+    {
+      "surface": "ordinary dev",
+      "passed": true,
+      "enabled": false,
+      "endpointStatus": 502
+    },
+    {
+      "surface": "production preview",
+      "passed": true,
+      "enabled": false,
+      "endpointStatus": 502
+    }
+  ],
+  "errors": [],
+  "paidCalls": 0,
+  "version": "156.0.8078.4"
+}
