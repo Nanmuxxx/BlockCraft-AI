@@ -10,7 +10,7 @@ import { exportProjectZip, EXPORT_LIMITS, ProjectExportError } from './export.mj
  */
 export async function exportSessionSnapshot(session, options) {
   const captured = session.getSnapshot()
-  protocol.assertJson(captured)
+  protocol.assertProjectJson(captured)
   const project = json.cloneJson(captured)
   const references = new Map(project.custom.instances.map(({ definitionId, versionDigest }) =>
     [`${definitionId}/${versionDigest}`, { definitionId, versionDigest }]))

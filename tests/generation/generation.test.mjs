@@ -248,3 +248,43 @@ test('legacy protocol projection does not advertise trusted v2 primitives', () =
   assert.ok(!readV1GenerationProtocol().includes("type: 'pomodoro'"))
   assert.ok(readV1GenerationProtocol().includes('version: 1;'))
 })
+
+test('generation prompt permits an empty-resource gallery and quality accepts a pure gallery app', () => {
+  const prompt = buildGenerationSystemPrompt()
+  assert.match(prompt, /gallery/)
+  assert.match(prompt, /imageIds.*为空/)
+  assert.match(prompt, /data URL|dataUrl/)
+  const spec = {
+    version: 1,
+    id: 'gallery-only',
+    name: '图片画廊',
+    entities: [],
+    blocks: [{ id: 'gallery', name: '作品画廊', type: 'gallery', protocolVersion: 1, imageIds: [], layout: 'grid', interaction: 'preview' }],
+    relations: [],
+  }
+  const report = checkGeneratedApplication(spec, {
+    idea: '展示项目图片',
+    requirements: [{ id: 'gallery-goal', quote: '展示项目图片', goal: '浏览图片', primary: true }],
+  })
+  assert.equal(report.structure.valid, true)
+  assert.equal(report.completeness.valid, true)
+  assert.deepEqual(report.inventory, [{ blockId: 'gallery', entityId: null, operations: { preview: [] } }])
+  const requirements = [{ id: 'gallery-goal', quote: '展示项目图片', goal: '浏览项目图片', primary: true }]
+  const review = { ...generationReviewContext('展示项目图片', spec, requirements), assessments: [{
+    requirementId: 'gallery-goal', status: 'partial', explanation: '空画廊可配置用户导入的项目图片。', limitations: ['需要用户导入并选择图片。'],
+    evidence: [{ blockId: 'gallery', entityId: null, operation: 'preview', fieldIds: [] }],
+  }] }
+  assert.equal(checkGeneratedApplication(spec, { idea: '展示项目图片', requirements, review }).requirements.status, 'partial')
+  for (const bad of [
+    { blockId: 'gallery', entityId: 'fake-entity', operation: 'preview', fieldIds: [] },
+    { blockId: 'gallery', entityId: null, operation: 'generate-image', fieldIds: [] },
+    { blockId: 'gallery', entityId: null, operation: 'preview', fieldIds: ['invented-image'] },
+  ]) {
+    const invalid = structuredClone(review); invalid.assessments[0].evidence = [bad]
+    assert.equal(checkGeneratedApplication(spec, { idea: '展示项目图片', requirements, review: invalid }).requirements.status, 'invalid-review')
+  }
+  assert.equal(initializeGeneratedProject(spec).assets, undefined)
+  const invalidRef = structuredClone(spec); invalidRef.blocks[0].imageIds = ['invented-image']
+  assert.equal(checkGeneratedApplication(invalidRef).completeness.valid, false)
+  assert.deepEqual(codes(checkGeneratedApplication(invalidRef)), ['GENERATED_ASSET_REFERENCE'])
+})

@@ -35,6 +35,10 @@
 .app-spec-inspector :focus-visible { outline: 2px solid #3e6852; outline-offset: 3px; }
 .app-spec-inspector__error { color: #a72323; }
 .app-spec-inspector__success { color: #305d40; }
+.app-spec-gallery-editor__asset { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.app-spec-gallery-editor__asset .app-spec-inspector__choice { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.app-spec-gallery-editor__asset button { flex: none; padding: 6px 8px; font-size: 12px; }
+.app-spec-gallery-editor__asset button:disabled { cursor: not-allowed; opacity: .55; }
 
 /* Match the original Workshop nest without changing editor behavior. */
 .app-spec-inspector { border-color: var(--line); border-radius: 16px; color: var(--ink); background: var(--card); box-shadow: var(--shadow-sm); padding: 16px; }

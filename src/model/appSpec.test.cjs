@@ -163,3 +163,67 @@ test('unsupported targets and bad addBlock bindings are rejected', () => {
     { type: 'addBlock', block: { id: 'new-list', name: '列表', type: 'list', fieldIds: ['book-title'] }, binding: { id: 'new-binding', type: 'dataBinding', blockId: 'bookshelf', entityId: 'books' } },
   ]) failure(run(session, [command]), session)
 })
+
+const image = (id = 'photo') => ({ id, name: '图片', altText: '说明', mimeType: 'image/png', dataUrl: 'data:image/png;base64,iVBORw0KGgo=' })
+const gallery = (imageIds = []) => ({ id: 'photos', name: '图片画廊', type: 'gallery', protocolVersion: 1, imageIds, layout: 'grid', interaction: 'preview' })
+test('v1 gallery needs no binding and old projects remain compatible', () => {
+  const state = createReadingLogExample()
+  assert.equal(state.assets, undefined)
+  assertProjectState(state)
+  state.spec.blocks.push(gallery())
+  assertProjectState(state)
+  state.spec.relations.push({ id: 'gallery-binding', type: 'dataBinding', blockId: 'photos', entityId: 'books' })
+  assert.throws(() => assertProjectState(state), /cannot bind/)
+})
+test('gallery image references must resolve even when assets is omitted', () => {
+  const state = createReadingLogExample()
+  state.spec.blocks.push(gallery(['photo']))
+  assert.throws(() => assertProjectState(state), /unknown image asset/)
+  state.assets = { photo: image() }
+  assertProjectState(state)
+  state.assets.photo.id = 'other'
+  assert.throws(() => assertProjectState(state), /does not match/)
+})
+test('image asset registry accepts raster signatures and rejects active or mismatched input', () => {
+  const signatures = { 'image/png': [137,80,78,71,13,10,26,10], 'image/jpeg': [255,216,255], 'image/gif': [...Buffer.from('GIF89a')], 'image/webp': [...Buffer.from('RIFF0000WEBP')] }
+  for (const [mimeType, signature] of Object.entries(signatures)) {
+    const state = createReadingLogExample()
+    state.assets = { photo: { ...image(), mimeType, dataUrl: `data:${mimeType};base64,${Buffer.from(signature).toString('base64')}` } }
+    assertProjectState(state)
+  }
+  for (const asset of [
+    { ...image(), mimeType: 'image/svg+xml', dataUrl: 'data:image/svg+xml;base64,PHN2Zz4=' },
+    { ...image(), dataUrl: 'https://example.com/image.png' },
+    { ...image(), dataUrl: 'data:image/png;base64,SGVsbG8=' },
+    { ...image(), dataUrl: 'data:image/png;base64,!!!=' },
+    { ...image(), dataUrl: 'data:image/jpeg;base64,/9j/' },
+  ]) {
+    const state = createReadingLogExample(); state.assets = { photo: asset }
+    assert.throws(() => assertProjectState(state), { name: 'AppSpecError' })
+  }
+})
+test('image count, per-file and aggregate byte limits are enforced before commit', () => {
+  const { PROJECT_ASSET_LIMITS: limits } = require('./appSpecValidation.ts')
+  const sizedImage = (id, size) => { const bytes = Buffer.alloc(size); Buffer.from([137,80,78,71,13,10,26,10]).copy(bytes); return { ...image(id), dataUrl: `data:image/png;base64,${bytes.toString('base64')}` } }
+  const state = createReadingLogExample()
+  state.assets = Object.fromEntries(Array.from({ length: limits.maxCount + 1 }, (_, i) => [`p${i}`, image(`p${i}`)]))
+  assert.throws(() => assertProjectState(state), /Too many/)
+  state.assets = { photo: sizedImage('photo', limits.maxBytesEach + 1) }
+  assert.throws(() => assertProjectState(state), /per-file/)
+  state.assets = { one: sizedImage('one', limits.maxBytesEach), two: sizedImage('two', limits.maxBytesEach), three: image('three') }
+  assert.throws(() => assertProjectState(state), /project limit/)
+})
+test('asset import, gallery configuration, reference protection and undo are atomic', () => {
+  const initial = freeze(fresh())
+  const added = success(run(initial, [{ type: 'addProjectAsset', asset: image() }, { type: 'addBlock', block: gallery(['photo']) }]))
+  assert.equal(added.state.assets.photo.id, 'photo')
+  assert.equal(added.state.spec.relations.length, initial.state.spec.relations.length)
+  failure(run(added, [{ type: 'removeProjectAsset', assetId: 'photo' }], 'remove-ref'), added, 'ASSET_REFERENCED')
+  failure(run(added, [{ type: 'addProjectAsset', asset: image() }], 'duplicate'), added, 'ID_CONFLICT')
+  failure(run(added, [{ type: 'configureGallery', blockId: 'photos', imageIds: ['missing'] }], 'missing'), added)
+  failure(run(initial, [{ type: 'addProjectAsset', asset: image() }, { type: 'configureGallery', blockId: 'missing', imageIds: ['photo'] }]), initial)
+  const removed = success(run(added, [{ type: 'configureGallery', blockId: 'photos', imageIds: [] }, { type: 'removeProjectAsset', assetId: 'photo' }], 'remove'))
+  assert.deepEqual(removed.state.assets, {})
+  assert.deepEqual(success(run(removed, [undo], 'undo-assets')).state.assets, added.state.assets)
+  assert.throws(() => assertCommandRequest({ requestId: 'bound', baseRevision: 0, commands: [{ type: 'addBlock', block: gallery(), binding: { id: 'forbidden', type: 'dataBinding', blockId: 'photos', entityId: 'books' } }] }), /cannot bind/)
+})

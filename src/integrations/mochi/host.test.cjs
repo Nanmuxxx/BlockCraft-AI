@@ -34,6 +34,73 @@ async function plan(host) { await host.callbacks.onRequestPlan('这是固定 Moc
 const rejects = (promise, code) => assert.rejects(promise, error => error.code === code)
 function defer() { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b }); return { promise, resolve, reject } }
 
+function galleryState() {
+  const state = createClubRegistrationExample()
+  state.spec.blocks.push({ id: 'gallery-1', name: '作品画廊', type: 'gallery', protocolVersion: 1, imageIds: [], layout: 'grid', interaction: 'preview' })
+  state.assets = { 'img-1': { id: 'img-1', name: '项目封面', altText: '封面说明', mimeType: 'image/png', dataUrl: 'data:image/png;base64,iVBORw0KGgo=' } }
+  return state
+}
+const galleryCandidate = (request, commands, capabilityIds = []) => ({ request: { requestId: request.requestId, baseRevision: request.context.revision, commands }, capabilityIds })
+
+test('gallery selection has no entity scope; configure preview excludes bytes and confirmation preserves assets/records', async () => {
+  const s = setup(request => {
+    assert.deepEqual(request.context.assets, [{ id: 'img-1', name: '项目封面', altText: '封面说明', mimeType: 'image/png' }])
+    assert.equal(JSON.stringify(request.context).includes('data:image'), false)
+    return galleryCandidate(request, [{ type: 'configureGallery', blockId: 'gallery-1', imageIds: ['img-1'], layout: 'grid' }])
+  }, galleryState())
+  s.host.setSelection('gallery-1')
+  const before = s.runtime.getSnapshot(), id = await plan(s.host)
+  assert.strictEqual(s.runtime.getSnapshot(), before)
+  assert.equal(s.host.getSnapshot().preview.changes[0].operation, 'configureGallery')
+  await s.host.callbacks.onConfirm(id)
+  assert.deepEqual(s.runtime.getSnapshot().spec.blocks.find(b => b.id === 'gallery-1').imageIds, ['img-1'])
+  assert.deepEqual(s.runtime.getSnapshot().assets, before.assets)
+  assert.deepEqual(s.runtime.getSnapshot().records, before.records)
+  s.host.dispose()
+})
+
+test('gallery add/remove plans are previewed and confirmed without entity binding', async () => {
+  const s = setup(request => galleryCandidate(request, [{ type: 'addBlock', block: { id: 'gallery-2', name: '新画廊', type: 'gallery', protocolVersion: 1, imageIds: ['img-1'], layout: 'grid', interaction: 'preview' } }], ['gallery']), galleryState())
+  s.host.setSelection('gallery-1')
+  await s.host.callbacks.onConfirm(await plan(s.host))
+  assert.equal(s.runtime.getSnapshot().spec.blocks.at(-1).id, 'gallery-2')
+  assert.equal(s.runtime.getSnapshot().spec.relations.some(b => b.blockId === 'gallery-2'), false)
+  s.host.dispose()
+  const removal = setup(request => galleryCandidate(request, [{ type: 'removeBlock', blockId: 'gallery-1' }]), galleryState())
+  removal.host.setSelection('gallery-1')
+  await removal.host.callbacks.onConfirm(await plan(removal.host))
+  assert.equal(removal.runtime.getSnapshot().spec.blocks.some(b => b.id === 'gallery-1'), false)
+  assert.deepEqual(Object.keys(removal.runtime.getSnapshot().assets), ['img-1'])
+  removal.host.dispose()
+})
+
+for (const [name, commands] of [
+  ['unknown asset', [{ type: 'configureGallery', blockId: 'gallery-1', imageIds: ['missing'] }]],
+  ['unselected block', [{ type: 'removeBlock', blockId: 'registration-form' }]],
+  ['asset mutation', [{ type: 'removeProjectAsset', assetId: 'img-1' }]],
+]) test(`gallery plan rejects ${name} without mutation`, async () => {
+  const s = setup(request => galleryCandidate(request, commands), galleryState())
+  s.host.setSelection('gallery-1')
+  const before = s.runtime.getSnapshot()
+  await assert.rejects(plan(s.host))
+  assert.strictEqual(s.runtime.getSnapshot(), before)
+  assert.equal(s.executions(), 0)
+  s.host.dispose()
+})
+
+test('gallery cancel and later asset revision retire the pending plan', async () => {
+  const s = setup(request => galleryCandidate(request, [{ type: 'configureGallery', blockId: 'gallery-1', imageIds: ['img-1'] }]), galleryState())
+  s.host.setSelection('gallery-1')
+  let id = await plan(s.host)
+  s.host.callbacks.onCancel(id)
+  await rejects(s.host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  id = await plan(s.host)
+  assert.equal(s.runtime.executeCommand({ requestId: 'remove-unused', baseRevision: 0, commands: [{ type: 'removeProjectAsset', assetId: 'img-1' }] }).ok, true)
+  await rejects(s.host.callbacks.onConfirm(id), 'PLAN_NOT_PENDING')
+  assert.deepEqual(s.runtime.getSnapshot().assets, {})
+  s.host.dispose()
+})
+
 // Inject notification loss at the Runtime boundary. The production v2 owner
 // isolates observer exceptions, so throwing subscribers no longer drop events.
 function notificationGate(runtime) {

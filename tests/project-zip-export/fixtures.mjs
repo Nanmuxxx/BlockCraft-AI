@@ -4,6 +4,16 @@ import { trustedSample } from '../../tools/custom-block-compiler/trusted-samples
 const require = createRequire(import.meta.url)
 export const { createReadingLogExample, createClubRegistrationExample, createAppRuntime } = require('../custom-block/fixtures.cjs')
 export function builtin() { return { project: protocol.migrateProjectState(createClubRegistrationExample()), artifacts: [] } }
+export function gallery(assetBytes = 68) {
+  const input = builtin()
+  const pixel = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jN9kAAAAASUVORK5CYII=', 'base64')
+  const image = Buffer.alloc(Math.max(assetBytes, pixel.length))
+  pixel.copy(image)
+  input.project.base.assets = { photo: { id: 'photo', name: '项目图片', altText: '作品示例图片', mimeType: 'image/png', dataUrl: `data:image/png;base64,${image.toString('base64')}` } }
+  input.project.base.spec.blocks.push({ id: 'gallery', name: '作品画廊', type: 'gallery', protocolVersion: 1, imageIds: ['photo'], layout: 'grid', interaction: 'preview' })
+  input.project.renderOrder.push({ kind: 'builtin', id: 'gallery' })
+  return input
+}
 export async function mixed() {
   const input = builtin()
   for (const name of ['counter', 'temperature']) {

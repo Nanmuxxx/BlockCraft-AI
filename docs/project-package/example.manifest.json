@@ -1,0 +1,25 @@
+{
+  "format": "blockcraft-project-package",
+  "formatVersion": 1,
+  "metadata": {
+    "id": "club-registration",
+    "name": "项目包离线验收",
+    "revision": 7,
+    "appSpecVersion": 2,
+    "projectFormatVersion": 2
+  },
+  "project": {
+    "path": "project.json",
+    "byteLength": 2182,
+    "sha256": "20725b8468b42aedd2d42a654bc83183ea9f6e82302dc687f90ffee1beb44503"
+  },
+  "resources": [
+    {
+      "id": "fixture-png",
+      "path": "assets/fixture-png.png",
+      "mimeType": "image/png",
+      "byteLength": 76,
+      "sha256": "8e546007599fa6df13786602a501cc2933ae498bb8ed8ff0fa4664f551cad2be"
+    }
+  ]
+}

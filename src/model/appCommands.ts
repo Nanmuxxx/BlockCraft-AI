@@ -31,8 +31,15 @@ function apply(state: ProjectState, command: Exclude<AppCommand, { type: 'undo' 
       break
     }
     case 'addBlock':
-      ensure(command.binding.blockId === command.block.id, 'Binding must target the added block')
-      spec.blocks.push(clone(command.block)); spec.relations.push(clone(command.binding))
+      if (command.block.type === 'gallery') {
+        ensure(!('binding' in command) || command.binding === undefined, 'Gallery blocks cannot bind entities')
+      } else {
+        const binding = 'binding' in command ? command.binding : undefined
+        ensure(binding, 'Data block requires binding')
+        ensure(binding.blockId === command.block.id, 'Binding must target the added block')
+        spec.relations.push(clone(binding))
+      }
+      spec.blocks.push(clone(command.block))
       if (command.position) state.blockPositions[command.block.id] = clone(command.position)
       break
     case 'removeBlock':
@@ -48,6 +55,25 @@ function apply(state: ProjectState, command: Exclude<AppCommand, { type: 'undo' 
       b.fieldIds = [...command.fieldIds]
       break
     }
+    case 'configureGallery': {
+      const block = spec.blocks.find(block => block.id === command.blockId)
+      ensure(block?.type === 'gallery', 'Gallery configuration requires a gallery block')
+      block.imageIds = [...command.imageIds]
+      if (command.layout !== undefined) block.layout = command.layout
+      break
+    }
+    case 'addProjectAsset': {
+      state.assets ??= {}
+      ensure(!Object.prototype.hasOwnProperty.call(state.assets, command.asset.id), 'Asset ID already exists', 'ID_CONFLICT')
+      state.assets[command.asset.id] = clone(command.asset)
+      break
+    }
+    case 'removeProjectAsset': {
+      ensure(state.assets && Object.prototype.hasOwnProperty.call(state.assets, command.assetId), 'Unknown image asset')
+      ensure(!spec.blocks.some(block => block.type === 'gallery' && block.imageIds.includes(command.assetId)), 'Image asset is still used by a gallery', 'ASSET_REFERENCED')
+      delete state.assets![command.assetId]
+      break
+    }
     case 'addField':
     case 'updateField':
     case 'removeField': {
@@ -61,7 +87,7 @@ function apply(state: ProjectState, command: Exclude<AppCommand, { type: 'undo' 
         e.fields[index] = clone(command.field)
       } else {
         const bound = new Set(spec.relations.filter(r => r.entityId === e.id).map(r => r.blockId))
-        ensure(!spec.blocks.some(b => bound.has(b.id) && (b.type === 'metric' ? b.aggregation !== 'count' && b.fieldId === command.fieldId : b.type !== 'pomodoro' && b.fieldIds.includes(command.fieldId))), 'Field referenced by block', 'FIELD_REFERENCED')
+        ensure(!spec.blocks.some(b => bound.has(b.id) && (b.type === 'metric' ? b.aggregation !== 'count' && b.fieldId === command.fieldId : (b.type === 'list' || b.type === 'form') && b.fieldIds.includes(command.fieldId))), 'Field referenced by block', 'FIELD_REFERENCED')
         ensure(!(state.records[e.id] ?? []).some(row => Object.prototype.hasOwnProperty.call(row.values, command.fieldId)), 'Field contains business data', 'FIELD_REFERENCED')
         e.fields.splice(index, 1)
       }

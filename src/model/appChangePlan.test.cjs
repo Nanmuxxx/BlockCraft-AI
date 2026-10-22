@@ -149,6 +149,42 @@ test('existing list and metric primitive capabilities add working blocks on the 
   assert.equal(metricValue(app.runtime.getSnapshot(), commands[1].block), 0)
 })
 
+test('gallery preview uses project assets without entity authority and requires direct scope', () => {
+  const initial = createReadingLogExample()
+  const gallery = { id: 'photos', name: '相册', type: 'gallery', protocolVersion: 1, imageIds: [], layout: 'grid', interaction: 'preview' }
+  initial.spec.blocks.unshift(gallery)
+  initial.assets = { photo: { id: 'photo', name: '照片', mimeType: 'image/png', dataUrl: 'data:image/png;base64,iVBORw0KGgo=' } }
+  const app = setup(initial)
+  app.scope.allowedEntityIds = []
+  app.scope.allowedBlockIds = ['photos']
+  const before = app.runtime.getSnapshot()
+  const command = { type: 'configureGallery', blockId: 'photos', imageIds: ['photo'] }
+  const plan = planOf(app.preview([command]))
+  assert.deepEqual(plan.diff.galleryChanges, [{ blockId: 'photos', before: { imageIds: [], layout: 'grid' }, after: { imageIds: ['photo'], layout: 'grid' } }])
+  assert.deepEqual(plan.diff.affectedEntityIds, [])
+  assert.strictEqual(app.runtime.getSnapshot(), before)
+  assert.equal(app.planner.confirm(plan).ok, true)
+  assert.deepEqual(app.runtime.getSnapshot().spec.blocks[0].imageIds, ['photo'])
+  const other = setup(initial)
+  rejected(other.planner.preview({ request: { requestId: 'outside-gallery', baseRevision: 0, commands: [command] }, capabilityIds: [] }, { selectedBlockId: null, allowedBlockIds: [], allowedEntityIds: [] }), 'SCOPE_VIOLATION')
+  rejected(other.preview([{ ...command, imageIds: ['missing'] }]), 'UNKNOWN_TARGET')
+  rejected(other.preview([{ type: 'addProjectAsset', asset: initial.assets.photo }]), 'AI_COMMAND_FORBIDDEN')
+  assert.strictEqual(other.runtime.getSnapshot().revision, 0)
+})
+
+test('AI can add and remove a gallery without forging a CRUD binding or losing assets', () => {
+  const app = setup()
+  const block = { id: 'new-photos', type: 'gallery', name: '作品图片', protocolVersion: 1, imageIds: [], layout: 'grid', interaction: 'preview' }
+  const plan = planOf(app.preview([{ type: 'addBlock', block }], { capabilityIds: ['gallery'] }))
+  assert.deepEqual(plan.diff.affectedEntityIds, [])
+  assert.deepEqual(plan.after.spec.relations, app.runtime.getSnapshot().spec.relations)
+  assert.equal(app.planner.confirm(plan).ok, true)
+  const scope = { selectedBlockId: block.id, allowedBlockIds: [block.id], allowedEntityIds: [] }
+  const removal = planOf(app.planner.preview({ request: { requestId: 'remove-gallery', baseRevision: 1, commands: [{ type: 'removeBlock', blockId: block.id }] }, capabilityIds: [] }, scope))
+  assert.equal(app.planner.confirm(removal).ok, true)
+  assert.equal(app.runtime.getSnapshot().spec.blocks.some(item => item.id === block.id), false)
+})
+
 test('numeric aggregation adds a running sum and average using existing number field', () => {
   const app = setup(createReadingLogExample())
   const blocks = ['sum', 'average'].map(aggregation => ({ id: `minutes-${aggregation}`, name: aggregation, type: 'metric', aggregation, fieldId: 'minutes' }))
@@ -262,10 +298,10 @@ test('entity and direct block permissions are both required; model cannot grant 
   assert.equal(app.notifications(), 0)
 })
 
-test('five-command contract includes controlled presentation edits and rejects forbidden commands atomically', () => {
+test('AI command contract includes controlled gallery/presentation edits and rejects forbidden commands atomically', () => {
   // Presentation editing is the approved AppSpec text/color/radius extension;
   // membership does not grant scope, confirmation, or Runtime authorization.
-  assert.deepEqual([...AI_CHANGE_COMMANDS], ['addField', 'configureBlockFields', 'configureBlockPresentation', 'addBlock', 'removeBlock'])
+  assert.deepEqual([...AI_CHANGE_COMMANDS], ['addField', 'configureBlockFields', 'configureBlockPresentation', 'configureGallery', 'addBlock', 'removeBlock'])
   assert.ok(Object.isFrozen(AI_CHANGE_COMMANDS))
   const app = setup()
   const before = app.runtime.getSnapshot()
@@ -440,7 +476,7 @@ test('plan handles are bound to the exact planner and app instance, even with eq
 
 test('capability catalog separates business composition and actual primitives and is deeply immutable', () => {
   assert.equal(new Set(APP_CAPABILITIES.map(item => item.id)).size, APP_CAPABILITIES.length)
-  assert.deepEqual(APP_CAPABILITIES.filter(item => item.kind === 'primitive').map(item => item.id), ['pomodoro', 'form', 'list', 'metric-count', 'metric-sum', 'metric-average'])
+  assert.deepEqual(APP_CAPABILITIES.filter(item => item.kind === 'primitive').map(item => item.id), ['pomodoro', 'form', 'list', 'gallery', 'metric-count', 'metric-sum', 'metric-average'])
   for (const item of APP_CAPABILITIES) {
     assert.ok(Object.isFrozen(item))
     if (item.kind === 'semantic' && item.status === 'supported') item.primitives.forEach(id => assert.equal(getAppCapability(id).kind, 'primitive'))

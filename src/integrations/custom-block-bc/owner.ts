@@ -1,5 +1,5 @@
 import type { CustomProject } from '../../custom-block'
-import { assertJson, check, cloneJson, CustomBlockError, revision } from '../../custom-block/json'
+import { assertProjectJson, check, cloneJson, CustomBlockError, revision } from '../../custom-block/json'
 import type { RuntimeResult } from '../../model/appRuntime'
 
 /** Identity is the authorization generation. Only the owner can issue it. */
@@ -25,7 +25,7 @@ export function createProjectRevisionOwner(initial: CustomProject, options: {
   readOnly?: boolean
   persist?: (next: CustomProject) => undefined
 } = {}) {
-  assertJson(initial); revision(initial.revision)
+  assertProjectJson(initial); revision(initial.revision)
   check(options.readOnly === undefined || typeof options.readOnly === 'boolean', 'Invalid authorization')
   let snapshot = freeze(cloneJson(initial))
   let authorization: WriteAuthorization = Object.freeze({ readOnly: options.readOnly ?? false })
@@ -54,7 +54,7 @@ export function createProjectRevisionOwner(initial: CustomProject, options: {
         check(expected === snapshot, '项目已变化，请重新操作。', 'REVISION_CONFLICT')
         revision(snapshot.revision)
         check(snapshot.revision < Number.MAX_SAFE_INTEGER, '项目版本号已用尽。', 'REVISION_EXHAUSTED')
-        assertJson(next); revision(next.revision)
+        assertProjectJson(next); revision(next.revision)
         check(next.revision === snapshot.revision + 1, 'Invalid next revision', 'REVISION_CONFLICT')
         freeze(next)
         options.persist?.(next)

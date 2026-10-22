@@ -7,6 +7,7 @@ import { ProjectJsonLandingImport } from '../../integrations/project-json/Projec
 import { createProjectJson, serializeProjectJson } from '../../integrations/project-json/format'
 import { saveProjectBackup } from '../../integrations/project-json/backups'
 import { ProjectJsonBackups } from '../../integrations/project-json/ProjectJsonBackups'
+import { assertNoPackageSecrets } from '../../integrations/project-package/security'
 import { generateProject } from './generateApp'
 import { loadTrustedPomodoroFixture, trustedPomodoroSource } from './trustedPomodoroFixture'
 import { Logo } from '../Logo'
@@ -78,7 +79,9 @@ export function AiCreate() {
     const previous = currentApp.current
     const snapshot = previous?.runtime.customProject.getSnapshot()
     if (previous) {
-      const backup = serializeProjectJson(await createProjectJson(snapshot!, previous.runtime.customProject.registry))
+      const document = await createProjectJson(snapshot!, previous.runtime.customProject.registry)
+      assertNoPackageSecrets(document)
+      const backup = serializeProjectJson(document)
       await saveProjectBackup(backup, snapshot!.base.spec.name)
     }
     // Recheck synchronously at publication, after all asynchronous backup work.
@@ -96,7 +99,7 @@ export function AiCreate() {
       const verifyBackup = await backupCurrentProject()
       verifyBackup()
       currentApp.current?.installation.beforeContextChange()
-      const next = { runtime, generation: (currentApp.current?.generation ?? 0) + 1, installation: createGeneratedArtifactUI(runtime.customProject), source: '从项目 JSON 恢复' }
+      const next = { runtime, generation: (currentApp.current?.generation ?? 0) + 1, installation: createGeneratedArtifactUI(runtime.customProject), source: '从项目文件恢复' }
       currentApp.current?.installation.dispose()
       currentApp.current = next
       setError('')
@@ -117,7 +120,7 @@ export function AiCreate() {
     </> : <p className="ai-create-hint">{trustedPomodoroSource}。加载固定的 25 分钟番茄钟配置，由可信内置组件计时；此演示不会根据自然语言生成内容。</p>}
     <div className="composer__bar"><small className="composer__count">{mode === 'legacy-v1' ? `${idea.length} / 4000` : '固定配置 · 25 分钟'}</small>{pending && <button type="button" className="btn-secondary" onClick={cancelGeneration}>取消生成</button>}<button className="btn-primary" type="submit" disabled={pending || (mode === 'legacy-v1' && !idea.trim())}>{pending ? <><LoaderCircle size={18} className="spin" aria-hidden="true" />处理中…</> : <>{mode === 'trusted-fixture' ? '加载离线番茄钟' : error ? '重试生成' : app ? '生成新应用' : '生成应用'}<ArrowRight size={18} aria-hidden="true" /></>}</button></div>
     {!app && <><ProjectJsonLandingImport onImportProject={importProject} /><ProjectJsonBackups onRestore={importProject} /></>}
-    <p className="ai-create-hint">{mode === 'legacy-v1' && '点击将请求 DeepSeek。'}成功创建后会替换当前应用，替换前自动保留本地备份；失败或取消保留原应用和数据。刷新前请下载项目 JSON，稍后导入可继续编辑。</p>
+    <p className="ai-create-hint">{mode === 'legacy-v1' && '点击将请求 DeepSeek。'}成功创建后会替换当前应用，替换前自动保留本地备份；失败或取消保留原应用和数据。刷新前请下载项目 ZIP 或 JSON，稍后导入可继续编辑。</p>
   </form>
   return <main className={`ai-create${app ? ' ai-create--workshop' : ' app'}`}>
     {!app && <><div className="app__bg" aria-hidden="true" /><header className="topbar"><Logo /><span className="topbar__tag"><span className="pixel-dot" aria-hidden="true" />AI 创作</span></header></>}

@@ -76,12 +76,12 @@ export function WorkshopMochi({ host, view, root, planningDisabledReason, canvas
     },
   }), [host])
   const customSelected = view.context.blocks.some(block => block.id === view.context.selectedBlockId && block.type === 'custom')
-  const formSelected = view.context.blocks.some(block => block.id === view.context.selectedBlockId && block.type === 'form')
+  const editableSelected = view.context.blocks.some(block => block.id === view.context.selectedBlockId && (block.type === 'form' || block.type === 'gallery'))
   const suggestions = view.context.selectedBlockId && !customSelected ? evaluateMochiSuggestions(view.context)
     .filter(item => !view.ignoredSuggestionIds.includes(item.id)) : []
   return <div className="app-spec-workshop__mochi" onPointerDown={event => event.stopPropagation()} onKeyDown={event => event.stopPropagation()}>
     <MochiAssistant {...callbacks} context={view.context} messages={messages}
-      suggestions={suggestions} preview={view.preview} operation={view} onCancelRequest={host.cancelRequest} planningDisabledReason={customSelected ? '自定义积木请使用参数面板；修改计划尚未开放。' : planningDisabledReason ?? (!formSelected ? '选择表单后，可以新增、隐藏或恢复可选字段。' : undefined)}
+      suggestions={suggestions} preview={view.preview} operation={view} onCancelRequest={host.cancelRequest} planningDisabledReason={customSelected ? '自定义积木请使用参数面板；修改计划尚未开放。' : planningDisabledReason ?? (!editableSelected ? '选择表单或图片画廊后，可以请求 Mochi 生成修改计划。' : undefined)}
       emotion={view.error ? 'error' : view.busy ? 'thinking' : receipt ? 'happy' : 'idle'}
       anchor={view.anchor} showOverlay={view.mode === 'blocks'} />
   </div>

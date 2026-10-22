@@ -18,3 +18,12 @@
 .renderer-table table { width: 100%; border-collapse: collapse; text-align: left; }
 .renderer-table th, .renderer-table td { padding: 12px 8px; border-bottom: 1px solid #e5ebe5; overflow-wrap: anywhere; }
 .renderer-metric { display: block; color: #285e46; font-size: 44px; font-weight: 700; }
+.renderer-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr)); gap: 12px; }
+.renderer-gallery-item { display: grid; grid-template-rows: minmax(120px, 1fr) auto; gap: 8px; min-width: 0; padding: 8px; border: 1px solid #d6e0d7; border-radius: 6px; background: #f7faf7; color: #24342c; text-align: left; cursor: pointer; font: inherit; }
+.renderer-gallery-item img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #eef2ee; }
+.renderer-gallery-item span { overflow-wrap: anywhere; }
+.renderer-gallery-missing { padding: 12px; border: 1px solid #b94b4b; color: #8d2020; background: #fff8f7; }
+.renderer-gallery-preview { position: fixed; z-index: 1000; inset: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 12px; padding: 16px; background: #101613ef; }
+.renderer-gallery-preview button { justify-self: end; padding: 8px 12px; border: 1px solid #fff; border-radius: 4px; color: white; background: transparent; font: inherit; cursor: pointer; }
+.renderer-gallery-preview img { justify-self: center; align-self: center; max-width: 100%; max-height: calc(100vh - 80px); object-fit: contain; }
+.renderer-gallery-empty { padding: 20px; border: 1px dashed #9eaea2; color: #59685e; text-align: center; }

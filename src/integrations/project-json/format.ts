@@ -1,6 +1,6 @@
 import type { ProjectState } from '../../model/appSpec'
 import type { ArtifactRegistry, CustomProject, RegisteredArtifact } from '../../custom-block'
-import { assertJson, cloneJson, CustomBlockError, JSON_LIMITS, keys, object } from '../../custom-block/json'
+import { assertProjectJson, cloneJson, CustomBlockError, JSON_LIMITS, keys, object } from '../../custom-block/json'
 import { assertCustomProjectStructure, parseCustomProject } from '../../custom-block/project'
 
 export const PROJECT_JSON_FORMAT = 'blockcraft-project'
@@ -45,7 +45,7 @@ export async function createProjectJson(project: CustomProject, registry: Artifa
 
 export async function parseProjectJson(value: unknown): Promise<RestoredProject> {
   try {
-    assertJson(value)
+    assertProjectJson(value)
     object(value)
     keys(value, ['format', 'formatVersion', 'project', 'artifacts'])
     if (value.format !== PROJECT_JSON_FORMAT || value.formatVersion !== PROJECT_JSON_VERSION) {
@@ -89,7 +89,7 @@ export function parseProjectJsonText(text: string): Promise<RestoredProject> {
 }
 
 export function serializeProjectJson(document: ProjectJsonDocument): string {
-  assertJson(document)
+  assertProjectJson(document)
   const text = `${JSON.stringify(document, null, 2)}\n`
   if (new TextEncoder().encode(text).byteLength > PROJECT_JSON_MAX_BYTES) {
     fail('LIMIT', '项目文件超过 4 MB，无法导出。')

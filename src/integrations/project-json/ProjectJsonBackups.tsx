@@ -2,8 +2,9 @@ import { useEffect, useId, useState } from 'react'
 import { Download } from 'lucide-react'
 import type { RestoredProject } from './format'
 import { listProjectBackups, readProjectBackup, formatBackupTime, PROJECT_BACKUPS_CHANGED, type ProjectBackupEntry } from './backups'
-import { parseProjectJsonText } from './format'
+import { parseProjectFile } from '../project-package/file'
 import { downloadProjectJson } from './download'
+import { projectFileErrorMessage } from '../project-package/messages'
 
 export function ProjectJsonBackups({ onRestore }: { onRestore?: (restored: RestoredProject) => void | Promise<void> }) {
   const [entries, setEntries] = useState<Omit<ProjectBackupEntry, 'text'>[]>([])
@@ -23,9 +24,10 @@ export function ProjectJsonBackups({ onRestore }: { onRestore?: (restored: Resto
     setPending(true); setFeedback('')
     try {
       const text = await readProjectBackup(selected || entries[0].id)
+      const restored = await parseProjectFile(new Blob([text], { type: 'application/json' }))
       if (download) { downloadProjectJson(text, 'blockcraft-project-backup.json'); setFeedback('已发起备份下载，请确认浏览器已保存文件。') }
-      else if (onRestore) { await onRestore(await parseProjectJsonText(text)); setFeedback('备份项目已恢复。') }
-    } catch (error) { setFeedback(error instanceof Error ? error.message : '备份项目无效，当前项目未更改。') }
+      else if (onRestore) { await onRestore(restored); setFeedback('备份项目已恢复。') }
+    } catch (error) { setFeedback(projectFileErrorMessage(error)) }
     finally { setPending(false) }
   }
   return <div className="project-json-backups" aria-label="本地项目备份">

@@ -5,7 +5,7 @@ import { createCommandSession, processCommand } from './appCommands'
 import { AppSpecError, assertCommandRequest, assertProjectState, ensure } from './appSpecValidation'
 import { getAppCapability, getBlockCapabilityId } from './appCapabilities'
 
-export const AI_CHANGE_COMMANDS = Object.freeze(['addField', 'configureBlockFields', 'configureBlockPresentation', 'addBlock', 'removeBlock'] as const)
+export const AI_CHANGE_COMMANDS = Object.freeze(['addField', 'configureBlockFields', 'configureBlockPresentation', 'configureGallery', 'addBlock', 'removeBlock'] as const)
 export type AiChangeCommand = Extract<AppCommand, { type: typeof AI_CHANGE_COMMANDS[number] }>
 export type AiChangeRequest = Omit<CommandRequest, 'commands'> & { commands: AiChangeCommand[] }
 export type DeepReadonly<T> = T extends object ? { readonly [K in keyof T]: DeepReadonly<T[K]> } : T
@@ -27,6 +27,7 @@ export interface AppChangeScope {
 export interface UnsupportedOperation { capabilityId: string; reason: string }
 export interface AppChangeDiff {
   presentationChanges: { blockId: string; before: BlockSpec['presentation']; after: BlockSpec['presentation'] }[]
+  galleryChanges: { blockId: string; before: { imageIds: string[]; layout: 'grid' }; after: { imageIds: string[]; layout: 'grid' } }[]
   addedBlocks: BlockSpec[]
   removedBlocks: BlockSpec[]
   addedFields: { entityId: string; field: FieldSpec }[]
@@ -122,6 +123,7 @@ function stringIds(value: unknown): asserts value is string[] {
 /** Resolve by stable ID, never display name or the first matching binding. */
 export function resolveBlockEntityId(state: ProjectState, blockId: string): string {
   ensure(state.spec.blocks.some(block => block.id === blockId), `Unknown block: ${blockId}`, 'UNKNOWN_TARGET')
+  ensure(state.spec.blocks.find(block => block.id === blockId)?.type !== 'gallery', `Gallery has no entity binding: ${blockId}`, 'INVALID_BINDING')
   const bindings = state.spec.relations.filter(binding => binding.blockId === blockId)
   ensure(bindings.length === 1 && state.spec.entities.some(entity => entity.id === bindings[0].entityId), `Block requires one valid entity binding: ${blockId}`, 'INVALID_BINDING')
   return bindings[0].entityId
@@ -131,11 +133,14 @@ function validateScope(state: ProjectState, input: AppChangeScope): AppChangeSco
   object(scope, ['selectedBlockId', 'allowedBlockIds', 'allowedEntityIds'])
   stringIds(scope.allowedBlockIds); stringIds(scope.allowedEntityIds)
   ensure(scope.selectedBlockId === null || typeof scope.selectedBlockId === 'string', 'Invalid selected block')
-  scope.allowedBlockIds.forEach(id => resolveBlockEntityId(state, id))
+  scope.allowedBlockIds.forEach(id => {
+    if (state.spec.blocks.find(block => block.id === id)?.type !== 'gallery') resolveBlockEntityId(state, id)
+  })
   ensure(scope.allowedEntityIds.every(id => state.spec.entities.some(entity => entity.id === id)), 'Unknown scope entity', 'UNKNOWN_TARGET')
   if (scope.selectedBlockId !== null) {
     ensure(scope.allowedBlockIds.includes(scope.selectedBlockId), 'Selected block is outside scope', 'SCOPE_VIOLATION')
-    ensure(scope.allowedEntityIds.includes(resolveBlockEntityId(state, scope.selectedBlockId)), 'Selected entity is outside scope', 'SCOPE_VIOLATION')
+    const selected = state.spec.blocks.find(block => block.id === scope.selectedBlockId)!
+    if (selected.type !== 'gallery') ensure(scope.allowedEntityIds.includes(resolveBlockEntityId(state, scope.selectedBlockId)), 'Selected entity is outside scope', 'SCOPE_VIOLATION')
   }
   return scope as unknown as AppChangeScope
 }
@@ -147,22 +152,41 @@ function validateTargets(state: ProjectState, request: AiChangeRequest, scope: A
     existingIds.add(id)
   }
   for (const command of request.commands) {
-    let entityId: string
+    let entityId: string | null
     if (command.type === 'addField') {
       entityId = command.entityId
       reserve(command.field.id)
     } else if (command.type === 'addBlock') {
-      entityId = command.binding.entityId
-      ensure(command.binding.blockId === command.block.id, 'Binding must target added block', 'INVALID_BINDING')
-      reserve(command.block.id); reserve(command.binding.id)
+      if (command.block.type === 'gallery') {
+        ensure(!('binding' in command) || command.binding === undefined, 'Gallery blocks cannot bind entities', 'INVALID_BINDING')
+        entityId = null
+        ensure(command.block.imageIds.every(id => Object.prototype.hasOwnProperty.call(state.assets ?? {}, id)), 'Gallery references an unknown project asset', 'UNKNOWN_TARGET')
+      } else {
+        const binding = 'binding' in command ? command.binding : undefined
+        ensure(binding, 'Data block requires an entity binding', 'INVALID_BINDING')
+        entityId = binding.entityId
+        ensure(binding.blockId === command.block.id, 'Binding must target added block', 'INVALID_BINDING')
+        reserve(binding.id)
+      }
+      reserve(command.block.id)
+    } else if (command.type === 'configureGallery') {
+      ensure(scope.allowedBlockIds.includes(command.blockId), `Block outside direct scope: ${command.blockId}`, 'SCOPE_VIOLATION')
+      const block = state.spec.blocks.find(block => block.id === command.blockId)
+      ensure(block?.type === 'gallery', 'Gallery configuration requires a gallery block', 'INVALID_TARGET')
+      ensure(command.imageIds.every(id => Object.prototype.hasOwnProperty.call(state.assets ?? {}, id)), 'Gallery references an unknown project asset', 'UNKNOWN_TARGET')
+      ensure(command.imageIds.length <= 32, 'Gallery has too many images')
+      entityId = null
     } else {
       ensure(scope.allowedBlockIds.includes(command.blockId), `Block outside direct scope: ${command.blockId}`, 'SCOPE_VIOLATION')
       ensure(!removed.has(command.blockId), 'Cannot target a removed block', 'INVALID_TARGET')
-      entityId = resolveBlockEntityId(state, command.blockId)
+      const target = state.spec.blocks.find(block => block.id === command.blockId)
+      entityId = target?.type === 'gallery' ? null : resolveBlockEntityId(state, command.blockId)
       if (command.type === 'removeBlock') removed.add(command.blockId)
     }
-    ensure(scope.allowedEntityIds.includes(entityId), `Entity outside scope: ${entityId}`, 'SCOPE_VIOLATION')
-    ensure(state.spec.entities.some(entity => entity.id === entityId), 'New entities are not supported', 'UNKNOWN_TARGET')
+    if (entityId !== null) {
+      ensure(scope.allowedEntityIds.includes(entityId), `Entity outside scope: ${entityId}`, 'SCOPE_VIOLATION')
+      ensure(state.spec.entities.some(entity => entity.id === entityId), 'New entities are not supported', 'UNKNOWN_TARGET')
+    }
   }
 }
 function diff(before: ProjectState, after: ProjectState, request: AiChangeRequest, scope: AppChangeScope): AppChangeDiff {
@@ -178,8 +202,16 @@ function diff(before: ProjectState, after: ProjectState, request: AiChangeReques
   const affectedBlockIds = new Set<string>()
   for (const command of request.commands) {
     if (command.type === 'addField') affectedEntityIds.add(command.entityId)
-    else if (command.type === 'addBlock') { affectedEntityIds.add(command.binding.entityId); affectedBlockIds.add(command.block.id) }
-    else { affectedEntityIds.add(resolveBlockEntityId(before, command.blockId)); affectedBlockIds.add(command.blockId) }
+    else if (command.type === 'addBlock') {
+      if ('binding' in command && command.binding) affectedEntityIds.add(command.binding.entityId)
+      affectedBlockIds.add(command.block.id)
+    }
+    else {
+      if (command.type !== 'configureGallery' && before.spec.blocks.find(block => block.id === command.blockId)?.type !== 'gallery') {
+        affectedEntityIds.add(resolveBlockEntityId(before, command.blockId))
+      }
+      affectedBlockIds.add(command.blockId)
+    }
   }
   const sharedEntityImpacts = [...new Set(addedFields.map(item => item.entityId))].map(entityId => {
     const boundBlockIds = [...new Set([...before.spec.relations, ...after.spec.relations].filter(binding => binding.entityId === entityId).map(binding => binding.blockId))]
@@ -193,7 +225,13 @@ function diff(before: ProjectState, after: ProjectState, request: AiChangeReques
     const old = before.spec.blocks.find(old => old.id === block.id)
     return old && JSON.stringify(old.presentation) !== JSON.stringify(block.presentation) ? [{ blockId: block.id, before: old.presentation, after: block.presentation }] : []
   })
-  return { presentationChanges, addedBlocks, removedBlocks, addedFields, blockFieldChanges, affectedEntityIds: [...affectedEntityIds], affectedBlockIds: [...affectedBlockIds], sharedEntityImpacts, recordsPreserved: true }
+  const galleryChanges = after.spec.blocks.flatMap(block => {
+    const old = before.spec.blocks.find(old => old.id === block.id)
+    return old?.type === 'gallery' && block.type === 'gallery'
+      && (JSON.stringify(old.imageIds) !== JSON.stringify(block.imageIds) || old.layout !== block.layout)
+      ? [{ blockId: block.id, before: { imageIds: old.imageIds, layout: old.layout }, after: { imageIds: block.imageIds, layout: block.layout } }] : []
+  })
+  return { presentationChanges, galleryChanges, addedBlocks, removedBlocks, addedFields, blockFieldChanges, affectedEntityIds: [...affectedEntityIds], affectedBlockIds: [...affectedBlockIds], sharedEntityImpacts, recordsPreserved: true }
 }
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`

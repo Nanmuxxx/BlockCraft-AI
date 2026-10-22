@@ -17,8 +17,11 @@ export interface MochiHostContext {
   blocks: Array<{
     id: string
     name: string
-    type: 'form' | 'list' | 'metric' | string
+    type: 'form' | 'list' | 'gallery' | 'pomodoro' | 'metric' | string
     fieldIds?: string[]
+    imageIds?: string[]
+    layout?: 'grid'
+    interaction?: 'preview'
   }>
   relations: Array<{ blockId: string; entityId: string }>
   entities: Array<{

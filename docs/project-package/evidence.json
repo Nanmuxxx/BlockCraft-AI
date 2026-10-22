@@ -1,0 +1,129 @@
+{
+  "baseline": "a77cf25c9e1547fc1b51f004d20ea6bf47a8a97e",
+  "branch": "feature/project-package-v1",
+  "deliveryState": "verified integration candidate; remote publication tracked in workspace deployment report",
+  "environment": {
+    "node": "v24.22.0",
+    "npm": "11.19.1",
+    "typescript": "5.9.3",
+    "playwright": "1.64.1",
+    "chromium": "156.0.8078.4"
+  },
+  "checks": [
+    {
+      "command": "npm run test:project-package",
+      "passed": 35,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "command": "npm test",
+      "passed": 224,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:project-json",
+      "passed": 6,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:layout-order",
+      "passed": 33,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "command": "node --test tests/project-zip-export/*.test.mjs tests/gallery/server.test.mjs tests/project-package/acceptance.test.cjs",
+      "passed": 84,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "command": "node tests/project-package/browser.cjs",
+      "passed": true,
+      "externalRequests": 0,
+      "aiRequests": 0,
+      "pageErrors": 0,
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:project-json:browser",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "command": "node tests/gallery/browser.cjs",
+      "passed": true,
+      "externalRequests": 0,
+      "pageErrors": 0,
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check + all delivery text trailing-whitespace scan",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "command": "Python zipfile independent sample CRC and STORE inspection",
+      "passed": true,
+      "exitCode": 0
+    }
+  ],
+  "artifact": {
+    "path": "docs/project-package/example.zip",
+    "bytes": 3096,
+    "entries": [
+      "manifest.json",
+      "project.json",
+      "assets/fixture-png.png"
+    ]
+  },
+  "scopeNotes": [
+    "Fixed offline AppSpec/resources only; no credential reads or real AI calls.",
+    "Browser has native image decode gate. Node without decoder APIs validates signatures and integrity.",
+    "Source hashes exclude this evidence document and the local node_modules symlink."
+  ],
+  "sha256": {
+    "docs/project-package/DELIVERY.md": "747150ce5227b2053de69d2bdd42a14c14c286996ba29eaa8f67c5efb5eb85ae",
+    "docs/project-package/FORMAT.md": "0fcbf3eda4800aea547075d59fed3fc5f9be54540fa2c26625054f8d7298e148",
+    "docs/project-package/PLAN.md": "b84346565478327c99c6e8e839f46a136137a70b03ddebafed36e14b42dc2e0c",
+    "docs/project-package/QA.md": "65e57ddaaf4da26ed16157e8d691a6ad87c21c310d5773b64719f9b49421b151",
+    "docs/project-package/TROUBLESHOOTING.md": "1a828af54ce9f646550475719b0fb673f9e6598a41b1ccd4b866d4d1a5a0e184",
+    "docs/project-package/example.manifest.json": "e27f79d65014ca9a438005dce8c46059f06c7c0d63fbdc19c938583964bf98e4",
+    "docs/project-package/example.zip": "b0e276969ef79042a677f392a8d164edb3ea500752ac53df5648a0d01ebe98da",
+    "package.json": "90cdbfffcc553814a34d484a8a2ca8b5659965307e4e6f8b8695d2b02868d777",
+    "src/components/ai-create/AiCreate.tsx": "855801074708588be30184fbd60e6355d1eb7b6c3d39f2cb3fa1419c17800fc7",
+    "src/integrations/project-json/ProjectJsonBackups.tsx": "625bd26b30ef02f51d2dde758f122d005e5735de4ae44fd4fea183df5e812793",
+    "src/integrations/project-json/ProjectJsonControls.tsx": "35634a64064a001ca904db9811d1e6ba479f7837ae722daba965d296b26695ad",
+    "src/integrations/project-json/ProjectJsonLandingImport.tsx": "bf0d9a0840c7ea7be47d65f444e183b051f9e7dcc1a3c31c0ba3e1ccd3485e8d",
+    "src/integrations/project-package/download.ts": "8ee951d0ce1ccfcf3234e299ecc6afb84eb427577215d86b8a0adee1075cbd50",
+    "src/integrations/project-package/errors.ts": "65bc8afcd7778b5d317223c4e7c2c07e5fda5d70ce9f2f5852588cd3d8213533",
+    "src/integrations/project-package/file.ts": "4d67cd8b4d70959f2c9a97a69114b81198eaace06b582a67ddd4e887519d0130",
+    "src/integrations/project-package/format.ts": "941ed86d199983e1a8291c6827f1908554b4ba600b1ba6116d681bb8aceab39e",
+    "src/integrations/project-package/image.ts": "74606f20d5d34f601e0ae2c111fd3442bc22a0507c4fc1cbfa8893f6022df6ea",
+    "src/integrations/project-package/json.ts": "94339b85ae26c4e8de8805f158ae251162bb2d618432f32e1b05795e86cbdf6b",
+    "src/integrations/project-package/messages.ts": "5ee6a4b768d45f761b0649a3fbff189d8869eeb8b5e1ecc778472cedd754f5f2",
+    "src/integrations/project-package/security.ts": "8e2b17909db846cfcd86fab9a7163dda82c61aeb5c61728c6b33fc59647d71b9",
+    "src/integrations/project-package/zip.ts": "07f9cd9a44dcbc406bfce845f77d2b3b14ce4638e22ea41986a7cdf3f27cad40",
+    "tests/gallery/browser.cjs": "86ac6d0692ee6412440edd1b72ca4f203ef557e3706fe336631832b73255af0b",
+    "tests/project-package/acceptance.test.cjs": "b6a83538ba852ff9eff8179044ae6ef58f5cb63eb09af6ced49d93c6e8735456",
+    "tests/project-package/browser.cjs": "0baeecc8633b5690ec0f8f17dadf7f7171d9b7063f9f6df73a046fc77b3fb1dd",
+    "tests/project-package/file.test.cjs": "44c7c826e5045399b4b10e693ccfa6c1be475b59636571cec631e77a4b33a622",
+    "tests/project-package/fixtures.cjs": "cdfd96a0b47c54c74c9acbacc5ed57a94bc53dca07cec4b0b4fd556af3f56dd9",
+    "tests/project-package/format.test.cjs": "11a27cad0ad06c2bd7b05c0ea681e09e931726e6b28e3e0ff1e5fd54631c9cb2",
+    "tests/project-package/image.test.cjs": "07bf0d6bfde36f53e1b3db2205a3f645af60a1735285a8c02fec2fab7a8d226c",
+    "tests/project-package/zip.test.cjs": "9c4c9e785507d80759e3254dec2646adfc97ccca3f569ef24c5e679d4641f353",
+    "docs/project-package/RELEASE.md": "ab4b8e9f8ffbe06dec1bc56dcf282f4fddf03bcab6714984a4a692f5ae244e6e",
+    "docs/project-package/integration-tests.json": "f7724486515fda13332f456edd2f2ab796315d9ba5b2a1fbd725e7e18aeadbcd"
+  },
+  "integrationBaseline": "366133c64c8276539fe9024d460b79760e05a2ab",
+  "checksScope": "Historical initial package checks; final integrated 1410-test and six-browser results are in integration-tests.json.",
+  "integrationEvidence": "docs/project-package/integration-tests.json"
+}

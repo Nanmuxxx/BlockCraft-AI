@@ -9,9 +9,10 @@ export interface MochiHostContext {
   instanceId: string
   revision: number
   selectedBlockId: string | null
-  blocks: Array<{ id: string; name: string; type: string; fieldIds?: string[] }>
+  blocks: Array<{ id: string; name: string; type: string; fieldIds?: string[]; imageIds?: string[]; layout?: 'grid'; interaction?: 'preview' }>
   relations: Array<{ blockId: string; entityId: string }>
   entities: Array<{ id: string; name: string; fields: Array<{ id: string; name: string; type: string }> }>
+  assets: Array<{ id: string; name: string; altText?: string; mimeType: string }>
 }
 export interface MochiAnchor {
   // CSS pixels relative to the overlay's positioned containing block (PR #17
@@ -65,6 +66,7 @@ function projection(planId: string, plan: DeepReadonly<AppChangePlan>): HostPrev
     ...plan.diff.presentationChanges.map(change => ({ operation: 'configureBlockPresentation', target: change.blockId, description: '调整展示属性', before: JSON.stringify(change.before ?? {}), after: JSON.stringify(change.after) })),
     ...plan.diff.addedFields.map(({ entityId, field }) => ({ operation: 'addField', target: entityId, description: `新增字段：${field.name}`, after: JSON.stringify(field) })),
     ...plan.diff.blockFieldChanges.map(change => ({ operation: 'configureBlockFields', target: change.blockId, description: '调整显示字段', before: change.before.join(', '), after: change.after.join(', ') })),
+    ...plan.diff.galleryChanges.map(change => ({ operation: 'configureGallery', target: change.blockId, description: '调整图片画廊资源', before: JSON.stringify(change.before), after: JSON.stringify(change.after) })),
     ...plan.diff.addedBlocks.map(block => ({ operation: 'addBlock', target: block.id, description: `新增积木：${block.name}`, after: JSON.stringify({ block, binding: plan.after.spec.relations.find(item => item.blockId === block.id), position: plan.after.blockPositions[block.id] }) })),
     ...plan.diff.removedBlocks.map(block => ({ operation: 'removeBlock', target: block.id, description: `删除积木：${block.name}；保留实体与记录`, before: JSON.stringify({ block, binding: plan.before.spec.relations.find(item => item.blockId === block.id), position: plan.before.blockPositions[block.id] }) })),
     ...plan.diff.sharedEntityImpacts.map(impact => ({ operation: 'sharedEntityImpact', target: impact.entityId, description: `共享实体影响：${impact.boundBlockIds.join(', ')}；直接授权外：${impact.outsideDirectScopeBlockIds.join(', ') || '无'}；保留 ${impact.retainedRecordCount} 条记录` })),
@@ -99,9 +101,13 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   function context(): MochiHostContext {
     const { spec, revision } = runtime.getSnapshot()
     return { appId: spec.id, instanceId, revision, selectedBlockId,
-      blocks: [...spec.blocks.map(block => ({ id: block.id, name: block.name, type: block.type, ...('fieldIds' in block ? { fieldIds: [...block.fieldIds] } : {}) })), ...customInstances().map(instance => ({ id: instance.id, name: '自定义积木', type: 'custom' }))],
+      blocks: [...spec.blocks.map(block => ({ id: block.id, name: block.name, type: block.type,
+        ...('fieldIds' in block ? { fieldIds: [...block.fieldIds] } : {}),
+        ...(block.type === 'gallery' ? { imageIds: [...block.imageIds], layout: block.layout, interaction: block.interaction } : {}),
+      })), ...customInstances().map(instance => ({ id: instance.id, name: '自定义积木', type: 'custom' }))],
       relations: spec.relations.map(({ blockId, entityId }) => ({ blockId, entityId })),
       entities: spec.entities.map(entity => ({ id: entity.id, name: entity.name, fields: entity.fields.map(({ id, name, type }) => ({ id, name, type })) })),
+      assets: Object.values(runtime.getSnapshot().assets ?? {}).map(({ id, name, altText, mimeType }) => ({ id, name, ...(altText === undefined ? {} : { altText }), mimeType })),
     }
   }
   function publish(patch: Partial<HostView> = {}) {
@@ -184,8 +190,10 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         ensure(selectedBlockId !== null, 'Select a block before requesting a plan', 'SELECTION_REQUIRED')
         ensure(!customInstances().some(instance => instance.id === selectedBlockId), '自定义积木请使用参数面板；修改计划尚未开放此权限。', 'CUSTOM_SCOPE_UNAVAILABLE')
         ensure(snapshot.spec.blocks.find(b => b.id === selectedBlockId)?.type !== 'pomodoro', '可信番茄钟暂不支持 AI 修改计划。', 'TIMER_SCOPE_UNAVAILABLE')
-        const entityId = resolveBlockEntityId(snapshot, selectedBlockId)
-        return { snapshot, scope: { selectedBlockId, allowedBlockIds: [selectedBlockId], allowedEntityIds: [entityId] } }
+        const selected = snapshot.spec.blocks.find(block => block.id === selectedBlockId)
+        ensure(selected, 'Unknown selected block', 'UNKNOWN_TARGET')
+        const entityId = selected.type === 'gallery' ? null : resolveBlockEntityId(snapshot, selectedBlockId)
+        return { snapshot, scope: { selectedBlockId, allowedBlockIds: [selectedBlockId], allowedEntityIds: entityId ? [entityId] : [] } }
       }
       let prepared: ReturnType<typeof prepare>
       try { prepared = prepare() } catch (error) {
@@ -343,7 +351,11 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
     },
     setSelection(blockId: string | null) {
       alive()
-      if (blockId !== null && !customInstances().some(instance => instance.id === blockId) && runtime.getSnapshot().spec.blocks.find(b => b.id === blockId)?.type !== 'pomodoro') resolveBlockEntityId(runtime.getSnapshot(), blockId)
+      if (blockId !== null && !customInstances().some(instance => instance.id === blockId)) {
+        const block = runtime.getSnapshot().spec.blocks.find(b => b.id === blockId)
+        ensure(block, `Unknown block: ${blockId}`, 'UNKNOWN_TARGET')
+        if (block.type !== 'pomodoro' && block.type !== 'gallery') resolveBlockEntityId(runtime.getSnapshot(), blockId)
+      }
       if (blockId === selectedBlockId) return
       selectedBlockId = blockId
       invalidate()

@@ -71,7 +71,7 @@ export function BlockCanvas<Id extends string = ModuleId>({ modules: requestedMo
       <div className="block-canvas-actions">
         {appBuilder && <>
           <button type="button" disabled={!appBuilder.canUndo} onClick={appBuilder.onUndo}><Undo2 size={14} aria-hidden="true" />撤销结构修改</button>
-          <button type="button" disabled={!selected || appBlockKind(selected) === 'metric'} onClick={() => selected && appBuilder.onEdit({ type: 'configure', blockId: selected.id })}>配置字段</button>
+          <button type="button" disabled={!selected || ['metric', 'pomodoro', 'gallery'].includes(appBlockKind(selected) ?? '')} onClick={() => selected && appBuilder.onEdit({ type: 'configure', blockId: selected.id })}>配置字段</button>
           <button type="button" disabled={!selected} onClick={() => selected && appBuilder.onEdit({ type: 'remove', blockId: selected.id })}>移除积木</button>
         </>}
         {builder && <button type="button" disabled={!builder.canUndo} onClick={builder.onUndo}><Undo2 size={14} aria-hidden="true" />撤销功能修改</button>}

@@ -1,0 +1,43 @@
+{
+  "suite": "gallery-stage1-browser-acceptance",
+  "passed": true,
+  "browser": "Chromium 151.0.7922.34",
+  "viewports": [
+    {
+      "name": "desktop",
+      "size": "1280x920",
+      "passed": true,
+      "mochiPlans": 4,
+      "mochiStructuralCommands": ["addBlock", "removeBlock"],
+      "confirmedRevision": 4,
+      "jsonBytes": 1402,
+      "zipBytes": 40444
+    },
+    {
+      "name": "mobile",
+      "size": "390x844",
+      "passed": true,
+      "mochiPlans": 4,
+      "mochiStructuralCommands": ["addBlock", "removeBlock"],
+      "confirmedRevision": 4,
+      "jsonBytes": 1402,
+      "zipBytes": 40444
+    }
+  ],
+  "checks": [
+    "B/C mode switching",
+    "async image authorization and invalid-file rejection",
+    "gallery image selection and referenced-asset deletion guard",
+    "empty and missing-resource rendering states",
+    "preview natural dimensions",
+    "preview focus restoration and Escape dismissal",
+    "Mochi configureGallery preview and confirmation",
+    "Mochi addBlock preview and confirmation",
+    "Mochi removeBlock preview and confirmation",
+    "JSON export/import round trip",
+    "React ZIP export with GalleryBlock and split asset chunks",
+    "no external requests",
+    "no page errors"
+  ],
+  "command": "NODE_PATH=<bundled-node-runtime>/node_modules PLAYWRIGHT_CHROMIUM_EXECUTABLE=<bundled-chromium> GALLERY_SCREENSHOT_DIR=<report-directory> node tests/gallery/browser.cjs"
+}
