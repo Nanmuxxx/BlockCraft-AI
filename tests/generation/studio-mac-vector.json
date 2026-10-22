@@ -1,0 +1,12 @@
+{
+  "provenance": "Python stdlib hashlib/hmac; independently cross-checked with openssl dgst -sha256 -mac HMAC; no JS fixture imports",
+  "now": 1792508400000,
+  "keyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "domainHex": "626c6f636b63726166742d73747564696f2d6973737565722d76310a",
+  "grantCanonical": "{\"id\":\"known-answer-lf-v1\",\"credentialHash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"principal\":\"vector-owner\",\"appId\":\"pomodoro\",\"issuedAt\":1792508399000,\"expiresAt\":1792508700000,\"sessionExpiresAt\":1792509300000,\"revoked\":false}",
+  "stateCanonical": "{\"version\":1,\"grantDigest\":\"0f1bade6c6e4cc469cccdbda33cf58a4a6f9c129c26f1cebead82768c0948c46\",\"attempts\":0,\"consumed\":false,\"sessionHash\":null,\"sessionExpiresAt\":null}",
+  "expectedMac": "38f416ffacc3ad7d2b0a68b832dbb02bdec0c2dde2111756780ef419eb66c207",
+  "backslashNMac": "0b92fe915842d165a13f2bdfd542ed199c04c6b485978c7f10c8a05c9a888776",
+  "attemptCanonical": "{\"version\":1,\"grantDigest\":\"0f1bade6c6e4cc469cccdbda33cf58a4a6f9c129c26f1cebead82768c0948c46\",\"attempts\":1,\"consumed\":false,\"sessionHash\":null,\"sessionExpiresAt\":null}",
+  "expectedAttemptMac": "8e79dea0f446a341c39b616f73bb494e397644214a991df7d81f81acc0d2df21"
+}

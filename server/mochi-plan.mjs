@@ -158,7 +158,7 @@ function send(res, status, value) {
   res.end(JSON.stringify(value))
 }
 /** Default deny. A trusted local/deployment composition supplies auth and budgeted egress. */
-export function createMochiPlanHandler({ enabled = false, resolveAccess, allowedOrigin = '', apiKey, fetchImpl = globalThis.fetch, model = defaultModelForTransport(fetchImpl), timeoutMs = 30000 } = {}) {
+export function createMochiPlanHandler({ enabled = false, resolveAccess, resolveRequest, allowedOrigin = '', apiKey, fetchImpl = globalThis.fetch, model = defaultModelForTransport(fetchImpl), timeoutMs = 30000 } = {}) {
   let busy = false
   return async (req, res) => {
     const path = (req.url || '').split('?')[0]
@@ -169,15 +169,15 @@ export function createMochiPlanHandler({ enabled = false, resolveAccess, allowed
     const timer = setTimeout(() => controller.abort(), timeoutMs)
     let acquired = false
     try {
-      if (!await authorizeGeneration(req, res, resolveAccess)) fail('UNAUTHORIZED', 401)
-      if (req.headers.origin && req.headers.origin !== (allowedOrigin || `http://${req.headers.host}`)) fail('ORIGIN_REJECTED', 403)
-      const configured = enabled && Boolean(apiKey) && typeof resolveAccess === 'function'
+      const configured = enabled && (typeof resolveRequest === 'function' || Boolean(apiKey)) && typeof resolveAccess === 'function'
       if (path.endsWith('/status') && req.method === 'GET') {
         send(res, 200, { enabled: configured, reason: configured ? null : 'AI_DISABLED', source: isPaidTransport(fetchImpl) ? 'deepseek' : 'offline-fixture', model }); return true
       }
+      if (!await authorizeGeneration(req, res, resolveAccess)) fail('UNAUTHORIZED', 401)
+      if (req.headers.origin && req.headers.origin !== (allowedOrigin || `http://${req.headers.host}`)) fail('ORIGIN_REJECTED', 403)
       if (req.method !== 'POST') fail('METHOD_NOT_ALLOWED', 405)
       if (!configured) fail('AI_DISABLED', 503)
-      requireControlledEgress(fetchImpl)
+      if (!resolveRequest) requireControlledEgress(fetchImpl)
       if (!/^application\/json(?:\s*;|$)/i.test(req.headers['content-type'] || '')) fail('INVALID_INPUT', 415)
       if (Number(req.headers['content-length']) > maxBytes) fail('INPUT_TOO_LARGE', 413)
       if (busy) fail('AI_BUSY', 429)
@@ -185,9 +185,13 @@ export function createMochiPlanHandler({ enabled = false, resolveAccess, allowed
       let input
       try { input = validatePlanInput(await abortable(readBounded(req, controller.signal), controller.signal)) }
       catch (e) { if (e.status) throw e; fail('INVALID_INPUT') }
-      const response = await abortable(fetchImpl(endpoint, { method: 'POST', redirect: 'error', signal: controller.signal,
-        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model, messages: [{ role: 'system', content: FIELD_PLAN_INSTRUCTION }, { role: 'user', content: JSON.stringify(input) }], response_format: { type: 'json_object' }, stream: false, max_tokens: 2048 }) }), controller.signal)
+      let requestOptions = { apiKey, fetchImpl, model }
+      if (resolveRequest) requestOptions = await abortable(resolveRequest(req, input, controller.signal), controller.signal)
+      if (!requestOptions?.apiKey || typeof requestOptions.fetchImpl !== 'function') fail('AI_DISABLED', 503)
+      requireControlledEgress(requestOptions.fetchImpl)
+      const response = await abortable(requestOptions.fetchImpl(endpoint, { method: 'POST', redirect: 'error', signal: controller.signal,
+        headers: { Authorization: `Bearer ${requestOptions.apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: requestOptions.model, messages: [{ role: 'system', content: FIELD_PLAN_INSTRUCTION }, { role: 'user', content: JSON.stringify(input) }], response_format: { type: 'json_object' }, stream: false, max_tokens: 2048 }) }), controller.signal)
       if (!response.ok) { await response.body?.cancel(); fail('AI_UNAVAILABLE', 502) }
       let candidate
       try {
@@ -198,7 +202,7 @@ export function createMochiPlanHandler({ enabled = false, resolveAccess, allowed
         candidate = validateFieldCandidate(JSON.parse(choice.message.content), input)
       } catch { fail('AI_INVALID_RESPONSE', 502) }
       controller.signal.throwIfAborted()
-      send(res, 200, { candidate, source: isPaidTransport(fetchImpl) ? 'deepseek' : 'offline-fixture', model })
+      send(res, 200, { candidate, source: isPaidTransport(requestOptions.fetchImpl) ? 'deepseek' : 'offline-fixture', model: requestOptions.model })
     } catch (e) {
       const known = ['UNAUTHORIZED', 'ORIGIN_REJECTED', 'AI_DISABLED', 'AI_BUSY', 'METHOD_NOT_ALLOWED', 'INVALID_INPUT', 'FORM_REQUIRED', 'INPUT_TOO_LARGE', 'AI_INVALID_RESPONSE', 'AI_UNAVAILABLE', 'BUDGET_EXHAUSTED', 'BUDGET_HALTED', 'PRICING_EXPIRED']
       const code = controller.signal.aborted ? 'AI_TIMEOUT' : known.includes(e.code) ? e.code : 'AI_UNAVAILABLE'

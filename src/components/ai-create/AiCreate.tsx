@@ -1,3 +1,4 @@
+import { StudioAccessStatus, type StudioStatus } from './StudioAccessStatus'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { createAppRuntime, type AppRuntime } from '../../model/appRuntime'
 import { AppSpecWorkshop } from '../app-builder/AppSpecWorkshop'
@@ -21,10 +22,32 @@ export function AiCreate() {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
   const importing = useRef(false)
+  const [studio, setStudio] = useState<StudioStatus | null>(null)
+  const [credential, setCredential] = useState('')
+  const [unlocking, setUnlocking] = useState(false)
   const [app, setApp] = useState<{ runtime: AppRuntime; generation: number; installation: GeneratedArtifactUI; source: string } | null>(null)
   const currentApp = useRef(app)
   const active = useRef<AbortController | null>(null)
   useEffect(() => () => { active.current?.abort(); active.current = null }, [])
+  async function refreshStudio() {
+    try {
+      const response = await fetch('/api/studio/status', { credentials: 'same-origin', cache: 'no-store', redirect: 'error' })
+      if (response.ok) setStudio(await response.json())
+    } catch { /* A standalone local renderer may not have this deployment endpoint. */ }
+  }
+  useEffect(() => { void refreshStudio() }, [])
+  async function unlock() {
+    if (unlocking) return
+    setUnlocking(true); setError('')
+    try {
+      const response = await fetch('/api/studio/session', { method: 'POST', credentials: 'same-origin', redirect: 'error',
+        headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ credential }) })
+      setCredential('')
+      if (!response.ok) throw new Error(response.status === 429 ? '解锁尝试过于频繁，请一分钟后重试。' : '未能解锁，请检查测试空间访问码。')
+      await refreshStudio()
+    } catch (failure) { setError(failure instanceof Error ? failure.message : '解锁失败，请重试。') }
+    finally { setUnlocking(false) }
+  }
 
   function changeMode(next: typeof mode) {
     if (active.current || importing.current || next === mode) return
@@ -72,6 +95,7 @@ export function AiCreate() {
       if (active.current === controller) setError(failure instanceof Error ? failure.message : '生成失败，请重试。')
     } finally {
       if (active.current === controller) { active.current = null; setPending(false) }
+      void refreshStudio()
     }
   }
 
@@ -108,6 +132,11 @@ export function AiCreate() {
   }
 
   const prompt = <form className="composer ai-create-prompt" onSubmit={generate} aria-busy={pending}>
+    {studio && <div className="ai-create-access">
+      {studio.authenticated ? <StudioAccessStatus studio={studio} />
+      : studio.configured ? <div><label htmlFor="studio-access">解锁 AI 创作</label><div className="ai-create-access__row"><input id="studio-access" type="password" autoComplete="off" maxLength={43} value={credential} onChange={event => setCredential(event.target.value)} placeholder="输入测试空间访问码（不是 API Key）" /><button type="button" className="btn-secondary" disabled={unlocking || credential.length !== 43} onClick={() => { void unlock() }}>{unlocking ? '解锁中…' : '解锁'}</button></div><small>访问码仅用于本测试空间，API Key 始终保留在服务端。</small></div>
+      : <p>{studio.unavailable === 'AI_AUTHORIZATION_EXPIRED' ? '本次 AI 测试授权已到期。' : studio.unavailable === 'AI_AUTHORIZATION_LOCKED' ? '本次 AI 测试授权已安全锁定，需要负责人复核；额度不会自动恢复。' : 'AI 服务正在配置。'}可以体验下方明确标注的离线番茄钟、学习示例和组件展厅。</p>}
+    </div>}
     <div className="ai-create-mode"><label htmlFor="generation-mode">创建方式</label>
       <select id="generation-mode" value={mode} disabled={pending} onChange={event => changeMode(event.target.value as typeof mode)}>
         <option value="legacy-v1">AI 应用（原有 v1）</option>
@@ -118,7 +147,7 @@ export function AiCreate() {
     <label htmlFor="software-idea" className="sr-only">你想做什么软件？</label>
     <textarea className="composer__input" id="software-idea" value={idea} maxLength={4000} required disabled={pending} onChange={event => setIdea(event.target.value)} placeholder="告诉 Mochi，你今天想创造什么……例如社团报名工具，包含表单、名单和人数统计。" />
     </> : <p className="ai-create-hint">{trustedPomodoroSource}。加载固定的 25 分钟番茄钟配置，由可信内置组件计时；此演示不会根据自然语言生成内容。</p>}
-    <div className="composer__bar"><small className="composer__count">{mode === 'legacy-v1' ? `${idea.length} / 4000` : '固定配置 · 25 分钟'}</small>{pending && <button type="button" className="btn-secondary" onClick={cancelGeneration}>取消生成</button>}<button className="btn-primary" type="submit" disabled={pending || (mode === 'legacy-v1' && !idea.trim())}>{pending ? <><LoaderCircle size={18} className="spin" aria-hidden="true" />处理中…</> : <>{mode === 'trusted-fixture' ? '加载离线番茄钟' : error ? '重试生成' : app ? '生成新应用' : '生成应用'}<ArrowRight size={18} aria-hidden="true" /></>}</button></div>
+    <div className="composer__bar"><small className="composer__count">{mode === 'legacy-v1' ? `${idea.length} / 4000` : '固定配置 · 25 分钟'}</small>{pending && <button type="button" className="btn-secondary" onClick={cancelGeneration}>取消生成</button>}<button className="btn-primary" type="submit" disabled={pending || (mode === 'legacy-v1' && (!idea.trim() || Boolean(studio && !studio.authenticated) || Boolean(studio?.budget?.halted) || Boolean(studio?.budget && studio.budget.calls >= studio.budget.maxCalls)))}>{pending ? <><LoaderCircle size={18} className="spin" aria-hidden="true" />处理中…</> : <>{mode === 'trusted-fixture' ? '加载离线番茄钟' : error ? '重试生成' : app ? '生成新应用' : '生成应用'}<ArrowRight size={18} aria-hidden="true" /></>}</button></div>
     {!app && <><ProjectJsonLandingImport onImportProject={importProject} /><ProjectJsonBackups onRestore={importProject} /></>}
     <p className="ai-create-hint">{mode === 'legacy-v1' && '点击将请求 DeepSeek。'}成功创建后会替换当前应用，替换前自动保留本地备份；失败或取消保留原应用和数据。刷新前请下载项目 ZIP 或 JSON，稍后导入可继续编辑。</p>
   </form>
