@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-19",
+  "pages": 15,
+  "pageTextParity": "PASS all 15",
+  "brandMediaUnchanged": true,
+  "pdfFontProgramsEmbedded": true,
+  "files": [
+    {
+      "name": "BlockCraftAI_Final_BP.pdf",
+      "bytes": 813890,
+      "sha256": "29d6aa2a6cdeb489cfa3da48c19851dc3a014df859cdff1f23425cf4323e890c"
+    },
+    {
+      "name": "BlockCraftAI_Final_BP.pptx",
+      "bytes": 430280,
+      "sha256": "3ee82646e0a225f6a1f52c50288f26eed8be3708c0fa9fdeae4769bc66574a33"
+    }
+  ],
+  "nativePowerPoint": "NOT TESTED",
+  "main": "8cfa37f5112adaab1e0adbb4cb4086240111d436",
+  "visualInspection": "All 15 pages reviewed; final re-export contact sheet and changed slide 7 reviewed. No obvious clipping, missing glyphs, overlaps or footer collisions.",
+  "renderDirectory": "rendered-oct19-r3",
+  "layoutWarning": "slide 13 estimated native table overflow 0.0184 in; no visible collision in PDF"
+}
