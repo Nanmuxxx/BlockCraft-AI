@@ -13,18 +13,25 @@ const forbidden = new Set(['__proto__', 'prototype', 'constructor'])
 export function safeKey(key: string) { check(!forbidden.has(key), 'Forbidden property name') }
 
 /** Data descriptors only. No property reads/toJSON before inspection; never coerce input. */
-export function assertJson(value: unknown, limits: JsonLimits = JSON_LIMITS): asserts value is JsonValue {
+function validateJson(value: unknown, limits: JsonLimits, projectAssets = false): asserts value is JsonValue {
   let nodes = 0, textLength = 0
   const ancestors = new Set<object>()
-  const text = (s: string) => {
-    check(s.length <= limits.maxStringLength, 'JSON string limit', 'LIMIT')
+  const assetPath = (path: string[]) => {
+    const prefix = path.length === 3 ? [] : path.length === 4 ? ['base'] : path.length === 5 ? ['project', 'base'] : null
+    return prefix !== null && prefix.every((part, index) => path[index] === part)
+      && path[prefix.length] === 'assets' && /^[A-Za-z][A-Za-z0-9_-]{0,127}$/.test(path[prefix.length + 1])
+      && path[prefix.length + 2] === 'dataUrl'
+  }
+  const text = (s: string, imageData = false) => {
+    // 512 KiB base64 plus the raster data-URL prefix. Ordinary text/source stays capped.
+    check(s.length <= (imageData ? 699_100 : limits.maxStringLength), 'JSON string limit', 'LIMIT')
     textLength += s.length
     check(textLength <= limits.maxTextLength, 'JSON aggregate text limit', 'LIMIT')
   }
-  const visit = (v: unknown, depth: number) => {
+  const visit = (v: unknown, depth: number, path: string[]) => {
     check(++nodes <= limits.maxNodes && depth <= limits.maxDepth, 'JSON node/depth limit', 'LIMIT')
     if (v === null || typeof v === 'boolean') return
-    if (typeof v === 'string') { text(v); return }
+    if (typeof v === 'string') { text(v, projectAssets && assetPath(path)); return }
     if (typeof v === 'number') { check(Number.isFinite(v), 'Non-finite JSON number'); return }
     check(typeof v === 'object', 'Non-JSON value')
     check(!ancestors.has(v), 'Cyclic JSON')
@@ -41,12 +48,19 @@ export function assertJson(value: unknown, limits: JsonLimits = JSON_LIMITS): as
       if (array) check(/^(0|[1-9][0-9]*)$/.test(key) && Number(key) < v.length, 'Invalid array key')
       const descriptor = Object.getOwnPropertyDescriptor(v, key)!
       check('value' in descriptor && descriptor.enumerable, 'Accessor/hidden JSON property')
-      visit(descriptor.value, depth + 1)
+      visit(descriptor.value, depth + 1, [...path, key])
     }
     ancestors.delete(v)
   }
-  visit(value, 0)
+  visit(value, 0, [])
   check(new TextEncoder().encode(JSON.stringify(value)).byteLength <= limits.maxBytes, 'JSON byte limit', 'LIMIT')
+}
+export function assertJson(value: unknown, limits: JsonLimits = JSON_LIMITS): asserts value is JsonValue {
+  validateJson(value, limits)
+}
+/** Project-only byte payload exception; semantic image validation remains mandatory. */
+export function assertProjectJson(value: unknown): asserts value is JsonValue {
+  validateJson(value, JSON_LIMITS, true)
 }
 export function object(value: unknown): asserts value is Record<string, unknown> {
   check(value !== null && typeof value === 'object' && !Array.isArray(value), 'Expected object')

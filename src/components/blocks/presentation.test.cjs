@@ -17,6 +17,7 @@ const { readBlockPresentation, blockCardStyle } = require('./presentation.ts')
 const { toAppCanvasModules } = require('./app-canvas.ts')
 const { BlockCanvas } = require('../BlockCanvas.tsx')
 const { BuiltinBlockRenderer } = require('../app-renderer/AppRenderer.tsx')
+const { AppSpecInspector } = require('../app-builder/AppSpecInspector.tsx')
 const { assertAppSpec } = require('../../model/appSpecValidation.ts')
 
 const FULL = { buttonText: '立即报名', backgroundColor: '#FFEEDD', textColor: '#123456', borderRadius: 12 }
@@ -128,6 +129,58 @@ test('B card defaults stay byte-identical without or with empty presentation', (
   assert.equal(plain, unset)
   assert.doesNotMatch(plain, /background-color/)
   assert.doesNotMatch(plain, /按钮文字/)
+})
+
+test('gallery renderer shows project images with preview affordance and accessible alt text', () => {
+  const galleryProject = {
+    revision: 0,
+    spec: { version: 2, id: 'gallery-app', name: '图片精选', entities: [], blocks: [
+      { id: 'gallery-1', name: '旅行相册', type: 'gallery', protocolVersion: 1, imageIds: ['image-1'], layout: 'grid', interaction: 'preview' },
+    ], relations: [] },
+    records: {}, blockPositions: {},
+    assets: { 'image-1': { id: 'image-1', name: '海边', altText: '海边日落', mimeType: 'image/png', dataUrl: 'data:image/png;base64,aGVsbG8=' } },
+  }
+  const runtime = { subscribe: () => () => {}, getSnapshot: () => galleryProject }
+  const html = renderToStaticMarkup(React.createElement(BuiltinBlockRenderer, { runtime, blockId: 'gallery-1' }))
+  assert.match(html, /renderer-block--gallery/)
+  assert.match(html, /alt="海边日落"/)
+  assert.match(html, /预览 海边日落/)
+  assert.match(html, /data:image\/png;base64,aGVsbG8=/)
+})
+
+test('gallery renderer provides empty and broken-resource states', () => {
+  const galleryProject = {
+    revision: 0,
+    spec: { version: 2, id: 'gallery-app', name: '图片精选', entities: [], blocks: [
+      { id: 'gallery-1', name: '旅行相册', type: 'gallery', protocolVersion: 1, imageIds: [], layout: 'grid', interaction: 'preview' },
+    ], relations: [] }, records: {}, blockPositions: {}, assets: {},
+  }
+  const runtime = { subscribe: () => () => {}, getSnapshot: () => galleryProject }
+  const emptyHtml = renderToStaticMarkup(React.createElement(BuiltinBlockRenderer, { runtime, blockId: 'gallery-1' }))
+  assert.match(emptyHtml, /画廊还没有图片/)
+  galleryProject.spec.blocks[0].imageIds = ['missing-image']
+  const brokenHtml = renderToStaticMarkup(React.createElement(BuiltinBlockRenderer, { runtime, blockId: 'gallery-1' }))
+  assert.match(brokenHtml, /role="alert"/)
+  assert.match(brokenHtml, /图片资源不可用：missing-image/)
+})
+
+test('gallery inspector exposes local import, current assets and selection controls', () => {
+  const galleryProject = {
+    revision: 0,
+    spec: { version: 2, id: 'gallery-app', name: '图片精选', entities: [], blocks: [
+      { id: 'gallery-1', name: '旅行相册', type: 'gallery', protocolVersion: 1, imageIds: ['image-1'], layout: 'grid', interaction: 'preview' },
+    ], relations: [] },
+    records: {}, blockPositions: {},
+    assets: { 'image-1': { id: 'image-1', name: '海边', altText: '海边日落', mimeType: 'image/png', dataUrl: 'data:image/png;base64,aGVsbG8=' } },
+  }
+  const runtime = { getSnapshot: () => galleryProject, executeCommand() { throw Error('static render must not commit') } }
+  const html = renderToStaticMarkup(React.createElement(AppSpecInspector, { runtime, snapshot: galleryProject, blockId: 'gallery-1' }))
+  assert.match(html, /accept="image\/png,image\/jpeg,image\/webp,image\/gif"/)
+  assert.match(html, /添加图片/)
+  assert.match(html, /海边/)
+  assert.match(html, /checked=""/)
+  assert.match(html, /移除资源/)
+  assert.match(html, /布局：网格 · 交互：点击预览/)
 })
 
 const renderBlock = blockId => renderToStaticMarkup(React.createElement(BuiltinBlockRenderer, { runtime: fakeRuntime, blockId }))

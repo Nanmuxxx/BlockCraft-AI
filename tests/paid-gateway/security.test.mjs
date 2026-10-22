@@ -15,15 +15,17 @@ import { createDeepSeekProvider as mochi } from '../../server/mochi-ai/provider.
 
 const key = 'offline-key-not-a-real-secret'
 const endpoint = 'https://api.deepseek.com/chat/completions'
+const verifiedNow = Date.parse('2026-10-21T12:00:00+08:00')
 const spec = { version: 1, id: 'tasks', name: '任务', entities: [{ id: 'items', name: '任务', fields: [{ id: 'title', name: '名称', type: 'text', required: true }] }], blocks: [{ id: 'list', name: '清单', type: 'list', fieldIds: ['title'] }], relations: [{ id: 'binding', type: 'dataBinding', blockId: 'list', entityId: 'items' }] }
 const envelope = (usage = { prompt_tokens: 50, completion_tokens: 100, total_tokens: 150 }) => ({ model: 'deepseek-flash', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: JSON.stringify(spec) } }], usage })
 const init = extra => ({ method: 'POST', body: JSON.stringify({ model: PRICING.model, messages: [{ role: 'system', content: 'JSON only' }, { role: 'user', content: 'tasks' }], stream: false, response_format: { type: 'json_object' }, max_tokens: 8192, ...extra }) })
-function ledger(t) {
+function ledger(t, now = () => PRICING.expiresAt - 1) {
   const dir = mkdtempSync(join(tmpdir(), 'blockcraft-budget-test-')); chmodSync(dir, 0o700)
-  const path = join(dir, 'ledger.json'), store = openLedger(path, { now: () => PRICING.expiresAt - 1 })
+  const path = join(dir, 'ledger.json'), store = openLedger(path, { now })
   t.after(() => store.close())
   return { dir, path, store }
 }
+test.beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: verifiedNow }))
 async function server(t, options) {
   const s = createAppServer({ apiKey: key, ...options }); s.listen(0, '127.0.0.1'); await once(s, 'listening')
   t.after(() => new Promise(r => { s.closeAllConnections(); s.close(r) }))
@@ -88,6 +90,17 @@ test('request policy rejects other endpoint/model/tools/token limits and oversiz
   for (const extra of [{ model: 'deepseek-v4-pro' }, { tools: [] }, { max_tokens: 8193 }, { max_tokens: -1 }, { stream: true }, { messages: [{ role: 'system', content: 'x'.repeat(65537) }, { role: 'user', content: 'x' }] }]) await assert.rejects(transport(endpoint, init(extra)))
   await assert.rejects(transport('https://evil.invalid', init()))
   assert.equal(calls, 0); assert.equal(store.snapshot().entries.length, 0)
+})
+test('pricing expiry rejects before network and reservation at the exact expiresAt boundary', async t => {
+  let clock = PRICING.expiresAt - 1
+  const { store } = ledger(t, () => clock); let calls = 0
+  const transport = createPaidTransport({ apiKey: key, ledger: store, fetchImpl: async () => { calls++; return Response.json(envelope()) } })
+  t.mock.timers.setTime(PRICING.expiresAt)
+  clock = PRICING.expiresAt
+  assert.throws(() => store.reserve(100, 8192, 'expired'), { code: 'PRICING_EXPIRED' })
+  await assert.rejects(transport(endpoint, init()), { code: 'PRICING_EXPIRED' })
+  assert.equal(calls, 0)
+  assert.equal(store.snapshot().entries.length, 0)
 })
 test('durable call cap survives reopen and reservations never refunded', t => {
   const { store, path } = ledger(t)

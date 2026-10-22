@@ -10,6 +10,9 @@ export { ProjectExportError, ZIP_LIMITS } from './zip.mjs'
 export const EXPORT_PROFILE = 'react-props-local-v1'
 export const EXPORT_LIMITS = Object.freeze({ maxArtifacts: 32, maxArtifactSourceBytes: 1048576, maxBlocks: 128 })
 const encoder = new TextEncoder()
+// Keep generated modules below the ZIP per-file cap while retaining the original
+// data URL in the generated project's in-memory model.
+const ASSET_CHUNK_CHARS = 180000
 const key = ref => `${ref.definitionId}/${ref.versionDigest}`
 const stringify = value => json.canonicalJson(value)
 const content = value => `${stringify(value)}\n`
@@ -73,7 +76,7 @@ function sourcePolicy(artifact) {
  * Validation is repeated here; callers cannot bypass it with a "validated" flag.
  */
 export async function exportProjectZip(input, options = {}) {
-  guarded(() => { protocol.assertJson(input); json.object(input); json.keys(input, ['project', 'artifacts']) }, 'INVALID_INPUT')
+  guarded(() => { protocol.assertProjectJson(input); json.object(input); json.keys(input, ['project', 'artifacts']) }, 'INVALID_INPUT')
   const snapshot = json.cloneJson(input)
   ensure(snapshot.project?.base?.spec?.version === 1, 'UNSUPPORTED_APP_SPEC')
   guarded(() => { protocol.assertJson(options); json.object(options); json.keys(options, [], ['filename', 'limits']) }, 'INVALID_OPTIONS')
@@ -126,11 +129,32 @@ export async function exportProjectZip(input, options = {}) {
   add('src/main.tsx', templates.main)
   add('src/App.tsx', templates.app(imports, cases))
   add('src/model.ts', templates.model)
+  // Asset payloads are emitted as static chunks so their aggregate size cannot
+  // overflow src/data.ts or ZIP_LIMITS.maxFileBytes. Static imports reconstruct
+  // the exact original data URLs at module evaluation time.
+  const dataProject = structuredClone(project)
+  const assetImports = []
+  const assetAssignments = []
+  for (const [index, [assetId, asset]] of Object.entries(dataProject.base.assets ?? {}).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0).entries()) {
+    const parts = []
+    for (let offset = 0, part = 0; offset < asset.dataUrl.length; offset += ASSET_CHUNK_CHARS, part++) {
+      const value = asset.dataUrl.slice(offset, offset + ASSET_CHUNK_CHARS)
+      const path = `src/assets/asset-${index}-part-${part}.ts`
+      const alias = `asset_${index}_${part}`
+      add(path, `export default ${JSON.stringify(value)};\n`)
+      assetImports.push(`import ${alias} from './assets/asset-${index}-part-${part}';`)
+      parts.push(alias)
+    }
+    asset.dataUrl = ''
+    assetAssignments.push(`project.base.assets![${JSON.stringify(assetId)}].dataUrl = [${parts.join(', ')}].join('');`)
+  }
   // Contextual JSON escaping: U+2028/29 are escaped; data never becomes JSX/HTML.
-  add('src/data.ts', `import type { Project } from './model';\nexport const project: Project = ${stringify(project).replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')};\n`)
+  const dataSource = stringify(dataProject).replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
+  add('src/data.ts', `import type { Project } from './model';\n${assetImports.join('\n')}${assetImports.length ? '\n' : ''}export const project: Project = ${dataSource};\n${assetAssignments.join('\n')}${assetAssignments.length ? '\n' : ''}`)
   add('src/components/FormBlock.tsx', templates.form)
   add('src/components/ListBlock.tsx', templates.list)
   add('src/components/MetricBlock.tsx', templates.metric)
+  add('src/components/GalleryBlock.tsx', templates.gallery)
   add('src/styles.css', templates.css)
   add('README.md', templates.readme)
   add('provenance.json', content({ formatVersion: 1, profile: EXPORT_PROFILE, projectRevision: project.revision, artifacts: ordered.map(([, entry]) => ({ definitionId: entry.artifact.manifest.definitionId, versionDigest: entry.versionDigest })) }))

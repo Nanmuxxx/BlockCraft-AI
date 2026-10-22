@@ -15,6 +15,8 @@ import { request as customRequest } from '../custom-block-generation/fixtures.mj
 import { request as mochiRequest, advice } from '../mochi-ai/fixtures.mjs'
 
 const key = 'offline-model-contract-key'
+const verifiedNow = Date.parse('2026-10-21T12:00:00+08:00')
+test.beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: verifiedNow }))
 function modelEnvironment(t, value) {
   const previous = process.env.DEEPSEEK_MODEL
   if (value === undefined) delete process.env.DEEPSEEK_MODEL

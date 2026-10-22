@@ -9,12 +9,14 @@ import { PRICING } from '../../server/paid-gateway/pricing.mjs'
 
 const key = 'OFFLINE_AUDIT_PRIVATE_SENTINEL_12345678'
 const url = 'https://api.deepseek.com/chat/completions'
+const verifiedNow = Date.parse('2026-10-21T12:00:00+08:00')
 const init = () => ({ method: 'POST', body: JSON.stringify({ model: PRICING.model, messages: [{ role: 'system', content: 'JSON only' }, { role: 'user', content: 'synthetic test' }], stream: false, response_format: { type: 'json_object' }, max_tokens: 8192 }) })
 const envelope = model => ({ model, choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: '{}' } }], usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 } })
 function store(t) {
   const dir = mkdtempSync(join(tmpdir(), 'blockcraft-audit-boundary-')); chmodSync(dir, 0o700)
   const ledger = openLedger(join(dir, 'ledger.json'), { now: () => PRICING.expiresAt - 1 }); t.after(() => ledger.close()); return ledger
 }
+test.beforeEach(t => t.mock.timers.enable({ apis: ['Date'], now: verifiedNow }))
 
 test('hung audit callback obeys deadline; concurrency releases without refunding settled usage', { timeout: 2000 }, async t => {
   const ledger = store(t); let entered, callbackSignal, calls = 0

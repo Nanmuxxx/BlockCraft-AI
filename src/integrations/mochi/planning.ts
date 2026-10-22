@@ -17,6 +17,15 @@ export function toMinimalPlanInput(request: PlanRequest) {
   const block = context.blocks.find(item => item.id === context.selectedBlockId)
   const relation = context.relations.find(item => item.blockId === block?.id)
   const entity = context.entities.find(item => item.id === relation?.entityId)
+  if (!block) throw new AppSpecError('SELECTION_REQUIRED', '请先选择有效积木。')
+  if (block.type === 'gallery') {
+    return {
+      requestId: request.requestId, baseRevision: context.revision,
+      prompt: request.prompt,
+      block: { id: block.id, name: block.name, type: block.type, imageIds: [...(block.imageIds ?? [])], layout: block.layout, interaction: block.interaction },
+      assets: context.assets.map(({ id, name, altText, mimeType }) => ({ id, name, ...(altText === undefined ? {} : { altText }), mimeType })),
+    }
+  }
   const sourceBlock = request.snapshot.spec.blocks.find(item => item.id === block?.id)
   if (!block || !entity || !sourceBlock) throw new AppSpecError('SELECTION_REQUIRED', '请先选择有效积木。')
   const spec = request.snapshot.spec

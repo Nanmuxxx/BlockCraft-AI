@@ -1,5 +1,7 @@
 import type { AppSpec, CommandRequest, ProjectState } from './appSpec'
 
+export const PROJECT_ASSET_LIMITS = Object.freeze({ maxCount: 32, maxBytesEach: 512 * 1024, maxBytesTotal: 1024 * 1024 })
+
 export class AppSpecError extends Error {
   constructor(public readonly code: string, message: string) { super(message); this.name = 'AppSpecError' }
 }
@@ -24,6 +26,51 @@ function array(value: unknown): asserts value is unknown[] { ensure(Array.isArra
 function unique(values: unknown[]) { ensure(new Set(values).size === values.length, 'Duplicate ID or value') }
 function ids(value: unknown): asserts value is string[] { array(value); value.forEach(id); unique(value) }
 function revision(value: unknown) { ensure(Number.isSafeInteger(value) && (value as number) >= 0, 'Invalid revision') }
+const ASSET_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'] as const
+function decodedDataUrlBytes(value: unknown): number {
+  ensure(typeof value === 'string', 'Invalid image data URL')
+  const match = /^data:(image\/(?:png|jpeg|webp|gif));base64,([A-Za-z0-9+/]*={0,2})$/.exec(value)
+  ensure(match && match[2].length % 4 === 0, 'Invalid image data URL')
+  const payload = match[2]
+  ensure(!/=/.test(payload.slice(0, -2)), 'Invalid image data URL')
+  const bytes = Math.floor(payload.length * 3 / 4) - (payload.endsWith('==') ? 2 : payload.endsWith('=') ? 1 : 0)
+  ensure(bytes > 0 && bytes <= PROJECT_ASSET_LIMITS.maxBytesEach, 'Image asset exceeds per-file limit')
+  const decoded = atob(payload)
+  const startsWith = (signature: number[]) => signature.every((byte, index) => decoded.charCodeAt(index) === byte)
+  if (match[1] === 'image/png') ensure(startsWith([137, 80, 78, 71, 13, 10, 26, 10]), 'PNG signature mismatch')
+  if (match[1] === 'image/jpeg') ensure(startsWith([255, 216, 255]), 'JPEG signature mismatch')
+  if (match[1] === 'image/gif') ensure(decoded.startsWith('GIF87a') || decoded.startsWith('GIF89a'), 'GIF signature mismatch')
+  if (match[1] === 'image/webp') ensure(decoded.startsWith('RIFF') && decoded.slice(8, 12) === 'WEBP', 'WebP signature mismatch')
+  return bytes
+}
+function asset(value: unknown) {
+  object(value); keys(value, ['id', 'name', 'mimeType', 'dataUrl'], ['altText'])
+  id(value.id); label(value.name); ensure(value.name.length <= 160, 'Asset name too long')
+  ensure(ASSET_MIME_TYPES.includes(value.mimeType as typeof ASSET_MIME_TYPES[number]), 'Unsupported image type')
+  ensure(typeof value.dataUrl === 'string' && value.dataUrl.startsWith(`data:${value.mimeType};base64,`), 'Image MIME/data mismatch')
+  const bytes = decodedDataUrlBytes(value.dataUrl)
+  ensure(bytes > 0 && bytes <= PROJECT_ASSET_LIMITS.maxBytesEach, 'Image asset exceeds per-file limit')
+  if (hasOwn(value, 'altText')) ensure(typeof value.altText === 'string' && value.altText.length <= 240, 'Alt text too long')
+}
+function assetRegistry(value: unknown, spec: AppSpec) {
+  if (value === undefined) {
+    ensure(spec.blocks.every(block => block.type !== 'gallery' || block.imageIds.length === 0), 'Gallery references unknown image asset')
+    return
+  }
+  object(value)
+  const entries = Object.entries(value)
+  ensure(entries.length <= PROJECT_ASSET_LIMITS.maxCount, 'Too many image assets')
+  let total = 0
+  const ids = new Set<string>()
+  for (const [key, item] of entries) {
+    id(key); asset(item); ensure((item as Obj).id === key, 'Asset key does not match ID')
+    ids.add(key); total += decodedDataUrlBytes((item as Obj).dataUrl)
+  }
+  ensure(total <= PROJECT_ASSET_LIMITS.maxBytesTotal, 'Image assets exceed project limit')
+  for (const block of spec.blocks) if (block.type === 'gallery') {
+    for (const imageId of block.imageIds) ensure(ids.has(imageId), 'Gallery references unknown image asset')
+  }
+}
 function field(value: unknown) {
   object(value); keys(value, ['id', 'name', 'type', 'required'], value.type === 'select' ? ['options'] : [])
   id(value.id); label(value.name); ensure(typeof value.required === 'boolean', 'Invalid required flag')
@@ -44,6 +91,11 @@ function block(value: unknown) {
     ensure(value.protocolVersion === 1, 'Unsupported pomodoro protocol')
     ensure(Number.isInteger(value.durationSeconds) && (value.durationSeconds as number) >= 1 && (value.durationSeconds as number) <= 7200, 'Duration must be 1–7200 seconds')
     ensure(typeof value.name === 'string' && value.name.length <= 120, 'Title too long')
+  } else if (value.type === 'gallery') {
+    keys(value, ['id', 'name', 'type', 'protocolVersion', 'imageIds', 'layout', 'interaction'], ['presentation'])
+    ensure(value.protocolVersion === 1, 'Unsupported gallery protocol')
+    ids(value.imageIds); ensure(value.imageIds.length <= PROJECT_ASSET_LIMITS.maxCount, 'Gallery has too many images'); ensure(value.layout === 'grid', 'Unsupported gallery layout')
+    ensure(value.interaction === 'preview', 'Unsupported gallery interaction')
   } else if (value.type === 'list' || value.type === 'form') {
     keys(value, ['id', 'name', 'type', 'fieldIds'], ['presentation']); ids(value.fieldIds); ensure(value.fieldIds.length > 0, 'Empty display fields')
   } else {
@@ -85,9 +137,9 @@ export function assertAppSpec(value: unknown): asserts value is AppSpec {
   }
   for (const b of spec.blocks) {
     const links = spec.relations.filter(r => r.blockId === b.id)
-    if (b.type === 'pomodoro') {
-      ensure(spec.version === 2, 'Pomodoro requires AppSpec v2')
-      ensure(links.length === 0, 'Pomodoro cannot bind CRUD entities')
+    if (b.type === 'pomodoro' || b.type === 'gallery') {
+      if (b.type === 'pomodoro') ensure(spec.version === 2, 'Pomodoro requires AppSpec v2')
+      ensure(links.length === 0, `${b.type} cannot bind CRUD entities`)
       continue
     }
     ensure(links.length === 1, 'Block requires exactly one binding')
@@ -102,8 +154,9 @@ export function assertAppSpec(value: unknown): asserts value is AppSpec {
   }
 }
 export function assertProjectState(value: unknown): asserts value is ProjectState {
-  object(value); keys(value, ['revision', 'spec', 'records', 'blockPositions'], ['timers']); revision(value.revision); assertAppSpec(value.spec)
+  object(value); keys(value, ['revision', 'spec', 'records', 'blockPositions'], ['timers', 'assets']); revision(value.revision); assertAppSpec(value.spec)
   object(value.records); object(value.blockPositions)
+  assetRegistry(value.assets, value.spec)
   if (hasOwn(value, 'timers')) {
     ensure(value.spec.version === 2, 'Timer state requires v2'); object(value.timers)
     for (const [blockId, timer] of Object.entries(value.timers)) {
@@ -145,13 +198,23 @@ export function assertCommandRequest(value: unknown): asserts value is CommandRe
   for (const c of value.commands) {
     object(c)
     switch (c.type) {
-      case 'addBlock': keys(c, ['type', 'block', 'binding'], ['position']); block(c.block); binding(c.binding); if (hasOwn(c, 'position')) position(c.position); break
+      case 'addBlock': {
+        keys(c, ['type', 'block'], ['binding', 'position']); block(c.block)
+        const addedBlock = c.block as AppSpec['blocks'][number]
+        if (addedBlock.type === 'gallery') ensure(!hasOwn(c, 'binding'), 'Gallery blocks cannot bind entities')
+        else { ensure(hasOwn(c, 'binding'), 'Data block requires binding'); binding(c.binding); }
+        if (hasOwn(c, 'position')) position(c.position)
+        break
+      }
       case 'removeBlock': keys(c, ['type', 'blockId']); id(c.blockId); break
       case 'addField': keys(c, ['type', 'entityId', 'field']); id(c.entityId); field(c.field); break
       case 'updateField': keys(c, ['type', 'entityId', 'fieldId', 'field']); id(c.entityId); id(c.fieldId); field(c.field); break
       case 'removeField': keys(c, ['type', 'entityId', 'fieldId']); id(c.entityId); id(c.fieldId); break
       case 'configureBlockPresentation': keys(c, ['type', 'blockId', 'presentation']); id(c.blockId); presentation(c.presentation); break
       case 'configureBlockFields': keys(c, ['type', 'blockId', 'fieldIds']); id(c.blockId); ids(c.fieldIds); break
+      case 'configureGallery': keys(c, ['type', 'blockId', 'imageIds'], ['layout']); id(c.blockId); ids(c.imageIds); if (hasOwn(c, 'layout')) ensure(c.layout === 'grid', 'Unsupported gallery layout'); break
+      case 'addProjectAsset': keys(c, ['type', 'asset']); asset(c.asset); break
+      case 'removeProjectAsset': keys(c, ['type', 'assetId']); id(c.assetId); break
       case 'undo': keys(c, ['type']); ensure(value.commands.length === 1, 'Undo must be a standalone request'); break
       default: ensure(false, 'Unsupported command')
     }

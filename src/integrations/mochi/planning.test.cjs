@@ -34,3 +34,28 @@ test('egress allowlist includes occupied structural IDs but excludes records, un
   for (const value of ['records', '小林', '技术部', 'never-send', '报名名单', 'instanceId']) assert.ok(!json.includes(value), value)
   host.dispose()
 })
+
+test('gallery projection exposes only existing asset metadata and no image bytes', () => {
+  const request = {
+    requestId: 'gallery-request',
+    prompt: '把第二张图加入画廊',
+    context: {
+      revision: 4,
+      selectedBlockId: 'gallery-1',
+      blocks: [{ id: 'gallery-1', name: '作品画廊', type: 'gallery', imageIds: ['img-1'], layout: 'grid', interaction: 'preview' }],
+      relations: [], entities: [],
+      assets: [
+        { id: 'img-1', name: '第一张', altText: '封面', mimeType: 'image/png' },
+        { id: 'img-2', name: '第二张', mimeType: 'image/jpeg' },
+      ],
+    },
+  }
+  const { toMinimalPlanInput } = require('./planning.ts')
+  const input = toMinimalPlanInput(request)
+  assert.deepEqual(input.block, { id: 'gallery-1', name: '作品画廊', type: 'gallery', imageIds: ['img-1'], layout: 'grid', interaction: 'preview' })
+  assert.deepEqual(input.assets, [
+    { id: 'img-1', name: '第一张', altText: '封面', mimeType: 'image/png' },
+    { id: 'img-2', name: '第二张', mimeType: 'image/jpeg' },
+  ])
+  assert.equal(JSON.stringify(input).includes('dataUrl'), false)
+})

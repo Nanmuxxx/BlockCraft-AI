@@ -171,6 +171,7 @@ function inspectorHarness(getProps) {
   }
   return {
     render,
+    find,
     html: () => renderToStaticMarkup(render()),
     change(label, value) {
       const control = nodes(find(node => node.type === 'label' && nodes(node).some(child => child === label)))
@@ -412,6 +413,81 @@ test('missing or ambiguous bindings and missing entities display an explicit err
     assert.match(inspector.html(), /绑定异常：/)
     assert.doesNotMatch(inspector.html(), /<form|<fieldset/)
   }
+})
+
+function galleryRuntime() {
+  return createAppRuntime({
+    revision: 0, spec: { version: 1, id: 'gallery-project', name: '图片作品', entities: [], relations: [], blocks: [
+      { id: 'gallery-1', name: '作品画廊', type: 'gallery', protocolVersion: 1, imageIds: [], layout: 'grid', interaction: 'preview' },
+    ] }, records: {}, blockPositions: {}, assets: {},
+  })
+}
+
+const pixelPng = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jvXkAAAAASUVORK5CYII='
+
+test('gallery Inspector imports a local image, selects it, guards referenced deletion and removes it after deselection', async () => {
+  const runtime = galleryRuntime()
+  const { canvas, inspector } = selectedInspector(runtime, 'gallery-1')
+  const originalReader = globalThis.FileReader
+  let reads = 0
+  globalThis.FileReader = class {
+    readAsDataURL(file) {
+      reads++
+      assert.equal(file.name, '旅行.png')
+      this.result = pixelPng
+      queueMicrotask(() => this.onload())
+    }
+  }
+  try {
+    const control = inspector.find(node => node.type === 'input' && node.props.type === 'file')
+    const currentTarget = { files: [{ name: '旅行.png', type: 'image/png', size: 68 }], value: 'travel.png' }
+    control.props.onChange({ currentTarget })
+    assert.equal(currentTarget.value, '', 'same image can be chosen again after import')
+    assert.equal(inspector.find(node => node.type === 'input' && node.props.type === 'file').props.disabled, true)
+    await new Promise(resolve => setImmediate(resolve))
+    assert.equal(reads, 1)
+    const asset = Object.values(runtime.getSnapshot().assets)[0]
+    assert.equal(asset.name, '旅行.png')
+    assert.equal(asset.dataUrl, pixelPng)
+    assert.equal(runtime.getSnapshot().revision, 1)
+    assert.deepEqual(runtime.getSnapshot().spec.blocks[0].imageIds, [], 'upload does not silently select content')
+    assert.match(inspector.html(), /图片已加入项目资源/)
+    assert.equal(inspector.find(node => node.type === 'input' && node.props.type === 'file').props.disabled, false)
+
+    inspector.find(node => node.type === 'input' && node.props.type === 'checkbox').props.onChange({ currentTarget: { checked: true } })
+    assert.deepEqual(runtime.getSnapshot().spec.blocks[0].imageIds, [asset.id])
+    assert.equal(inspector.find(node => node.type === 'button' && node.props.children === '移除资源').props.disabled, true)
+    assert.equal(execute(runtime, [{ type: 'removeProjectAsset', assetId: asset.id }]).ok, false, 'runtime also guards referenced assets')
+    inspector.find(node => node.type === 'input' && node.props.type === 'checkbox').props.onChange({ currentTarget: { checked: false } })
+    const remove = inspector.find(node => node.type === 'button' && node.props.children === '移除资源')
+    assert.equal(remove.props.disabled, false)
+    remove.props.onClick()
+    assert.deepEqual(runtime.getSnapshot().assets, {})
+    assert.deepEqual(runtime.getSnapshot().spec.blocks[0].imageIds, [])
+    assert.match(inspector.html(), /项目图片已移除/)
+    assert.equal(runtime.getSnapshot().revision, 4)
+  } finally { globalThis.FileReader = originalReader; canvas.unmount() }
+})
+
+test('gallery Inspector rejects unsupported, empty and oversized files before reading or publishing', async () => {
+  const runtime = galleryRuntime()
+  const { canvas, inspector } = selectedInspector(runtime, 'gallery-1')
+  const originalReader = globalThis.FileReader
+  globalThis.FileReader = class { readAsDataURL() { assert.fail('invalid files must not be read') } }
+  try {
+    const before = runtime.getSnapshot()
+    for (const [file, message] of [
+      [{ name: 'unsafe.svg', type: 'image/svg+xml', size: 100 }, /仅支持 PNG、JPEG、WebP 或 GIF/],
+      [{ name: 'empty.png', type: 'image/png', size: 0 }, /512 KiB/],
+      [{ name: 'large.png', type: 'image/png', size: 512 * 1024 + 1 }, /512 KiB/],
+    ]) {
+      inspector.find(node => node.type === 'input' && node.props.type === 'file').props.onChange({ currentTarget: { files: [file], value: file.name } })
+      await new Promise(resolve => setImmediate(resolve))
+      assert.strictEqual(runtime.getSnapshot(), before)
+      assert.match(inspector.html(), /role="alert"/)
+      assert.match(inspector.html(), message)
+    }
+  } finally { globalThis.FileReader = originalReader; canvas.unmount() }
 })
 
 test('Phase 1 pointer lifecycle: collision and cancel never submit, valid dragging updates only target layout', () => {

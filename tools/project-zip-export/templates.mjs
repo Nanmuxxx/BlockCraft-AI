@@ -16,11 +16,12 @@ export const tsconfig = {
 export const model = `export type Value = string | number | boolean;
 export type Row = { id: string; values: Record<string, Value> };
 export type Field = { id: string; name: string; required: boolean } & ({ type: 'text' | 'number' | 'boolean' | 'date' } | { type: 'select'; options: string[] });
-export type Block = { id: string; name: string } & ({ type: 'form'; fieldIds: string[] } | { type: 'list'; fieldIds: string[] } | { type: 'metric'; aggregation: 'count' } | { type: 'metric'; aggregation: 'sum' | 'average'; fieldId: string });
+export type Asset = { id: string; name: string; altText?: string; mimeType: 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif'; dataUrl: string };
+export type Block = { id: string; name: string } & ({ type: 'form'; fieldIds: string[] } | { type: 'list'; fieldIds: string[] } | { type: 'gallery'; protocolVersion: 1; imageIds: string[]; layout: 'grid'; interaction: 'preview' } | { type: 'metric'; aggregation: 'count' } | { type: 'metric'; aggregation: 'sum' | 'average'; fieldId: string });
 export type Records = Record<string, Row[]>;
 export type Project = {
   formatVersion: 2; revision: number;
-  base: { spec: { version: 1; id: string; name: string; entities: { id: string; name: string; fields: Field[] }[]; blocks: Block[]; relations: { id: string; type: 'dataBinding'; blockId: string; entityId: string }[] }; records: Records; blockPositions: Record<string, { x: number; y: number }> };
+  base: { spec: { version: 1; id: string; name: string; entities: { id: string; name: string; fields: Field[] }[]; blocks: Block[]; relations: { id: string; type: 'dataBinding'; blockId: string; entityId: string }[] }; records: Records; blockPositions: Record<string, { x: number; y: number }>; assets?: Record<string, Asset> };
   custom: { instances: { id: string; definitionId: string; versionDigest: string; props: Record<string, unknown> }[]; positions: Record<string, { x: number; y: number }>; states: Record<string, never> };
   renderOrder: { kind: 'builtin' | 'custom'; id: string }[];
 };
@@ -68,6 +69,11 @@ export default function MetricBlock({ block, rows }: { block: Extract<Block, { t
   return <output className="metric">{Number.isFinite(value) ? value : '数值超出范围'}</output>;
 }
 `
+export const gallery = `import type { Asset } from '../model';
+export default function GalleryBlock({ block, assets }: { block: { name: string; imageIds: string[] }; assets: Record<string, Asset> }) {
+  return <section aria-label={block.name}><h2>{block.name}</h2>{block.imageIds.length === 0 ? <p>画廊还没有图片。</p> : <div className="gallery-grid">{block.imageIds.map(id => { const asset = assets[id]; return asset ? <figure key={id}><img src={asset.dataUrl} alt={asset.altText || asset.name} loading="lazy" /><figcaption>{asset.name}</figcaption></figure> : <p key={id} role="alert">图片资源不可用：{id}</p> })}</div>}</section>;
+}
+`
 export const main = `import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles.css';
@@ -93,6 +99,7 @@ import { project } from './data';
 import FormBlock from './components/FormBlock';
 import ListBlock from './components/ListBlock';
 import MetricBlock from './components/MetricBlock';
+import GalleryBlock from './components/GalleryBlock';
 ${customImports}
 ${recordOperations}
 // Records live only in this standalone app's memory. Reload restores exported data.
@@ -116,6 +123,7 @@ export default function App() {
       return <section key={'custom:' + item.id} data-block-id={item.id} data-positioned={!!position} className="block" style={style}><Component {...instance.props} /></section>;
     }
     const block: Block = project.base.spec.blocks.find(block => block.id === item.id)!;
+    if (block.type === 'gallery') return <section key={'builtin:' + item.id} data-block-id={item.id} data-positioned={!!position} className="block" style={style}><GalleryBlock block={block} assets={project.base.assets ?? {}} /></section>;
     const binding = project.base.spec.relations.find(binding => binding.blockId === block.id)!;
     const entity = project.base.spec.entities.find(entity => entity.id === binding.entityId)!;
     const rows = own(records, entity.id) ?? [];
@@ -132,6 +140,7 @@ main { max-width: 1280px; margin: auto; padding: 24px; } h1 { margin-top: 0; } h
 .board { position: relative; padding-top: var(--positioned-height, 0px); display: grid; gap: 20px; align-content: start; }
 .block { background: white; border: 1px solid #d6deed; border-radius: 12px; padding: 20px; min-width: 0; overflow: auto; }
 .block[data-positioned="true"] { position: absolute; width: 320px; max-height: 600px; left: calc(var(--x) * (100% - 320px)); top: calc(var(--y) * 800px); }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; } .gallery-grid figure { margin: 0; } .gallery-grid img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; } .gallery-grid figcaption { padding-top: 4px; font-size: .9rem; }
 label { display: grid; gap: 6px; margin-bottom: 12px; } input, select, button { padding: 8px; font: inherit; } input[type="checkbox"] { justify-self: start; }
 button { cursor: pointer; } table { border-collapse: collapse; width: 100%; } td, th { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; }
 .table-scroll { overflow: auto; } .metric { font-size: 2.2rem; }

@@ -83,3 +83,27 @@ test('production JSON boundaries constrain broad, deep and multibyte inputs', ()
   const broad = Object.fromEntries(Array.from({ length: api.JSON_LIMITS.maxKeys }, (_, i) => [`k${i}`, 0]))
   api.assertJson(broad); broad.overflow = 0; assert.throws(() => api.assertJson(broad), { code: 'LIMIT' })
 })
+
+test('project JSON permits large asset data only at three exact paths and preserves descriptor and aggregate limits', () => {
+  const dataUrl = 'x'.repeat(699_100)
+  for (const value of [
+    { assets: { photo: { dataUrl } } },
+    { base: { assets: { photo: { dataUrl } } } },
+    { project: { base: { assets: { photo: { dataUrl } } } } },
+  ]) {
+    api.assertProjectJson(value)
+    assert.throws(() => api.assertJson(value), { code: 'LIMIT' })
+  }
+  for (const value of [
+    { dataUrl }, { custom: { assets: { photo: { dataUrl } } } },
+    { project: { assets: { photo: { dataUrl } } } },
+    { assets: { photo: { name: dataUrl } } },
+    { sources: { 'main.tsx': dataUrl } },
+    { assets: { photo: { dataUrl: `${dataUrl}x` } } },
+    { assets: { one: { dataUrl }, two: { dataUrl }, three: { dataUrl } } },
+  ]) assert.throws(() => api.assertProjectJson(value), { code: 'LIMIT' })
+  let calls = 0
+  const photo = {}; Object.defineProperty(photo, 'dataUrl', { enumerable: true, get() { calls++; return dataUrl } })
+  assert.throws(() => api.assertProjectJson({ assets: { photo } }), /Accessor/)
+  assert.equal(calls, 0)
+})

@@ -72,3 +72,26 @@ test('serialization keeps all JSON state and rejects over-limit projects', async
   document.project.base.spec.name = 'x'.repeat(262_145)
   assert.throws(() => serializeProjectJson(document), { code: 'LIMIT' })
 })
+
+test('512 KiB raster asset commits through owner CAS and roundtrips through project JSON', async () => {
+  const bytes = Buffer.alloc(512 * 1024)
+  Buffer.from([137,80,78,71,13,10,26,10]).copy(bytes)
+  const asset = { id: 'large-photo', name: '图片', mimeType: 'image/png', dataUrl: `data:image/png;base64,${bytes.toString('base64')}` }
+  const runtime = createAppRuntime(createReadingLogExample())
+  const result = runtime.executeCommand({ requestId: 'large-image', baseRevision: 0, commands: [
+    { type: 'addProjectAsset', asset },
+    { type: 'addBlock', block: { id: 'photos', type: 'gallery', name: '相册', protocolVersion: 1, imageIds: ['large-photo'], layout: 'grid', interaction: 'preview' } },
+  ] })
+  assert.equal(result.ok, true, JSON.stringify(result))
+  const file = await createProjectJson(runtime.customProject.getSnapshot(), runtime.customProject.registry)
+  const restored = await parseProjectJsonText(serializeProjectJson(file))
+  assert.deepEqual(restored.base, runtime.getSnapshot())
+  const reopened = createAppRuntime(restored.base, restored.artifacts, restored.project)
+  assert.equal(reopened.getSnapshot().assets['large-photo'].dataUrl, asset.dataUrl)
+  const forged = copy(file)
+  forged.project.base.assets['large-photo'].dataUrl = `data:image/png;base64,${Buffer.alloc(512 * 1024).toString('base64')}`
+  await assert.rejects(parseProjectJson(forged), { code: 'INVALID_FILE' })
+  const oversizedText = copy(file)
+  oversizedText.project.base.spec.name = 'x'.repeat(262_145)
+  assert.throws(() => serializeProjectJson(oversizedText), { code: 'LIMIT' })
+})

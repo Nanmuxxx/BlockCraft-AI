@@ -279,9 +279,9 @@ test('Host failure from a real Runtime authorization check preserves state and p
   applied(runtime, before, { buttonText: 'fresh' })
 })
 
-test('PR49: exact frozen five-command contract does not itself mutate application state', t => {
+test('gallery integration: exact frozen six-command contract does not itself mutate application state', t => {
   const { runtime } = setup(t), before = capture(runtime)
-  assert.deepEqual([...AI_CHANGE_COMMANDS], ['addField', 'configureBlockFields', 'configureBlockPresentation', 'addBlock', 'removeBlock'])
+  assert.deepEqual([...AI_CHANGE_COMMANDS], ['addField', 'configureBlockFields', 'configureBlockPresentation', 'configureGallery', 'addBlock', 'removeBlock'])
   assert.equal(Object.isFrozen(AI_CHANGE_COMMANDS), true)
   unchanged(runtime, before)
 })

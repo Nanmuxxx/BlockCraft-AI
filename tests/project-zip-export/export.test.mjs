@@ -3,7 +3,7 @@ import ts from 'typescript'
 import { recordOperations } from '../../tools/project-zip-export/templates.mjs'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { builtin, mixed, rehash, unzip, createAppRuntime, createClubRegistrationExample } from './fixtures.mjs'
+import { builtin, gallery, mixed, rehash, unzip, createAppRuntime, createClubRegistrationExample } from './fixtures.mjs'
 import { protocol } from '../../server/custom-block/protocol.mjs'
 import { exportProjectZip } from '../../tools/project-zip-export/export.mjs'
 import { encodeProjectZip, ZIP_LIMITS } from '../../tools/project-zip-export/zip.mjs'
@@ -11,14 +11,58 @@ import { exportSessionSnapshot } from '../../tools/project-zip-export/integratio
 
 test('builtins produce a full standalone archive, fixed scripts and configured data', async () => {
   const input = builtin(), result = await exportProjectZip(input), files = unzip(result.bytes)
-  assert.equal(files.size, 15)
-  for (const name of ['package.json', 'index.html', 'tsconfig.json', 'vite.config.ts', 'src/main.tsx', 'src/App.tsx', 'src/components/FormBlock.tsx', 'src/components/ListBlock.tsx', 'src/components/MetricBlock.tsx', 'src/styles.css', 'README.md']) assert.ok(files.has(name), name)
+  assert.equal(files.size, 16)
+  for (const name of ['package.json', 'index.html', 'tsconfig.json', 'vite.config.ts', 'src/main.tsx', 'src/App.tsx', 'src/components/FormBlock.tsx', 'src/components/ListBlock.tsx', 'src/components/MetricBlock.tsx', 'src/components/GalleryBlock.tsx', 'src/styles.css', 'README.md']) assert.ok(files.has(name), name)
   const pkg = JSON.parse(files.get('package.json'))
   assert.equal(pkg.dependencies.react, '19.3.1'); assert.equal(pkg.scripts.build, 'tsc --noEmit && vite build')
   assert.deepEqual(Object.keys(pkg.scripts).sort(), ['build', 'dev', 'preview'])
   assert.ok(!files.get('src/App.tsx').includes('BlockCraft'))
   assert.ok(files.get('src/data.ts').includes('applicant-name'))
   assert.deepEqual(result.files.map(file => file.path), [...files.keys()])
+})
+async function exportedData(files) {
+  let source = ts.transpileModule(files.get('src/data.ts'), { compilerOptions: { module: ts.ModuleKind.ESNext } }).outputText
+  source = source.replace(/import (asset_\d+_\d+) from ['"](.+)['"];?/g, (_, alias, path) => {
+    const chunk = files.get(`src/${path.slice(2)}.ts`)
+    assert.ok(chunk, path)
+    return `const ${alias} = ${chunk.slice('export default '.length)}`
+  })
+  return (await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'))).project
+}
+test('gallery exports with no entity binding and keeps its images and render order', async () => {
+  const input = gallery(), files = unzip((await exportProjectZip(input)).bytes)
+  assert.ok(!input.project.base.spec.relations.some(binding => binding.blockId === 'gallery'))
+  assert.deepEqual(await exportedData(files), input.project)
+  const app = files.get('src/App.tsx')
+  assert.ok(app.indexOf("if (block.type === 'gallery')") < app.indexOf('const binding ='))
+  assert.match(files.get('src/components/GalleryBlock.tsx'), /src=\{asset\.dataUrl\}/)
+})
+test('maximum-size images reconstruct exactly without exceeding ZIP file caps or mutating the snapshot', async () => {
+  const input = gallery(524288), before = structuredClone(input)
+  const result = await exportProjectZip(input), files = unzip(result.bytes)
+  assert.deepEqual(await exportedData(files), before.project)
+  assert.deepEqual(input, before)
+  assert.equal([...files.keys()].filter(path => path.startsWith('src/assets/')).length, 4)
+  assert.ok(result.files.every(file => file.bytes <= ZIP_LIMITS.maxFileBytes))
+  assert.deepEqual((await exportProjectZip(input)).bytes, result.bytes)
+  assert.deepEqual((await exportSessionSnapshot({ getSnapshot: () => input.project, registry: { resolve: async () => { throw new Error('UNEXPECTED_REFERENCE') } } })).bytes, result.bytes)
+})
+test('multiple image assets export deterministically regardless of object key order', async () => {
+  const input = gallery(393216)
+  input.project.base.assets.second = { ...input.project.base.assets.photo, id: 'second' }
+  input.project.base.spec.blocks.find(block => block.id === 'gallery').imageIds.push('second')
+  const result = await exportProjectZip(input), files = unzip(result.bytes)
+  assert.deepEqual(await exportedData(files), input.project)
+  input.project.base.assets = Object.fromEntries(Object.entries(input.project.base.assets).reverse())
+  assert.deepEqual((await exportProjectZip(input)).bytes, result.bytes)
+})
+test('gallery export refuses invalid raster signatures and unregistered image references', async () => {
+  const badImage = gallery()
+  badImage.project.base.assets.photo.dataUrl = 'data:image/png;base64,' + Buffer.from('not png').toString('base64')
+  await assert.rejects(exportProjectZip(badImage), { code: 'INVALID_PROJECT' })
+  const missing = gallery()
+  missing.project.base.spec.blocks.find(block => block.id === 'gallery').imageIds.push('missing')
+  await assert.rejects(exportProjectZip(missing), { code: 'INVALID_PROJECT' })
 })
 test('exported list exposes update flow that preserves ids and clears stale editing state', async () => {
   const files = unzip((await exportProjectZip(builtin())).bytes)

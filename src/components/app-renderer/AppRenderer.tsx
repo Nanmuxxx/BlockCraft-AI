@@ -1,4 +1,4 @@
-import { useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type { BlockSpec, EntityRecord, FieldSpec } from '../../model/appSpec'
 import { metricValue, parseFieldDraft, type AppRuntime, type FieldDraft } from '../../model/appRuntime'
 import './app-renderer.css'
@@ -79,6 +79,48 @@ function RecordList({ runtime, entityId, fieldIds }: { runtime: AppRuntime; enti
   </>
 }
 
+function GalleryBlock({ runtime, block }: { runtime: AppRuntime; block: Extract<BlockSpec, { type: 'gallery' }> }) {
+  const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [failedImages, setFailedImages] = useState<Record<string, string>>({})
+  const previewRef = useRef<HTMLDivElement>(null)
+  const assets = state.assets ?? {}
+  const active = activeId && block.imageIds.includes(activeId) && failedImages[activeId] !== assets[activeId]?.dataUrl ? assets[activeId] : undefined
+  useEffect(() => {
+    if (!active) return
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const closeButton = previewRef.current?.querySelector('button')
+    closeButton?.focus()
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setActiveId(null)
+      // The close button is the preview's only interactive control.
+      if (event.key === 'Tab') { event.preventDefault(); closeButton?.focus() }
+    }
+    document.addEventListener('keydown', closeOnEscape)
+    return () => { document.removeEventListener('keydown', closeOnEscape); previousFocus?.focus() }
+  }, [active])
+  const markFailed = (id: string, dataUrl: string) => setFailedImages(current => ({ ...current, [id]: dataUrl }))
+  return <section className="renderer-block renderer-block--gallery" aria-label={block.name} style={blockCardStyle(readBlockPresentation(block))}>
+    <h2>{block.name}</h2>
+    {!block.imageIds.length
+      ? <p className="renderer-gallery-empty">画廊还没有图片，请在 B 模式添加项目图片。</p>
+      : <div className="renderer-gallery-grid" aria-label="图片画廊">
+        {block.imageIds.map(id => {
+          const asset = assets[id]
+          if (!asset || failedImages[id] === asset.dataUrl) return <div className="renderer-gallery-missing" key={id} role="alert">图片资源不可用：{asset?.name || id}</div>
+          return <button type="button" className="renderer-gallery-item" key={id} onClick={() => setActiveId(id)} aria-label={`预览 ${asset.altText || asset.name}`}>
+            <img src={asset.dataUrl} alt={asset.altText || asset.name} loading="lazy" onError={() => markFailed(id, asset.dataUrl)} />
+            <span>{asset.name}</span>
+          </button>
+        })}
+      </div>}
+    {active && <div ref={previewRef} tabIndex={-1} className="renderer-gallery-preview" role="dialog" aria-modal="true" aria-label={`预览 ${active.altText || active.name}`} onClick={event => { if (event.target === event.currentTarget) setActiveId(null) }}>
+      <button type="button" onClick={() => setActiveId(null)} aria-label="关闭图片预览">关闭</button>
+      <img src={active.dataUrl} alt={active.altText || active.name} onError={() => markFailed(active.id, active.dataUrl)} />
+    </div>}
+  </section>
+}
+
 /** Render exactly one trusted builtin against the shared runtime facade. */
 export function BuiltinBlockRenderer({ runtime, blockId }: { runtime: AppRuntime; blockId: BlockSpec['id'] }) {
   const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
@@ -86,6 +128,7 @@ export function BuiltinBlockRenderer({ runtime, blockId }: { runtime: AppRuntime
   const binding = state.spec.relations.find(relation => relation.blockId === blockId)
   const entity = state.spec.entities.find(entity => entity.id === binding?.entityId)
   if (block?.type === 'pomodoro') return <Pomodoro runtime={runtime} block={block} />
+  if (block?.type === 'gallery') return <GalleryBlock runtime={runtime} block={block} />
   if (!block || !entity) return null
   const presentation = readBlockPresentation(block)
   return <section className={`renderer-block renderer-block--${block.type}`} aria-label={block.name} style={blockCardStyle(presentation)}>

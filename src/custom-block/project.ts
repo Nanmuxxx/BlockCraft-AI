@@ -1,7 +1,7 @@
 import { assertProjectState } from '../model/appSpecValidation'
 import type { ProjectState } from '../model/appSpec'
 import type { ArtifactRegistry, CustomProject } from './types'
-import { assertJson, check, cloneJson, digest, id, keys, object, revision } from './json'
+import { assertProjectJson, check, cloneJson, digest, id, keys, object, revision } from './json'
 import { resolveArtifact } from './artifacts'
 import { assertSchemaValue } from './schema'
 
@@ -11,9 +11,9 @@ function position(value: unknown) {
 }
 /** Internal structural pass; custom props/state still require an exact registry resolution. */
 export function assertCustomProjectStructure(input: unknown): asserts input is CustomProject {
-  assertJson(input); object(input); keys(input, ['formatVersion', 'revision', 'base', 'custom', 'renderOrder'])
+  assertProjectJson(input); object(input); keys(input, ['formatVersion', 'revision', 'base', 'custom', 'renderOrder'])
   check(input.formatVersion === 2, 'Unknown project format version'); revision(input.revision)
-  object(input.base); keys(input.base, ['spec', 'records', 'blockPositions'], ['timers'])
+  object(input.base); keys(input.base, ['spec', 'records', 'blockPositions'], ['timers', 'assets'])
   assertProjectState({ revision: input.revision, ...input.base })
   const base = input.base as unknown as CustomProject['base']
   const globalIds = new Set([base.spec.id, ...base.spec.entities.flatMap(e => [e.id, ...e.fields.map(f => f.id)]), ...base.spec.blocks.map(b => b.id), ...base.spec.relations.map(r => r.id)])
@@ -47,7 +47,7 @@ export function assertCustomProjectStructure(input: unknown): asserts input is C
 }
 /** One-way wrapper; no Runtime, aliasing, revision increment or business-data rewrite. */
 export function migrateProjectState(input: unknown): CustomProject {
-  assertJson(input); assertProjectState(input)
+  assertProjectJson(input); assertProjectState(input)
   const { revision: projectRevision, ...base } = cloneJson(input as unknown as ProjectState)
   const result: CustomProject = {
     formatVersion: 2, revision: projectRevision, base,

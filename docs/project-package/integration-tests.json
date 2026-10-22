@@ -1,0 +1,271 @@
+{
+  "at": "2026-10-22T23:15:05+0800",
+  "node": "v24.22.0",
+  "files": 89,
+  "exitCode": 0,
+  "elapsedMs": 7809,
+  "summary": [
+    "# tests 1410",
+    "# suites 0",
+    "# pass 1410",
+    "# fail 0",
+    "# cancelled 0",
+    "# skipped 0",
+    "# todo 0",
+    "# duration_ms 7775.341959"
+  ],
+  "command": [
+    "/usr/local/bin/node",
+    "--experimental-transform-types",
+    "--test",
+    "--test-concurrency=4",
+    "--test-reporter=tap",
+    "server/server.test.mjs",
+    "src/components/ai-create/generateApp.test.cjs",
+    "src/components/app-builder/AppSpecCanvas.test.cjs",
+    "src/components/blocks/blocks.test.cjs",
+    "src/components/blocks/presentation.test.cjs",
+    "src/components/mochi-ai/mochi-ai-v2.test.cjs",
+    "src/components/mochi-ai/mochi-ai.test.cjs",
+    "src/integrations/mochi/host.test.cjs",
+    "src/integrations/mochi/planning.test.cjs",
+    "src/model/appChangePlan.test.cjs",
+    "src/model/appRuntime.test.cjs",
+    "src/model/appSpec.test.cjs",
+    "tests/ai-quality/business.test.cjs",
+    "tests/ai-quality/quality.test.cjs",
+    "tests/custom-block-bc/adapter.test.cjs",
+    "tests/custom-block-bc/authorization.test.cjs",
+    "tests/custom-block-bc/layout-order.test.cjs",
+    "tests/custom-block-bc/owner.test.cjs",
+    "tests/custom-block-bc/viewer.test.cjs",
+    "tests/custom-block-compiler/compiler.test.mjs",
+    "tests/custom-block-generation/contract.test.mjs",
+    "tests/custom-block-generation/installation.test.cjs",
+    "tests/custom-block-generation/pipeline.test.mjs",
+    "tests/custom-block-generation/provider.test.mjs",
+    "tests/custom-block-sandbox/environment.test.mjs",
+    "tests/custom-block-workshop/authorization.test.cjs",
+    "tests/custom-block-workshop/owner.test.cjs",
+    "tests/custom-block-workshop/reinstall.test.cjs",
+    "tests/custom-block/artifacts.test.cjs",
+    "tests/custom-block/messages.test.cjs",
+    "tests/custom-block/project.test.cjs",
+    "tests/custom-block/schema-json.test.cjs",
+    "tests/field-plans/host.test.cjs",
+    "tests/field-plans/server.test.mjs",
+    "tests/generated-artifact-ui/ui.test.cjs",
+    "tests/generated-artifact/install.test.cjs",
+    "tests/generation/client-boundary.test.cjs",
+    "tests/generation/compatibility.test.mjs",
+    "tests/generation/generation.test.mjs",
+    "tests/generation/ingress.test.mjs",
+    "tests/generation/service-runtime.test.cjs",
+    "tests/mochi-ai/adapter-errors.test.mjs",
+    "tests/mochi-ai/admission-cancellation.test.mjs",
+    "tests/mochi-ai/client-transport.test.mjs",
+    "tests/mochi-ai/client.test.mjs",
+    "tests/mochi-ai/consent-lifecycle.test.mjs",
+    "tests/mochi-ai/context.test.mjs",
+    "tests/mochi-ai/host-cancellation.test.cjs",
+    "tests/mochi-ai/host-compatibility.test.mjs",
+    "tests/mochi-ai/http.test.mjs",
+    "tests/mochi-ai/model-plan.test.cjs",
+    "tests/mochi-ai/provider.test.mjs",
+    "tests/mochi-ai/server-routing.test.mjs",
+    "tests/mochi-ai/service.test.mjs",
+    "tests/mochi-ai/status-validation.test.mjs",
+    "tests/mochi-ai/suggestion-actions.test.mjs",
+    "tests/mochi-ai/workshop.test.mjs",
+    "tests/mochi-motion/geometry.test.cjs",
+    "tests/mochi-proactive/budget.test.mjs",
+    "tests/mochi-proactive/host-guard.test.cjs",
+    "tests/mochi-proactive/lifecycle.test.mjs",
+    "tests/mochi-proactive/provider.test.mjs",
+    "tests/mochi-source/planning.test.cjs",
+    "tests/mochi-source/provider.test.cjs",
+    "tests/mochi/editing-safety-native.test.mjs",
+    "tests/mochi/presentation-native.test.mjs",
+    "tests/mochi/presentation.test.cjs",
+    "tests/paid-gateway/audit-boundary.test.mjs",
+    "tests/paid-gateway/model-contract.test.mjs",
+    "tests/paid-gateway/security.test.mjs",
+    "tests/phase2-core/gateway-composition.test.mjs",
+    "tests/project-json/format.test.cjs",
+    "tests/project-zip-export/export.test.mjs",
+    "tests/trusted-interactive/client.test.cjs",
+    "tests/trusted-interactive/export.test.mjs",
+    "tests/trusted-interactive/gate.test.mjs",
+    "tests/trusted-interactive/inspector.test.cjs",
+    "tests/trusted-interactive/runtime.test.cjs",
+    "tests/trusted-interactive/server.test.mjs",
+    "tests/trusted-pomodoro-ui/fixture.test.cjs",
+    "tests/workshop-export/boundary.test.mjs",
+    "tests/workshop-export/capture.test.cjs",
+    "tests/workshop-export/http.test.mjs",
+    "tests/gallery/server.test.mjs",
+    "tests/project-package/file.test.cjs",
+    "tests/project-package/image.test.cjs",
+    "tests/project-package/acceptance.test.cjs",
+    "tests/project-package/format.test.cjs",
+    "tests/project-package/zip.test.cjs"
+  ],
+  "localLog": "/Users/nanmuxun/BlockAI/BlockCraft-AI-project-package-v1/.cache/project-package/integration-offline-final.tap",
+  "externalAiCalls": 0,
+  "browsers": [
+    {
+      "suite": "mochi-proactive",
+      "command": [
+        "node",
+        "tests/mochi-proactive/browser.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 4329,
+      "localLog": "/Users/nanmuxun/BlockAI/BlockCraft-AI-project-package-v1/.cache/project-package/integration-mochi-proactive-browser.log",
+      "live": false,
+      "report": ".cache/mochi-proactive/browser/report.json",
+      "cases": 2,
+      "errors": 0,
+      "externalRequests": 0,
+      "browserVersion": "156.0.8078.4",
+      "realAiCalls": 0
+    },
+    {
+      "suite": "project-json",
+      "command": [
+        "node",
+        "tests/project-json/browser.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 2126,
+      "localLog": "/Users/nanmuxun/BlockAI/BlockCraft-AI-project-package-v1/.cache/project-package/integration-project-json-browser.log",
+      "live": false,
+      "cases": 7,
+      "externalRequests": 0,
+      "pageErrors": 0
+    },
+    {
+      "suite": "gallery",
+      "command": [
+        "node",
+        "tests/gallery/browser.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 4199,
+      "localLog": "/Users/nanmuxun/BlockAI/BlockCraft-AI-project-package-v1/.cache/project-package/integration-gallery-browser.log",
+      "live": false,
+      "cases": 2,
+      "externalRequests": 0,
+      "pageErrors": 0
+    },
+    {
+      "suite": "mochi",
+      "command": [
+        "node",
+        "tests/mochi/browser.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 16419,
+      "localLog": "/Users/nanmuxun/BlockAI/BlockCraft-AI-project-package-v1/.cache/project-package/integration-mochi-browser.log",
+      "live": false,
+      "report": ".cache/mochi-browser/evidence/report.json",
+      "cases": 2,
+      "errors": 0,
+      "externalRequests": 0,
+      "browserVersion": "156.0.8078.4",
+      "realAiCalls": 0
+    },
+    {
+      "suite": "field-plans",
+      "command": [
+        "node",
+        "tests/field-plans/browser.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 3621,
+      "localLog": "/Users/nanmuxun/BlockAI/BlockCraft-AI-project-package-v1/.cache/project-package/integration-field-plans-browser.log",
+      "live": false,
+      "report": ".cache/field-plans/offline/report.json",
+      "cases": 6,
+      "errors": 0,
+      "externalRequests": 0,
+      "browserVersion": null,
+      "realAiCalls": 0
+    },
+    {
+      "suite": "project-package",
+      "command": [
+        "node",
+        "tests/project-package/browser.cjs"
+      ],
+      "exitCode": 0,
+      "reportedBy": "root integration agent",
+      "live": false,
+      "externalRequests": 0,
+      "realAiCalls": 0,
+      "pageErrors": 0
+    }
+  ],
+  "compilerSetup": {
+    "initialError": "PACKAGE_CACHE_MISSING",
+    "repair": "Restored regular local copies of ignored compiler .packages and node_modules from same-lock BlockCraft-AI-agent-a; no network or package scripts.",
+    "lockSha256": "81e1ad412fefdc1cfc9f66c51da8ec28dbffe03f7956666bd17117d557f04fbe",
+    "verificationExitCode": 0,
+    "verificationReport": ".cache/project-package/compiler-verification.json",
+    "officialSource": "https://docs.npmjs.com/cli/v11/commands/npm-ci"
+  },
+  "initialFailures": [
+    {
+      "test": 486,
+      "name": "compiler package archives",
+      "cause": "Ignored compiler dependencies/cache absent"
+    },
+    {
+      "test": 487,
+      "name": "trusted compiler builds",
+      "cause": "Ignored compiler dependencies/cache absent"
+    },
+    {
+      "test": 1194,
+      "name": "PR49 five-command contract",
+      "cause": "Gallery added configureGallery; historical test expectation pending integration"
+    },
+    {
+      "test": 1251,
+      "name": "pricing expiry boundary",
+      "cause": "Pending parent integration review"
+    }
+  ],
+  "troubleshooting": [
+    {
+      "command": "node --experimental-transform-types --test --test-concurrency=4 --test-reporter=tap [89 files]",
+      "initialExitCode": 1,
+      "versions": {
+        "node": "24.22.0",
+        "npm": "11.19.1",
+        "python": "3.14.7"
+      },
+      "fullLocalLog": ".cache/project-package/integration-offline.tap",
+      "officialSources": [
+        "https://docs.npmjs.com/cli/v11/commands/npm-ci",
+        "https://nodejs.org/api/assert.html"
+      ],
+      "confirmedCauses": [
+        "Fresh checkout lacked ignored compiler archive cache and isolated compiler dependencies.",
+        "Frozen command test omitted the existing gallery configureGallery contract.",
+        "Pricing test advanced mocked Date while its ledger helper injected a fixed pre-expiry clock."
+      ],
+      "repairs": [
+        "Restored same-lock local compiler copies and passed strict supply verifier.",
+        "Updated historical command assertion to include configureGallery; only the expiry-boundary test uses an injectable mutable clock advanced to expiresAt. Protected production ledger unchanged."
+      ],
+      "verification": [
+        "Isolated compiler 12/12 passed.",
+        "Five integration browser suites passed with zero real AI calls.",
+        "Final full 89-file rerun exit 0.",
+        "Final regression: 1410/1410 passed, zero failed/skipped; six browser suites passed."
+      ]
+    }
+  ],
+  "passed": true
+}
