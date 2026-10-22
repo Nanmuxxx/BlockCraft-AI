@@ -18,26 +18,37 @@ export function toMinimalPlanInput(request: PlanRequest) {
   const relation = context.relations.find(item => item.blockId === block?.id)
   const entity = context.entities.find(item => item.id === relation?.entityId)
   if (!block) throw new AppSpecError('SELECTION_REQUIRED', '请先选择有效积木。')
+  const spec = request.snapshot?.spec
+  const projected = context as typeof context & { blockOrder?: readonly string[]; reservedIds?: readonly string[] }
+  const common = {
+    requestId: request.requestId, baseRevision: context.revision,
+    ...(context.appId ? { appId: context.appId } : {}),
+    prompt: request.prompt,
+    blockOrder: [...(projected.blockOrder ?? spec?.blocks.map(item => item.id) ?? context.blocks.filter(item => item.type !== 'custom').map(item => item.id))],
+    // Only occupied IDs leave the host, never custom definitions, props, source or records.
+    reservedIds: [...new Set([...(projected.reservedIds ?? []),
+      ...(spec ? [spec.id, ...spec.entities.flatMap(item => [item.id, ...item.fields.map(field => field.id)]),
+        ...spec.blocks.map(item => item.id), ...spec.relations.map(item => item.id)] : []),
+      ...context.blocks.map(item => item.id), ...context.assets.map(item => item.id),
+    ])],
+  }
   if (block.type === 'gallery') {
     return {
-      requestId: request.requestId, baseRevision: context.revision,
-      prompt: request.prompt,
+      ...common,
       block: { id: block.id, name: block.name, type: block.type, imageIds: [...(block.imageIds ?? [])], layout: block.layout, interaction: block.interaction },
       assets: context.assets.map(({ id, name, altText, mimeType }) => ({ id, name, ...(altText === undefined ? {} : { altText }), mimeType })),
     }
   }
-  const sourceBlock = request.snapshot.spec.blocks.find(item => item.id === block?.id)
-  if (!block || !entity || !sourceBlock) throw new AppSpecError('SELECTION_REQUIRED', '请先选择有效积木。')
-  const spec = request.snapshot.spec
+  const sourceBlock = spec?.blocks.find(item => item.id === block.id)
+  if (!entity || !sourceBlock || !['form', 'list', 'metric'].includes(sourceBlock.type)) throw new AppSpecError('SELECTION_REQUIRED', '请先选择有效积木。')
   return {
-    requestId: request.requestId, baseRevision: context.revision,
-    prompt: request.prompt,
-    block: { id: block.id, name: block.name, type: block.type, fieldIds: [...(block.fieldIds ?? [])],
-      ...(sourceBlock.presentation ? { presentation: { ...sourceBlock.presentation } } : {}) },
+    ...common,
+    block: { id: block.id, name: block.name, type: block.type,
+      ...(sourceBlock.type === 'metric'
+        ? { aggregation: sourceBlock.aggregation, ...('fieldId' in sourceBlock ? { fieldId: sourceBlock.fieldId } : {}) }
+        : { fieldIds: [...(block.fieldIds ?? [])], ...(sourceBlock.presentation ? { presentation: { ...sourceBlock.presentation } } : {}) }),
+    },
     entity: { id: entity.id, name: entity.name, fields: entity.fields.map(({ id, name, type }) => ({ id, name, type,
       required: request.snapshot.spec.entities.find(item => item.id === entity.id)!.fields.find(field => field.id === id)!.required })) },
-    // IDs alone prevent cross-entity structural collisions without exposing unrelated metadata or records.
-    reservedIds: [spec.id, ...spec.entities.flatMap(item => [item.id, ...item.fields.map(field => field.id)]),
-      ...spec.blocks.map(item => item.id), ...spec.relations.map(item => item.id)],
   }
 }

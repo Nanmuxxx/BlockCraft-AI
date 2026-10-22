@@ -1,9 +1,10 @@
-import type { BlockSpec, EntityRecord, FieldSpec, FieldValue, ProjectState } from './appSpec'
+import type { AppCommand, CommandRequest, BlockSpec, EntityRecord, FieldSpec, FieldValue, ProjectState } from './appSpec'
 import { createCommandSession, processCommand, type CommandSession } from './appCommands'
 import { createProjectSession, type CustomProjectSession } from './customProjectSession'
 import type { CustomProject, RegisteredArtifact } from '../custom-block'
 import { CustomBlockError } from '../custom-block/json'
 import type { WriteAuthorization } from '../integrations/custom-block-bc/owner'
+import { projectBuiltinChange, restoreProjectSnapshot } from './appProjectCommands'
 import { AppSpecError, assertProjectState, ensure } from './appSpecValidation'
 
 export type RecordChange =
@@ -55,11 +56,16 @@ export interface AppRuntime {
 export function createAppRuntime(initial: ProjectState, initialArtifacts: readonly RegisteredArtifact[] = [], initialProject?: CustomProject): AppRuntime {
   const initialSession = createCommandSession(initial)
   let metadata: Omit<CommandSession, 'state'> = freeze({ history: initialSession.history, receipts: initialSession.receipts })
-  const project = createProjectSession(initial, () => { metadata = freeze({ ...metadata, history: [] }) }, initialArtifacts, initialProject)
+  let projectHistory: CustomProject[] = []
+  const project = createProjectSession(initial, () => { metadata = freeze({ ...metadata, history: [] }); projectHistory = [] }, initialArtifacts, initialProject)
   const session = (): CommandSession => ({ ...metadata, state: project.getBaseSnapshot() })
-  const publish = (next: CommandSession, expected: ReturnType<CustomProjectSession['getSnapshot']>, authorization: WriteAuthorization) => project.commitBuiltin(next.state, () => {
-    metadata = freeze({ history: next.history, receipts: next.receipts })
-  }, expected, authorization)
+  const publish = (next: CommandSession, expected: CustomProject, authorization: WriteAuthorization, commands: readonly AppCommand[] = [], history: CustomProject[] = [], restored?: CustomProject) => {
+    const candidate = restored ? restoreProjectSnapshot(restored, next.state.revision) : projectBuiltinChange(expected, next.state, commands)
+    return project.commitProject(candidate, () => {
+      metadata = freeze({ history: next.history, receipts: next.receipts })
+      projectHistory = freeze(history)
+    }, expected, authorization)
+  }
   // Full-state command history cannot cross a later data/layout transaction.
   // Keep receipts so retries across this boundary remain idempotent.
   const mutate = (apply: (state: ProjectState) => ProjectState): RuntimeResult => {
@@ -72,7 +78,7 @@ export function createAppRuntime(initial: ProjectState, initialArtifacts: readon
     }
     try { return publish({ ...session(), state, history: [] }, expected, authorization) }
     catch (error) {
-      if (!(error instanceof CustomBlockError)) throw error
+      if (!(error instanceof CustomBlockError) && !(error instanceof AppSpecError)) throw error
       return { ok: false, error: { code: error.code, message: error.message } }
     }
   }
@@ -87,9 +93,13 @@ export function createAppRuntime(initial: ProjectState, initialArtifacts: readon
       const result = processCommand(session(), request)
       if (!result.ok) return { ok: false, error: result.error }
       if (!result.duplicate) {
-        try { return publish(result.session, expected, authorization) }
+        const commands = (request as CommandRequest).commands
+        const undo = commands[0].type === 'undo'
+        const previous = undo ? projectHistory[projectHistory.length - 1] : undefined
+        if (undo && !previous) return { ok: false, error: { code: 'NOTHING_TO_UNDO', message: '没有可恢复的完整项目快照。' } }
+        try { return publish(result.session, expected, authorization, commands, undo ? projectHistory.slice(0, -1) : [...projectHistory, expected], previous) }
         catch (error) {
-          if (!(error instanceof CustomBlockError)) throw error
+          if (!(error instanceof CustomBlockError) && !(error instanceof AppSpecError)) throw error
           return { ok: false, error: { code: error.code, message: error.message } }
         }
       }

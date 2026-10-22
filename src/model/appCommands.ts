@@ -31,8 +31,8 @@ function apply(state: ProjectState, command: Exclude<AppCommand, { type: 'undo' 
       break
     }
     case 'addBlock':
-      if (command.block.type === 'gallery') {
-        ensure(!('binding' in command) || command.binding === undefined, 'Gallery blocks cannot bind entities')
+      if (command.block.type === 'gallery' || command.block.type === 'pomodoro') {
+        ensure(!('binding' in command) || command.binding === undefined, `${command.block.type} blocks cannot bind entities`)
       } else {
         const binding = 'binding' in command ? command.binding : undefined
         ensure(binding, 'Data block requires binding')
@@ -42,6 +42,23 @@ function apply(state: ProjectState, command: Exclude<AppCommand, { type: 'undo' 
       spec.blocks.push(clone(command.block))
       if (command.position) state.blockPositions[command.block.id] = clone(command.position)
       break
+    case 'reorderBlocks': {
+      ensure(command.blockIds.length === spec.blocks.length && new Set(command.blockIds).size === spec.blocks.length && command.blockIds.every(id => spec.blocks.some(block => block.id === id)), 'Order must contain every builtin block exactly once', 'INVALID_ORDER')
+      spec.blocks = command.blockIds.map(id => spec.blocks.find(block => block.id === id)!)
+      break
+    }
+    case 'configureMetric': {
+      const block = spec.blocks.find(block => block.id === command.blockId)
+      ensure(block?.type === 'metric', 'Metric configuration requires a metric block', 'INVALID_TARGET')
+      if (command.aggregation !== 'count') {
+        const binding = spec.relations.find(relation => relation.blockId === block.id)
+        const field = spec.entities.find(entity => entity.id === binding?.entityId)?.fields.find(field => field.id === command.fieldId)
+        ensure(field?.type === 'number', 'Numeric metric requires a number field from its bound entity', 'INVALID_TARGET')
+      }
+      const { fieldId: _previousField, ...rest } = block as typeof block & { fieldId?: string }
+      spec.blocks[spec.blocks.indexOf(block)] = command.aggregation === 'count' ? { ...rest, aggregation: 'count' } : { ...rest, aggregation: command.aggregation, fieldId: command.fieldId }
+      break
+    }
     case 'removeBlock':
       ensure(spec.blocks.some(b => b.id === command.blockId), 'Unknown block')
       spec.blocks = spec.blocks.filter(b => b.id !== command.blockId)

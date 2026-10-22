@@ -69,7 +69,7 @@ test('synchronous completion failure and abort cannot leak an unhandled rejectio
 test('completion receives selected metadata and occupied structural IDs without records; preview requires explicit confirmation', async t => {
   const { runtime, host } = setup(t, async ({ instruction, request, signal }) => {
     assert.match(instruction, /existing AppChangeCandidate/)
-    assert.deepEqual(Object.keys(request).sort(), ['requestId', 'baseRevision', 'prompt', 'block', 'entity', 'reservedIds'].sort())
+    assert.deepEqual(Object.keys(request).sort(), ['appId', 'blockOrder', 'requestId', 'baseRevision', 'prompt', 'block', 'entity', 'reservedIds'].sort())
     assert.equal(new Set(request.reservedIds).size, request.reservedIds.length)
     assert.ok(request.reservedIds.includes('applicant-list'))
     assert.equal(Object.hasOwn(request, 'records'), false)

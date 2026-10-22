@@ -301,7 +301,7 @@ test('entity and direct block permissions are both required; model cannot grant 
 test('AI command contract includes controlled gallery/presentation edits and rejects forbidden commands atomically', () => {
   // Presentation editing is the approved AppSpec text/color/radius extension;
   // membership does not grant scope, confirmation, or Runtime authorization.
-  assert.deepEqual([...AI_CHANGE_COMMANDS], ['addField', 'configureBlockFields', 'configureBlockPresentation', 'configureGallery', 'addBlock', 'removeBlock'])
+  assert.deepEqual([...AI_CHANGE_COMMANDS], ['addField', 'configureBlockFields', 'configureBlockPresentation', 'configureGallery', 'addBlock', 'removeBlock', 'configureMetric', 'reorderBlocks'])
   assert.ok(Object.isFrozen(AI_CHANGE_COMMANDS))
   const app = setup()
   const before = app.runtime.getSnapshot()

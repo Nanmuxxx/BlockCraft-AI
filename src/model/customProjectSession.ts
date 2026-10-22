@@ -1,5 +1,5 @@
-import type { ProjectState } from './appSpec'
-import { syncLayoutOrder } from './layoutOrder'
+import type { AppCommand, ProjectState } from './appSpec'
+import { projectBuiltinChange } from './appProjectCommands'
 import type { RuntimeResult } from './appRuntime'
 import type { ArtifactReference, ArtifactRegistry, CustomBlockInstance, CustomProject, RegisteredArtifact } from '../custom-block'
 import { assertArtifactReference, migrateProjectState, parseCustomProject, resolveArtifact } from '../custom-block'
@@ -118,18 +118,15 @@ export function createProjectSession(initial: ProjectState, onCustomCommit: () =
       }
       return base
     },
-    /** Sync builtin transactions preserve all admitted custom data. Only base and
-     * builtin references change; structure catches global ID collisions. */
-    commitBuiltin(next: ProjectState, beforePublish: () => void, expected: CustomProject, authorization: WriteAuthorization) {
-      const { revision: nextRevision, ...nextBase } = next
-      const ids = new Set(next.spec.blocks.map(block => block.id))
-      const renderOrder = expected.renderOrder.filter(item => item.kind === 'custom' || ids.delete(item.id))
-      ids.forEach(id => renderOrder.push({ kind: 'builtin', id }))
-      const candidate = { ...expected, revision: nextRevision, base: nextBase, renderOrder }
-      if (Object.entries(next.blockPositions).some(([id, point]) => {
-        const previous = expected.base.blockPositions[id]
-        return !previous || previous.x !== point.x || previous.y !== point.y
-      })) syncLayoutOrder(candidate)
+    /** Full-project publication is also used by undo; candidate effects remain
+     * bound to the sole owner's atomic persistence/publication boundary. */
+    commitProject(candidate: CustomProject, beforePublish: () => void, expected: CustomProject, authorization: WriteAuthorization) {
+      effects.set(candidate, beforePublish)
+      try { return owner.compareAndSwap(expected, candidate, authorization) }
+      finally { effects.delete(candidate) }
+    },
+    commitBuiltin(next: ProjectState, beforePublish: () => void, expected: CustomProject, authorization: WriteAuthorization, commands: readonly AppCommand[] = []) {
+      const candidate = projectBuiltinChange(expected, next, commands)
       effects.set(candidate, beforePublish)
       try { return owner.compareAndSwap(expected, candidate, authorization) }
       finally { effects.delete(candidate) }
