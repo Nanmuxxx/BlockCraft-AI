@@ -1,6 +1,7 @@
 import type { BlockSpec, EntityRecord, FieldSpec, FieldValue, ProjectState } from './appSpec'
 import { createCommandSession, processCommand, type CommandSession } from './appCommands'
 import { createProjectSession, type CustomProjectSession } from './customProjectSession'
+import type { CustomProject, RegisteredArtifact } from '../custom-block'
 import { CustomBlockError } from '../custom-block/json'
 import type { WriteAuthorization } from '../integrations/custom-block-bc/owner'
 import { AppSpecError, assertProjectState, ensure } from './appSpecValidation'
@@ -51,10 +52,10 @@ export interface AppRuntime {
 }
 
 /** One session owns state, history and receipts for both B and C. */
-export function createAppRuntime(initial: ProjectState): AppRuntime {
+export function createAppRuntime(initial: ProjectState, initialArtifacts: readonly RegisteredArtifact[] = [], initialProject?: CustomProject): AppRuntime {
   const initialSession = createCommandSession(initial)
   let metadata: Omit<CommandSession, 'state'> = freeze({ history: initialSession.history, receipts: initialSession.receipts })
-  const project = createProjectSession(initial, () => { metadata = freeze({ ...metadata, history: [] }) })
+  const project = createProjectSession(initial, () => { metadata = freeze({ ...metadata, history: [] }) }, initialArtifacts, initialProject)
   const session = (): CommandSession => ({ ...metadata, state: project.getBaseSnapshot() })
   const publish = (next: CommandSession, expected: ReturnType<CustomProjectSession['getSnapshot']>, authorization: WriteAuthorization) => project.commitBuiltin(next.state, () => {
     metadata = freeze({ history: next.history, receipts: next.receipts })

@@ -52,8 +52,21 @@
 .workshop-export button:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
 .workshop-export p { margin: 8px 0 0; font-size: 11px; line-height: 1.5; color: var(--ink-soft); overflow-wrap: anywhere; }
 .workshop-export [role="alert"] { color: #943c29; }
+.workshop__project-actions { display: flex; align-items: flex-start; gap: 10px; flex-shrink: 0; }
+.workshop-json-controls { display: flex; flex-wrap: wrap; gap: 6px; max-width: 300px; }
+.workshop-json-controls button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 9px; color: var(--brand-deep); background: #fff4e9; font: inherit; font-size: 12px; cursor: pointer; }
+.workshop-json-controls button:hover { background: #ffe1c9; }
+.workshop-json-controls button:disabled { opacity: .65; cursor: wait; }
+.workshop-json-controls button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.workshop-json-controls p { flex-basis: 100%; margin: 2px 0 0; font-size: 11px; line-height: 1.4; color: var(--ink-soft); overflow-wrap: anywhere; }
+.workshop-json-controls [role="alert"] { color: #943c29; }
+.workshop-json-controls .project-json-backups { flex-basis: 100%; padding: 0; margin-top: 4px; }
+.workshop-json-controls .project-json-backups button { padding: 3px; font-size: 11px; }
 @media (max-width: 1000px) {
   .app-spec-workshop .workshop__topbar { flex-wrap: wrap; gap: 14px; }
   .workshop-export { max-width: none; flex: 1 1 100%; }
   .workshop-export button { width: auto; min-width: 180px; }
+  .workshop__project-actions { flex: 1 1 100%; }
+  .workshop-json-controls { max-width: none; }
 }
+@media (max-width: 640px) { .workshop__project-actions { flex-wrap: wrap; min-width: 0; } .workshop-json-controls { min-width: 0; max-width: 100%; } }

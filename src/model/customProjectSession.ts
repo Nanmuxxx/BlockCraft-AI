@@ -30,14 +30,18 @@ function failure(error: unknown): RuntimeResult {
  * commands/CRUD/layout/custom edits all publish here and share subscribers.
  * Artifact storage contains immutable build inputs, never another project store.
  */
-export function createProjectSession(initial: ProjectState, onCustomCommit: () => void) {
+export function createProjectSession(initial: ProjectState, onCustomCommit: () => void, initialArtifacts: readonly RegisteredArtifact[] = [], initialProject?: CustomProject) {
   const artifacts = new Map<string, RegisteredArtifact>()
+  // Imported projects have already passed the asynchronous artifact admission
+  // checks in parseProjectJson. Keep those exact immutable versions available
+  // to the new session without reusing the previous session's registry.
+  for (const artifact of initialArtifacts) artifacts.set(key({ definitionId: artifact.artifact.manifest.definitionId, versionDigest: artifact.versionDigest }), freeze(cloneJson(artifact)))
   const registry: ArtifactRegistry = Object.freeze({ async resolve(ref: ArtifactReference) { return artifacts.get(key(ref)) } })
   // Candidate-bound synchronous effects carry no project state. Only the sole
   // owner's persist hook may install metadata/history alongside publication.
   const effects = new WeakMap<CustomProject, () => void>()
   const admissions = new WeakMap<CustomProject, RegisteredArtifact>()
-  const authority = createProjectRevisionOwner(migrateProjectState(initial), { persist(next) {
+  const authority = createProjectRevisionOwner(initialProject ?? migrateProjectState(initial), { persist(next) {
     const effect = effects.get(next)
     if (effect) effect()
     else onCustomCommit()
