@@ -18,7 +18,7 @@ export interface ConversationState {
 export function createMochiApi(options?: { fetchImpl?: typeof fetch; timeoutMs?: number }): {
   status(options?: { signal?: AbortSignal }): Promise<unknown>
   analyze(input: unknown, options?: { signal?: AbortSignal }): Promise<unknown>
-  consent(enabled: boolean): Promise<unknown>
+  consent(enabled: boolean, options?: { appId: string; instanceId: string }): Promise<unknown>
   ignore(id: string): Promise<unknown>
 }
 export function createMochiConversation(options: {

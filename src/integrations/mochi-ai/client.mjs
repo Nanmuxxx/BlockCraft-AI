@@ -1,4 +1,4 @@
-import { LIMITS, MochiError, check, object, projectContext, validateAdvice, binding, fingerprint, redact, validateRequest } from './protocol.mjs'
+import { LIMITS, MochiError, check, object, id, projectContext, validateAdvice, binding, fingerprint, redact, validateRequest } from './protocol.mjs'
 const errors = { UNAUTHORIZED: 'Mochi AI 尚未启用：需要可信会话认证和项目访问权限。', ORIGIN_REJECTED: 'Mochi AI 请求来源未获允许。', CONTEXT_MISMATCH: '当前项目与可信访问范围不一致，请重新打开项目。', MODE_UNAVAILABLE: '请回到 B 模式再和 Mochi 聊聊。', ACCESS_UNAVAILABLE: 'Mochi AI 尚未启用：可信会话认证与项目权限尚未配置。', BUDGET_UNAVAILABLE: 'Mochi AI 尚未启用：持久费用预算控制尚未配置或不可用。', CONTEXT_PENDING: '正在读取积木结构…', CONTEXT_UNAVAILABLE: '积木结构暂不可用，请重新载入。', CONTEXT_TOO_LARGE: '当前结构超出分析范围，请减少积木或字段后重试。', INVALID_INPUT: '当前积木结构暂不支持分析。', AI_DISABLED: 'Mochi AI 尚未启用。', AI_NOT_CONFIGURED: 'Mochi AI 尚未配置。', AI_MODIFICATION_DISABLED: '目前只能解释和建议，修改计划尚未接通。',
   AI_TIMEOUT: 'Mochi 想得有点久，请稍后重试。', AI_BUSY: 'Mochi 正在思考。', THROTTLED: '先消化一下刚才的想法吧。', BUDGET_EXHAUSTED: '本次 AI 预算已用完。',
   PROACTIVE_DISABLED: '主动建议尚未开启。', DUPLICATE_EVENT: '这个变化已经分析过了。', CANCELLED: '已取消请求。' }
@@ -54,7 +54,7 @@ export function createMochiApi({ fetchImpl = globalThis.fetch, timeoutMs = 25_00
     }
   }
   return { status: options => request('status', undefined, options), async analyze(input, options) { const safe = validateRequest(input); return validateReply(await request('analyze', safe, options), safe.context) },
-    consent: enabled => request('consent', { enabled }), ignore: id => request('ignore', { id }) }
+    consent: (enabled, { appId, instanceId } = {}) => request('consent', { enabled, ...(appId === undefined ? {} : { appId }), ...(instanceId === undefined ? {} : { instanceId }) }), ignore: id => request('ignore', { id }) }
 }
 function validateReply(reply, context) {
   object(reply, ['version','source','capabilities','binding','message','suggestions'])
@@ -81,6 +81,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   let state = freeze({ contextAvailable: true, enabled: false, disabledReason: '正在检查 Mochi AI 状态…', proactiveEnabled: false, busy: false, modificationsEnabled: false, planningEnabled: canPlan, messages: [], suggestions: [], deferredSuggestions: [], error: null })
   let disposed = false, pending = null, epoch = 0, actionEpoch = 0, signature = '', identity = '', prompts = [], lastProactive = -Infinity, consentSequence = 0, statusSequence = 0
   let consentTail = Promise.resolve()
+  let projectTransitions = 0, firstStatusIdentity = ''
   const messageFor = (code, fallback) => typeof code === 'string' && Object.hasOwn(errors, code) ? errors[code] : fallback
   const codeFor = (error, fallback) => typeof error?.code === 'string' && Object.hasOwn(errors, error.code) ? error.code : fallback
   const listeners = new Set(), seen = new Map(), ignored = new Map(), events = new Map(), provenance = new WeakMap(), rejected = new WeakSet(), planning = new Set()
@@ -130,15 +131,21 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       const selectionOnly = signature !== '' && JSON.stringify({ ...JSON.parse(signature), selectedBlockId: context.selectedBlockId }) === next
       // Publish a coherent identity/history before notifying or aborting. Both
       // callbacks may synchronously synchronize or enter a newer project.
+      const changedProject = newProject && (identity !== '' || firstStatusIdentity !== '' && firstStatusIdentity !== nextIdentity)
       signature = next; identity = nextIdentity
+      if (changedProject) { projectTransitions++; consentSequence++; statusSequence++ }
       if (newProject) { prompts = []; seen.clear(); ignored.clear(); events.clear(); lastProactive = -Infinity }
-      retire({ contextAvailable: true, ...(newProject ? { messages: [] } : {}), suggestions: [], deferredSuggestions: [], error: null }, selectionOnly)
+      retire({ contextAvailable: true, ...(newProject ? { messages: [] } : {}), ...(changedProject ? { proactiveEnabled: false } : {}), suggestions: [], deferredSuggestions: [], error: null }, selectionOnly)
     } else if (!state.contextAvailable) emit({ contextAvailable: true, error: null })
     return context
   }
   async function refreshStatus() {
     check(!disposed, 'DISPOSED')
     const sequence = ++statusSequence, consentAtStart = consentSequence
+    const projectAtStart = projectTransitions
+    let statusContext
+    try { statusContext = projectContext(readContext()) } catch { /* A pending projection cannot restore project consent. */ }
+    if (statusContext && firstStatusIdentity === '') firstStatusIdentity = `${statusContext.appId}:${statusContext.instanceId}`
     await consentTail.catch(() => {})
     if (disposed || sequence !== statusSequence) return state
     let result
@@ -146,26 +153,47 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       result = await api.status()
       if (disposed || sequence !== statusSequence) return state
       check(result && typeof result === 'object' && !Array.isArray(result) && typeof result.enabled === 'boolean' && typeof result.proactiveEnabled === 'boolean' && result.modificationsEnabled === false, 'AI_INVALID_RESPONSE')
+      check(result.proactiveAppId === undefined || id(result.proactiveAppId), 'AI_INVALID_RESPONSE')
+      check(result.proactiveInstanceId === undefined || id(result.proactiveInstanceId) && result.proactiveAppId !== undefined, 'AI_INVALID_RESPONSE')
     }
     catch (error) {
       if (!disposed && sequence === statusSequence) retire({ enabled: false, proactiveEnabled: false, suggestions: [], deferredSuggestions: [], disabledReason: messageFor(error?.code, 'Mochi 暂时无法连接，请稍后检查连接。') })
       throw error
     }
     if (disposed || sequence !== statusSequence) return state
-    const patch = { enabled: result.enabled, disabledReason: result.enabled ? null : messageFor(result.reason, errors.AI_DISABLED), proactiveEnabled: result.enabled && (consentAtStart === consentSequence ? result.proactiveEnabled : state.proactiveEnabled) }
+    let sameStatusProject = false
+    try { const current = projectContext(readContext()); sameStatusProject = statusContext?.appId === current.appId && statusContext?.instanceId === current.instanceId } catch { /* No current project grant. */ }
+    // Old single-project adapters omit instance scope. Their initial status is
+    // compatible, but cannot restore consent after any project replacement.
+    const scopedConsent = sameStatusProject && projectAtStart === projectTransitions && (result.proactiveInstanceId === undefined
+      ? projectTransitions === 0 && firstStatusIdentity === `${statusContext?.appId}:${statusContext?.instanceId}`
+        && (result.proactiveAppId === undefined || result.proactiveAppId === statusContext?.appId)
+      : result.proactiveAppId === statusContext?.appId && result.proactiveInstanceId === statusContext?.instanceId)
+    const patch = { enabled: result.enabled, disabledReason: result.enabled ? null : messageFor(result.reason, errors.AI_DISABLED), proactiveEnabled: result.enabled && (consentAtStart === consentSequence ? result.proactiveEnabled && scopedConsent : state.proactiveEnabled) }
     if (!result.enabled || (state.proactiveEnabled && !patch.proactiveEnabled)) retire({ ...patch, suggestions: [], deferredSuggestions: [] })
     else emit(patch)
     return state
   }
   async function setProactive(enabled) {
     check(typeof enabled === 'boolean' && !disposed, 'INVALID_INPUT')
+    let context
+    if (enabled) context = syncContext()
+    else { try { context = projectContext(readContext()) } catch { /* A global opt-out must still work without context. */ } }
+    const projectAtStart = projectTransitions
+    const ownsProject = () => {
+      if (projectAtStart !== projectTransitions) return false
+      try { const current = projectContext(readContext()); return context?.appId === current.appId && context?.instanceId === current.instanceId } catch { return false }
+    }
     const sequence = ++consentSequence
     // Serialize consent writes so rapid on/off cannot leave the server enabled.
     const write = consentTail.catch(() => {}).then(() => {
       // Never send a queued opt-in from a closed conversation. An explicit
       // opt-out must still follow an already sent opt-in to preserve revocation.
-      if (enabled) check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
-      return api.consent(enabled)
+      if (enabled) {
+        check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
+        check(ownsProject(), 'CONTEXT_CHANGED', '项目已变化，请重新开启主动建议。', 409)
+      }
+      return api.consent(enabled, context ? { appId: context.appId, instanceId: context.instanceId } : undefined)
     })
     consentTail = write
     // Reserve queue order before observers can synchronously change consent.
@@ -173,7 +201,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     try {
       const result = await write
       check(result.proactiveEnabled === enabled, 'AI_INVALID_RESPONSE')
-      if (sequence === consentSequence) emit({ proactiveEnabled: enabled && state.enabled })
+      if (sequence === consentSequence && (!enabled || ownsProject())) emit({ proactiveEnabled: enabled && state.enabled })
     } catch (error) { if (sequence === consentSequence) emit({ proactiveEnabled: false, error: { code: codeFor(error, 'AI_UNAVAILABLE'), message: '主动建议设置失败，请重试。' } }); throw error }
   }
   async function run(kind, prompt, event) {

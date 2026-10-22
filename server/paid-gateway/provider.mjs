@@ -4,7 +4,9 @@ import { PRICING, POLICY, ensure, GatewayError } from './pricing.mjs'
 const ENDPOINT = 'https://api.deepseek.com/chat/completions'
 const nativeFetch = globalThis.fetch
 const paidTransports = new WeakMap()
+const paidOutputLimits = new WeakMap()
 export const isPaidTransport = value => paidTransports.has(value)
+export const maxOutputTokensForTransport = value => paidOutputLimits.get(value)
 export const defaultModelForTransport = value => paidTransports.get(value) ?? 'deepseek-v4-flash'
 async function abortable(work, signal) {
   signal.throwIfAborted()
@@ -28,7 +30,8 @@ async function read(response, signal, policy) {
 
 /** Sole production egress. No retries, redirects, tools, browser-provided URL,
  * key or model. Call reservation is synchronous and durable before fetch. */
-export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, timeoutMs = POLICY.timeoutMs, onResponse, pricing = PRICING, policy = POLICY } = {}) {
+export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, timeoutMs = POLICY.timeoutMs, onResponse, pricing = PRICING, policy = POLICY, reservationStore, beforeReserve, concurrencyGate = { active: false } } = {}) {
+  if (policy.id) ensure(ledger?.policyId === policy.id, 'LEDGER_PROFILE')
   pricing = Object.freeze({ ...pricing }); policy = Object.freeze({ ...policy })
   ensure(typeof apiKey === 'string' && apiKey.length >= 16 && apiKey.length <= 512 && !/\s/.test(apiKey), 'API_CONFIGURATION')
   ensure(ledger && typeof ledger.reserve === 'function' && typeof ledger.snapshot === 'function', 'LEDGER_UNAVAILABLE')
@@ -36,9 +39,7 @@ export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, t
   ensure(['maxInputBytes', 'framingTokens', 'maxOutputTokens', 'maxResponseBytes', 'timeoutMs'].every(k =>
     Number.isSafeInteger(policy[k]) && policy[k] > 0 && policy[k] <= POLICY[k]), 'POLICY_INVALID')
   ensure(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= policy.timeoutMs, 'TIMEOUT_CONFIGURATION')
-  let active = false
   const transport = async (url, init) => {
-    ensure(!active, 'CONCURRENCY_LIMIT')
     ensure(url === ENDPOINT && init?.method === 'POST', 'EGRESS_DENIED')
     ensure(!init.signal?.aborted, 'CANCELLED')
     let body
@@ -52,8 +53,12 @@ export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, t
     ensure(inputBytes <= policy.maxInputBytes, 'INPUT_LIMIT')
     const inputBound = inputBytes + policy.framingTokens
     const requestHash = createHash('sha256').update(JSON.stringify(body)).digest('hex')
-    const id = ledger.reserve(inputBound, body.max_tokens, requestHash)
-    active = true
+    if (beforeReserve) await beforeReserve()
+    reservationStore?.check(body)
+    ensure(!concurrencyGate.active, 'CONCURRENCY_LIMIT')
+    const id = reservationStore ? reservationStore.reserve(body, inputBound, body.max_tokens, requestHash)
+      : ledger.reserve(inputBound, body.max_tokens, requestHash)
+    concurrencyGate.active = true
     const controller = new AbortController()
     const cancel = () => controller.abort()
     init.signal?.addEventListener('abort', cancel, { once: true })
@@ -101,9 +106,10 @@ export function createPaidTransport({ apiKey, ledger, fetchImpl = nativeFetch, t
     } finally {
       clearTimeout(timer); controller.abort(); init.signal?.removeEventListener('abort', cancel)
       if (response?.body && !response.body.locked) void response.body.cancel().catch(() => {})
-      active = false
+      concurrencyGate.active = false
     }
   }
   paidTransports.set(transport, pricing.model)
+  paidOutputLimits.set(transport, policy.maxOutputTokens)
   return transport
 }

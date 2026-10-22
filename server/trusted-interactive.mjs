@@ -17,15 +17,16 @@ const denied = (code, status = 503) => { throw new AdmissionError(code, status) 
  * No env flag, request body or browser header can grant approval. Disabled by default.
  * Reuses /api/ai/generate provider, official endpoint, size/rate/timeout protections.
  */
-export function createInteractiveGate({ enabled = false, approval, resolveAccess, allowedOrigin, reserveBudget } = {}) {
+export function createInteractiveGate({ enabled = false, approval, resolveAccess, allowedOrigin, reserveBudget, principalManagedBudget = false } = {}) {
   const approved = approval && Object.freeze({ ...approval })
   let calls = 0
   function gate() {
     if (!enabled || approved?.providerVerified !== true || approved?.permissionsVerified !== true || !approved?.reference ||
       !Number.isSafeInteger(approved.maxCalls) || approved.maxCalls < 1 || !Number.isSafeInteger(approved.expiresAt) || approved.expiresAt <= Date.now() ||
-      !allowedOrigin || typeof resolveAccess !== 'function' || typeof reserveBudget !== 'function') denied('AI_DISABLED')
+      !allowedOrigin || typeof resolveAccess !== 'function' ||
+      (principalManagedBudget !== true && typeof reserveBudget !== 'function')) denied('AI_DISABLED')
   }
-  return async (req, { model, requestId, maxTokens, signal }) => {
+  return async (req, { model, requestId, maxTokens, signal, principal }) => {
     gate()
     if (req.headers.origin && req.headers.origin !== allowedOrigin) denied('ORIGIN_REJECTED', 403)
     const controller = new AbortController()
@@ -37,13 +38,15 @@ export function createInteractiveGate({ enabled = false, approval, resolveAccess
     const timer = setTimeout(() => controller.abort(new AdmissionError('BUDGET_UNAVAILABLE')), 5000)
     try {
       controller.signal.throwIfAborted()
-      const access = await abortable(resolveAccess(req, { signal: controller.signal }), controller.signal)
+      const access = await abortable(resolveAccess(req, { signal: controller.signal, principal }), controller.signal)
       if (!access || typeof access.sessionId !== 'string' || !access.sessionId || typeof access.appId !== 'string' || !access.appId || access.readOnly !== false) denied('UNAUTHORIZED', 401)
       gate()
       if (calls >= approved.maxCalls) denied('BUDGET_EXHAUSTED', 429)
       calls++ // Reserve before budget await; failures never refund the approved cap.
-      const admitted = await abortable(reserveBudget(Object.freeze({ requestId, sessionId: access.sessionId, appId: access.appId, approvalReference: approved.reference, model, maxTokens, signal: controller.signal })), controller.signal)
-      if (admitted !== true) denied('BUDGET_EXHAUSTED', 429)
+      if (!principalManagedBudget) {
+        const admitted = await abortable(reserveBudget(Object.freeze({ requestId, sessionId: access.sessionId, appId: access.appId, approvalReference: approved.reference, model, maxTokens, signal: controller.signal })), controller.signal)
+        if (admitted !== true) denied('BUDGET_EXHAUSTED', 429)
+      }
       if (controller.signal.aborted) denied('CANCELLED', 499)
       gate()
     } catch (error) {
