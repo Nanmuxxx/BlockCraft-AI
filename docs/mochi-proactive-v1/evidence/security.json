@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-22T12:58:51.781Z",
+  "scannedFiles": 106,
+  "scope": [
+    "git modified and untracked intended text files",
+    ".cache/mochi-proactive text artifacts"
+  ],
+  "checks": [
+    "exact sensitive configuration values in memory",
+    "common key format",
+    "credential URL"
+  ],
+  "privateValuesNotPrinted": true,
+  "findings": [],
+  "passed": true
+}

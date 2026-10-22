@@ -24,7 +24,7 @@ function modelEnvironment(t, value) {
 const spec = { version: 1, id: 'tasks', name: '任务', entities: [{ id: 'items', name: '任务', fields: [{ id: 'title', name: '名称', type: 'text', required: true }] }], blocks: [{ id: 'list', name: '清单', type: 'list', fieldIds: ['title'] }], relations: [{ id: 'binding', type: 'dataBinding', blockId: 'list', entityId: 'items' }] }
 async function setup(t) {
   const dir = mkdtempSync(join(tmpdir(), 'blockcraft-model-contract-')); chmodSync(dir, 0o700)
-  const ledger = openLedger(join(dir, 'ledger.json')); t.after(() => ledger.close())
+  const ledger = openLedger(join(dir, 'ledger.json'), { now: () => PRICING.expiresAt - 1 }); t.after(() => ledger.close())
   let calls = 0, content = spec
   const transport = createPaidTransport({ apiKey: key, ledger, fetchImpl: async (_url, init) => {
     calls++; const body = JSON.parse(init.body)

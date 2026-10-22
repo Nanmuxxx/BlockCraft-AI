@@ -75,13 +75,15 @@ function validateReply(reply, context) {
 }
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value) }; return value }
 /** Trusted adapter owns readContext/focusBlock. This module never receives Runtime/PlanProvider. */
-export function createMochiConversation({ api = createMochiApi(), readContext, focusBlock, now = Date.now }) {
-  let state = freeze({ contextAvailable: true, enabled: false, disabledReason: '正在检查 Mochi AI 状态…', proactiveEnabled: false, busy: false, modificationsEnabled: false, messages: [], suggestions: [], error: null })
+export function createMochiConversation({ api = createMochiApi(), readContext, focusBlock, requestPlan, planningEnabled = true, suggestionTtlMs = 600_000, now = Date.now }) {
+  check(Number.isSafeInteger(suggestionTtlMs) && suggestionTtlMs > 0 && suggestionTtlMs <= 600_000, 'INVALID_INPUT')
+  const canPlan = planningEnabled && typeof requestPlan === 'function'
+  let state = freeze({ contextAvailable: true, enabled: false, disabledReason: '正在检查 Mochi AI 状态…', proactiveEnabled: false, busy: false, modificationsEnabled: false, planningEnabled: canPlan, messages: [], suggestions: [], deferredSuggestions: [], error: null })
   let disposed = false, pending = null, epoch = 0, actionEpoch = 0, signature = '', identity = '', prompts = [], lastProactive = -Infinity, consentSequence = 0, statusSequence = 0
   let consentTail = Promise.resolve()
   const messageFor = (code, fallback) => typeof code === 'string' && Object.hasOwn(errors, code) ? errors[code] : fallback
   const codeFor = (error, fallback) => typeof error?.code === 'string' && Object.hasOwn(errors, error.code) ? error.code : fallback
-  const listeners = new Set(), seen = new Map(), ignored = new Map(), events = new Map()
+  const listeners = new Set(), seen = new Map(), ignored = new Map(), events = new Map(), provenance = new WeakMap(), rejected = new WeakSet(), planning = new Set()
   const COOLDOWN = 600_000
   function emit(patch) {
     if (disposed) return
@@ -91,6 +93,16 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
   }
   function remember(map, key) { if (map.size >= 200) map.delete(map.keys().next().value); map.set(key, now() + COOLDOWN) }
   function purge() { for (const map of [seen, ignored, events]) for (const [k, expiry] of map) if (expiry <= now()) map.delete(k) }
+  function refreshSuggestions() {
+    if (disposed) return
+    purge()
+    const active = state.suggestions.filter(s => s.expiresAt > now())
+    const deferred = state.deferredSuggestions.filter(s => s.expiresAt > now())
+    const awakened = deferred.filter(s => s.snoozedUntil <= now())
+    if (active.length !== state.suggestions.length || deferred.length !== state.deferredSuggestions.length || awakened.length) {
+      emit({ suggestions: [...active, ...awakened], deferredSuggestions: deferred.filter(s => s.snoozedUntil > now()) })
+    }
+  }
   function retire(patch = {}, selectionOnly = false) {
     epoch++
     if (!selectionOnly) actionEpoch++
@@ -109,7 +121,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     catch (error) {
       const changed = signature !== '' || state.contextAvailable
       signature = ''
-      if (changed) retire({ contextAvailable: false, suggestions: [], error: { code: codeFor(error, 'CONTEXT_UNAVAILABLE'), message: messageFor(error?.code, errors.CONTEXT_UNAVAILABLE) } })
+      if (changed) retire({ contextAvailable: false, suggestions: [], deferredSuggestions: [], error: { code: codeFor(error, 'CONTEXT_UNAVAILABLE'), message: messageFor(error?.code, errors.CONTEXT_UNAVAILABLE) } })
       throw error
     }
     const nextIdentity = `${context.appId}:${context.instanceId}`, next = JSON.stringify(context)
@@ -120,7 +132,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       // callbacks may synchronously synchronize or enter a newer project.
       signature = next; identity = nextIdentity
       if (newProject) { prompts = []; seen.clear(); ignored.clear(); events.clear(); lastProactive = -Infinity }
-      retire({ contextAvailable: true, ...(newProject ? { messages: [] } : {}), suggestions: [], error: null }, selectionOnly)
+      retire({ contextAvailable: true, ...(newProject ? { messages: [] } : {}), suggestions: [], deferredSuggestions: [], error: null }, selectionOnly)
     } else if (!state.contextAvailable) emit({ contextAvailable: true, error: null })
     return context
   }
@@ -136,12 +148,12 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       check(result && typeof result === 'object' && !Array.isArray(result) && typeof result.enabled === 'boolean' && typeof result.proactiveEnabled === 'boolean' && result.modificationsEnabled === false, 'AI_INVALID_RESPONSE')
     }
     catch (error) {
-      if (!disposed && sequence === statusSequence) retire({ enabled: false, proactiveEnabled: false, disabledReason: messageFor(error?.code, 'Mochi 暂时无法连接，请稍后检查连接。') })
+      if (!disposed && sequence === statusSequence) retire({ enabled: false, proactiveEnabled: false, suggestions: [], deferredSuggestions: [], disabledReason: messageFor(error?.code, 'Mochi 暂时无法连接，请稍后检查连接。') })
       throw error
     }
     if (disposed || sequence !== statusSequence) return state
     const patch = { enabled: result.enabled, disabledReason: result.enabled ? null : messageFor(result.reason, errors.AI_DISABLED), proactiveEnabled: result.enabled && (consentAtStart === consentSequence ? result.proactiveEnabled : state.proactiveEnabled) }
-    if (!result.enabled) retire(patch)
+    if (!result.enabled || (state.proactiveEnabled && !patch.proactiveEnabled)) retire({ ...patch, suggestions: [], deferredSuggestions: [] })
     else emit(patch)
     return state
   }
@@ -157,7 +169,7 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
     })
     consentTail = write
     // Reserve queue order before observers can synchronously change consent.
-    if (!enabled) retire({ proactiveEnabled: false })
+    if (!enabled) retire({ proactiveEnabled: false, suggestions: [], deferredSuggestions: [] })
     try {
       const result = await write
       check(result.proactiveEnabled === enabled, 'AI_INVALID_RESPONSE')
@@ -195,11 +207,12 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       const reply = await abortable(Promise.resolve(api.analyze(input, { signal: controller.signal })), controller.signal)
       check(!disposed && !controller.signal.aborted && owned === epoch && contextCurrent(), 'CONTEXT_CHANGED', '已丢弃过期回复。', 409)
       validateReply(reply, context)
+      const createdAt = now()
       const suggestions = reply.suggestions.filter(s => {
         const key = fingerprint(s)
         if (seen.has(key) || ignored.has(key)) return false
         remember(seen, key); return true
-      })
+      }).map(s => { const item = { ...s, createdAt, expiresAt: createdAt + suggestionTtlMs }; provenance.set(item, kind); return item })
       emit({ messages: [...state.messages, { role: 'assistant', content: reply.message }].slice(-40), suggestions })
       return { ...reply, suggestions }
     } catch (error) {
@@ -208,43 +221,80 @@ export function createMochiConversation({ api = createMochiApi(), readContext, f
       throw error
     } finally { if (pending === controller) { pending = null; emit({ busy: false }) } }
   }
-  function suggestion(id) {
+  function suggestion(id, deferred = false) {
     check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
-    const item = state.suggestions.find(s => s.id === id)
+    refreshSuggestions()
+    check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
+    const item = (deferred ? [...state.suggestions, ...state.deferredSuggestions] : state.suggestions).find(s => s.id === id)
     check(item, 'SUGGESTION_EXPIRED', '建议已过期。', 409)
     const context = projectContext(readContext())
     check(JSON.stringify(context) === signature && (item.blockId === null || context.blocks.some(b => b.id === item.blockId)), 'CONTEXT_CHANGED', '积木已变化，请重新分析。', 409)
     return item
   }
+  function focusForAction(item) {
+    const before = projectContext(readContext()), owned = actionEpoch, contextEpoch = epoch
+    if (item.blockId !== null) focusBlock(item.blockId)
+    check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
+    const after = projectContext(readContext())
+    check(actionEpoch === owned && (epoch === contextEpoch || (epoch === contextEpoch + 1 && before.selectedBlockId !== after.selectedBlockId && after.selectedBlockId === item.blockId))
+      && JSON.stringify({ ...before, selectedBlockId: after.selectedBlockId }) === JSON.stringify(after)
+      && (after.selectedBlockId === before.selectedBlockId || after.selectedBlockId === item.blockId), 'CONTEXT_CHANGED', '项目已变化，请重新提问。', 409)
+    return after
+  }
   return {
     getSnapshot: () => state,
     subscribe(fn) { check(!disposed, 'DISPOSED'); listeners.add(fn); return () => listeners.delete(fn) },
-    syncContext, refreshStatus, setProactive, cancel,
+    syncContext, refreshStatus, refreshSuggestions, setProactive, cancel,
     chat: prompt => run('chat', prompt), onEvent: event => run('proactive', undefined, event),
     focusSuggestion(id) { const item = suggestion(id); if (item.blockId !== null) focusBlock(item.blockId); return item },
     async continueSuggestion(id, question) {
-      const item = suggestion(id), before = projectContext(readContext()), owned = actionEpoch, contextEpoch = epoch
-      if (item.blockId !== null) focusBlock(item.blockId)
-      // Focusing can synchronously publish a new selection, edit or project.
-      // Only this action's target selection may change before sending its text.
-      check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
-      const after = projectContext(readContext())
-      check(actionEpoch === owned && (epoch === contextEpoch || (epoch === contextEpoch + 1 && before.selectedBlockId !== after.selectedBlockId && after.selectedBlockId === item.blockId))
-        && JSON.stringify({ ...before, selectedBlockId: after.selectedBlockId }) === JSON.stringify(after)
-        && (after.selectedBlockId === before.selectedBlockId || after.selectedBlockId === item.blockId), 'CONTEXT_CHANGED', '项目已变化，请重新提问。', 409)
+      const item = suggestion(id)
+      focusForAction(item)
       return run('chat', question || `请解释这条建议：${item.text}`)
     },
     async ignore(id) {
-      const item = suggestion(id), owned = signature, ownedEpoch = epoch
+      const item = suggestion(id, true), owned = signature, ownedEpoch = epoch
+      rejected.add(item)
       remember(ignored, fingerprint(item))
-      emit({ suggestions: state.suggestions.filter(s => s.id !== id) })
+      emit({ suggestions: state.suggestions.filter(s => s.id !== id), deferredSuggestions: state.deferredSuggestions.filter(s => s.id !== id) })
       // Publication can synchronously close the panel or replace its project.
       // Do not dispatch the retired action into the host's new access scope.
       check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
       check(epoch === ownedEpoch && signature === owned && JSON.stringify(projectContext(readContext())) === owned, 'CONTEXT_CHANGED', '项目已变化，请重新提问。', 409)
       await api.ignore(id)
     },
-    requestModification(id) { suggestion(id); throw new MochiError('AI_MODIFICATION_DISABLED', errors.AI_MODIFICATION_DISABLED, 503) },
+    reject(id) { return this.ignore(id) },
+    snooze(id, delayMs = 60_000) {
+      check(Number.isSafeInteger(delayMs) && delayMs > 0 && delayMs <= 600_000, 'INVALID_INPUT')
+      const item = suggestion(id)
+      const deferred = { ...item, snoozedUntil: Math.min(now() + delayMs, item.expiresAt) }
+      provenance.set(deferred, provenance.get(item)); rejected.add(item)
+      emit({ suggestions: state.suggestions.filter(s => s.id !== id), deferredSuggestions: [...state.deferredSuggestions, deferred] })
+    },
+    resume(id) {
+      const item = suggestion(id, true)
+      if (state.suggestions.includes(item)) return
+      emit({ suggestions: [...state.suggestions, item], deferredSuggestions: state.deferredSuggestions.filter(s => s.id !== id) })
+    },
+    requestModification(id) {
+      // Keep the legacy synchronous refusal when no trusted preview bridge exists.
+      const item = suggestion(id)
+      check(canPlan, 'AI_MODIFICATION_DISABLED', errors.AI_MODIFICATION_DISABLED, 503)
+      return (async () => {
+        check(item.kind === 'design-change' && item.requiresUserAction && item.blockId !== null, 'SUGGESTION_NOT_EXECUTABLE', '这条建议不能生成修改计划。', 409)
+        check(!planning.has(id), 'AI_BUSY', errors.AI_BUSY, 429)
+        const after = focusForAction(item), owned = actionEpoch, expected = JSON.stringify(after)
+        const validate = () => {
+          check(!disposed, 'DISPOSED', 'Mochi 会话已关闭。')
+          check(now() < item.expiresAt && !rejected.has(item), 'SUGGESTION_EXPIRED', '建议已过期或已处理，请重新分析。', 409)
+          check(state.enabled && (provenance.get(item) !== 'proactive' || state.proactiveEnabled), 'PROACTIVE_DISABLED', errors.PROACTIVE_DISABLED, 403)
+          check(actionEpoch === owned && JSON.stringify(projectContext(readContext())) === expected, 'CONTEXT_CHANGED', '积木已变化，请重新分析。', 409)
+        }
+        validate(); planning.add(id)
+        try { return await requestPlan(item, freeze({ validate, expiresAt: item.expiresAt })) }
+        finally { planning.delete(id) }
+      })()
+    },
     dispose() { disposed = true; cancel(); listeners.clear() },
   }
 }

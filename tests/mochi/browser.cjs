@@ -46,6 +46,7 @@ async function run() {
         const request = route.request(), target = new URL(request.url())
         // The production #32 panel checks status on mount; keep it offline and disabled.
         if (target.origin === 'http://127.0.0.1:5197' && target.pathname === '/api/mochi-ai/status' && request.method() === 'GET') return route.fulfill({ json: { enabled: false, proactiveEnabled: false, modificationsEnabled: false, reason: 'ACCESS_UNAVAILABLE' } })
+        if (target.origin === 'http://127.0.0.1:5197' && target.pathname === '/api/mochi-plan/status' && request.method() === 'GET') return route.fulfill({ json: { enabled: false, reason: 'AI_DISABLED', source: 'offline-fixture', model: 'offline' } })
         if (target.origin === 'http://127.0.0.1:5197' && request.method() === 'GET' && !target.pathname.startsWith('/api')) return route.continue()
         report.blockedRequests.push({ url: target.href, method: request.method() })
         return route.abort('blockedbyclient')
@@ -66,7 +67,7 @@ async function run() {
       const request = async (text = '固定测试计划') => { await input.fill(text); await send.click() }
       await page.goto(url + '?production')
       await expect(input).toBeDisabled()
-      await expect(page.getByText(/AI 修改能力尚未启用：DeepSeek/)).toBeVisible()
+      await expect(page.locator('.mochi-ai').getByText('字段计划服务尚未启用，请启动已授权的本地 DeepSeek 服务。', { exact: true })).toBeVisible()
       await expect(page.locator('.mochi-ai')).toHaveCount(1)
       const prod = await state()
       for (let i = 0; i < 3; i++) { await c.click(); await b.click() }

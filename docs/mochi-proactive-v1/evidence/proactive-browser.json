@@ -1,0 +1,71 @@
+{
+  "startedAt": "2026-10-22T12:54:31.427Z",
+  "realAiCalls": 0,
+  "cases": [
+    {
+      "width": 1440,
+      "passed": true,
+      "analysisNoWrites": true,
+      "previewNoWrites": true,
+      "confirmationWrites": 1,
+      "expiredPreviewRejected": true,
+      "deferredAutoResumed": true,
+      "ignored": 2,
+      "analyses": 3
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "analysisNoWrites": true,
+      "previewNoWrites": true,
+      "confirmationWrites": 1,
+      "expiredPreviewRejected": true,
+      "deferredAutoResumed": true,
+      "ignored": 2,
+      "analyses": 3
+    }
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "analyses": [
+    {
+      "width": 1440,
+      "kind": "proactive",
+      "event": "project-opened",
+      "revision": 0
+    },
+    {
+      "width": 1440,
+      "kind": "proactive",
+      "event": "structure-changed",
+      "revision": 1
+    },
+    {
+      "width": 1440,
+      "kind": "proactive",
+      "event": "structure-changed",
+      "revision": 3
+    },
+    {
+      "width": 390,
+      "kind": "proactive",
+      "event": "project-opened",
+      "revision": 0
+    },
+    {
+      "width": 390,
+      "kind": "proactive",
+      "event": "structure-changed",
+      "revision": 1
+    },
+    {
+      "width": 390,
+      "kind": "proactive",
+      "event": "structure-changed",
+      "revision": 3
+    }
+  ],
+  "browserVersion": "151.0.7922.34",
+  "passed": true,
+  "completedAt": "2026-10-22T12:54:35.230Z"
+}

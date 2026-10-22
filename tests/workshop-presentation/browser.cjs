@@ -8,7 +8,7 @@ const root = path.resolve(__dirname, '../..')
 const output = process.env.WORKSHOP_QA_OUTPUT || path.join(root, '.cache/workshop-presentation')
 async function run() {
   const { createServer } = await import('vite')
-  const vite = await createServer({ root, server: { host: '127.0.0.1', port: 5195, strictPort: true }, plugins: [{ name: 'isolated-workshop-presentation', configureServer(server) {
+  const vite = await createServer({ root, server: { host: '127.0.0.1', port: 5195, strictPort: true, fs: { allow: [root, path.dirname(require.resolve('@fontsource/pixelify-sans/500.css'))] } }, plugins: [{ name: 'isolated-workshop-presentation', configureServer(server) {
     server.middlewares.use('/__presentation', async (_req, res, next) => {
       try { res.setHeader('Content-Type', 'text/html'); res.end(await server.transformIndexHtml('/__presentation', '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="root"></div><script type="module" src="/tests/workshop-presentation/fixture.tsx"></script></body></html>')) } catch(e) { next(e) }
     })
@@ -25,6 +25,7 @@ async function run() {
       await page.route('**/*',route=>{
         const url=new URL(route.request().url())
         if(url.pathname==='/api/mochi-ai/status') return route.fulfill({json:{enabled:false,proactiveEnabled:false,modificationsEnabled:false,reason:'ACCESS_UNAVAILABLE'}})
+        if(url.pathname==='/api/mochi-plan/status') return route.fulfill({json:{enabled:false,reason:'AI_DISABLED',source:'offline-fixture',model:'offline'}})
         if(url.hostname==='127.0.0.1' && route.request().method()==='GET' && !url.pathname.startsWith('/api/')) return route.continue()
         report.network.push(url.href); return route.abort()
       })
@@ -103,6 +104,7 @@ async function run() {
           const url=new URL(route.request().url())
           if(url.pathname==='/api/ai/generate')return route.fulfill({json:spec})
           if(url.pathname==='/api/mochi-ai/status')return route.fulfill({json:{enabled:false,proactiveEnabled:false,modificationsEnabled:false,reason:'ACCESS_UNAVAILABLE'}})
+          if(url.pathname==='/api/mochi-plan/status')return route.fulfill({json:{enabled:false,reason:'AI_DISABLED',source:'offline-fixture',model:'offline'}})
           if(url.hostname==='127.0.0.1'&&route.request().method()==='GET'&&!url.pathname.startsWith('/api/'))return route.continue()
           report.network.push(url.href);return route.abort()
         })

@@ -1,0 +1,108 @@
+{
+  "source": "deepseek",
+  "approval": "MOCHI-PROACTIVE-V1-USER-20261022",
+  "limits": {
+    "calls": 100,
+    "cny": 5
+  },
+  "enforced": {
+    "calls": 8,
+    "reservedCny": 1
+  },
+  "pricing": {
+    "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+    "verifiedDate": "2026-10-22",
+    "expiresAt": 1792684800000,
+    "model": "deepseek-flash",
+    "inputCnyPerMillion": 2,
+    "outputCnyPerMillion": 8,
+    "inputNanoPerToken": 2000,
+    "outputNanoPerToken": 8000
+  },
+  "calls": 8,
+  "estimatedCny": 0.024924,
+  "reservedCny": 0.280314,
+  "halted": false,
+  "entries": [
+    {
+      "status": "settled",
+      "usage": {
+        "prompt_tokens": 569,
+        "completion_tokens": 229,
+        "total_tokens": 798
+      },
+      "reservedCny": 0.029634,
+      "estimatedCny": 0.00297
+    },
+    {
+      "status": "settled",
+      "usage": {
+        "prompt_tokens": 748,
+        "completion_tokens": 142,
+        "total_tokens": 890
+      },
+      "reservedCny": 0.039164,
+      "estimatedCny": 0.002632
+    },
+    {
+      "status": "settled",
+      "usage": {
+        "prompt_tokens": 645,
+        "completion_tokens": 354,
+        "total_tokens": 999
+      },
+      "reservedCny": 0.03029,
+      "estimatedCny": 0.004122
+    },
+    {
+      "status": "settled",
+      "usage": {
+        "prompt_tokens": 757,
+        "completion_tokens": 112,
+        "total_tokens": 869
+      },
+      "reservedCny": 0.039188,
+      "estimatedCny": 0.00241
+    },
+    {
+      "status": "settled",
+      "usage": {
+        "prompt_tokens": 643,
+        "completion_tokens": 382,
+        "total_tokens": 1025
+      },
+      "reservedCny": 0.03029,
+      "estimatedCny": 0.004342
+    },
+    {
+      "status": "settled",
+      "usage": {
+        "prompt_tokens": 810,
+        "completion_tokens": 51,
+        "total_tokens": 861
+      },
+      "reservedCny": 0.039748,
+      "estimatedCny": 0.002028
+    },
+    {
+      "status": "settled",
+      "usage": {
+        "prompt_tokens": 831,
+        "completion_tokens": 277,
+        "total_tokens": 1108
+      },
+      "reservedCny": 0.03204,
+      "estimatedCny": 0.003878
+    },
+    {
+      "status": "settled",
+      "usage": {
+        "prompt_tokens": 827,
+        "completion_tokens": 111,
+        "total_tokens": 938
+      },
+      "reservedCny": 0.03996,
+      "estimatedCny": 0.002542
+    }
+  ]
+}

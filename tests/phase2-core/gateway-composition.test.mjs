@@ -19,7 +19,7 @@ const v2 = JSON.parse(readFileSync(new URL('../trusted-interactive/pomodoro.json
 const envelope = value => Response.json({ model: PRICING.model, choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: JSON.stringify(value) } }], usage: { prompt_tokens: 50, completion_tokens: 100, total_tokens: 150 } })
 function setup(t, value) {
   const dir = mkdtempSync(join(tmpdir(), 'core-composition-')); chmodSync(dir, 0o700)
-  const ledger = openLedger(join(dir, 'ledger.json')); let calls = 0
+  const ledger = openLedger(join(dir, 'ledger.json'), { now: () => PRICING.expiresAt - 1 }); let calls = 0
   const transport = createPaidTransport({ apiKey: key, ledger, fetchImpl: async () => { calls++; return envelope(value) } })
   t.after(() => { ledger.close(); rmSync(dir, { recursive: true, force: true }) })
   return { ledger, transport, calls: () => calls }

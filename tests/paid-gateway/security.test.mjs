@@ -20,7 +20,7 @@ const envelope = (usage = { prompt_tokens: 50, completion_tokens: 100, total_tok
 const init = extra => ({ method: 'POST', body: JSON.stringify({ model: PRICING.model, messages: [{ role: 'system', content: 'JSON only' }, { role: 'user', content: 'tasks' }], stream: false, response_format: { type: 'json_object' }, max_tokens: 8192, ...extra }) })
 function ledger(t) {
   const dir = mkdtempSync(join(tmpdir(), 'blockcraft-budget-test-')); chmodSync(dir, 0o700)
-  const path = join(dir, 'ledger.json'), store = openLedger(path)
+  const path = join(dir, 'ledger.json'), store = openLedger(path, { now: () => PRICING.expiresAt - 1 })
   t.after(() => store.close())
   return { dir, path, store }
 }
@@ -93,7 +93,7 @@ test('durable call cap survives reopen and reservations never refunded', t => {
   const { store, path } = ledger(t)
   for (let n = 0; n < POLICY.maxCalls; n++) { const id = store.reserve(100, 8192, 'hash'); store.settle(id, { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 }) }
   assert.throws(() => store.reserve(100, 8192, 'hash'), { code: 'BUDGET_EXHAUSTED' })
-  store.close(); const other = openLedger(path); t.after(() => other.close())
+  store.close(); const other = openLedger(path, { now: () => PRICING.expiresAt - 1 }); t.after(() => other.close())
   assert.throws(() => other.reserve(100, 8192, 'hash'), { code: 'BUDGET_EXHAUSTED' })
   assert.equal(other.snapshot().entries.reduce((s, e) => s + e.reserveNano, 0), POLICY.maxCalls * price(100, 8192))
 })
@@ -114,7 +114,7 @@ test('missing or over-bound usage halts automatic calls permanently; no refund',
     const transport = createPaidTransport({ apiKey: key, ledger: store, fetchImpl: async () => { calls++; return Response.json(envelope(usage)) } })
     await assert.rejects(transport(endpoint, init()), { code: 'USAGE_UNRELIABLE' })
     await assert.rejects(transport(endpoint, init()), { code: 'BUDGET_HALTED' }); assert.equal(calls, 1)
-    store.close(); const again = openLedger(path); t.after(() => again.close()); assert.equal(again.snapshot().halted, true)
+    store.close(); const again = openLedger(path, { now: () => PRICING.expiresAt - 1 }); t.after(() => again.close()); assert.equal(again.snapshot().halted, true)
   }
 })
 test('unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt', async t => {
@@ -136,9 +136,9 @@ test('unknown upstream failures, bounded body, timeout, cancel and late results 
 })
 test('exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed', t => {
   const { store, path } = ledger(t)
-  assert.throws(() => openLedger(path), { code: 'LEDGER_LOCKED' })
+  assert.throws(() => openLedger(path, { now: () => PRICING.expiresAt - 1 }), { code: 'LEDGER_LOCKED' })
   store.reserve(100, 8192, 'hash'); store.close()
-  const again = openLedger(path); assert.equal(again.snapshot().halted, true); again.close()
-  writeFileSync(path, '{bad', { mode: 0o600 }); assert.throws(() => openLedger(path)); assert.equal(existsSync(path + '.lock'), false)
-  chmodSync(path, 0o644); assert.throws(() => openLedger(path), { code: 'LEDGER_PERMISSIONS' })
+  const again = openLedger(path, { now: () => PRICING.expiresAt - 1 }); assert.equal(again.snapshot().halted, true); again.close()
+  writeFileSync(path, '{bad', { mode: 0o600 }); assert.throws(() => openLedger(path, { now: () => PRICING.expiresAt - 1 })); assert.equal(existsSync(path + '.lock'), false)
+  chmodSync(path, 0o644); assert.throws(() => openLedger(path, { now: () => PRICING.expiresAt - 1 }), { code: 'LEDGER_PERMISSIONS' })
 })

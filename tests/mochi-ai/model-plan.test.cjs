@@ -66,10 +66,13 @@ test('synchronous completion failure and abort cannot leak an unhandled rejectio
   assert.equal(host.getSnapshot().preview, null)
 })
 
-test('completion only receives selected metadata, prompt and cancellation signal; preview requires explicit confirmation', async t => {
+test('completion receives selected metadata and occupied structural IDs without records; preview requires explicit confirmation', async t => {
   const { runtime, host } = setup(t, async ({ instruction, request, signal }) => {
     assert.match(instruction, /existing AppChangeCandidate/)
-    assert.deepEqual(Object.keys(request).sort(), ['requestId', 'baseRevision', 'prompt', 'block', 'entity'].sort())
+    assert.deepEqual(Object.keys(request).sort(), ['requestId', 'baseRevision', 'prompt', 'block', 'entity', 'reservedIds'].sort())
+    assert.equal(new Set(request.reservedIds).size, request.reservedIds.length)
+    assert.ok(request.reservedIds.includes('applicant-list'))
+    assert.equal(Object.hasOwn(request, 'records'), false)
     assert.ok(!JSON.stringify(request).includes('小林'))
     assert.equal(signal.aborted, false)
     return JSON.stringify(candidate(request))

@@ -23,15 +23,15 @@ export async function fieldPlanningStatus(signal: AbortSignal) {
 export function createHttpPlanProvider(fetchImpl: typeof fetch = globalThis.fetch): PlanProvider {
   return async request => {
     const input = toMinimalPlanInput(request)
-    if (input.block.type !== 'form') throw new AppSpecError('FORM_REQUIRED', '请先选择表单积木。')
+    if (!['form', 'list'].includes(input.block.type)) throw new AppSpecError('FORM_REQUIRED', '请先选择已绑定实体的表单或列表积木。')
     const body = JSON.stringify(input)
-    if (new TextEncoder().encode(body).byteLength > maxBytes) throw new AppSpecError('MODEL_REQUEST_TOO_LARGE', '表单结构超出计划请求限制。')
+    if (new TextEncoder().encode(body).byteLength > maxBytes) throw new AppSpecError('MODEL_REQUEST_TOO_LARGE', '积木结构超出计划请求限制。')
     const signal = AbortSignal.any([request.signal, AbortSignal.timeout(35000)])
     const response = await fetchImpl('/api/mochi-plan', { method: 'POST', credentials: 'same-origin', redirect: 'error', signal,
       headers: { 'Content-Type': 'application/json' }, body })
     const result = await read(response)
     signal.throwIfAborted()
-    if (!response.ok) throw new AppSpecError('FIELD_PLAN_FAILED', '字段计划生成失败，请检查服务连接或预算后重试。')
+    if (!response.ok) throw new AppSpecError('FIELD_PLAN_FAILED', '积木计划生成失败，请检查服务连接或预算后重试。')
     if (!result || !['deepseek', 'offline-fixture'].includes(result.source) || typeof result.model !== 'string' || !result.candidate) throw new AppSpecError('AI_INVALID_RESPONSE', '计划响应无效。')
     return result.candidate
   }
