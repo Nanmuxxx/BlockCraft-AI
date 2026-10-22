@@ -11,3 +11,11 @@
 .mochi-conversation :focus-visible { outline: 2px solid #7857ac; outline-offset: 2px; }
 
 .mochi-conversation input[type=checkbox] { accent-color: var(--brand-deep, #7857ac); }
+.mochi-conversation__actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.mochi-conversation__actions button { margin: 0; min-height: 36px; max-width: 100%; white-space: normal; }
+.mochi-conversation .mochi-conversation__accept { background: #7857ac; color: white; border-color: #7857ac; }
+.mochi-conversation__deferred { margin-block: 12px; padding: 10px; border: 1px dashed #b5a6ce; border-radius: 10px; }
+.mochi-conversation__deferred summary { cursor: pointer; font-weight: 600; }
+.mochi-conversation__empty, .mochi-conversation__planning-status { color: #6a5d7b; font-size: 12px; }
+.mochi-conversation__feedback { color: #36583b; }
+.mochi-conversation [role=alert] { color: #8b293b; }

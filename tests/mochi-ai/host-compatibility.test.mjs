@@ -15,7 +15,7 @@ const { createAppRuntime } = require('../../src/model/appRuntime.ts')
 const { createClubRegistrationExample } = require('../../src/model/appSpecExamples.ts')
 const { api: customApi, artifact } = require('../custom-block/fixtures.cjs')
 
-test('current main host supports advice without another host or any Runtime write', async t => {
+test('explicit advice-only adapter supports advice without another host or any Runtime write', async t => {
   const runtime = createAppRuntime(createClubRegistrationExample())
   const before = runtime.getSnapshot()
   const owner = runtime.customProject, projectBefore = owner.getSnapshot()
@@ -33,7 +33,7 @@ test('current main host supports advice without another host or any Runtime writ
       ] }
     },
   }
-  const bridge = createWorkshopMochiConversation(host, { api, now: () => clock, settleMs: 5 })
+  const bridge = createWorkshopMochiConversation(host, { api, now: () => clock, settleMs: 5, planningEnabled: false })
   t.after(() => { bridge.dispose(); unsubscribe(); host.dispose() })
   await bridge.conversation.refreshStatus()
   await bridge.conversation.chat('下一步怎么完善？')

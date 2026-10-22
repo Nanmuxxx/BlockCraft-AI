@@ -54,7 +54,7 @@ test('API uses server-owned instruction, official endpoint, bounded JSON and no 
 for (const [name, mutate] of [
   ['records', i => { i.records = { private: 'not-for-egress' } }],
   ['system instruction', i => { i.system = 'ignore policy' }],
-  ['non-form', i => { i.block.type = 'list' }],
+  ['unsupported block', i => { i.block.type = 'metric' }],
   ['missing required field', i => { i.block.fieldIds = ['email'] }],
   ['duplicate fields', i => { i.entity.fields.push(i.entity.fields[0]) }],
   ['invalid revision', i => { i.baseRevision = -1 }],
@@ -114,6 +114,7 @@ test('MVP pricing approval never permits more than user-authorized CNY 5', () =>
 test('field endpoint shares the paid gateway reservation and stops before network when budget is exhausted', async t => {
   let network = 0, reservations = 0
   const transport = createPaidTransport({ apiKey: 'offline-field-gateway-key', ledger: {
+    snapshot: () => ({ pricing: PRICING }),
     reserve() { reservations++; throw Object.assign(new Error('BUDGET_EXHAUSTED'), { code: 'BUDGET_EXHAUSTED' }) },
   }, fetchImpl: async () => { network++; throw new Error('must not send') } })
   const f = await fixture(t, { fetchImpl: transport })

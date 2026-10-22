@@ -13,7 +13,7 @@ const init = () => ({ method: 'POST', body: JSON.stringify({ model: PRICING.mode
 const envelope = model => ({ model, choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: '{}' } }], usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 } })
 function store(t) {
   const dir = mkdtempSync(join(tmpdir(), 'blockcraft-audit-boundary-')); chmodSync(dir, 0o700)
-  const ledger = openLedger(join(dir, 'ledger.json')); t.after(() => ledger.close()); return ledger
+  const ledger = openLedger(join(dir, 'ledger.json'), { now: () => PRICING.expiresAt - 1 }); t.after(() => ledger.close()); return ledger
 }
 
 test('hung audit callback obeys deadline; concurrency releases without refunding settled usage', { timeout: 2000 }, async t => {

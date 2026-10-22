@@ -1,11 +1,20 @@
 import { openSync, closeSync, writeFileSync, fsyncSync, renameSync, unlinkSync, lstatSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
-import { PRICING, POLICY, ensure, price } from './pricing.mjs'
+import { PRICING, POLICY, ensure } from './pricing.mjs'
 
 // The canonical CLI path is shared across worktrees. Hold an exclusive process
 // lease throughout the run. Crashed/stale leases are NEVER auto-recovered.
-export function openLedger(path) {
+export function openLedger(path, { pricing = PRICING, policy = POLICY, now = Date.now } = {}) {
+  pricing = Object.freeze({ ...pricing }); policy = Object.freeze({ ...policy })
+  ensure(typeof pricing.model === 'string' && Number.isSafeInteger(pricing.expiresAt)
+    && Number.isSafeInteger(pricing.inputNanoPerToken) && pricing.inputNanoPerToken > 0
+    && Number.isSafeInteger(pricing.outputNanoPerToken) && pricing.outputNanoPerToken > 0, 'PRICING_INVALID')
+  ensure(typeof policy.approval === 'string' && policy.approval.length > 0
+    && ['stopNano', 'absoluteNano', 'conservativeNano'].every(k => Number.isSafeInteger(policy[k]) && policy[k] > 0 && policy[k] <= 5_000_000_000)
+    && Number.isSafeInteger(policy.maxCalls) && policy.maxCalls > 0 && policy.maxCalls <= 100
+    && ['maxInputBytes', 'framingTokens', 'maxOutputTokens', 'maxResponseBytes', 'timeoutMs'].every(k => Number.isSafeInteger(policy[k]) && policy[k] > 0 && policy[k] <= POLICY[k]), 'POLICY_INVALID')
+  const price = (prompt, completion) => prompt * pricing.inputNanoPerToken + completion * pricing.outputNanoPerToken
   const parent = lstatSync(dirname(path))
   ensure(parent.isDirectory() && !parent.isSymbolicLink() && (parent.mode & 0o077) === 0, 'LEDGER_PERMISSIONS')
   let lock
@@ -27,10 +36,10 @@ export function openLedger(path) {
       state = JSON.parse(readFileSync(path, 'utf8'))
     } catch (error) {
       if (error.code !== 'ENOENT') throw error
-      state = { version: 1, approval: POLICY.approval, pricing: PRICING, entries: [], halted: false }
+      state = { version: 1, approval: policy.approval, pricing, entries: [], halted: false }
       persist()
     }
-    ensure(state.version === 1 && state.approval === POLICY.approval && JSON.stringify(state.pricing) === JSON.stringify(PRICING) && Array.isArray(state.entries), 'LEDGER_INVALID')
+    ensure(state.version === 1 && state.approval === policy.approval && JSON.stringify(state.pricing) === JSON.stringify(pricing) && Array.isArray(state.entries), 'LEDGER_INVALID')
     let total = 0
     for (const entry of state.entries) {
       ensure(typeof entry.id === 'string' && Number.isSafeInteger(entry.reserveNano) && entry.reserveNano > 0 && Number.isSafeInteger(entry.inputBound) && Number.isSafeInteger(entry.outputBound), 'LEDGER_INVALID')
@@ -39,7 +48,7 @@ export function openLedger(path) {
       if (entry.status === 'settled') ensure(Number.isSafeInteger(entry.estimatedNano) && entry.estimatedNano >= 0 && entry.estimatedNano <= entry.reserveNano, 'LEDGER_INVALID')
       total += entry.reserveNano
     }
-    ensure(Number.isSafeInteger(total) && total <= POLICY.conservativeNano && state.entries.length <= POLICY.maxCalls, 'LEDGER_INVALID')
+    ensure(Number.isSafeInteger(total) && total <= policy.conservativeNano && state.entries.length <= policy.maxCalls, 'LEDGER_INVALID')
     if (state.entries.some(entry => entry.status !== 'settled')) state.halted = true
     persist()
   } catch (error) { closeSync(lock); unlinkSync(path + '.lock'); throw error }
@@ -48,11 +57,11 @@ export function openLedger(path) {
   return Object.freeze({
     reserve(inputBound, outputBound, requestHash) {
       check()
-      ensure(Date.now() < PRICING.expiresAt, 'PRICING_EXPIRED')
+      ensure(now() < pricing.expiresAt, 'PRICING_EXPIRED')
       ensure(!state.halted && !state.entries.some(e => e.status !== 'settled'), 'BUDGET_HALTED')
-      ensure(Number.isSafeInteger(inputBound) && inputBound > 0 && inputBound <= POLICY.maxInputBytes + POLICY.framingTokens && Number.isSafeInteger(outputBound) && outputBound > 0 && outputBound <= POLICY.maxOutputTokens, 'RESERVATION_INVALID')
+      ensure(Number.isSafeInteger(inputBound) && inputBound > 0 && inputBound <= policy.maxInputBytes + policy.framingTokens && Number.isSafeInteger(outputBound) && outputBound > 0 && outputBound <= policy.maxOutputTokens, 'RESERVATION_INVALID')
       const reserveNano = price(inputBound, outputBound), used = state.entries.reduce((sum, e) => sum + e.reserveNano, 0)
-      ensure(state.entries.length < POLICY.maxCalls && used + reserveNano <= Math.min(POLICY.stopNano, POLICY.absoluteNano, POLICY.conservativeNano), 'BUDGET_EXHAUSTED')
+      ensure(state.entries.length < policy.maxCalls && used + reserveNano <= Math.min(policy.stopNano, policy.absoluteNano, policy.conservativeNano), 'BUDGET_EXHAUSTED')
       const entry = { id: randomUUID(), at: new Date().toISOString(), requestHash, inputBound, outputBound, reserveNano, status: 'reserved' }
       state.entries.push(entry); save() // Durable reservation BEFORE network; never refunded.
       return entry.id

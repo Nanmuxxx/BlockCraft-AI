@@ -33,6 +33,8 @@ export interface PlanRequest {
 }
 /** Returns unknown JSON for Phase A validation; never receives a Runtime or authority. */
 export type PlanProvider = (request: PlanRequest) => unknown | Promise<unknown>
+/** Trusted bridge closure; never reconstructed from model or HTTP JSON. */
+export interface TrustedPlanGuard { validate(): void; expiresAt: number }
 export interface HostPreview {
   planId: string
   title: string
@@ -77,7 +79,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   const instanceId = `mochi-${globalThis.crypto.randomUUID()}`
   const planner = createAppChangePlanner(runtime)
   const listeners = new Set<() => void>()
-  type Entry = { plan: DeepReadonly<AppChangePlan>; epoch: number; authorization: ReturnType<AppRuntime['customProject']['getAuthorization']>; authorizationKey: string; status: 'pending' | 'confirming' | 'committed' | 'cancelled' | 'rejected' | 'unknown' }
+  type Entry = { guard?: TrustedPlanGuard; plan: DeepReadonly<AppChangePlan>; epoch: number; authorization: ReturnType<AppRuntime['customProject']['getAuthorization']>; authorizationKey: string; status: 'pending' | 'confirming' | 'committed' | 'cancelled' | 'rejected' | 'unknown' }
   const entries = new Map<string, Entry>()
   let selectedBlockId: string | null = null
   let authorizationKey = '' // Invalidation identity only; never a source of authority.
@@ -171,9 +173,10 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
 
   const callbacks = {
     // The optional UI context is a display projection, never trusted scope.
-    async onRequestPlan(prompt: string, _untrustedContext?: unknown): Promise<void> {
+    async onRequestPlan(prompt: string, _untrustedContext?: unknown, guard?: TrustedPlanGuard): Promise<void> {
       alive()
       const prepare = () => {
+        guard?.validate()
         ensure(!committing, 'A confirmation is in progress', 'PLAN_NOT_PENDING')
         ensure(!runtime.customProject.getAuthorization().readOnly, '项目为只读，无法请求修改。', 'READ_ONLY')
         ensure(typeof prompt === 'string' && prompt.trim().length > 0 && prompt.length <= 4000, 'Expected a short nonempty instruction', 'INVALID_PROMPT')
@@ -215,6 +218,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
       try {
         ensure(ownsRequest(), 'Discarded obsolete plan request', 'CONTEXT_CHANGED')
         checkRequestContext()
+        guard?.validate()
         const retired = new Promise<never>((_, reject) => {
           stopWaiting = () => reject(new AppSpecError('CONTEXT_CHANGED', 'Discarded obsolete plan request'))
           attempt.controller.signal.addEventListener('abort', stopWaiting, { once: true })
@@ -228,6 +232,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         const input = await Promise.race([retired, operation])
         ensure(ownsRequest(), 'Discarded obsolete plan response', 'CONTEXT_CHANGED')
         checkRequestContext()
+        guard?.validate()
         stage = 'PREVIEW_REJECTED'
         const result = planner.preview(input, scope)
         if (!result.ok) throw new AppSpecError(result.error.code, result.error.message)
@@ -236,7 +241,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
           throw new AppSpecError('PLAN_BINDING_MISMATCH', 'Provider changed the host requestId or revision')
         }
         const planId = `${attempt.requestId}-plan`
-        entries.set(planId, { plan: result.plan, epoch, authorization, authorizationKey, status: 'pending' })
+        entries.set(planId, { guard, plan: result.plan, epoch, authorization, authorizationKey, status: 'pending' })
         activeId = planId
         pending = null
         publish({ phase: 'PREVIEW', preview: projection(planId, result.plan), error: null })
@@ -253,6 +258,11 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
       const entry = entryFor(planId)
       if (entry.status === 'committed') return
       current(entry, planId)
+      try { entry.guard?.validate() } catch (error) {
+        const problem = failure(error, 'SUGGESTION_EXPIRED', '建议已失效，请重新分析。')
+        invalidate({ code: problem.code, message: problem.message })
+        throw problem
+      }
       ensure(!committing, 'A confirmation is in progress', 'PLAN_NOT_PENDING')
       entry.status = 'confirming'
       committing = entry
@@ -264,6 +274,14 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         entry.status = 'cancelled'
         if (!disposed && activeId === planId) invalidate({ code: 'CONTEXT_CHANGED', message: 'Context changed before confirmation' })
         throw new AppSpecError('CONTEXT_CHANGED', 'Context changed before confirmation')
+      }
+      try { entry.guard?.validate() } catch (error) {
+        committing = null
+        planner.cancel(entry.plan)
+        entry.status = 'cancelled'
+        const problem = failure(error, 'SUGGESTION_EXPIRED', '建议已失效，请重新分析。')
+        invalidate({ code: problem.code, message: problem.message })
+        throw problem
       }
       const before = runtime.getSnapshot()
       let result: RuntimeResult

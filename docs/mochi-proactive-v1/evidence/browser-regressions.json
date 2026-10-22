@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "versions": {
+    "node": "v24.22.0",
+    "vite": "8.3.4",
+    "playwright": "1.62.1",
+    "chromium": "151.0.7922.34"
+  },
+  "realAiCalls": 0,
+  "realAiCostCny": 0,
+  "runs": [
+    {
+      "suite": "mochi",
+      "command": "NODE_PATH=/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules node tests/mochi/browser.cjs",
+      "exitCode": 0,
+      "passedCases": 2,
+      "log": "mochi-final.log",
+      "report": "mochi-final/report.json",
+      "env": {
+        "MOCHI_QA_OUTPUT": ".cache/mochi-proactive/browser-regression/mochi-final"
+      }
+    },
+    {
+      "suite": "field-plans",
+      "command": "NODE_PATH=/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules node tests/field-plans/browser.cjs",
+      "exitCode": 0,
+      "passedCases": 6,
+      "log": "field-plans-sequential.log",
+      "report": "field-plans-sequential/report.json",
+      "env": {
+        "MVP_EVIDENCE": ".cache/mochi-proactive/browser-regression/field-plans-sequential"
+      }
+    },
+    {
+      "suite": "project-json",
+      "command": "NODE_PATH=/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules node tests/project-json/browser.cjs",
+      "exitCode": 0,
+      "passedCases": 7,
+      "log": "project-json.log"
+    },
+    {
+      "suite": "layout-order",
+      "command": "NODE_PATH=/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules node tests/layout-order/browser.cjs",
+      "exitCode": 0,
+      "passedCases": 2,
+      "log": "layout-order-sequential.log",
+      "report": "layout-order-final-report.json"
+    },
+    {
+      "suite": "workshop-presentation",
+      "command": "NODE_PATH=/Users/nanmuxun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules node tests/workshop-presentation/browser.cjs",
+      "exitCode": 0,
+      "passedCases": 4,
+      "log": "workshop-presentation-final.log",
+      "report": "workshop-presentation-final/report.json",
+      "env": {
+        "WORKSHOP_QA_OUTPUT": ".cache/mochi-proactive/browser-regression/workshop-presentation-final"
+      }
+    }
+  ],
+  "testChanges": [
+    "tests/mochi/browser.cjs: offline plan-status response and current disabled-message assertion scoped to Host",
+    "tests/workshop-presentation/browser.cjs: offline plan-status response and resolved font directory test-server allowlist"
+  ],
+  "remainingRisks": [
+    "Browser runners using the default Vite optimizer cache should run sequentially in this shared/symlinked dependency setup."
+  ],
+  "troubleshooting": "troubleshooting.md"
+}

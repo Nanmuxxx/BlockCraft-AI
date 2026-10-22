@@ -17,7 +17,7 @@ test('production provider fails closed and preserves the original runtime', asyn
   host.dispose()
 })
 
-test('egress allowlist excludes records, unrelated blocks and arbitrary injected properties', async () => {
+test('egress allowlist includes occupied structural IDs but excludes records, unrelated block details and injected properties', async () => {
   const runtime = createAppRuntime(createClubRegistrationExample())
   let input
   const host = createMochiHost(runtime, request => {
@@ -26,9 +26,11 @@ test('egress allowlist excludes records, unrelated blocks and arbitrary injected
   })
   host.setSelection('registration-form')
   await assert.rejects(host.callbacks.onRequestPlan('新增备注', { selectedBlockId: 'applicant-list' }))
-  assert.deepEqual(Object.keys(input).sort(), ['requestId', 'baseRevision', 'prompt', 'block', 'entity'].sort())
+  assert.deepEqual(Object.keys(input).sort(), ['requestId', 'baseRevision', 'prompt', 'block', 'entity', 'reservedIds'].sort())
   assert.equal(input.block.id, 'registration-form')
+  assert.ok(input.reservedIds.includes('applicant-list'))
+  assert.equal(new Set(input.reservedIds).size, input.reservedIds.length)
   const json = JSON.stringify(input)
-  for (const value of ['records', '小林', '技术部', 'never-send', 'applicant-list', 'instanceId']) assert.ok(!json.includes(value), value)
+  for (const value of ['records', '小林', '技术部', 'never-send', '报名名单', 'instanceId']) assert.ok(!json.includes(value), value)
   host.dispose()
 })

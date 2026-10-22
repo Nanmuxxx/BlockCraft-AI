@@ -1,7 +1,7 @@
 import { AppSpecError } from '../../model/appSpecValidation'
 import type { PlanProvider, PlanRequest } from './host'
 
-export const AI_MODIFICATION_DISABLED = 'AI 修改能力尚未启用：DeepSeek 修改计划 API 尚未接入。可继续手动编辑积木与运行应用。'
+export const AI_MODIFICATION_DISABLED = 'AI 修改能力尚未启用：当前计划服务未配置。可继续手动编辑积木与运行应用。'
 
 /** Production fails closed. No Mock import, transport, or fabricated reply. */
 export const unavailablePlanProvider: PlanProvider = () => {
@@ -17,12 +17,18 @@ export function toMinimalPlanInput(request: PlanRequest) {
   const block = context.blocks.find(item => item.id === context.selectedBlockId)
   const relation = context.relations.find(item => item.blockId === block?.id)
   const entity = context.entities.find(item => item.id === relation?.entityId)
-  if (!block || !entity) throw new AppSpecError('SELECTION_REQUIRED', '请先选择有效积木。')
+  const sourceBlock = request.snapshot.spec.blocks.find(item => item.id === block?.id)
+  if (!block || !entity || !sourceBlock) throw new AppSpecError('SELECTION_REQUIRED', '请先选择有效积木。')
+  const spec = request.snapshot.spec
   return {
     requestId: request.requestId, baseRevision: context.revision,
     prompt: request.prompt,
-    block: { id: block.id, name: block.name, type: block.type, fieldIds: [...(block.fieldIds ?? [])] },
+    block: { id: block.id, name: block.name, type: block.type, fieldIds: [...(block.fieldIds ?? [])],
+      ...(sourceBlock.presentation ? { presentation: { ...sourceBlock.presentation } } : {}) },
     entity: { id: entity.id, name: entity.name, fields: entity.fields.map(({ id, name, type }) => ({ id, name, type,
       required: request.snapshot.spec.entities.find(item => item.id === entity.id)!.fields.find(field => field.id === id)!.required })) },
+    // IDs alone prevent cross-entity structural collisions without exposing unrelated metadata or records.
+    reservedIds: [spec.id, ...spec.entities.flatMap(item => [item.id, ...item.fields.map(field => field.id)]),
+      ...spec.blocks.map(item => item.id), ...spec.relations.map(item => item.id)],
   }
 }
