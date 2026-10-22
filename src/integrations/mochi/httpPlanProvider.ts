@@ -23,7 +23,7 @@ export async function fieldPlanningStatus(signal: AbortSignal) {
 export function createHttpPlanProvider(fetchImpl: typeof fetch = globalThis.fetch): PlanProvider {
   return async request => {
     const input = toMinimalPlanInput(request)
-    if (!['form', 'list', 'gallery'].includes(input.block.type)) throw new AppSpecError('FORM_REQUIRED', '请先选择已绑定实体的表单、列表或画廊积木。')
+    if (!['form', 'list', 'gallery', 'metric'].includes(input.block.type)) throw new AppSpecError('FORM_REQUIRED', '请先选择表单、列表、图库或统计积木。')
     const body = JSON.stringify(input)
     if (new TextEncoder().encode(body).byteLength > maxBytes) throw new AppSpecError('MODEL_REQUEST_TOO_LARGE', '积木结构超出计划请求限制。')
     const signal = AbortSignal.any([request.signal, AbortSignal.timeout(35000)])

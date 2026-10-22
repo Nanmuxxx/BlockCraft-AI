@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "test:controlled-edit": "npm --prefix server run build && node --test tests/controlled-edit/*.test.*",
+    "test:controlled-edit:browser": "node tests/controlled-edit/browser.cjs",
     "test:layout-order": "node --test tests/custom-block-bc/layout-order.test.cjs tests/custom-block-bc/adapter.test.cjs",
     "test:layout-order:browser": "node tests/layout-order/browser.cjs",
     "dev": "vite",

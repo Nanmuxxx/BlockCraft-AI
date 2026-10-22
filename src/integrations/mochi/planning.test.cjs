@@ -26,7 +26,7 @@ test('egress allowlist includes occupied structural IDs but excludes records, un
   })
   host.setSelection('registration-form')
   await assert.rejects(host.callbacks.onRequestPlan('新增备注', { selectedBlockId: 'applicant-list' }))
-  assert.deepEqual(Object.keys(input).sort(), ['requestId', 'baseRevision', 'prompt', 'block', 'entity', 'reservedIds'].sort())
+  assert.deepEqual(Object.keys(input).sort(), ['appId', 'blockOrder', 'requestId', 'baseRevision', 'prompt', 'block', 'entity', 'reservedIds'].sort())
   assert.equal(input.block.id, 'registration-form')
   assert.ok(input.reservedIds.includes('applicant-list'))
   assert.equal(new Set(input.reservedIds).size, input.reservedIds.length)

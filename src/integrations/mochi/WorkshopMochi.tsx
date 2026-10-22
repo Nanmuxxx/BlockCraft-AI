@@ -64,7 +64,7 @@ export function WorkshopMochi({ host, view, root, planningDisabledReason, canvas
     const next: MochiChatMessage[] = []
     const receiptKey = receipt ? `${view.requestId}:${receipt.committedRevision}` : ''
     const errorKey = JSON.stringify(view.error)
-    if (receipt && receiptKey !== lastEvent.current.receipt) next.push({ id: `receipt-${receiptKey}`, role: 'system', content: `Runtime 已确认应用修改，本次提交回执版本：${receipt.committedRevision}。` })
+    if (receipt && receiptKey !== lastEvent.current.receipt) next.push({ id: `receipt-${receiptKey}`, role: 'system', content: `Runtime 已确认应用修改，本次提交回执版本：${receipt.committedRevision}。可使用画布工具栏的“撤销结构修改”恢复操作前的项目。` })
     if (view.error && errorKey !== lastEvent.current.error) next.push({ id: crypto.randomUUID(), role: 'system', content: `${view.error.code}：${view.error.message}` })
     lastEvent.current = { receipt: receiptKey, error: errorKey }
     if (next.length) setMessages(previous => [...previous, ...next].slice(-100))
@@ -76,12 +76,12 @@ export function WorkshopMochi({ host, view, root, planningDisabledReason, canvas
     },
   }), [host])
   const customSelected = view.context.blocks.some(block => block.id === view.context.selectedBlockId && block.type === 'custom')
-  const editableSelected = view.context.blocks.some(block => block.id === view.context.selectedBlockId && (block.type === 'form' || block.type === 'gallery'))
+  const editableSelected = view.context.blocks.some(block => block.id === view.context.selectedBlockId && ['form', 'list', 'gallery', 'metric'].includes(block.type))
   const suggestions = view.context.selectedBlockId && !customSelected ? evaluateMochiSuggestions(view.context)
     .filter(item => !view.ignoredSuggestionIds.includes(item.id)) : []
   return <div className="app-spec-workshop__mochi" onPointerDown={event => event.stopPropagation()} onKeyDown={event => event.stopPropagation()}>
     <MochiAssistant {...callbacks} context={view.context} messages={messages}
-      suggestions={suggestions} preview={view.preview} operation={view} onCancelRequest={host.cancelRequest} planningDisabledReason={customSelected ? '自定义积木请使用参数面板；修改计划尚未开放。' : planningDisabledReason ?? (!editableSelected ? '选择表单或图片画廊后，可以请求 Mochi 生成修改计划。' : undefined)}
+      suggestions={suggestions} preview={view.preview} operation={view} onCancelRequest={host.cancelRequest} planningDisabledReason={customSelected ? '自定义积木请使用参数面板；修改计划尚未开放。' : planningDisabledReason ?? (!editableSelected ? '选择表单、列表、图片画廊或统计积木后，可以请求 Mochi 生成修改计划。' : undefined)}
       emotion={view.error ? 'error' : view.busy ? 'thinking' : receipt ? 'happy' : 'idle'}
       anchor={view.anchor} showOverlay={view.mode === 'blocks'} />
   </div>

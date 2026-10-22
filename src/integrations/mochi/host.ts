@@ -9,7 +9,11 @@ export interface MochiHostContext {
   instanceId: string
   revision: number
   selectedBlockId: string | null
-  blocks: Array<{ id: string; name: string; type: string; fieldIds?: string[]; imageIds?: string[]; layout?: 'grid'; interaction?: 'preview' }>
+  blocks: Array<{ id: string; name: string; type: string; fieldIds?: string[]; imageIds?: string[]; layout?: 'grid'; interaction?: 'preview'; aggregation?: 'count' | 'sum' | 'average'; fieldId?: string }>
+  /** Actual builtin render order; custom slots remain owned by the project. */
+  blockOrder?: string[]
+  /** Occupied structural IDs only, never custom props, state or source code. */
+  reservedIds?: string[]
   relations: Array<{ blockId: string; entityId: string }>
   entities: Array<{ id: string; name: string; fields: Array<{ id: string; name: string; type: string }> }>
   assets: Array<{ id: string; name: string; altText?: string; mimeType: string }>
@@ -67,8 +71,10 @@ function projection(planId: string, plan: DeepReadonly<AppChangePlan>): HostPrev
     ...plan.diff.addedFields.map(({ entityId, field }) => ({ operation: 'addField', target: entityId, description: `新增字段：${field.name}`, after: JSON.stringify(field) })),
     ...plan.diff.blockFieldChanges.map(change => ({ operation: 'configureBlockFields', target: change.blockId, description: '调整显示字段', before: change.before.join(', '), after: change.after.join(', ') })),
     ...plan.diff.galleryChanges.map(change => ({ operation: 'configureGallery', target: change.blockId, description: '调整图片画廊资源', before: JSON.stringify(change.before), after: JSON.stringify(change.after) })),
+    ...plan.diff.metricChanges.map(change => ({ operation: 'configureMetric', target: change.blockId, description: '调整统计方式与数值字段', before: JSON.stringify(change.before), after: JSON.stringify(change.after) })),
     ...plan.diff.addedBlocks.map(block => ({ operation: 'addBlock', target: block.id, description: `新增积木：${block.name}`, after: JSON.stringify({ block, binding: plan.after.spec.relations.find(item => item.blockId === block.id), position: plan.after.blockPositions[block.id] }) })),
     ...plan.diff.removedBlocks.map(block => ({ operation: 'removeBlock', target: block.id, description: `删除积木：${block.name}；保留实体与记录`, before: JSON.stringify({ block, binding: plan.before.spec.relations.find(item => item.blockId === block.id), position: plan.before.blockPositions[block.id] }) })),
+    ...(plan.diff.orderChanges ? [{ operation: 'reorderBlocks', target: plan.appId, description: '调整积木顺序（含保留的自定义积木位置）', before: JSON.stringify(plan.diff.orderChanges.before), after: JSON.stringify(plan.diff.orderChanges.after) }] : []),
     ...plan.diff.sharedEntityImpacts.map(impact => ({ operation: 'sharedEntityImpact', target: impact.entityId, description: `共享实体影响：${impact.boundBlockIds.join(', ')}；直接授权外：${impact.outsideDirectScopeBlockIds.join(', ') || '无'}；保留 ${impact.retainedRecordCount} 条记录` })),
   ]
   return { planId, title: '修改计划（等待确认）', summary: `版本 ${plan.request.baseRevision} → ${plan.after.revision}；业务记录保持不变`, changes }
@@ -100,11 +106,17 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   const exists = (id: string | null) => runtime.getSnapshot().spec.blocks.some(block => block.id === id) || customInstances().some(instance => instance.id === id)
   function context(): MochiHostContext {
     const { spec, revision } = runtime.getSnapshot()
+    const project = runtime.customProject.getSnapshot()
     return { appId: spec.id, instanceId, revision, selectedBlockId,
       blocks: [...spec.blocks.map(block => ({ id: block.id, name: block.name, type: block.type,
         ...('fieldIds' in block ? { fieldIds: [...block.fieldIds] } : {}),
         ...(block.type === 'gallery' ? { imageIds: [...block.imageIds], layout: block.layout, interaction: block.interaction } : {}),
+        ...(block.type === 'metric' ? { aggregation: block.aggregation, ...('fieldId' in block ? { fieldId: block.fieldId } : {}) } : {}),
       })), ...customInstances().map(instance => ({ id: instance.id, name: '自定义积木', type: 'custom' }))],
+      blockOrder: project.renderOrder.filter(item => item.kind === 'builtin').map(item => item.id),
+      reservedIds: [...new Set([spec.id, ...spec.entities.flatMap(entity => [entity.id, ...entity.fields.map(field => field.id)]),
+        ...spec.blocks.map(block => block.id), ...spec.relations.map(relation => relation.id),
+        ...project.custom.instances.flatMap(instance => [instance.id, instance.definitionId]), ...Object.keys(project.base.assets ?? {})])],
       relations: spec.relations.map(({ blockId, entityId }) => ({ blockId, entityId })),
       entities: spec.entities.map(entity => ({ id: entity.id, name: entity.name, fields: entity.fields.map(({ id, name, type }) => ({ id, name, type })) })),
       assets: Object.values(runtime.getSnapshot().assets ?? {}).map(({ id, name, altText, mimeType }) => ({ id, name, ...(altText === undefined ? {} : { altText }), mimeType })),
@@ -307,8 +319,11 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
       if (activeId === planId) activeId = null
       if (result.ok) {
         entry.status = 'committed'
+        // Our own publication bypasses the subscriber's invalidation path.
+        // A removed selection must not survive in the next trusted context.
+        if (!exists(selectedBlockId)) selectedBlockId = null
         const lastApplied = { requestId: entry.plan.request.requestId, planId, receipt: result }
-        if (entry.epoch === epoch) publish({ phase: 'APPLIED', preview: null, receipt: result, lastApplied, error: null })
+        if (entry.epoch === epoch) publish({ phase: 'APPLIED', preview: null, anchor: null, receipt: result, lastApplied, error: null })
         else publish({ lastApplied }) // A changed context receives history only.
         return
       }

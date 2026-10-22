@@ -45,9 +45,13 @@ export interface ProjectState {
 }
 export type AppCommand =
   | { type: 'configureBlockPresentation'; blockId: string; presentation: BlockPresentation }
-  | { type: 'addBlock'; block: Extract<BlockSpec, { type: 'gallery' }>; position?: { x: number; y: number } }
-  | { type: 'addBlock'; block: Exclude<BlockSpec, { type: 'gallery' }>; binding: RelationSpec; position?: { x: number; y: number } }
+  | { type: 'addBlock'; block: Extract<BlockSpec, { type: 'gallery' | 'pomodoro' }>; position?: { x: number; y: number } }
+  | { type: 'addBlock'; block: Exclude<BlockSpec, { type: 'gallery' | 'pomodoro' }>; binding: RelationSpec; position?: { x: number; y: number } }
   | { type: 'removeBlock'; blockId: string }
+  /** A complete permutation of builtin IDs after all preceding commands in the batch. */
+  | { type: 'reorderBlocks'; blockIds: string[] }
+  | { type: 'configureMetric'; blockId: string; aggregation: 'count' }
+  | { type: 'configureMetric'; blockId: string; aggregation: 'sum' | 'average'; fieldId: string }
   | { type: 'addField'; entityId: string; field: FieldSpec }
   | { type: 'updateField'; entityId: string; fieldId: string; field: FieldSpec }
   | { type: 'removeField'; entityId: string; fieldId: string }

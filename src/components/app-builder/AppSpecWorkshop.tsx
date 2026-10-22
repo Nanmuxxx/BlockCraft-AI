@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
-import { ArrowLeft, Blocks, Monitor } from 'lucide-react'
+import { ArrowLeft, Blocks, Monitor, Undo2 } from 'lucide-react'
 import type { AppRuntime } from '../../model/appRuntime'
 import { Logo } from '../Logo'
 import { BuiltinBlockRenderer } from '../app-renderer/AppRenderer'
@@ -56,6 +56,18 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
   const installation = useMemo(() => suppliedInstallation ?? createGeneratedArtifactUI(runtime.customProject), [runtime, suppliedInstallation])
   useInstallLifecycle(installation)
   const [installGateError, setInstallGateError] = useState('')
+  const [undoError, setUndoError] = useState('')
+  const undo = () => {
+    try {
+      installation.beforeContextChange()
+      const result = runtime.executeCommand({
+        requestId: `workshop-undo-${crypto.randomUUID()}`,
+        baseRevision: runtime.getSnapshot().revision,
+        commands: [{ type: 'undo' }],
+      })
+      setUndoError(result.ok ? '' : result.error.message)
+    } catch (error) { setUndoError(error instanceof Error ? error.message : '暂不可撤销，请稍后重试。') }
+  }
   // Only exact admitted references and the existing owner's immutable registry.
   // No new Host, Runtime, owner or plan authority is created for advice.
   const customContext = useMemo(() => ({
@@ -93,7 +105,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
       </nav>
       <div className="workshop__workspace">
         <div className="workshop__canvas-header"><div><p className="workshop__eyebrow">{mode === 'blocks' ? 'BUILD WITH BLOCKS' : 'A GLIMPSE OF YOUR APP'}</p><h2>{mode === 'blocks' ? '从一块积木开始' : '让想法有个模样'}</h2><p>{mode === 'blocks' ? '每一块，都是软件的一种可能。' : `这里是「${snapshot.spec.name}」的预览空间。`}</p></div><span className="workshop__badge">{project.renderOrder.length} 块功能积木</span></div>
-        <div className="workshop__blocks-layer" id="generated-blocks" hidden={mode !== 'blocks'}>{installGateError && <p role="alert">{installGateError}</p>}<CustomBlockImport owner={runtime.customProject} generated={installation} />{adapter ? <CustomBlockCanvas adapter={adapter} selectedId={selected} onSelect={setSelectedId} /> : admission}</div>
+        <div className="workshop__blocks-layer" id="generated-blocks" hidden={mode !== 'blocks'}>{installGateError && <p role="alert">{installGateError}</p>}<div className="block-canvas-toolbar"><button type="button" disabled={!runtime.canUndo() || runtime.customProject.getAuthorization().readOnly} onClick={undo}><Undo2 size={14} aria-hidden="true" />撤销结构修改</button></div>{undoError && <p role="alert">{undoError}</p>}<CustomBlockImport owner={runtime.customProject} generated={installation} />{adapter ? <CustomBlockCanvas adapter={adapter} selectedId={selected} onSelect={setSelectedId} /> : admission}</div>
         <div className="workshop__preview-stage" id="generated-preview" hidden={mode !== 'run'}><div className="study-app"><header className="study-app__topbar"><div className="study-app__brand"><span><Blocks size={18} aria-hidden="true" /></span><strong>{snapshot.spec.name}</strong><small>YOUR APP</small></div></header><div className="app-spec-preview-content">{adapter ? <CustomBlockRunSurface adapter={adapter} renderBuiltin={block => <BuiltinBlockRenderer runtime={runtime} blockId={block.id} />} /> : admission}</div></div></div>
         <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
       </div>

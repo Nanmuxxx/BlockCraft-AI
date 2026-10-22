@@ -201,12 +201,18 @@ export function assertCommandRequest(value: unknown): asserts value is CommandRe
       case 'addBlock': {
         keys(c, ['type', 'block'], ['binding', 'position']); block(c.block)
         const addedBlock = c.block as AppSpec['blocks'][number]
-        if (addedBlock.type === 'gallery') ensure(!hasOwn(c, 'binding'), 'Gallery blocks cannot bind entities')
+        if (addedBlock.type === 'gallery' || addedBlock.type === 'pomodoro') ensure(!hasOwn(c, 'binding'), `${addedBlock.type} blocks cannot bind entities`)
         else { ensure(hasOwn(c, 'binding'), 'Data block requires binding'); binding(c.binding); }
         if (hasOwn(c, 'position')) position(c.position)
         break
       }
       case 'removeBlock': keys(c, ['type', 'blockId']); id(c.blockId); break
+      case 'reorderBlocks': keys(c, ['type', 'blockIds']); ids(c.blockIds); break
+      case 'configureMetric':
+        keys(c, ['type', 'blockId', 'aggregation'], c.aggregation === 'count' ? [] : ['fieldId']); id(c.blockId)
+        ensure(['count', 'sum', 'average'].includes(c.aggregation as string), 'Unsupported aggregation')
+        if (c.aggregation !== 'count') id(c.fieldId)
+        break
       case 'addField': keys(c, ['type', 'entityId', 'field']); id(c.entityId); field(c.field); break
       case 'updateField': keys(c, ['type', 'entityId', 'fieldId', 'field']); id(c.entityId); id(c.fieldId); field(c.field); break
       case 'removeField': keys(c, ['type', 'entityId', 'fieldId']); id(c.entityId); id(c.fieldId); break

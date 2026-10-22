@@ -75,7 +75,7 @@ test('record/schema deletion, permission, code, cross-block and malformed presen
   for (const command of [
     { type: 'deleteRecord', entityId: 'people', recordId: 'person' },
     { type: 'removeField', entityId: 'people', fieldId: 'email' },
-    { type: 'removeBlock', blockId: 'entry' },
+    { type: 'removeBlock', blockId: 'unrelated' },
     { type: 'updateField', entityId: 'people', fieldId: 'email', field: { id: 'email', name: '邮箱', type: 'text', required: true } },
     { type: 'grantPermission', userId: 'person' }, { type: 'executeCode', code: 'fetch("https://invalid.example")' },
     { ...configure(i, ['name']), blockId: 'unrelated' },
@@ -113,7 +113,7 @@ test('minimal projection includes current presentation while excluding records a
   const host = createMochiHost(runtime, request => { projected = toMinimalPlanInput(request); throw new Error('fixture stops before candidate') })
   host.setSelection('registration-form'); await assert.rejects(host.callbacks.onRequestPlan('改善按钮'))
   assert.deepEqual(projected.block.presentation, initial.spec.blocks[0].presentation)
-  assert.deepEqual(Object.keys(projected).sort(), ['requestId', 'baseRevision', 'prompt', 'block', 'entity', 'reservedIds'].sort())
+  assert.deepEqual(Object.keys(projected).sort(), ['appId', 'blockOrder', 'requestId', 'baseRevision', 'prompt', 'block', 'entity', 'reservedIds'].sort())
   assert.deepEqual(projected.reservedIds, [initial.spec.id,
     ...initial.spec.entities.flatMap(entity => [entity.id, ...entity.fields.map(field => field.id)]),
     ...initial.spec.blocks.map(block => block.id), ...initial.spec.relations.map(relation => relation.id)])
