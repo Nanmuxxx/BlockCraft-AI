@@ -1,3 +1,4 @@
+import { modificationErrors } from '../mochi-ai/errors.mjs'
 import { createAppChangePlanner, resolveBlockEntityId, type AppChangePlan, type DeepReadonly } from '../../model/appChangePlan'
 import type { AppRuntime, RuntimeResult } from '../../model/appRuntime'
 import type { ProjectState } from '../../model/appSpec'
@@ -75,7 +76,7 @@ function projection(planId: string, plan: DeepReadonly<AppChangePlan>): HostPrev
     ...plan.diff.addedBlocks.map(block => ({ operation: 'addBlock', target: block.id, description: `新增积木：${block.name}`, after: JSON.stringify({ block, binding: plan.after.spec.relations.find(item => item.blockId === block.id), position: plan.after.blockPositions[block.id] }) })),
     ...plan.diff.removedBlocks.map(block => ({ operation: 'removeBlock', target: block.id, description: `删除积木：${block.name}；保留实体与记录`, before: JSON.stringify({ block, binding: plan.before.spec.relations.find(item => item.blockId === block.id), position: plan.before.blockPositions[block.id] }) })),
     ...(plan.diff.orderChanges ? [{ operation: 'reorderBlocks', target: plan.appId, description: '调整积木顺序（含保留的自定义积木位置）', before: JSON.stringify(plan.diff.orderChanges.before), after: JSON.stringify(plan.diff.orderChanges.after) }] : []),
-    ...plan.diff.sharedEntityImpacts.map(impact => ({ operation: 'sharedEntityImpact', target: impact.entityId, description: `共享实体影响：${impact.boundBlockIds.join(', ')}；直接授权外：${impact.outsideDirectScopeBlockIds.join(', ') || '无'}；保留 ${impact.retainedRecordCount} 条记录` })),
+    ...plan.diff.sharedEntityImpacts.map(impact => ({ operation: 'sharedEntityImpact', target: impact.entityId, description: `必要的数据联动：新增字段属于共享实体，${impact.boundBlockIds.join(', ')} 可读取扩展后的结构；仅“调整显示字段”行列出的积木改变显示，其他积木配置不变。保留 ${impact.retainedRecordCount} 条记录` })),
   ]
   return { planId, title: '修改计划（等待确认）', summary: `版本 ${plan.request.baseRevision} → ${plan.after.revision}；业务记录保持不变`, changes }
 }
@@ -87,7 +88,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   const instanceId = `mochi-${globalThis.crypto.randomUUID()}`
   const planner = createAppChangePlanner(runtime)
   const listeners = new Set<() => void>()
-  type Entry = { guard?: TrustedPlanGuard; plan: DeepReadonly<AppChangePlan>; epoch: number; authorization: ReturnType<AppRuntime['customProject']['getAuthorization']>; authorizationKey: string; status: 'pending' | 'confirming' | 'committed' | 'cancelled' | 'rejected' | 'unknown' }
+  type Entry = { prompt: string; guard?: TrustedPlanGuard; plan: DeepReadonly<AppChangePlan>; epoch: number; authorization: ReturnType<AppRuntime['customProject']['getAuthorization']>; authorizationKey: string; status: 'pending' | 'confirming' | 'committed' | 'cancelled' | 'rejected' | 'unknown' }
   const entries = new Map<string, Entry>()
   let selectedBlockId: string | null = null
   let authorizationKey = '' // Invalidation identity only; never a source of authority.
@@ -95,7 +96,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
   let epoch = 0
   let sequence = 0
   let activeId: string | null = null
-  let pending: { requestId: string; epoch: number; controller: AbortController } | null = null
+  let pending: { requestId: string; epoch: number; controller: AbortController; prompt: string } | null = null
   let committing: Entry | null = null
   let disposed = false
   let observedRevision = runtime.getSnapshot().revision
@@ -214,14 +215,21 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         // preserve its handle, phase and identity while notifying the composer.
         if (!pending && !committing) {
           const problem = failure(error, 'INVALID_PROMPT', '请求无效，尚未提交。')
-          publish({ ...(!activeId ? { phase: 'REQUEST_FAILED' as const, requestId: `${instanceId}-${++sequence}`, receipt: null } : {}), error: { code: problem.code, message: problem.message } })
+          publish({ ...(!activeId ? { phase: 'REQUEST_FAILED' as const, requestId: `${instanceId}-${++sequence}`, receipt: null } : {}), error: { code: problem.code, message: modificationErrors[problem.code] || problem.message } })
         }
         throw error
+      }
+      // Duplicate submit/retry keeps the original request/preview. A different
+      // instruction may still retire an obsolete request via the existing path.
+      if (pending?.prompt === prompt.trim()) throw new AppSpecError('AI_BUSY', modificationErrors.AI_BUSY)
+      if (activeId && entries.get(activeId)?.status === 'pending' && entries.get(activeId)?.prompt === prompt.trim()) {
+        if (view.error) publish({ error: null })
+        return
       }
       const { snapshot, scope } = prepared
       const authorization = runtime.customProject.getAuthorization()
       const previous = detach()
-      const attempt = { requestId: `${instanceId}-${++sequence}`, epoch, controller: new AbortController() }
+      const attempt = { requestId: `${instanceId}-${++sequence}`, epoch, controller: new AbortController(), prompt: prompt.trim() }
       const requestContext = freeze(context())
       pending = attempt
       const ownsRequest = () => !disposed && pending === attempt && epoch === attempt.epoch && !attempt.controller.signal.aborted
@@ -261,7 +269,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
           throw new AppSpecError('PLAN_BINDING_MISMATCH', 'Provider changed the host requestId or revision')
         }
         const planId = `${attempt.requestId}-plan`
-        entries.set(planId, { guard, plan: result.plan, epoch, authorization, authorizationKey, status: 'pending' })
+        entries.set(planId, { prompt: prompt.trim(), guard, plan: result.plan, epoch, authorization, authorizationKey, status: 'pending' })
         activeId = planId
         pending = null
         publish({ phase: 'PREVIEW', preview: projection(planId, result.plan), error: null })
@@ -270,7 +278,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         if (!ownsRequest()) throw error
         pending = null
         const problem = failure(error, 'PLAN_PROVIDER_FAILED', '计划请求失败；尚未提交此请求。')
-        publish({ phase: stage, preview: null, error: { code: problem.code, message: problem.message } })
+        publish({ phase: stage, preview: null, error: { code: problem.code, message: modificationErrors[problem.code] || problem.message } })
         throw problem
       } finally { attempt.controller.signal.removeEventListener('abort', stopWaiting) }
     },
@@ -312,7 +320,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         committing = null
         if (activeId === planId) activeId = null
         const problem = new AppSpecError('COMMIT_OUTCOME_UNKNOWN', '提交结果未确认。应用可能已改变；请核对当前状态，勿重试旧计划。')
-        if (view.requestId === entry.plan.request.requestId) publish({ phase: 'COMMIT_OUTCOME_UNKNOWN', preview: null, receipt: null, error: { code: problem.code, message: problem.message } })
+        if (view.requestId === entry.plan.request.requestId) publish({ phase: 'COMMIT_OUTCOME_UNKNOWN', preview: null, receipt: null, error: { code: problem.code, message: modificationErrors[problem.code] || problem.message } })
         throw problem
       }
       committing = null
@@ -331,7 +339,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
       entry.status = unchanged ? 'rejected' : 'unknown'
       const problem = unchanged ? new AppSpecError(result.error.code, result.error.message)
         : new AppSpecError('COMMIT_OUTCOME_UNKNOWN', '失败回执与应用状态不一致。请核对当前状态，勿重试旧计划。')
-      if (view.requestId === entry.plan.request.requestId) publish({ phase: unchanged ? 'COMMIT_FAILED' : 'COMMIT_OUTCOME_UNKNOWN', preview: null, receipt: unchanged ? result : null, error: { code: problem.code, message: problem.message } })
+      if (view.requestId === entry.plan.request.requestId) publish({ phase: unchanged ? 'COMMIT_FAILED' : 'COMMIT_OUTCOME_UNKNOWN', preview: null, receipt: unchanged ? result : null, error: { code: problem.code, message: modificationErrors[problem.code] || problem.message } })
       throw problem
     },
     onCancel(planId: string): void {

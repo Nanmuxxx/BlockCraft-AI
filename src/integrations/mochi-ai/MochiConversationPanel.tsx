@@ -1,3 +1,4 @@
+import { modificationErrors } from './errors.mjs'
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { createWorkshopMochiConversation, type ConversationHost } from './workshop.mjs'
 import type { CustomContextSource } from './context.mjs'
@@ -6,6 +7,7 @@ import './conversation.css'
 
 type Conversation = ReturnType<typeof createMochiConversation>
 const actionMessages: Record<string, string> = {
+  ...modificationErrors,
   SUGGESTION_EXPIRED: '这条建议已过期，请等待新的建议。', CONTEXT_CHANGED: '项目已变化，请重新分析后再预览。',
   READ_ONLY: '当前项目为只读，无法请求修改。', AI_MODIFICATION_DISABLED: '修改计划尚未接通，可以先聊聊这条建议。',
   SUGGESTION_NOT_EXECUTABLE: '这条建议暂时无法转为修改计划，可以先聊聊。', SUGGESTION_NOT_ACTIONABLE: '这条建议暂时无法转为修改计划，可以先聊聊。', UNSUPPORTED_SUGGESTION: '这个积木暂不支持修改计划。',

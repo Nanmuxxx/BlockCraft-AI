@@ -18,6 +18,7 @@ RUN set -eu; \
     mkdir -p /app/runtime-server; \
     cp server/index.mjs server/trusted-interactive.mjs server/aiGenerationPrompt.mjs server/aiGenerationQuality.mjs /app/runtime-server/; \
     if [ -f server/mochi-plan.mjs ]; then cp server/mochi-plan.mjs /app/runtime-server/; fi; \
+    cp server/mochi-response.mjs /app/runtime-server/; \
     cp -R server/mochi-ai /app/runtime-server/mochi-ai; \
     cp -R server/.generated /app/runtime-server/.generated; \
     if [ -f server/ai-abort.mjs ]; then cp server/ai-abort.mjs /app/runtime-server/; fi; \
@@ -30,7 +31,8 @@ ENV NODE_ENV=production PORT=7860
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/runtime-server/ ./server/
 COPY --from=build /app/src/model/appSpec.ts /app/src/model/trustedInteractive.schema.json ./src/model/
-COPY --from=build /app/src/integrations/mochi-ai/protocol.mjs ./src/integrations/mochi-ai/protocol.mjs
+COPY --from=build /app/src/integrations/mochi-ai/protocol.mjs /app/src/integrations/mochi-ai/errors.mjs ./src/integrations/mochi-ai/
+COPY --from=build /app/src/integrations/mochi/intent.mjs ./src/integrations/mochi/intent.mjs
 
 USER node
 EXPOSE 7860

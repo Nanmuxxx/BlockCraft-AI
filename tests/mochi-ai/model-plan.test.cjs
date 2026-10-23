@@ -5,7 +5,7 @@ const { createMochiHost } = require('../../src/integrations/mochi/host.ts')
 const { createModelPlanProvider } = require('../../src/integrations/mochi/modelPlanProvider.ts')
 const defer = () => { let resolve; const promise = new Promise(r => { resolve = r }); return { resolve, promise } }
 const candidate = request => ({ request: { requestId: request.requestId, baseRevision: request.baseRevision, commands: [
-  { type: 'addField', entityId: request.entity.id, field: { id: 'offline-note', name: '离线备注', type: 'text', required: false } },
+  { type: 'addField', entityId: request.entity.id, field: { id: 'offline-note', name: '备注', type: 'text', required: false } },
   { type: 'configureBlockFields', blockId: request.block.id, fieldIds: [...request.block.fieldIds, 'offline-note'] },
 ] }, capabilityIds: [] })
 function setup(t, complete, options) {
@@ -26,14 +26,14 @@ test('AppSpec model plan deadline releases Host without a preview and late outpu
   let guard
   try {
     await assert.rejects(Promise.race([
-      host.callbacks.onRequestPlan('超时修改'),
+      host.callbacks.onRequestPlan('新增一个可选文本字段备注（超时修改）'),
       new Promise(resolve => { guard = setTimeout(resolve, 150) }),
     ]), { code: 'MODEL_TIMEOUT' })
     assert.equal(oldSignal.aborted, true)
     assert.equal(runtime.getSnapshot(), before)
     assert.equal(host.getSnapshot().preview, null)
     assert.equal(host.getSnapshot().error.code, 'MODEL_TIMEOUT')
-    await host.callbacks.onRequestPlan('新修改')
+    await host.callbacks.onRequestPlan('新增一个可选文本字段备注（新修改）')
     const latest = host.getSnapshot()
     old.resolve(JSON.stringify(candidate(oldRequest)))
     await new Promise(resolve => setImmediate(resolve))
@@ -59,7 +59,7 @@ test('synchronous completion failure and abort cannot leak an unhandled rejectio
   })
   host = f.host
   const before = f.runtime.getSnapshot()
-  await assert.rejects(host.callbacks.onRequestPlan('同步取消修改'))
+  await assert.rejects(host.callbacks.onRequestPlan('新增一个可选文本字段备注（同步取消修改）'))
   await new Promise(resolve => setImmediate(resolve))
   assert.equal(captured.aborted, true)
   assert.equal(f.runtime.getSnapshot(), before)
@@ -78,7 +78,7 @@ test('completion receives selected metadata and occupied structural IDs without 
     return JSON.stringify(candidate(request))
   })
   const before = runtime.getSnapshot()
-  await host.callbacks.onRequestPlan('为选中表单添加备注')
+  await host.callbacks.onRequestPlan('新增一个可选文本字段备注（为选中表单添加备注）')
   assert.equal(runtime.getSnapshot(), before)
   const preview = host.getSnapshot().preview
   await host.callbacks.onConfirm(preview.planId)
@@ -97,7 +97,7 @@ for (const [name, transform] of [
   ['unsupported button style', r => JSON.stringify({ request: { requestId: r.requestId, baseRevision: r.baseRevision, commands: [{ type: 'setButtonColor', blockId: r.block.id, color: 'red' }] }, capabilityIds: [] })],
 ]) test(`${name}: Phase A rejects model data and preserves project`, async t => {
   const { runtime, host } = setup(t, async ({ request }) => transform(request)), before = runtime.getSnapshot()
-  await assert.rejects(host.callbacks.onRequestPlan('修改'))
+  await assert.rejects(host.callbacks.onRequestPlan('新增一个可选文本字段备注（修改）'))
   assert.equal(runtime.getSnapshot(), before)
   assert.equal(host.getSnapshot().preview, null)
 })
@@ -108,10 +108,10 @@ test('cancelled late completion cannot replace newer preview or apply receipt/hi
     if (++calls === 1) { started.resolve(); await old.promise }
     return JSON.stringify(candidate(request))
   })
-  const first = host.callbacks.onRequestPlan('旧修改')
+  const first = host.callbacks.onRequestPlan('新增一个可选文本字段备注（旧修改）')
   const rejected = assert.rejects(first)
   await started.promise; host.cancelRequest(host.getSnapshot().requestId)
-  await host.callbacks.onRequestPlan('新修改')
+  await host.callbacks.onRequestPlan('新增一个可选文本字段备注（新修改）')
   const second = host.getSnapshot()
   old.resolve(); await rejected
   assert.equal(host.getSnapshot(), second)
@@ -123,12 +123,12 @@ test('cancelled late completion cannot replace newer preview or apply receipt/hi
 
 test('authorization ABA and concurrent revision invalidate exact preview without implicit reauthorization', async t => {
   const { runtime, host } = setup(t, async ({ request }) => JSON.stringify(candidate(request)))
-  await host.callbacks.onRequestPlan('备注')
+  await host.callbacks.onRequestPlan('新增一个可选文本字段备注（备注）')
   const old = host.getSnapshot().preview.planId, before = runtime.getSnapshot()
   runtime.customProject.setReadOnly(true); runtime.customProject.setReadOnly(false)
   await assert.rejects(host.callbacks.onConfirm(old))
   assert.equal(runtime.getSnapshot(), before)
-  await host.callbacks.onRequestPlan('重新备注')
+  await host.callbacks.onRequestPlan('新增一个可选文本字段备注（重新备注）')
   const next = host.getSnapshot().preview.planId
   assert.equal(runtime.moveBlock('registration-form', { x: .2, y: .2 }).ok, true)
   const winner = runtime.getSnapshot()
@@ -143,11 +143,11 @@ test('cancel retires Host await even when completion never settles; late failure
     return JSON.stringify(candidate(request))
   })
   const before = runtime.getSnapshot()
-  const first = host.callbacks.onRequestPlan('不再等待的修改')
+  const first = host.callbacks.onRequestPlan('新增一个可选文本字段备注（不再等待的修改）')
   const rejected = assert.rejects(first)
   host.cancelRequest(host.getSnapshot().requestId); await rejected
   assert.equal(runtime.getSnapshot(), before)
-  await host.callbacks.onRequestPlan('新修改')
+  await host.callbacks.onRequestPlan('新增一个可选文本字段备注（新修改）')
   const current = host.getSnapshot()
   rejectOld(new Error('obsolete transport rejection'))
   await new Promise(resolve => setImmediate(resolve))
@@ -164,7 +164,7 @@ test('large valid selected metadata is rejected by UTF-8 bytes before completion
   const host = createMochiHost(runtime, createModelPlanProvider(async () => { calls++; throw new Error('must not call transport') }))
   t.after(() => host.dispose()); host.setSelection('registration-form')
   const before = runtime.getSnapshot()
-  await assert.rejects(host.callbacks.onRequestPlan('添加备注'), { code: 'MODEL_REQUEST_TOO_LARGE' })
+  await assert.rejects(host.callbacks.onRequestPlan('新增一个可选文本字段备注（添加备注）'), { code: 'MODEL_REQUEST_TOO_LARGE' })
   assert.equal(calls, 0)
   assert.equal(runtime.getSnapshot(), before)
   assert.equal(host.getSnapshot().preview, null)

@@ -18,6 +18,7 @@ on:
       - tests/controlled-edit/**
       - tests/project-package/**
       - tests/mochi-proactive/**
+      - tests/mochi-stability/**
   workflow_dispatch:
 
 permissions:
@@ -106,6 +107,7 @@ jobs:
             echo "command=npm run test:mochi-proactive"
           } | tee -a "$log"
           npm run test:mochi-proactive 2>&1 | tee -a "$log"
+          npm run test:mochi-stability 2>&1 | tee -a "$log"
           {
             echo "NOT RUN test:generation:browser: Playwright is not declared by this repository"
             echo "NOT RUN test:mochi:browser: Playwright is not declared by this repository"

@@ -75,9 +75,9 @@ test('gallery HTTP plan permits add and remove only with the gallery capability 
   const add = await fixture(t, input => candidate(input, [{ type: 'addBlock', block: {
     id: 'gallery-2', name: '第二画廊', type: 'gallery', protocolVersion: 1, imageIds: ['cover'], layout: 'grid', interaction: 'preview',
   } }], ['gallery']))
-  assert.equal((await add.post()).status, 200)
+  assert.equal((await add.post({ ...galleryInput(), prompt: '新增一个图库积木' })).status, 200)
   const remove = await fixture(t, input => candidate(input, [{ type: 'removeBlock', blockId: input.block.id }]))
-  assert.equal((await remove.post()).status, 200)
+  assert.equal((await remove.post({ ...galleryInput(), prompt: '删除当前图库积木' })).status, 200)
 })
 
 for (const [name, mutate] of [

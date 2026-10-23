@@ -34,7 +34,7 @@ function fixture(t, enabled = true) {
       const body = JSON.parse(init.body); received.push(body)
       assert.equal(body.model, PRICING.model)
       const input = JSON.parse(body.messages[1].content)
-      const data = input.version === 1 ? advice() : { request: { requestId: input.requestId, baseRevision: input.baseRevision, commands: [
+      const data = input.version === 1 ? advice('给当前表单增加一个可选日期字段截止时间') : { request: { requestId: input.requestId, baseRevision: input.baseRevision, commands: [
         { type: 'addField', entityId: input.entity.id, field: { id: 'deadline', name: '截止时间', type: 'date', required: false } },
         { type: 'configureBlockFields', blockId: input.block.id, fieldIds: [...input.block.fieldIds, 'deadline'] },
       ] }, capabilityIds: [] }

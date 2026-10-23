@@ -24,7 +24,7 @@ const blockId = 'registration-form'
 const candidate = (id, revision, target, patch) => ({ request: {
   requestId: id, baseRevision: revision, commands: [{ type: 'configureBlockPresentation', blockId: target, presentation: patch }],
 }, capabilityIds: [] })
-const answer = request => JSON.stringify(candidate(request.requestId, request.baseRevision, request.block.id, { buttonText: request.prompt }))
+const answer = request => JSON.stringify(candidate(request.requestId, request.baseRevision, request.block.id, { buttonText: request.prompt.match(/按钮文案设为「(.*?)」/)?.[1] ?? request.prompt }))
 function setup(t, complete = ({ request }) => answer(request), options) {
   const runtime = createAppRuntime(createClubRegistrationExample())
   const host = createMochiHost(runtime, createModelPlanProvider(complete, options))
@@ -50,7 +50,7 @@ function applied(runtime, before, patch, increments = 1) {
   assert.equal(runtime.customProject.getSnapshot().revision, expected.revision)
 }
 async function preview(host, text = '已修改') {
-  await host.callbacks.onRequestPlan(text)
+  await host.callbacks.onRequestPlan(`把按钮文案设为「${text}」，调整背景、文字颜色和圆角`)
   assert.equal(host.getSnapshot().phase, 'PREVIEW')
   return host.getSnapshot().preview.planId
 }
@@ -129,7 +129,7 @@ for (const kind of ['selection', 'cancel', 'authorization', 'dispose']) {
   for (const late of ['resolve', 'reject']) test(`${kind} invalidates pending request; late Provider ${late} cannot mutate or publish`, async t => {
     const pending = deferred(); let input, signal
     const { runtime, host } = setup(t, args => { input = args.request; signal = args.signal; return pending.promise })
-    const before = capture(runtime), request = host.callbacks.onRequestPlan('obsolete')
+    const before = capture(runtime), request = host.callbacks.onRequestPlan('把按钮文案设为「obsolete」，调整背景、文字颜色和圆角')
     const rejected = assert.rejects(request, e => e.code === 'CONTEXT_CHANGED')
     if (kind === 'selection') host.setSelection('applicant-list')
     if (kind === 'cancel') host.cancelRequest(host.getSnapshot().requestId)
@@ -149,7 +149,7 @@ test('project handoff retires old Host; late old result cannot affect either pro
   const pending = deferred(); let oldInput
   const old = setup(t, ({ request }) => { oldInput = request; return pending.promise })
   const oldBefore = capture(old.runtime)
-  const rejected = assert.rejects(old.host.callbacks.onRequestPlan('old project'), e => e.code === 'CONTEXT_CHANGED')
+  const rejected = assert.rejects(old.host.callbacks.onRequestPlan('把按钮文案设为「old project」，调整背景、文字颜色和圆角'), e => e.code === 'CONTEXT_CHANGED')
   old.host.dispose() // explicit host lifecycle seam; no Workshop UI simulated
   const nextRuntime = createAppRuntime(createReadingLogExample())
   const nextBlock = nextRuntime.getSnapshot().spec.blocks.find(b => b.type === 'form')
@@ -176,7 +176,7 @@ test('superseding request commits newer plan; late valid old response cannot ove
   const pending = deferred(); let firstInput, calls = 0
   const { runtime, host } = setup(t, ({ request }) => ++calls === 1 ? (firstInput = request, pending.promise) : answer(request))
   const before = capture(runtime)
-  const first = assert.rejects(host.callbacks.onRequestPlan('old'), e => e.code === 'CONTEXT_CHANGED')
+  const first = assert.rejects(host.callbacks.onRequestPlan('把按钮文案设为「old」，调整背景、文字颜色和圆角'), e => e.code === 'CONTEXT_CHANGED')
   const newer = await preview(host, 'new')
   await first; await host.callbacks.onConfirm(newer)
   const committed = capture(runtime)
@@ -196,8 +196,8 @@ const invalidPatches = [
 for (const [name, patch] of invalidPatches) test(`invalid ${name} is rejected before mutation`, async t => {
   const { runtime, host } = setup(t, ({ request }) => JSON.stringify(candidate(request.requestId, request.baseRevision, request.block.id, patch)))
   const before = capture(runtime)
-  await assert.rejects(preview(host), e => e.code === 'VALIDATION')
-  assert.equal(host.getSnapshot().phase, 'PREVIEW_REJECTED')
+  await assert.rejects(preview(host), e => e.code === (['unknown property', 'executable property'].includes(name) ? 'INTENT_SCOPE_VIOLATION' : 'VALIDATION'))
+  assert.equal(host.getSnapshot().phase, ['unknown property', 'executable property'].includes(name) ? 'REQUEST_FAILED' : 'PREVIEW_REJECTED')
   unchanged(runtime, before)
 })
 
@@ -213,11 +213,11 @@ const badResponses = [
   ['invalid JSON', () => '{', 'INVALID_MODEL_RESPONSE', 'REQUEST_FAILED'],
   ['non-string', () => 42, 'INVALID_MODEL_RESPONSE', 'REQUEST_FAILED'],
   ['oversized', () => 'x'.repeat(65537), 'INVALID_MODEL_RESPONSE', 'REQUEST_FAILED'],
-  ['null JSON', () => 'null', 'VALIDATION', 'PREVIEW_REJECTED'],
+  ['null JSON', () => 'null', 'AI_INVALID_RESPONSE', 'REQUEST_FAILED'],
   ['extra property', ({ request }) => JSON.stringify({ ...JSON.parse(answer(request)), authority: 'all' }), 'VALIDATION', 'PREVIEW_REJECTED'],
   ['wrong binding', ({ request }) => JSON.stringify(candidate('different-request', request.baseRevision, request.block.id, { buttonText: 'x' })), 'PLAN_BINDING_MISMATCH', 'PREVIEW_REJECTED'],
   ['stale revision', ({ request }) => JSON.stringify(candidate(request.requestId, 99, request.block.id, { buttonText: 'x' })), 'REVISION_CONFLICT', 'PREVIEW_REJECTED'],
-  ['forbidden command', ({ request }) => JSON.stringify({ request: { requestId: request.requestId, baseRevision: request.baseRevision, commands: [{ type: 'undo' }] }, capabilityIds: [] }), 'AI_COMMAND_FORBIDDEN', 'PREVIEW_REJECTED'],
+  ['forbidden command', ({ request }) => JSON.stringify({ request: { requestId: request.requestId, baseRevision: request.baseRevision, commands: [{ type: 'undo' }] }, capabilityIds: [] }), 'INTENT_SCOPE_VIOLATION', 'REQUEST_FAILED'],
   ['throw', () => { throw new Error('offline provider failure') }, 'PLAN_PROVIDER_FAILED', 'REQUEST_FAILED'],
   ['reject', () => Promise.reject(new Error('offline provider rejection')), 'PLAN_PROVIDER_FAILED', 'REQUEST_FAILED'],
 ]

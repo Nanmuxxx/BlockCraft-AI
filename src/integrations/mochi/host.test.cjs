@@ -30,7 +30,7 @@ function setup(provider = mockAddOptionalField, initial = createClubRegistration
   host.setSelection(initial.spec.blocks[0].id)
   return { runtime, host, executions: () => executions, updates: () => updates, authorizationArgs: () => authorizationArgs }
 }
-async function plan(host) { await host.callbacks.onRequestPlan('这是固定 Mock，不解析这句话'); return host.getSnapshot().preview.planId }
+async function plan(host, prompt = '这是固定 Mock，不解析这句话') { await host.callbacks.onRequestPlan(prompt); return host.getSnapshot().preview.planId }
 const rejects = (promise, code) => assert.rejects(promise, error => error.code === code)
 function defer() { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b }); return { promise, resolve, reject } }
 
@@ -196,7 +196,7 @@ test('selection A→B→A and a newer request both revoke old plans', async () =
   const s = setup(), old = await plan(s.host)
   s.host.setSelection('applicant-list'); s.host.setSelection('registration-form')
   await rejects(s.host.callbacks.onConfirm(old), 'PLAN_NOT_PENDING')
-  const middle = await plan(s.host), newest = await plan(s.host)
+  const middle = await plan(s.host), newest = await plan(s.host, '新的明确请求')
   await rejects(s.host.callbacks.onConfirm(middle), 'PLAN_NOT_PENDING')
   await s.host.callbacks.onConfirm(newest)
   assert.equal(s.executions(), 1)
@@ -419,7 +419,7 @@ test('authorization identity invalidates plans but never grants scope', async ()
   s.host.setAuthorizationContextKey('allowedBlockIds=all')
   await plan(s.host)
   const shared = s.host.getSnapshot().preview.changes.find(c => c.operation === 'sharedEntityImpact')
-  assert.match(shared.description, /直接授权外：applicant-list/)
+  assert.match(shared.description, /必要的数据联动：.*applicant-list.*其他积木配置不变/)
 })
 
 test('test wrapper forwards the preview authorization to Runtime', async () => {
@@ -601,7 +601,7 @@ test('invalid input over 4000 characters reports an error without revoking a val
   assert.equal(s.host.getSnapshot().requestId, requestId)
   assert.equal(s.host.getSnapshot().busy, false)
   const corrected = await plan(s.host)
-  assert.notEqual(corrected, id)
+  assert.equal(corrected, id, 'same corrected prompt reuses the existing preview without another completion')
   assert.equal(s.host.getSnapshot().error, null)
   assert.strictEqual(s.runtime.getSnapshot(), before)
   assert.equal(s.executions(), 0); assert.equal(s.updates(), 0)

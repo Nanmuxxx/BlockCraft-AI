@@ -16,15 +16,15 @@ test('HTTP provider -> host preview -> confirm supports add/hide/restore, preser
     assert.equal(url, '/api/mochi-plan'); assert.equal(init.redirect, 'error'); assert.ok(init.signal)
     const i = JSON.parse(init.body); inputs.push(i)
     assert.ok(!init.body.includes('小林')); assert.ok(!init.body.includes('技术部')); assert.ok(!Object.hasOwn(i, 'records'))
-    const fieldIds = i.prompt === 'hide' ? i.block.fieldIds.filter(id => id !== 'note') : [...new Set([...i.block.fieldIds, 'note'])]
-    const commands = [...(i.prompt === 'add' ? [{ type: 'addField', entityId: i.entity.id, field: { id: 'note', name: '备注', type: 'text', required: false } }] : []),
+    const fieldIds = i.prompt.includes('隐藏') ? i.block.fieldIds.filter(id => id !== 'note') : [...new Set([...i.block.fieldIds, 'note'])]
+    const commands = [...(i.prompt.includes('新增') ? [{ type: 'addField', entityId: i.entity.id, field: { id: 'note', name: '备注', type: 'text', required: false } }] : []),
       { type: 'configureBlockFields', blockId: i.block.id, fieldIds }]
     return Response.json({ source: 'offline-fixture', model: 'offline', candidate: { request: { requestId: i.requestId, baseRevision: i.baseRevision, commands }, capabilityIds: [] } })
   })
   const host = createMochiHost(runtime, provider); host.setSelection('registration-form')
   for (const [index, action] of ['add', 'hide', 'restore'].entries()) {
     const before = runtime.getSnapshot()
-    await host.callbacks.onRequestPlan(action)
+    await host.callbacks.onRequestPlan({ add: '新增一个可选文本字段备注', hide: '隐藏备注字段', restore: '恢复显示备注字段' }[action])
     assert.strictEqual(runtime.getSnapshot(), before, 'no writes before confirmation')
     const preview = host.getSnapshot().preview; assert.ok(preview)
     await host.callbacks.onConfirm(preview.planId)
