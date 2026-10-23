@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/docker-acceptance.yml
       - Dockerfile
+      - Dockerfile.studio
       - .dockerignore
       - ms_deploy.json
       - package.json
@@ -108,6 +109,7 @@ jobs:
           } | tee -a "$log"
           npm run test:mochi-proactive 2>&1 | tee -a "$log"
           npm run test:mochi-stability 2>&1 | tee -a "$log"
+          node --test tests/paid-gateway/unified-*.test.mjs tests/mochi-ai/unified-budget.test.mjs 2>&1 | tee -a "$log"
           {
             echo "NOT RUN test:generation:browser: Playwright is not declared by this repository"
             echo "NOT RUN test:mochi:browser: Playwright is not declared by this repository"
@@ -139,6 +141,8 @@ jobs:
           const entry = '/app/server/index.mjs'
           const optionalRoots = [
             '/app/server/ai-abort.mjs',
+            '/app/server/studio-launcher.mjs',
+            '/app/server/unified-studio-deployment.mjs',
             '/app/server/mochi-plan.mjs',
             '/app/server/paid-gateway/access.mjs',
             '/app/server/paid-gateway/egress.mjs',

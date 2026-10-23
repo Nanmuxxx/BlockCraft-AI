@@ -2,6 +2,14 @@
 .ai-create > .main { width: 100%; }
 .ai-create-prompt { margin-top: 24px; }
 .ai-create-prompt .composer__input { min-height: 130px; }
+.ai-create-access { padding: 14px 20px; border-bottom: 1px solid var(--line); background: #f3f8ef; color: var(--ink); font-size: 12px; line-height: 1.7; border-radius: 16px 16px 0 0; }
+.ai-create-access p { margin: 0; }
+.ai-create-access small { display: block; color: var(--ink-soft); font-size: 11px; margin-top: 5px; }
+.ai-create-access__row { display: flex; gap: 8px; margin-top: 7px; }
+.ai-create-access input { min-width: 0; flex: 1; border: 1px solid var(--line); border-radius: 8px; padding: 10px; font: inherit; background: white; }
+.ai-create-examples { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 12px; }
+.ai-create-examples button { cursor: pointer; border: 1px solid var(--line); border-radius: 20px; background: var(--bg); color: var(--brand-deep); padding: 7px 12px; font: inherit; font-size: 12px; }
+.ai-create-examples button:hover { background: #eee7f7; }
 .ai-create-hint { margin: 0; padding: 0 20px 16px; font-size: 11px; line-height: 1.7; color: var(--ink-soft); }
 .ai-create-mode { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 16px 20px; font-size: 13px; color: var(--ink-soft); }
 .ai-create-mode select { min-width: 0; max-width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; }

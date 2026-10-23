@@ -9,6 +9,6 @@ import { AiCreate } from './components/ai-create/AiCreate'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {window.location.pathname === '/ai-create' ? <AiCreate /> : window.location.pathname === '/app-renderer' ? <AppRendererDemo /> : <App />}
+    {window.location.pathname === '/demo' ? <App /> : window.location.pathname === '/app-renderer' ? <AppRendererDemo /> : <AiCreate />}
   </StrictMode>,
 )

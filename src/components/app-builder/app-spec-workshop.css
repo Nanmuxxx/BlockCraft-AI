@@ -45,6 +45,10 @@
 .app-spec-workshop .workshop__blocks-layer { flex-direction: column; }
 
 .app-spec-workshop__sidebar > [data-workshop-panel="mochi"] { padding: 0; }
+.app-spec-workshop__run-target { display: grid; gap: 7px; margin: 14px 14px 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: #fff4e9; }
+.app-spec-workshop__run-target label { color: var(--brand-deep); font-size: 12px; font-weight: 700; }
+.app-spec-workshop__run-target select { min-width: 0; width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fffaf3; color: var(--ink); font: inherit; font-size: 12px; }
+.app-spec-workshop__run-target select:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
 .workshop-export { max-width: 265px; flex-shrink: 0; }
 .workshop-export button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 14px; border: 1px solid #d77d4a; border-radius: 10px; color: #fff; background: var(--brand-deep); font: inherit; font-size: 13px; cursor: pointer; box-shadow: 0 3px 0 #d9a37f; }
 .workshop-export button:hover { filter: brightness(1.08); }

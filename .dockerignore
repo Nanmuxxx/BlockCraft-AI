@@ -12,6 +12,8 @@
 !server/package.json
 !server/tsconfig.json
 !server/index.mjs
+!server/studio-launcher.mjs
+!server/unified-studio-deployment.mjs
 !server/mochi-plan.mjs
 !server/mochi-response.mjs
 !server/ai-abort.mjs
