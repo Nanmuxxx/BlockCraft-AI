@@ -14,7 +14,7 @@ import { AppSpecInspector } from './AppSpecInspector'
 import { ExportProjectButton } from '../../integrations/project-export/ExportProjectButton'
 import { ProjectJsonControls } from '../../integrations/project-json/ProjectJsonControls'
 import type { RestoredProject } from '../../integrations/project-json/format'
-import { createMochiHost } from '../../integrations/mochi/host'
+import { createMochiHost, type HostView } from '../../integrations/mochi/host'
 import { createHttpPlanProvider, fieldPlanningStatus } from '../../integrations/mochi/httpPlanProvider'
 import { WorkshopMochi, type MochiHost, type WorkshopMochiProps } from '../../integrations/mochi/WorkshopMochi'
 import { MochiConversationPanel } from '../../integrations/mochi-ai/MochiConversationPanel'
@@ -27,6 +27,23 @@ export interface WorkshopPanelMount {
   renderMochi?: (props: WorkshopMochiProps) => ReactNode
   /** Parent must synchronously gate runtime replacement using this same binding. */
   installation?: GeneratedArtifactUI
+}
+
+function RunFormSelector({ blocks, selectedBlockId, onSelect }: {
+  blocks: HostView['context']['blocks']
+  selectedBlockId: string | null
+  onSelect: (id: string) => void
+}) {
+  const forms = blocks.filter(block => block.type === 'form')
+  if (!forms.length) return null
+  const selectedFormId = forms.some(block => block.id === selectedBlockId) ? selectedBlockId! : ''
+  return <div className="app-spec-workshop__run-target" aria-label="Mochi 修改目标">
+    <label htmlFor="mochi-run-form">Mochi 修改目标</label>
+    <select id="mochi-run-form" value={selectedFormId} onChange={event => onSelect(event.currentTarget.value)}>
+      <option value="" disabled>选择要修改的表单</option>
+      {forms.map(form => <option key={form.id} value={form.id}>{form.name}</option>)}
+    </select>
+  </div>
 }
 
 export function AppSpecWorkshop({ runtime, renderMochi, installation, onImportProject }: { runtime: AppRuntime; onImportProject?: (restored: RestoredProject) => void | Promise<void> } & WorkshopPanelMount) {
@@ -78,7 +95,15 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
   const mode = view.mode
   const selectedId = view.context.selectedBlockId
   const setMode = (next: typeof mode) => {
-    try { if (next !== mode) installation.beforeContextChange(); host.setMode(next); setInstallGateError('') }
+    try {
+      if (next !== mode) installation.beforeContextChange()
+      if (next === 'run' && !view.context.blocks.some(block => block.id === selectedId && block.type === 'form')) {
+        const firstForm = view.context.blocks.find(block => block.type === 'form')
+        host.setSelection(firstForm?.id ?? null)
+      }
+      host.setMode(next)
+      setInstallGateError('')
+    }
     catch (error) { setInstallGateError(error instanceof Error ? error.message : '暂不可切换模式。') }
   }
   const setSelectedId = host.setSelection
@@ -109,7 +134,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
         <div className="workshop__preview-stage" id="generated-preview" hidden={mode !== 'run'}><div className="study-app"><header className="study-app__topbar"><div className="study-app__brand"><span><Blocks size={18} aria-hidden="true" /></span><strong>{snapshot.spec.name}</strong><small>YOUR APP</small></div></header><div className="app-spec-preview-content">{adapter ? <CustomBlockRunSurface adapter={adapter} renderBuiltin={block => <BuiltinBlockRenderer runtime={runtime} blockId={block.id} />} /> : admission}</div></div></div>
         <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
       </div>
-      <aside className="app-spec-workshop__sidebar" aria-label="创作助手与积木属性"><div data-workshop-panel="mochi">{renderMochi ? renderMochi(mochiProps) : <WorkshopMochi key={view.context.instanceId} {...mochiProps} />}</div><div hidden={mode !== 'blocks'}><MochiConversationPanel host={host} customContext={customContext} planningDisabledReason={planningDisabledReason} />{customSelected ? adapter ? <CustomBlockInspector adapter={adapter} instanceId={selected} /> : admission : <AppSpecInspector key={selected ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selected} />}</div></aside>
+      <aside className="app-spec-workshop__sidebar" aria-label="创作助手与积木属性">{mode === 'run' && <RunFormSelector blocks={view.context.blocks} selectedBlockId={selectedId} onSelect={host.setSelection} />}<div data-workshop-panel="mochi">{renderMochi ? renderMochi(mochiProps) : <WorkshopMochi key={view.context.instanceId} {...mochiProps} />}</div><div hidden={mode !== 'blocks'}><MochiConversationPanel host={host} customContext={customContext} planningDisabledReason={planningDisabledReason} />{customSelected ? adapter ? <CustomBlockInspector adapter={adapter} instanceId={selected} /> : admission : <AppSpecInspector key={selected ?? 'empty'} runtime={runtime} snapshot={snapshot} blockId={selected} />}</div></aside>
     </div>
   </section>
 }

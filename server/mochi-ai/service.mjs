@@ -8,7 +8,7 @@ const denied = (code, message, status = 429) => { throw new MochiError(code, mes
 /** One service per approved process. Counters reserve before egress and never refund failures.
  * resolveAccess is a trusted authenticated host adapter, never a body/header sessionId.
  */
-export function createMochiService({ provider, enabled = false, approval, reserveBudget, authorizeContext, now = Date.now } = {}) {
+export function createMochiService({ provider, enabled = false, approval, reserveBudget, authorizeContext, now = Date.now, unifiedManagedBudget = false } = {}) {
   approval = approval && Object.freeze({ ...approval })
   const sessions = new Map(); let calls = 0, tokens = 0, inFlight = 0
   function gate() {
@@ -97,7 +97,7 @@ export function createMochiService({ provider, enabled = false, approval, reserv
       const eventKey = JSON.stringify([scope(access), input.context.instanceId, input.event?.type, eventContext])
       if (proactive && state.events.has(eventKey)) denied('DUPLICATE_EVENT', '这个变化已经分析过了。')
       const reservation = tokenReservation(input)
-      if (calls >= approval.maxCalls || tokens + reservation > approval.maxTotalTokens || state.calls >= POLICY.sessionCalls || state.tokens + reservation > POLICY.sessionTokens) denied('BUDGET_EXHAUSTED', '本次 AI 预算已用完。')
+      if (!unifiedManagedBudget && (calls >= approval.maxCalls || tokens + reservation > approval.maxTotalTokens || state.calls >= POLICY.sessionCalls || state.tokens + reservation > POLICY.sessionTokens)) denied('BUDGET_EXHAUSTED', '本次 AI 预算已用完。')
       signal?.throwIfAborted()
       const epoch = state.consentEpoch
       state.calls++; calls++; state.tokens += reservation; tokens += reservation
@@ -128,6 +128,7 @@ export function createMochiService({ provider, enabled = false, approval, reserv
           ])
         } catch (error) {
           if (controller.signal.aborted && !budgetTimedOut) denied('CANCELLED', '已取消本次请求。', 499)
+          if (error instanceof MochiError && error.code === 'BUDGET_HALTED') denied('BUDGET_HALTED', '共用 AI 账本校验异常，调用已安全暂停。', 503)
           denied('BUDGET_UNAVAILABLE', '费用控制暂不可用，未调用模型。', 503)
         } finally { clearTimeout(budgetTimer); controller.signal.removeEventListener('abort', budgetAbort) }
         if (admitted !== true) denied('BUDGET_EXHAUSTED', '费用额度不足，未调用模型。')

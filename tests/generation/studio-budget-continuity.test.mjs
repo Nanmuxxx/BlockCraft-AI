@@ -58,7 +58,9 @@ test('explicit lifetime authorization works after original deadline; original re
   status = await (await call(s, f.access, '/api/studio/status')).json()
   assert.equal(status.configured, true); assert.deepEqual(status.budget, beforeRestart)
   f.priceValid = false
-  assert.equal((await call(s, f.access, '/api/mochi-ai/analyze', analysis())).status, 502)
+  const unverified = await call(s, f.access, '/api/mochi-ai/analyze', analysis())
+  assert.equal(unverified.status, 503)
+  assert.equal((await unverified.json()).error.code, 'PRICING_UNVERIFIED')
   assert.equal(f.egress, 1)
   assert.equal(JSON.parse(readFileSync(join(f.scope, 'studio-ledger.json'))).entries.length, 1)
 })

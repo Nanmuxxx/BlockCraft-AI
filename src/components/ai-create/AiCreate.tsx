@@ -1,4 +1,4 @@
-import { StudioAccessStatus, type StudioStatus } from './StudioAccessStatus'
+import { StudioAccessStatus, type StudioStatus } from "./StudioAccessStatus"
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { createAppRuntime, type AppRuntime } from '../../model/appRuntime'
 import { AppSpecWorkshop } from '../app-builder/AppSpecWorkshop'
@@ -9,7 +9,7 @@ import { createProjectJson, serializeProjectJson } from '../../integrations/proj
 import { saveProjectBackup } from '../../integrations/project-json/backups'
 import { ProjectJsonBackups } from '../../integrations/project-json/ProjectJsonBackups'
 import { assertNoPackageSecrets } from '../../integrations/project-package/security'
-import { generateProject } from './generateApp'
+import { generateInteractiveProject, generateProject } from './generateApp'
 import { loadTrustedPomodoroFixture, trustedPomodoroSource } from './trustedPomodoroFixture'
 import { Logo } from '../Logo'
 import { MochiCat } from '../MochiCat'
@@ -17,7 +17,7 @@ import { ArrowRight, LoaderCircle, Sparkles } from 'lucide-react'
 import './ai-create.css'
 
 export function AiCreate() {
-  const [mode, setMode] = useState<'legacy-v1' | 'trusted-fixture'>('legacy-v1')
+  const [mode, setMode] = useState<'legacy-v1' | 'trusted-interactive' | 'trusted-fixture'>('legacy-v1')
   const [idea, setIdea] = useState('')
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
@@ -74,19 +74,29 @@ export function AiCreate() {
     setError('')
     try {
       const requestedMode = mode
-      const state = requestedMode === 'trusted-fixture'
-        ? await loadTrustedPomodoroFixture(controller.signal)
-        : await generateProject(idea, controller.signal)
+      let generatedState
+      let generatedSource: string
+      if (requestedMode === 'trusted-fixture') {
+        generatedState = await loadTrustedPomodoroFixture(controller.signal)
+        generatedSource = trustedPomodoroSource
+      } else if (requestedMode === 'trusted-interactive') {
+        const generated = await generateInteractiveProject(idea, controller.signal)
+        generatedState = generated.state
+        generatedSource = `${generated.source === 'deepseek' ? 'DeepSeek 真实生成' : '可信交互 Mock'} · ${generated.model}`
+      } else {
+        generatedSource = 'AI 应用 · 响应未提供可验证的模型来源'
+        generatedState = await generateProject(idea, controller.signal, source => { generatedSource = source })
+      }
       if (active.current === controller) {
         // Recheck at async completion: an install may have started during generation.
         // Never put a side effect in a React state updater (StrictMode can replay it).
         currentApp.current?.installation.beforeContextChange()
-        const runtime = createAppRuntime(state)
+        const runtime = createAppRuntime(generatedState)
         const verifyBackup = await backupCurrentProject()
         if (active.current !== controller) return
         verifyBackup()
         currentApp.current?.installation.beforeContextChange()
-        const next = { runtime, generation: (currentApp.current?.generation ?? 0) + 1, installation: createGeneratedArtifactUI(runtime.customProject), source: requestedMode === 'trusted-fixture' ? trustedPomodoroSource : '原有 AppSpec v1 生成入口 · 响应未提供可验证的模型来源' }
+        const next = { runtime, generation: (currentApp.current?.generation ?? 0) + 1, installation: createGeneratedArtifactUI(runtime.customProject), source: generatedSource }
         currentApp.current?.installation.dispose()
         currentApp.current = next
         setApp(next)
@@ -139,22 +149,28 @@ export function AiCreate() {
     </div>}
     <div className="ai-create-mode"><label htmlFor="generation-mode">创建方式</label>
       <select id="generation-mode" value={mode} disabled={pending} onChange={event => changeMode(event.target.value as typeof mode)}>
-        <option value="legacy-v1">AI 应用（原有 v1）</option>
+        <option value="legacy-v1">DeepSeek · 自定义数据应用</option>
+        <option value="trusted-interactive">DeepSeek · 交互番茄钟</option>
         <option value="trusted-fixture">可信番茄钟（离线演示）</option>
       </select>
     </div>
-    {mode === 'legacy-v1' ? <>
+    {mode !== 'trusted-fixture' && <div className="ai-create-examples" aria-label="创意灵感">
+      <button type="button" disabled={pending} onClick={() => { changeMode('legacy-v1'); setIdea('创建一个社团活动报名工具：包含姓名、专业、报名活动三个字段的表单，可查看报名名单，并统计报名总人数。所有数据从空白开始，由用户真实填写。') }}>社团报名</button>
+      <button type="button" disabled={pending} onClick={() => { changeMode('legacy-v1'); setIdea('创建一个个人读书清单：可以录入书名、作者、阅读状态和笔记，查看全部书籍，并统计书籍数量。所有数据初始为空。') }}>读书清单</button>
+      <button type="button" disabled={pending} onClick={() => { changeMode('trusted-interactive'); setIdea('创建一个名叫「星光专注站」的 25 分钟学习番茄钟，要能开始、暂停、继续和重置计时。') }}>专注番茄钟</button>
+    </div>}
+    {mode !== 'trusted-fixture' ? <>
     <label htmlFor="software-idea" className="sr-only">你想做什么软件？</label>
     <textarea className="composer__input" id="software-idea" value={idea} maxLength={4000} required disabled={pending} onChange={event => setIdea(event.target.value)} placeholder="告诉 Mochi，你今天想创造什么……例如社团报名工具，包含表单、名单和人数统计。" />
     </> : <p className="ai-create-hint">{trustedPomodoroSource}。加载固定的 25 分钟番茄钟配置，由可信内置组件计时；此演示不会根据自然语言生成内容。</p>}
-    <div className="composer__bar"><small className="composer__count">{mode === 'legacy-v1' ? `${idea.length} / 4000` : '固定配置 · 25 分钟'}</small>{pending && <button type="button" className="btn-secondary" onClick={cancelGeneration}>取消生成</button>}<button className="btn-primary" type="submit" disabled={pending || (mode === 'legacy-v1' && (!idea.trim() || Boolean(studio && !studio.authenticated) || Boolean(studio?.budget?.halted) || Boolean(studio?.budget && studio.budget.calls >= studio.budget.maxCalls)))}>{pending ? <><LoaderCircle size={18} className="spin" aria-hidden="true" />处理中…</> : <>{mode === 'trusted-fixture' ? '加载离线番茄钟' : error ? '重试生成' : app ? '生成新应用' : '生成应用'}<ArrowRight size={18} aria-hidden="true" /></>}</button></div>
+    <div className="composer__bar"><small className="composer__count">{mode === 'trusted-fixture' ? '固定配置 · 25 分钟' : `${idea.length} / 4000`}</small>{pending && <button type="button" className="btn-secondary" onClick={cancelGeneration}>取消生成</button>}<button className="btn-primary" type="submit" disabled={pending || (mode !== 'trusted-fixture' && (!idea.trim() || Boolean(studio && !studio.authenticated) || Boolean(studio?.budget?.halted) || Boolean(studio?.budget && studio.budget.maxCalls !== null && studio.budget.calls >= studio.budget.maxCalls) || studio?.budget?.remainingCny === 0))}>{pending ? <><LoaderCircle size={18} className="spin" aria-hidden="true" />处理中…</> : <>{mode === 'trusted-fixture' ? '加载离线番茄钟' : error ? '重试生成' : app ? '生成新应用' : '生成应用'}<ArrowRight size={18} aria-hidden="true" /></>}</button></div>
     {!app && <><ProjectJsonLandingImport onImportProject={importProject} /><ProjectJsonBackups onRestore={importProject} /></>}
-    <p className="ai-create-hint">{mode === 'legacy-v1' && '点击将请求 DeepSeek。'}成功创建后会替换当前应用，替换前自动保留本地备份；失败或取消保留原应用和数据。刷新前请下载项目 ZIP 或 JSON，稍后导入可继续编辑。</p>
+    <p className="ai-create-hint">{mode === 'legacy-v1' && 'DeepSeek 根据描述设计表单、列表和统计积木；生成结果经过结构校验。'}{mode === 'trusted-interactive' && 'AI 设计番茄钟配置，内置计时组件负责真实交互。'}成功创建后可预览、编辑和导出，替换前自动保留本地备份；失败或取消保留原应用和数据。刷新前请下载项目 ZIP 或 JSON，稍后导入可继续编辑。Mochi 修改会先展示预览，经你确认后应用。</p>
   </form>
   return <main className={`ai-create${app ? ' ai-create--workshop' : ' app'}`}>
     {!app && <><div className="app__bg" aria-hidden="true" /><header className="topbar"><Logo /><span className="topbar__tag"><span className="pixel-dot" aria-hidden="true" />AI 创作</span></header></>}
     {app ? <details className="ai-create-regenerate" open={pending || Boolean(error) || undefined}><summary>新的想法 · 重新生成</summary>{prompt}</details> : <div className="main"><div className="home">
-      <section className="hero"><p className="eyebrow"><Sparkles size={14} aria-hidden="true" />像搭乐高一样创造软件</p><h1 className="hero__title">把想法，<br /><span className="hero__accent">搭成现实。</span></h1><p className="hero__sub">和 Mochi 一起，把每个奇思妙想搭成属于自己的软件。</p>{prompt}<nav className="ai-create-links" aria-label="演示导航"><a href="/">学习管理 Demo</a><a href="/app-renderer">AppRenderer 示例</a></nav></section>
+      <section className="hero"><p className="eyebrow"><Sparkles size={14} aria-hidden="true" />像搭乐高一样创造软件</p><h1 className="hero__title">把想法，<br /><span className="hero__accent">搭成现实。</span></h1><p className="hero__sub">和 Mochi 一起，用真实 AI 把一句想法变成可操作的应用。</p>{prompt}<nav className="ai-create-links" aria-label="演示导航"><a href="/demo">学习管理示例</a><a href="/app-renderer">积木组件展厅</a></nav></section>
       <aside className="stage" aria-label="Mochi 展示区"><div className="speech" role="note"><span className="speech__name">Mochi</span>你负责天马行空，我们一起把想法一块块搭起来。</div><div className="stage__scene"><span className="float-brick float-brick--a" aria-hidden="true" /><span className="float-brick float-brick--b" aria-hidden="true" /><span className="float-brick float-brick--c" aria-hidden="true" /><MochiCat className="mochi" /><div className="stage__shadow" aria-hidden="true" /><div className="stage__plate" aria-hidden="true"><i /><i /><i /><i /><i /><i /></div></div></aside>
     </div></div>}
     {pending && <p className="ai-create-status" role="status">{mode === 'trusted-fixture' ? '正在验证离线配置' : 'AI 正在设计应用'}，请稍候。已有应用仍可使用。</p>}

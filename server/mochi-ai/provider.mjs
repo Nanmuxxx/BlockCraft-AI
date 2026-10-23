@@ -65,6 +65,9 @@ export function createDeepSeekProvider({ apiKey = process.env.DEEPSEEK_API_KEY?.
         throw Object.assign(new MochiError(error.code, error.message, error.status), { diagnostic: error.diagnostic })
       }
       if (error instanceof MochiError) throw error
+      if (error?.code === 'BUDGET_EXHAUSTED') throw new MochiError('BUDGET_EXHAUSTED', '共用 AI 余额或测试次数不足以支付本次请求。', 429)
+      if (error?.code === 'BUDGET_HALTED') throw new MochiError('BUDGET_HALTED', '共用 AI 账本校验异常，调用已安全暂停。', 503)
+      if (error?.code === 'PRICING_UNVERIFIED') throw new MochiError('PRICING_UNVERIFIED', '模型价格暂时无法复核，未发起付费请求。', 503)
       throw new MochiError('AI_UNAVAILABLE', 'Mochi 暂时无法回答，请稍后再试。', 502)
     } finally {
       clearTimeout(timer); controller.abort(); signal?.removeEventListener('abort', abort)

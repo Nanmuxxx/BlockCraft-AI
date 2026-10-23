@@ -137,7 +137,7 @@ test('trusted v2 admission uses principal identity and leaves the sole durable r
   assert.equal(stored.entries[0].status, 'settled')
 })
 
-test('budget exhaustion maps to HTTP 503 without provider egress beyond POLICY.maxCalls', async t => {
+test('budget exhaustion maps to HTTP 429 without provider egress beyond POLICY.maxCalls', async t => {
   let egress = 0
   const f = fixture(t, async () => { egress++; return response() })
   assert.ok(Number.isSafeInteger(POLICY.maxCalls) && POLICY.maxCalls > 0)
@@ -152,7 +152,8 @@ test('budget exhaustion maps to HTTP 503 without provider egress beyond POLICY.m
     Cookie: `__Host-bc_session=${token}`,
     'Idempotency-Key': requestId(POLICY.maxCalls + 1),
   })
-  assert.equal(denied.status, 503)
+  assert.equal(denied.status, 429)
+  assert.equal((await denied.json()).error.code, 'BUDGET_EXHAUSTED')
   assert.equal(egress, POLICY.maxCalls)
   assert.equal(ledger(f).entries.length, POLICY.maxCalls)
   const { shutdown } = await f.started

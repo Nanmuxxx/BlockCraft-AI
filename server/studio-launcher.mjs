@@ -4,7 +4,10 @@ import { dirname, isAbsolute, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { createAppServer, createOpaqueSessionPrincipalResolver, startServer, installShutdownHandlers } from './index.mjs'
 import { createPrincipalPaidGenerationRuntime } from './paid-gateway/runtime.mjs'
+import { createUnifiedPaidRuntime } from './paid-gateway/unified-runtime.mjs'
+import { UNIFIED_CUSTOMER_POLICY } from './paid-gateway/unified-ledger.mjs'
 import { createDeepSeekProvider } from './mochi-ai/provider.mjs'
+import { MochiError } from '../src/integrations/mochi-ai/protocol.mjs'
 import { POLICY, PRICING, STUDIO_PRICING, STUDIO_AUTHORIZATION, STUDIO_MVP_POLICY } from './paid-gateway/pricing.mjs'
 
 const refuse = () => { throw new Error('STUDIO_CONFIGURATION_REFUSED') }
@@ -33,7 +36,7 @@ function privateFile(path, maxBytes, metadataOnly = false, allowMountedDirectory
  * This launcher never provisions approvals, binding keys or initial durable state.
  */
 function readApproval(path, publicOrigin, policy = POLICY, allowMountedDirectory = false, studioAuthorization = false) {
-  const authorizationExpiry = studioAuthorization ? STUDIO_AUTHORIZATION.expiresAt : (policy === STUDIO_MVP_POLICY ? STUDIO_PRICING : PRICING).expiresAt
+  const authorizationExpiry = policy === UNIFIED_CUSTOMER_POLICY ? Number.MAX_SAFE_INTEGER : studioAuthorization ? STUDIO_AUTHORIZATION.expiresAt : (policy === STUDIO_MVP_POLICY ? STUDIO_PRICING : PRICING).expiresAt
   const value = JSON.parse(privateFile(path, 64 * 1024, false, allowMountedDirectory).toString('utf8'))
   const keys = ['version', 'publicOrigin', 'policyId', 'approval', 'sessions', ...(value?.issuer ? ['issuer'] : [])]
   if (!exactKeys(value, keys) || value.version !== 1 ||
@@ -67,7 +70,9 @@ function readApproval(path, publicOrigin, policy = POLICY, allowMountedDirectory
 
 export async function startStudioServer({ env = process.env, host = '127.0.0.1', port = 3001,
   fetchImpl, signalHandlers = true, issuerFault = () => {}, policy = POLICY, profile = 'production', allowMountedDirectory = false, mochiEnabled = false,
-  studioAuthorization = false, historicalDebit, verifyPricing, pricingGuard } = {}) {
+  studioAuthorization = false, historicalDebit, verifyPricing, pricingGuard, unifiedBudget } = {}) {
+  if (unifiedBudget && (policy !== UNIFIED_CUSTOMER_POLICY || profile !== 'unified-studio' ||
+      typeof verifyPricing !== 'function' || typeof pricingGuard !== 'function')) refuse()
   if (studioAuthorization && (policy !== STUDIO_MVP_POLICY || profile !== 'studio-mvp' || typeof verifyPricing !== 'function' || typeof pricingGuard !== 'function')) refuse()
   // Only a path is selected by env. No flag grants approval and no state is created here.
   const path = env.STUDIO_APPROVAL_PATH
@@ -85,7 +90,7 @@ export async function startStudioServer({ env = process.env, host = '127.0.0.1',
   // Every Studio launch requires an existing private canonical ledger, even
   // without the optional issuer. Inspect metadata only; Gateway owns parsing
   // and locking. Approval maxCalls never grants fresh budget/continuity.
-  privateFile(join(directory, 'studio-ledger.json'), 1024 * 1024, true, allowMountedDirectory)
+  if (!unifiedBudget) privateFile(join(directory, 'studio-ledger.json'), 1024 * 1024, true, allowMountedDirectory)
   let issuer
   const current = req => {
     try {
@@ -93,19 +98,25 @@ export async function startStudioServer({ env = process.env, host = '127.0.0.1',
       // Approval changes require a restart; revocation/expiry remain live.
       if (JSON.stringify(config.approval) !== JSON.stringify(approved.approval)) return null
       const issued = issuer?.session(config)
-      const principal = (issued ? createOpaqueSessionPrincipalResolver({ sessions: [...config.sessions, issued] }) : config.resolver)(req)
+      const test = unifiedBudget ? { sessionHash: unifiedBudget.testSessionHash, principal: unifiedBudget.testPrincipal,
+        appId: STUDIO_APP_ID, expiresAt: approved.approval.expiresAt, revoked: false } : null
+      const trustedSessions = [...config.sessions, ...(issued ? [issued] : []), ...(test ? [test] : [])]
+      const principal = createOpaqueSessionPrincipalResolver({ sessions: trustedSessions })(req)
       if (!principal) return null
-      const session = [...config.sessions, ...(issued ? [issued] : [])].find(s => s.principal === principal && !s.revoked && s.expiresAt > Date.now())
+      const session = trustedSessions.find(s => s.principal === principal && !s.revoked && s.expiresAt > Date.now())
       return session ? { principal, sessionId: session.sessionHash, appId: STUDIO_APP_ID } : null
     } catch { return null }
   }
+  let runtime
   const started = await startServer({ host, port,
     env: { DEEPSEEK_API_KEY: env.DEEPSEEK_API_KEY, DEEPSEEK_BUDGET_LEDGER_PATH: join(directory, 'studio-ledger.json') },
     bindingKey,
     resolvePrincipal: req => current(req)?.principal ?? null,
-    principalRuntimeFactory: options => createPrincipalPaidGenerationRuntime({ ...options, policy, profile, fetchImpl, allowMountedDirectory, mochiEnabled, studioAuthorization, historicalDebit, verifyPricing, pricingGuard }),
+    principalRuntimeFactory: options => runtime = unifiedBudget
+      ? createUnifiedPaidRuntime({ ...options, ...unifiedBudget, fetchImpl, allowMountedDirectory, verifyPricing, pricingGuard })
+      : createPrincipalPaidGenerationRuntime({ ...options, policy, profile, fetchImpl, allowMountedDirectory, mochiEnabled, studioAuthorization, historicalDebit, verifyPricing, pricingGuard }),
     interactive: {
-      enabled: true, approval: approved.approval, allowedOrigin: publicOrigin,
+      enabled: true, approval: approved.approval, allowedOrigin: publicOrigin, unifiedManagedBudget: Boolean(unifiedBudget),
       resolveAccess: (req, { principal }) => {
         const session = current(req)
         return session?.principal === principal ? { sessionId: session.sessionId, appId: session.appId, readOnly: false } : null
@@ -118,14 +129,16 @@ export async function startStudioServer({ env = process.env, host = '127.0.0.1',
         fieldPlanning: { enabled: true },
         mochi: mochiEnabled ? {
           enabled: true, allowedOrigin: publicOrigin,
+          unifiedManagedBudget: Boolean(unifiedBudget),
           approval: { ...approved.approval, maxCalls: 100, maxTotalTokens: 10_000_000 },
           resolveAccess: req => current(req),
           // These projects live solely in the authenticated owner's browser.
           // Validated structure is analyzed without accessing records or storage.
           authorizeContext: () => true,
-          reserveBudget: () => {
-            const budget = options.principalRuntime.mochiBudgetStatus()
-            return budget.remainingCalls > 0 && budget.remainingNano > 0
+          reserveBudget: ({ sessionId }) => {
+            const budget = options.principalRuntime.mochiBudgetStatus(sessionId)
+            if (budget.halted) throw new MochiError('BUDGET_HALTED', '共用 AI 账本校验异常，调用已安全暂停。', 503)
+            return (budget.remainingCalls === null || budget.remainingCalls > 0) && budget.remainingNano > 0
           },
           provider: { configured: true, model: PRICING.model,
             analyze(input, { signal, access }) {
@@ -155,7 +168,10 @@ export async function startStudioServer({ env = process.env, host = '127.0.0.1',
   let stopping
   const shutdown = () => stopping ??= (async () => { started.server.beginShutdown(); await issuer?.drain(); await started.shutdown() })()
   if (signalHandlers) installShutdownHandlers(shutdown)
-  return Object.freeze({ server: started.server, shutdown })
+  return Object.freeze({ server: started.server, shutdown, ...(unifiedBudget ? {
+    budgetStatus: account => runtime.budgetStatus(account),
+    resolveStudioPrincipal: req => current(req)?.principal ?? null,
+  } : {}) })
 }
 
 // Canonical v1: UTF8 JSON.stringify over fixed ordered fields below; no whitespace.

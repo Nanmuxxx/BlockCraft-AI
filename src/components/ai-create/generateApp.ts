@@ -21,6 +21,9 @@ export function initializeGeneratedProject(value: unknown): ProjectState {
 
 const errors: Record<string, string> = {
   AI_NOT_CONFIGURED: '后端尚未配置 AI 服务，请完成服务端配置后重试。',
+  BUDGET_EXHAUSTED: '共用 AI 余额或测试次数不足以支付本次请求，请联系管理员。',
+  BUDGET_HALTED: '共用 AI 账本校验异常，调用已安全暂停。',
+  PRICING_UNVERIFIED: '模型价格暂时无法复核，请稍后重试。',
 }
 
 // A response is data, never executable source. Bound bytes before JSON parsing.
@@ -68,7 +71,7 @@ async function readGenerationResponse(response: Response, signal: AbortSignal): 
   }
 }
 
-async function requestGeneration(idea: string, signal?: AbortSignal, interactive = false): Promise<unknown> {
+async function requestGeneration(idea: string, signal?: AbortSignal, interactive = false, onSource?: (source: string) => void): Promise<unknown> {
   const input = idea.trim()
   if (!input || input.length > 4000) throw new Error('请输入 1–4000 字的软件创意。')
   const controller = new AbortController()
@@ -80,7 +83,7 @@ async function requestGeneration(idea: string, signal?: AbortSignal, interactive
   try {
     controller.signal.throwIfAborted()
     const fetching = fetch('/api/ai/generate', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': crypto.randomUUID() },
       credentials: 'same-origin', redirect: 'error',
       body: JSON.stringify({ idea: input, ...(interactive ? { protocol: 'trusted-interactive/1' } : {}) }), signal: controller.signal,
     })
@@ -92,6 +95,7 @@ async function requestGeneration(idea: string, signal?: AbortSignal, interactive
     const body = await readGenerationResponse(response, controller.signal)
     controller.signal.throwIfAborted()
     if (!response.ok) {
+      if (response.status === 401) throw new Error('请先解锁本测试空间的 AI 创作，再生成应用。')
       const code = (body as { error?: { code?: unknown } } | null)?.error?.code
       if (interactive) {
         const safeCode = typeof code === 'string' && ['AI_DISABLED', 'AI_NOT_CONFIGURED', 'AI_INVALID_SPEC', 'AI_TIMEOUT', 'AI_UNAVAILABLE', 'UNAUTHORIZED', 'BUDGET_EXHAUSTED'].includes(code) ? `（${code}）` : ''
@@ -99,6 +103,7 @@ async function requestGeneration(idea: string, signal?: AbortSignal, interactive
       }
       throw new Error((typeof code === 'string' && Object.prototype.hasOwnProperty.call(errors, code) && errors[code]) || (response.status === 429 ? '请求过于频繁，请稍后重试。' : response.status === 504 ? 'AI 生成超时，请重试。' : `生成失败（HTTP ${response.status}），请稍后重试。`))
     }
+    if (response.headers.get('X-BlockCraft-Source') === 'deepseek' && response.headers.get('X-BlockCraft-Model') === 'deepseek-flash') onSource?.('DeepSeek 真实生成 · deepseek-flash')
     return body
   } catch (error) {
     if (controller.signal.aborted) throw new Error(CANCELLED)
@@ -113,8 +118,8 @@ async function requestGeneration(idea: string, signal?: AbortSignal, interactive
   }
 }
 
-export async function generateProject(idea: string, signal?: AbortSignal): Promise<ProjectState> {
-  const body = await requestGeneration(idea, signal)
+export async function generateProject(idea: string, signal?: AbortSignal, onSource?: (source: string) => void): Promise<ProjectState> {
+  const body = await requestGeneration(idea, signal, false, onSource)
   signal?.throwIfAborted()
   try {
     const state = initializeGeneratedProject(body)

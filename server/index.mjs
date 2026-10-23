@@ -333,6 +333,9 @@ function cliPrincipalBindingKey(env) {
 }
 
 function principalGatewayError(error) {
+  if (error?.code === 'BUDGET_EXHAUSTED') return fail(429, 'BUDGET_EXHAUSTED', '共用 AI 余额或测试次数不足以支付本次请求。')
+  if (error?.code === 'BUDGET_HALTED') return fail(503, 'BUDGET_HALTED', '共用 AI 账本校验异常，调用已安全暂停。')
+  if (error?.code === 'PRICING_UNVERIFIED') return fail(503, 'PRICING_UNVERIFIED', '模型价格暂时无法复核，未发起付费请求。')
   const status = paidRuntimeModule.paidGatewayHttpStatus?.(error) ?? 503
   const safeStatus = [400, 401, 409, 504].includes(status) ? status : 503
   return fail(safeStatus, safeStatus === 409 ? 'GENERATION_CONFLICT' : safeStatus === 401 ? 'UNAUTHORIZED' : safeStatus === 400 ? 'INVALID_INPUT' : safeStatus === 504 ? 'AI_TIMEOUT' : 'AI_UNAVAILABLE', '生成请求未完成，请检查授权或稍后重试。')

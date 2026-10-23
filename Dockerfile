@@ -18,7 +18,7 @@ RUN set -eu; \
     mkdir -p /app/runtime-server; \
     cp server/index.mjs server/trusted-interactive.mjs server/aiGenerationPrompt.mjs server/aiGenerationQuality.mjs /app/runtime-server/; \
     if [ -f server/mochi-plan.mjs ]; then cp server/mochi-plan.mjs /app/runtime-server/; fi; \
-    cp server/mochi-response.mjs /app/runtime-server/; \
+    cp server/mochi-response.mjs server/studio-launcher.mjs server/unified-studio-deployment.mjs /app/runtime-server/; \
     cp -R server/mochi-ai /app/runtime-server/mochi-ai; \
     cp -R server/.generated /app/runtime-server/.generated; \
     if [ -f server/ai-abort.mjs ]; then cp server/ai-abort.mjs /app/runtime-server/; fi; \
