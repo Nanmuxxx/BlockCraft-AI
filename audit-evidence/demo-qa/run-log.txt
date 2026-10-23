@@ -1,0 +1,19 @@
+[PASS] Q1: /ai-create 落地页加载 — hero 标题可见；输入框可见；导航链接=2；横向溢出=0px
+[PASS] Q2: AI 能力文案诚实性 — 提示="点击将请求 DeepSeek。成功创建后会替换当前应用；失败或取消保留原应用和数据。数据仅保留在当前页面，刷新后清空。"
+[PASS] Q3: Mochi 吉祥物显示（落地页） — 数量=1，全部可见且加载=true，alt="Mochi：奶白橘斑的像素猫，拖着橘色积木尾巴"
+[PASS] Q4: 落地页控制台 — pageErrors=0，consoleErrors=0，assetFailures=0
+[PASS] Q5: 离线演示主线（可信番茄钟 Fixture） — pending 观测=false；应用「考试专注番茄钟」出现；来源="离线固定 Fixture，非真实 DeepSeek 调用"
+[PASS] Q6: Workshop B 模式 + Mochi 面板 + AI 入口诚实禁用 — 积木卡片=1；面板吉祥物=2(加载=true)；禁用原因可见=true
+[PASS] Q7: C 模式运行与增删（番茄钟计时 + 示例 CRUD） — 番茄钟="25:00"(已暂停 / 待开始)；表单填写=3 已保存=true；列表行 2→3→2(填写=2)；metric="2"
+[PASS] Q8: 演示流程可重复运行 — 第 2 次全流程加载「考试专注番茄钟」成功
+[PASS] Q9: 失败/取消反馈与旧应用保留 — 路径=立即失败（CRLF 检出，见 F1）；alert="生成失败（HTTP 502），请稍后重试。 当前应用和数据已保留。"；旧应用保留=true
+[FINDING] F1: v1 生成在 CRLF 检出下 fail-closed（发现项，不计分） — 当前检出下 v1 生成返回 502（alert="生成失败（HTTP 502），请稍后重试。 当前应用和数据已保留。"）
+[PASS] Q10: 桌面溢出审计（三条路由） — /ai-create=0px，/= 0px，/app-renderer=0px
+[PASS] Q11: / 学习 Demo 全流程 + Mochi 面板（本地 Mock + 诚实护栏） — 吉祥物加载=true；澄清题=true；「Mochi 的小窝」=true；Mock 标识="Mock"；护栏提示=true("当前 Mock 只能介绍选中的任务、课程或统计积木，不能")；发送方式=快捷提示；消息=2 条
+[PASS] Q12: /app-renderer 示例切换 — 标题 "社团迎新报名" → "阅读记录"
+[PASS] Q13: 手机视口（390×844）落地与离线生成 — 落地溢出=0px；吉祥物可见=true；加载后溢出=0px；番茄钟计时可见=true
+[PASS] Q14: 手机视口溢出（/ 与 /app-renderer） — /=0px，/app-renderer=0px
+[PASS] Q15: 全程控制台健康（桌面+手机） — pageErrors=0，consoleErrors=0，assetFailures=0
+DONE demo-qa: 16 checks (incl. 1 FINDING), PASS=15, FAIL=0 -> none
+Console warnings (informational): 0
+Evidence: c:\Users\36317\blockcraft-phase2-workshop\BlockCraft-AI-main\audit-evidence\demo-qa
