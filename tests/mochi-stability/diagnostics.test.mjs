@@ -83,3 +83,17 @@ test('model widening hides an old optional field: separate scope rejection', asy
   const r = await f.post(); assert.equal(r.status, 422); assert.equal(r.body.error.code, 'INTENT_SCOPE_VIOLATION')
   assert.equal(f.events[0].reason, 'intent')
 })
+
+test('plan outer JSON and UTF8 failures are distinguished from interrupted body transport', async t => {
+  for (const [output, code, reason] of [
+    [() => new Response(secret), 'AI_INVALID_RESPONSE', 'json'],
+    [() => new Response(new Uint8Array([0xc3, 0x28])), 'AI_INVALID_RESPONSE', 'encoding'],
+    [() => new Response(new ReadableStream({ start(controller) { controller.error(new Error(secret)) } })), 'AI_UNAVAILABLE', null],
+  ]) {
+    const f = await planFixture(t, output)
+    const result = await f.post()
+    assert.equal(result.status, 502); assert.equal(result.body.error.code, code); assert.equal(f.calls(), 1)
+    if (reason) assert.deepEqual(f.events, [{ event: 'mochi_model_rejected', channel: 'plan', stage: 'body', reason, finishReason: 'unavailable' }])
+    else assert.deepEqual(f.events, [])
+  }
+})

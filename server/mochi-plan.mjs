@@ -192,7 +192,11 @@ async function readBounded(stream, signal) {
       if (size > maxBytes) fail('INPUT_TOO_LARGE', 413)
       chunks.push(Buffer.from(value))
     }
-    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))
+    let text
+    try { text = new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)) }
+    catch { throw Object.assign(new Error('INVALID_INPUT'), { bodyReason: 'encoding' }) }
+    try { return JSON.parse(text) }
+    catch { throw Object.assign(new Error('INVALID_INPUT'), { bodyReason: 'json' }) }
   } finally {
     if (reader) { void reader.cancel().catch(() => {}); reader.releaseLock() }
     else { void iterator.return().catch(() => {}); stream.resume() }
@@ -242,7 +246,14 @@ export function createMochiPlanHandler({ enabled = false, resolveAccess, resolve
       if (!response.ok) { void response.body?.cancel().catch(() => {}); fail('AI_UNAVAILABLE', 502) }
       let envelope
       try { envelope = await abortable(readBounded(response.body, controller.signal), controller.signal) }
-      catch (error) { if (controller.signal.aborted) throw error; throw invalidResponse('body', error.code === 'INPUT_TOO_LARGE' ? 'size' : error instanceof SyntaxError ? 'json' : 'encoding') }
+      catch (error) {
+        if (controller.signal.aborted) throw error
+        if (error.code === 'INPUT_TOO_LARGE') throw invalidResponse('body', 'size')
+        if (['json', 'encoding'].includes(error.bodyReason)) throw invalidResponse('body', error.bodyReason)
+        // A body stream can fail before decoding. Do not mislabel transport
+        // interruption as invalid UTF-8 or blame model output we never received.
+        fail('AI_UNAVAILABLE', 502)
+      }
       const content = modelContent(envelope)
       const candidate = validateFieldCandidate(parseModelJson(content, 'content', envelope.choices[0].finish_reason), input)
       try { assertPlanIntent(candidate, input) }
