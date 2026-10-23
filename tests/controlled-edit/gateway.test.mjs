@@ -161,7 +161,7 @@ test('real HTTP server accepts all four operations for form/gallery/metric throu
   let calls = 0, captured
   const server = createAppServer({ apiKey: 'offline-fixture-key', fieldPlanning: { enabled: true, resolveAccess: () => true }, fetchImpl: async (_url, init) => {
     calls++; captured = JSON.parse(init.body); const i = JSON.parse(captured.messages[1].content)
-    const operation = i.prompt
+    const operation = i.prompt.includes('新增') ? 'add' : i.prompt.includes('删除') ? 'remove' : i.prompt.includes('顺序') ? 'reorder' : 'configure'
     const commands = operation === 'add' ? [add(i.block.type)]
       : operation === 'remove' ? [{ type: 'removeBlock', blockId: i.block.id }]
         : operation === 'reorder' ? [{ type: 'reorderBlocks', blockIds: ['selected', 'before', 'after'] }]
@@ -174,7 +174,7 @@ test('real HTTP server accepts all four operations for form/gallery/metric throu
   server.listen(0, '127.0.0.1'); await once(server, 'listening')
   t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve) }))
   for (const type of ['form', 'gallery', 'metric']) for (const operation of ['configure', 'add', 'remove', 'reorder']) {
-    const result = await fetch(`http://127.0.0.1:${server.address().port}/api/mochi-plan`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...input(type), prompt: operation }) })
+    const result = await fetch(`http://127.0.0.1:${server.address().port}/api/mochi-plan`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...input(type), prompt: { configure: { form: '调整表单圆角', gallery: '清空图库图片', metric: '调整为金额合计' }[type], add: '新增' + { form: '表单', gallery: '图库', metric: '统计积木' }[type], remove: '删除选中积木', reorder: '调整选中积木顺序' }[operation] }) })
     assert.equal(result.status, 200, `${type}/${operation}`)
     const body = await result.json(); assert.equal(body.source, 'offline-fixture')
     assert.equal(body.candidate.request.commands[0].type, operation === 'configure' ? { form: 'configureBlockPresentation', gallery: 'configureGallery', metric: 'configureMetric' }[type] : { add: 'addBlock', remove: 'removeBlock', reorder: 'reorderBlocks' }[operation])

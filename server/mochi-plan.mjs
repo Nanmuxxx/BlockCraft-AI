@@ -1,3 +1,6 @@
+import { invalidResponse, reportModelFailure, modelContent, parseModelJson } from './mochi-response.mjs'
+import { resolvePlanIntent, assertPlanIntent } from '../src/integrations/mochi/intent.mjs'
+import { modificationErrors } from '../src/integrations/mochi-ai/errors.mjs'
 import { authorizeGeneration } from './paid-gateway/access.mjs'
 import { requireControlledEgress } from './paid-gateway/egress.mjs'
 import { isPaidTransport, defaultModelForTransport } from './paid-gateway/provider.mjs'
@@ -17,7 +20,7 @@ export const FIELD_PLAN_INSTRUCTION = `你是 Mochi 积木修改规划器。只�
 排序使用 {"type":"reorderBlocks","blockIds":["该步全部内置积木id的最终顺序"]}。输入 blockOrder 为当前内置顺序；先前新增的积木也必须包含，已删积木须移除。只可移动选中积木及本批新增积木，其他已有积木的相对顺序必须保留，禁止加入 custom ID。宿主再次校验排序权限。
 所有新增字段、积木、关联 id 必须避开输入 reservedIds（全项目已占用结构 ID）、输入其他已有id及本批次id；宿主仍会再次校验全局冲突。
 新增字段必须同时加入选中积木最终显示列表；仅增加 optional 字段，不能修改已有字段类型或 required。隐藏只从 fieldIds 移除，绝不删除 schema 或记录；恢复使用 entity.fields 中已有 id。保留所有未被明确要求隐藏的字段和顺序。form 必须显示全部必填字段；list 可选择实体内任意非空字段集合。
-只能配置选中积木；新积木配置放在 addBlock 内。所有场景不能改其他已有积木的配置、记录、资源、权限、模型、URL，不能返回代码、解释、未知属性、custom props 或源码、番茄钟操作。不得返回无变化计划。请求不支持时返回空 commands，宿主将显示拒绝。计划必须经过宿主权限校验、确定性执行模拟、预览及用户确认才可应用。`
+只执行用户明确请求的操作，绝不顺带美化、隐藏字段、新增或删除积木。新增字段时仅在选中积木原fieldIds末尾追加新增字段，保留原字段和顺序；共享实体扩展不等于修改其他积木显示。只能配置选中积木；新积木配置放在 addBlock 内。所有场景不能改其他已有积木的配置、记录、资源、权限、模型、URL，不能返回代码、解释、未知属性、custom props 或源码、番茄钟操作。不得返回无变化计划。请求不支持时返回空 commands，宿主将显示拒绝。计划必须经过宿主权限校验、确定性执行模拟、预览及用户确认才可应用。`
 const endpoint = 'https://api.deepseek.com/chat/completions'
 const maxBytes = 64 * 1024
 function fail(code, status = 400) { throw Object.assign(new Error(code), { code, status }) }
@@ -91,17 +94,22 @@ export function validatePlanInput(input) {
 }
 /** Additional model-output boundary; the Host still owns global IDs, scope, CAS and authorization. */
 export function validateFieldCandidate(candidate, input) {
+  let reason = 'shape'
   try {
     validatePlanInput(input)
     object(candidate, ['request', 'capabilityIds'])
+    reason = 'capabilities'
     if (!Array.isArray(candidate.capabilityIds) || new Set(candidate.capabilityIds).size !== candidate.capabilityIds.length
       || candidate.capabilityIds.some(value => !['form', 'list', 'gallery', 'metric-count', 'metric-sum', 'metric-average'].includes(value))) fail('AI_INVALID_RESPONSE')
+    reason = 'command_schema'
     assertCommandRequest(candidate.request)
+    reason = 'binding'
     const request = candidate.request
     if (request.requestId !== input.requestId || request.baseRevision !== input.baseRevision || request.commands.length > 16) fail('AI_INVALID_RESPONSE')
     // These are egress/output scope guards only. The shared command schema owns
     // command shapes; the host planner alone simulates the complete project,
     // checks authorization/CAS and supplies the atomic execution and undo path.
+    reason = 'command_constraints'
     const fields = new Map((input.entity?.fields ?? []).map(field => [field.id, field])), added = new Set(), capabilities = new Set()
     const assets = new Set((input.assets ?? []).map(asset => asset.id))
     const reserved = new Set([...(input.reservedIds ?? []), ...(input.blockOrder ?? []),
@@ -159,15 +167,17 @@ export function validateFieldCandidate(candidate, input) {
         reordered = true; order = [...command.blockIds]
       } else fail('AI_INVALID_RESPONSE')
     }
+    reason = 'capabilities'
     if (candidate.capabilityIds.length !== capabilities.size || !candidate.capabilityIds.every(value => capabilities.has(value))
       || ![...added].every(id => shown?.includes(id)) || !requiredShown(input.block.type, shown)) fail('AI_INVALID_RESPONSE')
     const presentationChanged = Object.keys(presentation).some(key => presentation[key] !== input.block.presentation?.[key])
     const galleryChanged = !same(gallery, { imageIds: input.block.imageIds, layout: input.block.layout })
     const metricChanged = !same(metric, { aggregation: input.block.aggregation, ...(input.block.fieldId ? { fieldId: input.block.fieldId } : {}) })
     const orderChanged = input.blockOrder && !same(order, input.blockOrder)
+    reason = 'no_change'
     if (!added.size && !addedBlocks && !removed && same(shown, input.block.fieldIds) && !presentationChanged && !galleryChanged && !metricChanged && !orderChanged) fail('AI_INVALID_RESPONSE')
     return candidate
-  } catch { fail('AI_INVALID_RESPONSE', 502) }
+  } catch { throw invalidResponse('candidate', reason, 'stop') }
 }
 async function readBounded(stream, signal) {
   let size = 0; const chunks = []
@@ -194,7 +204,7 @@ function send(res, status, value) {
   res.end(JSON.stringify(value))
 }
 /** Default deny. A trusted local/deployment composition supplies auth and budgeted egress. */
-export function createMochiPlanHandler({ enabled = false, resolveAccess, resolveRequest, allowedOrigin = '', apiKey, fetchImpl = globalThis.fetch, model = defaultModelForTransport(fetchImpl), timeoutMs = 30000 } = {}) {
+export function createMochiPlanHandler({ enabled = false, resolveAccess, resolveRequest, allowedOrigin = '', apiKey, fetchImpl = globalThis.fetch, model = defaultModelForTransport(fetchImpl), timeoutMs = 30000, onDiagnostic } = {}) {
   let busy = false
   return async (req, res) => {
     const path = (req.url || '').split('?')[0]
@@ -221,6 +231,7 @@ export function createMochiPlanHandler({ enabled = false, resolveAccess, resolve
       let input
       try { input = validatePlanInput(await abortable(readBounded(req, controller.signal), controller.signal)) }
       catch (e) { if (e.status) throw e; fail('INVALID_INPUT') }
+      resolvePlanIntent(input) // Clarification happens before any budget reservation or paid call.
       let requestOptions = { apiKey, fetchImpl, model }
       if (resolveRequest) requestOptions = await abortable(resolveRequest(req, input, controller.signal), controller.signal)
       if (!requestOptions?.apiKey || typeof requestOptions.fetchImpl !== 'function') fail('AI_DISABLED', 503)
@@ -228,21 +239,21 @@ export function createMochiPlanHandler({ enabled = false, resolveAccess, resolve
       const response = await abortable(requestOptions.fetchImpl(endpoint, { method: 'POST', redirect: 'error', signal: controller.signal,
         headers: { Authorization: `Bearer ${requestOptions.apiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: requestOptions.model, messages: [{ role: 'system', content: FIELD_PLAN_INSTRUCTION }, { role: 'user', content: JSON.stringify(input) }], response_format: { type: 'json_object' }, stream: false, max_tokens: 2048 }) }), controller.signal)
-      if (!response.ok) { await response.body?.cancel(); fail('AI_UNAVAILABLE', 502) }
-      let candidate
-      try {
-        const envelope = await abortable(readBounded(response.body, controller.signal), controller.signal)
-        const choice = envelope?.choices?.[0]
-        if (envelope.error || envelope.choices?.length !== 1 || choice?.finish_reason !== 'stop' || choice.message?.role !== 'assistant'
-          || choice.message.refusal || choice.message.tool_calls || choice.message.function_call || typeof choice.message.content !== 'string') fail('AI_INVALID_RESPONSE')
-        candidate = validateFieldCandidate(JSON.parse(choice.message.content), input)
-      } catch { fail('AI_INVALID_RESPONSE', 502) }
+      if (!response.ok) { void response.body?.cancel().catch(() => {}); fail('AI_UNAVAILABLE', 502) }
+      let envelope
+      try { envelope = await abortable(readBounded(response.body, controller.signal), controller.signal) }
+      catch (error) { if (controller.signal.aborted) throw error; throw invalidResponse('body', error.code === 'INPUT_TOO_LARGE' ? 'size' : error instanceof SyntaxError ? 'json' : 'encoding') }
+      const content = modelContent(envelope)
+      const candidate = validateFieldCandidate(parseModelJson(content, 'content', envelope.choices[0].finish_reason), input)
+      try { assertPlanIntent(candidate, input) }
+      catch (error) { reportModelFailure('plan', invalidResponse('candidate', 'intent', 'stop'), onDiagnostic); throw error }
       controller.signal.throwIfAborted()
       send(res, 200, { candidate, source: isPaidTransport(requestOptions.fetchImpl) ? 'deepseek' : 'offline-fixture', model: requestOptions.model })
     } catch (e) {
-      const known = ['UNAUTHORIZED', 'ORIGIN_REJECTED', 'AI_DISABLED', 'AI_BUSY', 'METHOD_NOT_ALLOWED', 'INVALID_INPUT', 'FORM_REQUIRED', 'INPUT_TOO_LARGE', 'AI_INVALID_RESPONSE', 'AI_UNAVAILABLE', 'BUDGET_EXHAUSTED', 'BUDGET_HALTED', 'PRICING_EXPIRED']
+      reportModelFailure('plan', e, onDiagnostic)
+      const known = [...Object.keys(modificationErrors), 'UNAUTHORIZED', 'ORIGIN_REJECTED', 'AI_DISABLED', 'AI_BUSY', 'METHOD_NOT_ALLOWED', 'INVALID_INPUT', 'FORM_REQUIRED', 'INPUT_TOO_LARGE', 'AI_INVALID_RESPONSE', 'AI_UNAVAILABLE', 'BUDGET_EXHAUSTED', 'BUDGET_HALTED', 'PRICING_EXPIRED']
       const code = controller.signal.aborted ? 'AI_TIMEOUT' : known.includes(e.code) ? e.code : 'AI_UNAVAILABLE'
-      send(res, controller.signal.aborted ? 504 : e.status || 503, { error: { code, message: '积木计划未完成，项目未修改。请检查连接、预算或输入后重试。' } })
+      send(res, controller.signal.aborted ? 504 : e.status || 503, { error: { code, message: modificationErrors[code] || '积木计划未完成，项目未修改。请检查输入或连接。' } })
     } finally { clearTimeout(timer); res.off('close', cancel); controller.abort(); if (acquired) busy = false }
     return true
   }

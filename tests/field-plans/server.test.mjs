@@ -6,7 +6,7 @@ import { validatePlanInput, validateFieldCandidate } from '../../server/mochi-pl
 import { PRICING, POLICY } from '../../server/paid-gateway/pricing.mjs'
 import { createPaidTransport } from '../../server/paid-gateway/provider.mjs'
 
-const input = () => ({ requestId: 'field-request', baseRevision: 2, prompt: '新增备注',
+const input = () => ({ requestId: 'field-request', baseRevision: 2, prompt: '新增一个可选文本字段备注',
   block: { id: 'form', name: '报名表', type: 'form', fieldIds: ['name', 'email'] },
   entity: { id: 'people', name: '报名者', fields: [
     { id: 'name', name: '姓名', type: 'text', required: true },

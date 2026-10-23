@@ -20,12 +20,12 @@ const { createModelPlanProvider } = await import('../../src/integrations/mochi/m
 function setup(transform = x => x) {
   const runtime = createAppRuntime(createClubRegistrationExample())
   const host = createMochiHost(runtime, createModelPlanProvider(async ({ request }) => JSON.stringify(transform({
-    request: { requestId: request.requestId, baseRevision: request.baseRevision, commands: [{ type: 'configureBlockPresentation', blockId: request.block.id, presentation: { buttonText: request.prompt, backgroundColor: '#abcdef', borderRadius: 12 } }] }, capabilityIds: [],
+    request: { requestId: request.requestId, baseRevision: request.baseRevision, commands: [{ type: 'configureBlockPresentation', blockId: request.block.id, presentation: { buttonText: request.prompt.match(/按钮文案设为「(.*?)」/)?.[1] ?? request.prompt, backgroundColor: '#abcdef', borderRadius: 12 } }] }, capabilityIds: [],
   }))))
   host.setSelection('registration-form')
   return { runtime, host }
 }
-const preview = async (host, text = '立即报名') => { await host.callbacks.onRequestPlan(text); return host.getSnapshot().preview.planId }
+const preview = async (host, text = '立即报名') => { await host.callbacks.onRequestPlan(`把按钮文案设为「${text}」，调整背景、文字颜色和圆角`); return host.getSnapshot().preview.planId }
 test('provider JSON → preview → confirm → shared B/C Runtime; two edits and idempotent confirmation', async () => {
   const { runtime, host } = setup()
   const before = runtime.getSnapshot()

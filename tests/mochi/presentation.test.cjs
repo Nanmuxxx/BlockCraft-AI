@@ -20,7 +20,7 @@ function setup(transform = x => x) {
   const provider = createModelPlanProvider(async ({ request }) => JSON.stringify(transform({
     request: { requestId: request.requestId, baseRevision: request.baseRevision, commands: [{
       type: 'configureBlockPresentation', blockId: request.block.id,
-      presentation: { buttonText: request.prompt, backgroundColor: '#abcdef', textColor: '#123456', borderRadius: 12 },
+      presentation: { buttonText: request.prompt.match(/按钮文案设为「(.*?)」/)?.[1] ?? request.prompt, backgroundColor: '#abcdef', textColor: '#123456', borderRadius: 12 },
     }] }, capabilityIds: [],
   })))
   const host = createMochiHost(runtime, provider)
@@ -28,7 +28,7 @@ function setup(transform = x => x) {
   return { host, runtime }
 }
 async function preview(host, prompt = '立即报名') {
-  await host.callbacks.onRequestPlan(prompt)
+  await host.callbacks.onRequestPlan(`把按钮文案设为「${prompt}」，调整背景、文字颜色和圆角`)
   return host.getSnapshot().preview.planId
 }
 

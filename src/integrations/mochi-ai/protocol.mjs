@@ -82,13 +82,16 @@ export function validateRequest(input) {
 }
 export function binding(c) { return { appId: c.appId, instanceId: c.instanceId, revision: c.revision, selectedBlockId: c.selectedBlockId, mode: c.mode } }
 export function validateAdvice(value, context) {
-  object(value, ['message', 'suggestions'])
-  check(short(value.message, LIMITS.messageChars) && Array.isArray(value.suggestions) && value.suggestions.length <= LIMITS.suggestions, 'AI_INVALID_RESPONSE', 'Mochi 回复不符合协议。', 502)
+  const reject = reason => { throw Object.assign(new MochiError('AI_INVALID_RESPONSE', 'Mochi 回复不符合协议。', 502), { validationReason: reason }) }
+  const shape = (v, keys) => { if (!v || typeof v !== 'object' || Array.isArray(v) || Object.keys(v).some(k => !keys.includes(k)) || !keys.every(k => Object.hasOwn(v, k))) reject('shape') }
+  shape(value, ['message', 'suggestions'])
+  if (!short(value.message, LIMITS.messageChars) || !Array.isArray(value.suggestions) || value.suggestions.length > LIMITS.suggestions) reject('schema')
   for (const s of value.suggestions) {
-    object(s, ['text','reason','blockId','priority','requiresUserAction','kind'])
-    check(short(s.text, 240) && short(s.reason, 400) && (s.blockId === null || context.blocks.some(b => b.id === s.blockId)) &&
-      ['low','medium','high'].includes(s.priority) && typeof s.requiresUserAction === 'boolean' && ['explain','design-change'].includes(s.kind) &&
-      (s.kind !== 'design-change' || s.requiresUserAction), 'AI_INVALID_RESPONSE', 'Mochi 建议无效或引用了未知积木。', 502)
+    shape(s, ['text','reason','blockId','priority','requiresUserAction','kind'])
+    if (!short(s.text, 240) || !short(s.reason, 400) || !['low','medium','high'].includes(s.priority)
+      || typeof s.requiresUserAction !== 'boolean' || !['explain','design-change'].includes(s.kind)) reject('schema')
+    if (s.blockId !== null && !context.blocks.some(b => b.id === s.blockId)) reject('reference')
+    if (s.kind === 'design-change' && !s.requiresUserAction) reject('action')
   }
   return value
 }

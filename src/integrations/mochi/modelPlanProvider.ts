@@ -1,3 +1,5 @@
+import { resolvePlanIntent, assertPlanIntent } from './intent.mjs'
+import { modificationErrors } from '../mochi-ai/errors.mjs'
 import type { PlanProvider } from './host'
 import { toMinimalPlanInput } from './planning'
 import { AppSpecError } from '../../model/appSpecValidation'
@@ -21,7 +23,7 @@ reorderBlocks: {type:"reorderBlocks",blockIds:string[]}. Include every surviving
 removeBlock deletes only the selected form/list/gallery/metric and preserves records, schema and assets.
 capabilityIds must exactly equal the unique capability IDs of all added blocks: form/list/gallery, or metric-count/metric-sum/metric-average according to each metric's aggregation. Never use metric as a capability ID. Empty if no additions.
 IDs must be unique and avoid reservedIds and all IDs introduced in the batch. appId identifies the current project. Keep existing displayed fields unless explicitly asked to hide them. New fields must be optional and displayed by the selected form/list to preserve existing records.
-Only modify the selected block and its bound entity; adding an optional field can affect other blocks sharing that entity.
+Only perform explicitly requested command categories and presentation keys. Never add opportunistic edits. For a field addition append exactly one optional field to the selected block without hiding or reordering existing fields. Only modify the selected block and its bound entity; shared schema expansion does not change other blocks display configuration.
 Never return scripts, TSX, event handlers, record data, permissions, custom props/source, timers, a replacement project or a new protocol.
 For gallery edits, return only existing project asset IDs; never return data URLs, uploads, arbitrary URLs or asset mutation commands.
 If the requested operation is unsupported, return an empty commands array so the host rejects it; do not pretend to apply it.
@@ -45,6 +47,7 @@ export function createModelPlanProvider(complete: ModelPlanCompletion, { timeout
   return async request => {
     request.signal.throwIfAborted()
     const input = toMinimalPlanInput(request)
+    try { resolvePlanIntent(input) } catch { throw new AppSpecError('INTENT_CLARIFICATION_REQUIRED', modificationErrors.INTENT_CLARIFICATION_REQUIRED) }
     // Imported AppSpecs can contain large labels even when structurally valid.
     // Bound actual UTF-8 egress before invoking any authorized transport; never
     // truncate metadata because that could change the meaning of an edit.
@@ -84,7 +87,11 @@ export function createModelPlanProvider(complete: ModelPlanCompletion, { timeout
     }
     request.signal.throwIfAborted()
     if (typeof output !== 'string' || new TextEncoder().encode(output).byteLength > 64 * 1024) throw new AppSpecError('INVALID_MODEL_RESPONSE', '修改计划超出响应限制。')
-    try { return JSON.parse(output) as unknown }
+    let candidate: unknown
+    try { candidate = JSON.parse(output) as unknown }
     catch { throw new AppSpecError('INVALID_MODEL_RESPONSE', '修改计划不是有效 JSON。') }
+    try { assertPlanIntent(candidate, input) }
+    catch (error) { const code = error && typeof error === 'object' && 'code' in error ? String(error.code) : 'AI_INVALID_RESPONSE'; throw new AppSpecError(code, modificationErrors[code] || modificationErrors.AI_INVALID_RESPONSE) }
+    return candidate
   }
 }
