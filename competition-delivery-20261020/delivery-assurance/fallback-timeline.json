@@ -1,0 +1,79 @@
+[
+  {
+    "name": "01-intro",
+    "output_start": 0,
+    "output_end": 10,
+    "source_start": null,
+    "caption": "产品目标与当前状态；全片为字幕演示，无旁白"
+  },
+  {
+    "name": "02-scope",
+    "output_start": 10,
+    "output_end": 18,
+    "source_start": null,
+    "caption": "B/C 源录屏：固定 AppSpec Fixture；非真实模型生成"
+  },
+  {
+    "name": "03-overview",
+    "output_start": 18,
+    "output_end": 22.1,
+    "source_start": 7,
+    "caption": "B 模式：表单、名单与人数统计"
+  },
+  {
+    "name": "04-inspector",
+    "output_start": 22.1,
+    "output_end": 29.0,
+    "source_start": 11.1,
+    "caption": "Inspector：新增邮箱字段并勾选展示"
+  },
+  {
+    "name": "05-drag",
+    "output_start": 29.0,
+    "output_end": 34.5,
+    "source_start": 18,
+    "caption": "拖动人数积木，调整可视布局"
+  },
+  {
+    "name": "06-runtime",
+    "output_start": 34.5,
+    "output_end": 44.7,
+    "source_start": 23.5,
+    "caption": "C 模式：填写报名记录，名单出现数据，人数变为 1"
+  },
+  {
+    "name": "07-roundtrip",
+    "output_start": 44.7,
+    "output_end": 52.9,
+    "source_start": 33.7,
+    "caption": "同一会话内 B/C 往返，字段与业务记录仍保留"
+  },
+  {
+    "name": "08-gallery",
+    "output_start": 52.9,
+    "output_end": 66.9,
+    "source_start": null,
+    "caption": "Gallery：历史独立离线 QA 截图；未合并、未公网验收"
+  },
+  {
+    "name": "09-mochi",
+    "output_start": 66.9,
+    "output_end": 78.9,
+    "source_start": null,
+    "caption": "Mochi：历史受控链路；正式 Provider 未启用"
+  },
+  {
+    "name": "10-real-slot",
+    "output_start": 78.9,
+    "output_end": 90.9,
+    "source_start": null,
+    "caption": "真实生成待验收；本段仅为诚实状态说明与替换窗口"
+  },
+  {
+    "name": "11-end",
+    "output_start": 90.9,
+    "output_end": 105.0,
+    "source_start": null,
+    "caption": "保底视频候选；真实生成与公网验收仍待完成"
+  }
+]

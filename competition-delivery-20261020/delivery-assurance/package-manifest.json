@@ -1,0 +1,227 @@
+[
+  {
+    "path": "DELIVERY-CHECKLIST.md",
+    "bytes": 5510,
+    "sha256": "0d987e38d920a307a49f0b5efc1f80c2ec4cfe561af6a99da77a39880a2da8a6"
+  },
+  {
+    "path": "BP-FOCUS-REVIEW.md",
+    "bytes": 5189,
+    "sha256": "b7f3447d2427961ecd6987b1b6290db3e8b4fb55517f32a301f24da7259cfb12"
+  },
+  {
+    "path": "VIDEO-SCRIPT.md",
+    "bytes": 5467,
+    "sha256": "e65c88065454c6eca61013b982d03c12127ccf45002976555bb1ed0acdb73bb8"
+  },
+  {
+    "path": "VIDEO-R02-INDEPENDENT-REVIEW.md",
+    "bytes": 2211,
+    "sha256": "3142d9e5e471ed85ea906838e93912e3361673a245804a72c03eecb359aa89f7"
+  },
+  {
+    "path": "PUBLIC-SMOKE.md",
+    "bytes": 3321,
+    "sha256": "264a29351ae5191fd190e2656fc4221308ca51fe14e56ff8e202846694552fbe"
+  },
+  {
+    "path": "REMOTE-HANDOFF.md",
+    "bytes": 2677,
+    "sha256": "efbf6b3ecf7013aac73f1b6514440f75c7db2534df8b0b35067369dd4cc0a068"
+  },
+  {
+    "path": "BlockCraftAI-OFFLINE-FALLBACK-105s-R01.mp4",
+    "bytes": 4620783,
+    "sha256": "9167633543ccaf30dd779770abc44cb253b43c0efdf3368f6ab0a4782c8381f2"
+  },
+  {
+    "path": "BlockCraftAI-OFFLINE-FALLBACK-105s-R01.srt",
+    "bytes": 1045,
+    "sha256": "894cf5f86cb714990ee7ed8b46b9f4140597fdaee430f6dffa05bcb6ee82ae0f"
+  },
+  {
+    "path": "fallback-audit.json",
+    "bytes": 432,
+    "sha256": "d37a009befdc4851dd708843fea0b70bae4f07856c24948edfb558cb8eb108d2"
+  },
+  {
+    "path": "fallback-timeline.json",
+    "bytes": 2105,
+    "sha256": "a53ffb2820558e6fa5ed7e3c7d932859564b1d85cafd03ba10afee3ad0883dfe"
+  },
+  {
+    "path": "fallback-contact.png",
+    "bytes": 732961,
+    "sha256": "46daf28e3abe2d7024f446f02d5daa922f2db6fae4b3c848b6d5a875e4b648cf"
+  },
+  {
+    "path": "fallback-probe.txt",
+    "bytes": 895,
+    "sha256": "3709ac9869f595386dd20a5fda12fc4f1faf9a3e9ac525d4482509b3ecf337f7"
+  },
+  {
+    "path": "artifact-audit.json",
+    "bytes": 2437,
+    "sha256": "d06a6abc815f1208f585f4d8fe1af1dedc6790bc7208df2518be269df1a3f601"
+  },
+  {
+    "path": "received-audit.json",
+    "bytes": 1108,
+    "sha256": "e8a27a62c844b6a40dcc6cac61e665b5552d423c08dcc4271fa53a33314c869d"
+  },
+  {
+    "path": "bp-current-text.txt",
+    "bytes": 13319,
+    "sha256": "601fd171e0837a04c3398fd4eab8cfe90f85f882b6c4d70c2474b67a89317145"
+  },
+  {
+    "path": "bp-mac-text.txt",
+    "bytes": 10996,
+    "sha256": "443fc7c111971b075be1f74863c4b51ca52e98bf2e8dd768320ffda8b87d7a28"
+  },
+  {
+    "path": "build_fallback.py",
+    "bytes": 6633,
+    "sha256": "10b5051e216b4aa21181c372c8e786af05dc7442fd4f8235af3f23f567683065"
+  },
+  {
+    "path": "gallery-offline-source.png",
+    "bytes": 559959,
+    "sha256": "5d84acdd17984110d3c9ca54192b96967909dcbaaf27a216ac011222bcdec6c7"
+  },
+  {
+    "path": "gallery-qa-REPORT.md",
+    "bytes": 4318,
+    "sha256": "a1b450f11acadd855c116ff6379227e81de08e21d9c87db9b573f3275941aeea"
+  },
+  {
+    "path": "gallery-qa-SCREENSHOTS.md",
+    "bytes": 9880,
+    "sha256": "d2b037ec5ae479a26830bcd54de58b8738e2566a79bb4727126b1d03446efb9f"
+  },
+  {
+    "path": "sources/B-mode-original.webm",
+    "bytes": 4835036,
+    "sha256": "aecee491073a07740cf2fd8755d9b177ff97a8b3f66877cb01a6f7cfa5633ee9"
+  },
+  {
+    "path": "sources/mochi-chat.png",
+    "bytes": 335737,
+    "sha256": "6695ebd239dbc25e2b429ce8f32a193d18e69d1c3a4857e0088398294226a29b"
+  },
+  {
+    "path": "bp-windows-candidate/BlockCraftAI_BP_Final_Redesign.pdf",
+    "bytes": 567735,
+    "sha256": "9a11a755f28ab4c15b40a563ca269edede5c3831b13480c16396aa2e805c10ca"
+  },
+  {
+    "path": "bp-windows-candidate/BlockCraftAI_BP_Final_Redesign.pptx",
+    "bytes": 2243606,
+    "sha256": "c70a8975e24a1a2595039a68dd126edafe08b4477c9b34920940038f26b70918"
+  },
+  {
+    "path": "bp-p05.png",
+    "bytes": 199648,
+    "sha256": "85a4cc51d2ef03e78abbcaaef054478f5c483bf4f5065fea021c06b7e2555702"
+  },
+  {
+    "path": "bp-p07.png",
+    "bytes": 288418,
+    "sha256": "1d18ab51b0fb7fd8a541476a87bc142a319581be49a2d3474b7f3d60e571ccfe"
+  },
+  {
+    "path": "bp-p09.png",
+    "bytes": 175884,
+    "sha256": "5199232cb03b43a6cf28f3d70903155179b939343d86261e96b939c051b097e9"
+  },
+  {
+    "path": "bp-p10.png",
+    "bytes": 250757,
+    "sha256": "f1abc635928decb887ef0f21942966a88221cc06c45b7fd373995740df6d6d69"
+  },
+  {
+    "path": "bp-p13.png",
+    "bytes": 207635,
+    "sha256": "7d7c4e7d36d9ce910547082595b8c766543acb62205ed32c4e196b4c61b0420d"
+  },
+  {
+    "path": "bp-mac-p05.png",
+    "bytes": 145530,
+    "sha256": "b24fd5f8b4e3b56d9be1ce25944759165489176a9475bd46e24e24eecc5d5302"
+  },
+  {
+    "path": "bp-mac-p07.png",
+    "bytes": 186633,
+    "sha256": "99af0bb1b71525d693e90cb6b0f5a189d6a6d7d1e15b39f1eaaa8f21f3aae298"
+  },
+  {
+    "path": "bp-mac-p09.png",
+    "bytes": 143292,
+    "sha256": "1996ed6a72b6c517dbe0294fdbe9c6a22553cb0bc9e5732f04928114daa4d450"
+  },
+  {
+    "path": "bp-mac-p10.png",
+    "bytes": 204168,
+    "sha256": "ddf5e18445336662567ddbb788b877543b8b0ba961de6c5417c44cc372c841a5"
+  },
+  {
+    "path": "bp-mac-p13.png",
+    "bytes": 200717,
+    "sha256": "e0f99dbeb002dceb7866e6bccfc1adba3982f81c258fd1630c97c92033b1ac37"
+  },
+  {
+    "path": "video-owner-r02/contact-1.jpg",
+    "bytes": 128462,
+    "sha256": "cdd9695187b0bd541558897620fd3c2a65f65fcae34a75e6c3bacdc48446d9f4"
+  },
+  {
+    "path": "video-owner-r02/contact-2.jpg",
+    "bytes": 106592,
+    "sha256": "5bb54eb76401e3475cf9667da9e2c0ed40a7352acd0a4ad9b5abc1cef37c421c"
+  },
+  {
+    "path": "video-owner-r02/contact-3.jpg",
+    "bytes": 119819,
+    "sha256": "c361cb75f692b90ab1e13feaa679108d16f1b22789e8430e5d8e18170eb5c5c2"
+  },
+  {
+    "path": "video-owner-r02/probe.txt",
+    "bytes": 917,
+    "sha256": "6c6e580bb9c3e249e8509f4e30bf766e83353bc56c71cd9e873154b1f5e03042"
+  },
+  {
+    "path": "video-owner-r02/audio-volume.txt",
+    "bytes": 2084,
+    "sha256": "bb7c599b934caca8b6c383857ed1a9f29ff8b631c8d5c0d54b261055feaa8b3b"
+  },
+  {
+    "path": "prepare_package.py",
+    "bytes": 2305,
+    "sha256": "0fa38bede2f7a9f285a5f5c33504ed98c5ab52378f1da64b990a523a02981f59"
+  },
+  {
+    "path": "audit_received.py",
+    "bytes": 2999,
+    "sha256": "279053bed3f957738c805e459fb360576a72fee294bd0f1204c575b4c087f216"
+  },
+  {
+    "path": "visual_qa.py",
+    "bytes": 1154,
+    "sha256": "9a851e25f2643487a84c05505a422dfff0b1cd8c33077dccd71a3c7c5e6364fa"
+  },
+  {
+    "path": "verify_remote_transfer.py",
+    "bytes": 2485,
+    "sha256": "86c354d56d102b61e036d665854654ddf5340dcf3bbfc1857d24b07ea9bbc0a3"
+  },
+  {
+    "path": "REMOTE-TRANSFER-VERIFICATION.json",
+    "bytes": 8260,
+    "sha256": "f81e2b2b14704b8fcc23db7a318fbd919a0b70bab247dee7b86a62d4a963bba0"
+  },
+  {
+    "path": "POWER-LOSS-HANDOFF.md",
+    "bytes": 4108,
+    "sha256": "ed6f9df207e5b12df1670a3d60fb45d364837e17099b65a73196db30a712ce1e"
+  }
+]

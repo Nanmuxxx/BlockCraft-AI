@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-20T00:50:29.731228+08:00",
+  "files": {
+    "bp-mac-candidate/BlockCraftAI_Final_BP.pdf": {
+      "bytes": 813890,
+      "sha256": "29d6aa2a6cdeb489cfa3da48c19851dc3a014df859cdff1f23425cf4323e890c",
+      "pages": 15
+    },
+    "bp-mac-candidate/BlockCraftAI_Final_BP.pptx": {
+      "bytes": 430280,
+      "sha256": "3ee82646e0a225f6a1f52c50288f26eed8be3708c0fa9fdeae4769bc66574a33",
+      "zip_crc_error": null,
+      "slides": 15
+    },
+    "video-owner-r02/VIDEO-B-105-FINAL-CUT-R02.mp4": {
+      "bytes": 9282324,
+      "sha256": "5695cc4262595c8859dbe634a9d97f222a31bd2069ee14ec0979fd899200b9a6",
+      "stream_summary": [
+        "Duration: 00:01:45.00, start: 0.000000, bitrate: 707 kb/s",
+        "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1920x1080 [SAR 1:1 DAR 16:9], 572 kb/s, 30 fps, 30 tbr, 15360 tbn (default)",
+        "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, mono, fltp, 125 kb/s (default)"
+      ],
+      "full_decode_exit": 0,
+      "decode_errors": ""
+    }
+  }
+}
