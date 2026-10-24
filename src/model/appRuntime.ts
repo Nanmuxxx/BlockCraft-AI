@@ -5,6 +5,7 @@ import type { CustomProject, RegisteredArtifact } from '../custom-block'
 import { CustomBlockError } from '../custom-block/json'
 import type { WriteAuthorization } from '../integrations/custom-block-bc/owner'
 import { projectBuiltinChange, restoreProjectSnapshot } from './appProjectCommands'
+import { createInteractions } from './appInteractions'
 import { AppSpecError, assertProjectState, ensure } from './appSpecValidation'
 
 export type RecordChange =
@@ -39,7 +40,7 @@ export type RuntimeResult =
   | { ok: true; duplicate: boolean; committedRevision: number }
   | { ok: false; error: { code: string; message: string } }
 
-export interface AppRuntime {
+export interface AppRuntime extends ReturnType<typeof createInteractions> {
   customProject: CustomProjectSession
   getSnapshot: () => ProjectState
   subscribe: (listener: () => void) => () => void
@@ -84,6 +85,7 @@ export function createAppRuntime(initial: ProjectState, initialArtifacts: readon
   }
   const updateRecords = (change: RecordChange) => mutate(state => applyRecordChange(state, change))
   return {
+    ...createInteractions(project.getBaseSnapshot, project.owner.subscribe),
     customProject: project.owner,
     getSnapshot: project.getBaseSnapshot,
     subscribe: project.owner.subscribe,
@@ -142,9 +144,9 @@ export function createAppRuntime(initial: ProjectState, initialArtifacts: readon
   }
 }
 
-export function metricValue(state: ProjectState, block: Extract<BlockSpec, { type: 'metric' }>): number {
+export function metricValue(state: ProjectState, block: Extract<BlockSpec, { type: 'metric' }>, visible?: EntityRecord[]): number {
   const binding = state.spec.relations.find(relation => relation.blockId === block.id)!
-  const rows = state.records[binding.entityId] ?? []
+  const rows = visible ?? state.records[binding.entityId] ?? []
   if (block.aggregation === 'count') return rows.length
   const values = rows.map(row => row.values[block.fieldId]).filter((value): value is number => typeof value === 'number')
   const sum = values.reduce((total, value) => total + value, 0)

@@ -38,7 +38,8 @@ const spec = {
   ],
 }
 const project = { spec, records: {}, revision: 1, blockPositions: {} }
-const fakeRuntime = { subscribe: () => () => {}, getSnapshot: () => project }
+const emptyInteractions = Object.freeze({ filters: Object.freeze({}), chartSelections: Object.freeze({}), records: Object.freeze({}) })
+const fakeRuntime = { subscribe: () => () => {}, getSnapshot: () => project, subscribeInteractions: () => () => {}, getInteractionSnapshot: () => emptyInteractions }
 
 test('reader returns empty presentation for absent, malformed or hostile blocks', () => {
   assert.deepEqual(readBlockPresentation(undefined), {})
@@ -140,7 +141,7 @@ test('gallery renderer shows project images with preview affordance and accessib
     records: {}, blockPositions: {},
     assets: { 'image-1': { id: 'image-1', name: '海边', altText: '海边日落', mimeType: 'image/png', dataUrl: 'data:image/png;base64,aGVsbG8=' } },
   }
-  const runtime = { subscribe: () => () => {}, getSnapshot: () => galleryProject }
+  const runtime = { subscribe: () => () => {}, getSnapshot: () => galleryProject, subscribeInteractions: () => () => {}, getInteractionSnapshot: () => emptyInteractions }
   const html = renderToStaticMarkup(React.createElement(BuiltinBlockRenderer, { runtime, blockId: 'gallery-1' }))
   assert.match(html, /renderer-block--gallery/)
   assert.match(html, /alt="海边日落"/)
@@ -155,7 +156,7 @@ test('gallery renderer provides empty and broken-resource states', () => {
       { id: 'gallery-1', name: '旅行相册', type: 'gallery', protocolVersion: 1, imageIds: [], layout: 'grid', interaction: 'preview' },
     ], relations: [] }, records: {}, blockPositions: {}, assets: {},
   }
-  const runtime = { subscribe: () => () => {}, getSnapshot: () => galleryProject }
+  const runtime = { subscribe: () => () => {}, getSnapshot: () => galleryProject, subscribeInteractions: () => () => {}, getInteractionSnapshot: () => emptyInteractions }
   const emptyHtml = renderToStaticMarkup(React.createElement(BuiltinBlockRenderer, { runtime, blockId: 'gallery-1' }))
   assert.match(emptyHtml, /画廊还没有图片/)
   galleryProject.spec.blocks[0].imageIds = ['missing-image']

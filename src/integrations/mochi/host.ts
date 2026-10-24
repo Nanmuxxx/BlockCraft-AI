@@ -205,6 +205,7 @@ export function createMochiHost(runtime: AppRuntime, provider: PlanProvider) {
         ensure(snapshot.spec.blocks.find(b => b.id === selectedBlockId)?.type !== 'pomodoro', '可信番茄钟暂不支持 AI 修改计划。', 'TIMER_SCOPE_UNAVAILABLE')
         const selected = snapshot.spec.blocks.find(block => block.id === selectedBlockId)
         ensure(selected, 'Unknown selected block', 'UNKNOWN_TARGET')
+        ensure(!['filter', 'chart', 'details'].includes(selected.type), '这类交互积木请使用属性面板；AI 修改暂未开放。', 'INTERACTIVE_SCOPE_UNAVAILABLE')
         const entityId = selected.type === 'gallery' ? null : resolveBlockEntityId(snapshot, selectedBlockId)
         return { snapshot, scope: { selectedBlockId, allowedBlockIds: [selectedBlockId], allowedEntityIds: entityId ? [entityId] : [] } }
       }

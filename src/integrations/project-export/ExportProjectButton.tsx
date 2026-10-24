@@ -5,6 +5,7 @@ import type { CustomProjectSession } from '../../model/customProjectSession'
 import { captureExport, ExportFailure } from './capture'
 
 const reasons: Record<string, string> = {
+  UNSUPPORTED_INTERACTIVE_EXPORT: '搜索、图表和详情暂不支持独立 React 源码导出。请使用“下载项目 ZIP”保存并恢复完整项目。',
   UNSUPPORTED_APP_SPEC: 'AppSpec v2 可信交互积木暂不支持 React ZIP 导出，已拒绝打包。',
   EXPORT_UNAUTHORIZED: '导出授权无效，请重新打开本机工坊。',
   VERSION_MISSING: '缺少精确版本的源码制品，请重新导入后重试。',

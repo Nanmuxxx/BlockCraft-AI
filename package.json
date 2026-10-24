@@ -36,7 +36,9 @@
     "test:project-package:browser": "node tests/project-package/browser.cjs",
     "test:mochi-proactive": "npm --prefix server run build && node --test tests/mochi-proactive/*.test.*",
     "test:mochi-proactive:browser": "node tests/mochi-proactive/browser.cjs",
-    "test:mochi-proactive:offline": "npm --prefix server run build && node tools/mochi-proactive/sample.cjs --offline"
+    "test:mochi-proactive:offline": "npm --prefix server run build && node tools/mochi-proactive/sample.cjs --offline",
+    "test:interactive-blocks": "npm --prefix server run build && node tools/project-zip-export/prepare.mjs && node --test tests/interactive-blocks/*.test.cjs",
+    "test:interactive-blocks:browser": "npm --prefix server run build && node tests/interactive-blocks/browser.cjs"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "5.3.0",

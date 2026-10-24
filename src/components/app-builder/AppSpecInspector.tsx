@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { AppCommand, CommandRequest, FieldSpec, ProjectState, ProjectAsset } from '../../model/appSpec'
 import type { AppRuntime } from '../../model/appRuntime'
 import './app-spec-inspector.css'
+import { InteractionInspector } from './InteractionInspector'
 
 interface AppSpecInspectorProps {
   runtime: AppRuntime
@@ -130,7 +131,7 @@ export function AppSpecInspector({ runtime, snapshot, blockId }: AppSpecInspecto
         <dt>积木 ID</dt><dd><code>{block.id}</code></dd>
         <dt>绑定实体</dt><dd>{block.type === 'pomodoro' || block.type === 'gallery' ? '无需数据绑定' : entity ? <>{entity.name}<br /><code>{entity.id}</code></> : '绑定异常'}</dd>
       </dl></details>
-      {block.type === 'pomodoro' ? <section aria-label="番茄钟配置"><p>时长：{block.durationSeconds} 秒</p><p>可信交互协议：1 · AppSpec v2</p><p>开始 / 暂停 / 重置由内置 React 组件执行。此版本暂不支持 ZIP 导出。</p></section>
+      {block.type === 'filter' || block.type === 'chart' || block.type === 'details' ? <InteractionInspector runtime={runtime} block={block} /> : block.type === 'pomodoro' ? <section aria-label="番茄钟配置"><p>时长：{block.durationSeconds} 秒</p><p>可信交互协议：1 · AppSpec v2</p><p>开始 / 暂停 / 重置由内置 React 组件执行。此版本暂不支持 ZIP 导出。</p></section>
         : block.type === 'gallery' ? <section className="app-spec-gallery-editor" aria-label="画廊配置">
           <h3>项目图片</h3>
           <p>导入 PNG、JPEG、WebP 或 GIF 文件，最多 32 张；单张不超过 512 KiB，项目总量不超过 1 MiB。</p>

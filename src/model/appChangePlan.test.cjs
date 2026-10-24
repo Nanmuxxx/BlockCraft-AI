@@ -476,7 +476,7 @@ test('plan handles are bound to the exact planner and app instance, even with eq
 
 test('capability catalog separates business composition and actual primitives and is deeply immutable', () => {
   assert.equal(new Set(APP_CAPABILITIES.map(item => item.id)).size, APP_CAPABILITIES.length)
-  assert.deepEqual(APP_CAPABILITIES.filter(item => item.kind === 'primitive').map(item => item.id), ['pomodoro', 'form', 'list', 'gallery', 'metric-count', 'metric-sum', 'metric-average'])
+  assert.deepEqual(APP_CAPABILITIES.filter(item => item.kind === 'primitive').map(item => item.id), ['filter', 'chart', 'details', 'pomodoro', 'form', 'list', 'gallery', 'metric-count', 'metric-sum', 'metric-average'])
   for (const item of APP_CAPABILITIES) {
     assert.ok(Object.isFrozen(item))
     if (item.kind === 'semantic' && item.status === 'supported') item.primitives.forEach(id => assert.equal(getAppCapability(id).kind, 'primitive'))

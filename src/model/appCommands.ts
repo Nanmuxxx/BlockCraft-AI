@@ -72,6 +72,12 @@ function apply(state: ProjectState, command: Exclude<AppCommand, { type: 'undo' 
       b.fieldIds = [...command.fieldIds]
       break
     }
+    case 'configureView': {
+      const index = spec.blocks.findIndex(block => block.id === command.blockId)
+      ensure(index >= 0 && spec.blocks[index].type === command.block.type, 'View type and ID are immutable', 'INVALID_TARGET')
+      spec.blocks[index] = clone(command.block)
+      break
+    }
     case 'configureGallery': {
       const block = spec.blocks.find(block => block.id === command.blockId)
       ensure(block?.type === 'gallery', 'Gallery configuration requires a gallery block')
@@ -104,7 +110,7 @@ function apply(state: ProjectState, command: Exclude<AppCommand, { type: 'undo' 
         e.fields[index] = clone(command.field)
       } else {
         const bound = new Set(spec.relations.filter(r => r.entityId === e.id).map(r => r.blockId))
-        ensure(!spec.blocks.some(b => bound.has(b.id) && (b.type === 'metric' ? b.aggregation !== 'count' && b.fieldId === command.fieldId : (b.type === 'list' || b.type === 'form') && b.fieldIds.includes(command.fieldId))), 'Field referenced by block', 'FIELD_REFERENCED')
+        ensure(!spec.blocks.some(b => bound.has(b.id) && (b.type === 'metric' ? b.aggregation !== 'count' && b.fieldId === command.fieldId : b.type === 'chart' ? b.groupFieldId === command.fieldId || b.valueFieldId === command.fieldId : (b.type === 'list' || b.type === 'form' || b.type === 'filter' || b.type === 'details') && b.fieldIds.includes(command.fieldId))), 'Field referenced by block', 'FIELD_REFERENCED')
         ensure(!(state.records[e.id] ?? []).some(row => Object.prototype.hasOwnProperty.call(row.values, command.fieldId)), 'Field contains business data', 'FIELD_REFERENCED')
         e.fields.splice(index, 1)
       }
