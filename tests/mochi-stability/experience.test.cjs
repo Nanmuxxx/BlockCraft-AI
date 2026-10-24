@@ -19,7 +19,10 @@ function setup(t, transport) {
 }
 test('same-tick duplicate and preview retry reuse one call; confirm once, exact shared impact and undo', async t => {
   let release, calls = 0
-  const { host, runtime } = setup(t, (_url, init) => { calls++; return new Promise(resolve => { release = () => resolve(response(JSON.parse(init.body))) }) })
+  const { host, runtime } = setup(t, (_url, init) => {
+    assert.match(new Headers(init.headers).get('Idempotency-Key') ?? '', /^[A-Za-z0-9_-]{32,128}$/, 'production gateway requires a request identity')
+    calls++; return new Promise(resolve => { release = () => resolve(response(JSON.parse(init.body))) })
+  })
   const before = runtime.getSnapshot()
   const pending = host.callbacks.onRequestPlan(prompt)
   await assert.rejects(host.callbacks.onRequestPlan(prompt), { code: 'AI_BUSY' })
@@ -41,7 +44,9 @@ test('same-tick duplicate and preview retry reuse one call; confirm once, exact 
 })
 test('failed manual retry gets one fresh attempt; cancellation and late response cannot mutate', async t => {
   let calls = 0, release
+  const keys = []
   const { host, runtime } = setup(t, (_url, init) => {
+    keys.push(new Headers(init.headers).get('Idempotency-Key'))
     calls++
     if (calls === 1) return Promise.resolve(Response.json({ error: { code: 'AI_INVALID_RESPONSE', message: 'PRIVATE' } }, { status: 502 }))
     return new Promise(resolve => { release = () => resolve(response(JSON.parse(init.body))) })
@@ -53,12 +58,13 @@ test('failed manual retry gets one fresh attempt; cancellation and late response
   const retry = host.callbacks.onRequestPlan(prompt); const rejected = assert.rejects(retry)
   await assert.rejects(host.callbacks.onRequestPlan(prompt), { code: 'AI_BUSY' })
   assert.equal(calls, 2)
+  assert.notEqual(keys[0], keys[1], 'explicit retry has a fresh attempt identity')
   host.cancelRequest(host.getSnapshot().requestId); await rejected; release()
   await new Promise(r => setImmediate(r))
   assert.equal(runtime.getSnapshot(), before); assert.equal(host.getSnapshot().preview, null)
 })
 test('format, stale, config, permission and budget failures keep distinct fixed feedback and zero writes', async t => {
-  for (const code of ['AI_INVALID_RESPONSE', 'STALE_REVISION', 'INVALID_CONFIG', 'PERMISSION_DENIED', 'BUDGET_EXHAUSTED']) {
+  for (const code of ['AI_INVALID_RESPONSE', 'STALE_REVISION', 'INVALID_CONFIG', 'PERMISSION_DENIED', 'BUDGET_EXHAUSTED', 'IDEMPOTENCY_KEY_INVALID', 'IDEMPOTENCY_REPLAY', 'IDEMPOTENCY_CONFLICT']) {
     let calls = 0
     const { host, runtime } = setup(t, async () => { calls++; return Response.json({ error: { code, message: 'PRIVATE' } }, { status: 422 }) })
     const before = runtime.getSnapshot()

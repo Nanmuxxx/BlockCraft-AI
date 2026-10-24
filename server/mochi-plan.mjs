@@ -221,7 +221,7 @@ export function createMochiPlanHandler({ enabled = false, resolveAccess, resolve
     try {
       const configured = enabled && (typeof resolveRequest === 'function' || Boolean(apiKey)) && typeof resolveAccess === 'function'
       if (path.endsWith('/status') && req.method === 'GET') {
-        send(res, 200, { enabled: configured, reason: configured ? null : 'AI_DISABLED', source: isPaidTransport(fetchImpl) ? 'deepseek' : 'offline-fixture', model }); return true
+        send(res, 200, { enabled: configured, reason: configured ? null : 'AI_DISABLED', source: (typeof resolveRequest === 'function' || isPaidTransport(fetchImpl)) ? 'deepseek' : 'offline-fixture', model }); return true
       }
       if (!await authorizeGeneration(req, res, resolveAccess)) fail('UNAUTHORIZED', 401)
       if (req.headers.origin && req.headers.origin !== (allowedOrigin || `http://${req.headers.host}`)) fail('ORIGIN_REJECTED', 403)

@@ -31,9 +31,12 @@ export function createHttpPlanProvider(fetchImpl: typeof fetch = globalThis.fetc
     const body = JSON.stringify(input)
     if (new TextEncoder().encode(body).byteLength > maxBytes) throw new AppSpecError('MODEL_REQUEST_TOO_LARGE', '积木结构超出计划请求限制。')
     const signal = AbortSignal.any([request.signal, AbortSignal.timeout(35000)])
+    // One identity per host attempt. Preview reuse never re-enters this provider;
+    // an explicit retry creates a new attempt. No transport retries are added.
+    const idempotencyKey = crypto.randomUUID()
     let response: Response
     try { response = await fetchImpl('/api/mochi-plan', { method: 'POST', credentials: 'same-origin', redirect: 'error', signal,
-      headers: { 'Content-Type': 'application/json' }, body }) }
+      headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idempotencyKey }, body }) }
     catch (error) {
       if (request.signal.aborted) throw error
       const code = signal.aborted ? 'AI_TIMEOUT' : 'AI_UNAVAILABLE'
