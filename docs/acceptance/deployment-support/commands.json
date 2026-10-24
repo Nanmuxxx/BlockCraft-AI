@@ -1,0 +1,58 @@
+[
+  {
+    "name": "install",
+    "command": [
+      "npm.cmd",
+      "ci",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "exitCode": 0,
+    "started": "2026-10-19T14:55:36.536904+00:00",
+    "seconds": 5.3
+  },
+  {
+    "name": "build",
+    "command": [
+      "npm.cmd",
+      "run",
+      "build"
+    ],
+    "exitCode": 0,
+    "started": "2026-10-19T14:55:41.833528+00:00",
+    "seconds": 3.63
+  },
+  {
+    "name": "server",
+    "command": [
+      "npm.cmd",
+      "--prefix",
+      "server",
+      "test"
+    ],
+    "exitCode": 0,
+    "started": "2026-10-19T14:55:45.463507+00:00",
+    "seconds": 1.7
+  },
+  {
+    "name": "root",
+    "command": [
+      "npm.cmd",
+      "test"
+    ],
+    "exitCode": 0,
+    "started": "2026-10-19T14:55:47.167896+00:00",
+    "seconds": 2.13
+  },
+  {
+    "name": "generation",
+    "command": [
+      "npm.cmd",
+      "run",
+      "test:generation"
+    ],
+    "exitCode": 0,
+    "started": "2026-10-19T14:55:49.299193+00:00",
+    "seconds": 1.92
+  }
+]
