@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-19",
+  "timezone": "Asia/Shanghai",
+  "main": "d644835bc915528fddc873e2687c84471f22ec52",
+  "runs": [
+    39192409815,
+    39205412867
+  ],
+  "metadata": [
+    {
+      "workflow_runs": []
+    },
+    {
+      "artifacts": [
+        {
+          "id": 12159549496,
+          "name": "docker-acceptance-39192409815-1",
+          "size_in_bytes": 21726,
+          "url": "https://api.github.com/repos/Nanmuxxx/BlockCraft-AI/actions/artifacts/12159549496",
+          "archive_download_url": "https://api.github.com/repos/Nanmuxxx/BlockCraft-AI/actions/artifacts/12159549496/zip",
+          "expired": false,
+          "created_at": "2026-10-19T02:59:00Z",
+          "expires_at": "2026-10-26T02:58:59Z",
+          "updated_at": "2026-10-19T02:59:00Z",
+          "digest": "sha256:a069d4dc071fead475c7f6a3de730af588d83fbfcefb817aa78b82056b4d27d2",
+          "workflow_run": {
+            "id": 39192409815,
+            "repository_id": 1422997407,
+            "head_repository_id": 1422997407,
+            "head_branch": "integration/phase2-core-remediation-20261019",
+            "head_sha": "d6dd7fe3ff25e8c8f1141b136704cfbaf67d1b97"
+          }
+        }
+      ]
+    },
+    {
+      "artifacts": [
+        {
+          "id": 12165890366,
+          "name": "docker-acceptance-39205412867-1",
+          "size_in_bytes": 21788,
+          "url": "https://api.github.com/repos/Nanmuxxx/BlockCraft-AI/actions/artifacts/12165890366",
+          "archive_download_url": "https://api.github.com/repos/Nanmuxxx/BlockCraft-AI/actions/artifacts/12165890366/zip",
+          "expired": false,
+          "created_at": "2026-10-19T05:37:11Z",
+          "expires_at": "2026-10-26T05:37:10Z",
+          "updated_at": "2026-10-19T05:37:11Z",
+          "digest": "sha256:a7d17adc1d9b38b66905c1306f263ad6c103115d2862914778d3940a2d2b6498",
+          "workflow_run": {
+            "id": 39205412867,
+            "repository_id": 1422997407,
+            "head_repository_id": 1422997407,
+            "head_branch": "handoff/mochi-editing-0c45cf5-20261019-7c8e",
+            "head_sha": "737f965ae923ccfb4d2a9a6315e3988afe1eb2cc"
+          }
+        }
+      ]
+    }
+  ],
+  "local": {
+    "node": "v24.22.0",
+    "npm_ci": 0,
+    "build": 0,
+    "server_build": 0,
+    "initial_gateway_tests": 1,
+    "initial_failure": "missing generated custom-block protocol; documented in report",
+    "after_existing_prepare_gateway_tests": 0,
+    "gateway_tests_pass": 16,
+    "source_cli_smoke": 0,
+    "real_model_calls": 0,
+    "docker_available": false
+  }
+}

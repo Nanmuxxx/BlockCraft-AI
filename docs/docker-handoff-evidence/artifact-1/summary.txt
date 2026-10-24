@@ -1,0 +1,36 @@
+commit=a603c735676af09d876b3bb73f937d0c314c2d1f
+event=pull_request
+ref=refs/pull/45/merge
+image=blockcraft-ci:39192409815-1
+container=blockcraft-ci-39192409815-1
+docker_version=see docker-version.log
+esm_resolution=see esm-resolution.log
+build_log_bytes=6400
+health_log_tail:
+attempt=1 running=true health=starting
+attempt=2 running=true health=starting
+attempt=3 running=true health=starting
+attempt=4 running=true health=healthy
+status=running exit=0 health=healthy
+status=running exit=0 health=healthy
+http_smoke_tail:
+GET /assets/index-BhYHRB8n.js -> 200 text/javascript 435769 bytes
+GET /assets/index-jCjpDxQz.css -> 200 text/css 76502 bytes
+GET /assets/pixelify-sans-latin-500-normal-DC052d-m.woff2 -> 200 font/woff2 8096 bytes
+GET /assets/pixelify-sans-latin-500-normal-Bq6pAlou.woff -> 200 font/woff 10684 bytes
+GET /assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2 -> 200 font/woff2 7904 bytes
+GET /assets/pixelify-sans-latin-700-normal-BctWAS0u.woff -> 200 font/woff 10492 bytes
+GET /api/health -> 200 application/json {status:"ok"}
+GET /unknown -> 404 application/json {error.code:"NOT_FOUND"}
+GET /api/unknown -> 404 application/json {error.code:"NOT_FOUND"}
+GET /assets/missing.js -> 404 application/json {error.code:"NOT_FOUND"}
+GET /api/local-project-export -> 404 application/json {error.code:"NOT_FOUND"}
+GET /../server/index.mjs -> 400 application/json {error.code:"INVALID_PATH"}
+GET /%2e%2e/server/index.mjs -> 400 application/json {error.code:"INVALID_PATH"}
+GET /api%2Funknown -> 400 application/json {error.code:"INVALID_PATH"}
+GET /api//unknown -> 400 application/json {error.code:"INVALID_PATH"}
+GET /%252e%252e/private -> 400 application/json {error.code:"INVALID_PATH"}
+GET /api%2Flocal-project-export -> 400 application/json {error.code:"INVALID_PATH"}
+POST /api/ai/generate without key/auth -> 401 UNAUTHORIZED; no paid credentials
+POST /api/ai/generate trusted-interactive/1 without server authorization -> 401 UNAUTHORIZED; no key, no upstream request
+PASS 7 local resources, routes, health, traversal, and no-key degradation

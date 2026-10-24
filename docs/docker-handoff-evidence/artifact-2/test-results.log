@@ -1,0 +1,2338 @@
+started=2026-10-19T05:36:19+00:00
+command=npm ci
+
+added 25 packages, and audited 26 packages in 4s
+
+9 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+command=npm test
+
+> blockcraft-ai@0.1.0 test
+> node --test src/model/appSpec.test.cjs src/model/appRuntime.test.cjs src/model/appChangePlan.test.cjs src/components/blocks/blocks.test.cjs src/components/ai-create/generateApp.test.cjs src/components/app-builder/AppSpecCanvas.test.cjs src/integrations/mochi/planning.test.cjs src/components/mochi-ai/mochi-ai.test.cjs src/components/mochi-ai/mochi-ai-v2.test.cjs
+
+TAP version 13
+# Subtest: validated generated spec starts empty, isolated, with complete normalized layout and interactive runtime
+ok 1 - validated generated spec starts empty, isolated, with complete normalized layout and interactive runtime
+  ---
+  duration_ms: 19.221945
+  type: 'test'
+  ...
+# Subtest: Mock API uses same-origin POST and validates success; errors never become applications
+ok 2 - Mock API uses same-origin POST and validates success; errors never become applications
+  ---
+  duration_ms: 65.938622
+  type: 'test'
+  ...
+# Subtest: renders all app block kinds and distinct instances of the same kind
+ok 3 - renders all app block kinds and distinct instances of the same kind
+  ---
+  duration_ms: 35.772398
+  type: 'test'
+  ...
+# Subtest: selection, moves and external updates use instance IDs and the runtime snapshot
+ok 4 - selection, moves and external updates use instance IDs and the runtime snapshot
+  ---
+  duration_ms: 18.421609
+  type: 'test'
+  ...
+# Subtest: failed move displays the runtime error and leaves the snapshot unchanged
+ok 5 - failed move displays the runtime error and leaves the snapshot unchanged
+  ---
+  duration_ms: 19.88321
+  type: 'test'
+  ...
+# Subtest: Inspector empty state and selected form/list/metric display actual instance configuration
+ok 6 - Inspector empty state and selected form/list/metric display actual instance configuration
+  ---
+  duration_ms: 79.460225
+  type: 'test'
+  ...
+# Subtest: 联系方式: add optional text, select in form, then list; preserve records, other blocks and layout
+ok 7 - 联系方式: add optional text, select in form, then list; preserve records, other blocks and layout
+  ---
+  duration_ms: 63.155953
+  type: 'test'
+  ...
+# Subtest: select options reject empty/blank/duplicate entries and commit valid options through Runtime
+ok 8 - select options reject empty/blank/duplicate entries and commit valid options through Runtime
+  ---
+  duration_ms: 80.518633
+  type: 'test'
+  ...
+# Subtest: all scalar field types are accepted, and required flags reach schema validation
+ok 9 - all scalar field types are accepted, and required flags reach schema validation
+  ---
+  duration_ms: 176.533488
+  type: 'test'
+  ...
+# Subtest: removing display fields preserves entity fields and records, respects required forms and nonempty lists
+ok 10 - removing display fields preserves entity fields and records, respects required forms and nonempty lists
+  ---
+  duration_ms: 29.755326
+  type: 'test'
+  ...
+# Subtest: same-kind blocks sharing one entity keep independent selections, configurations and input drafts
+ok 11 - same-kind blocks sharing one entity keep independent selections, configurations and input drafts
+  ---
+  duration_ms: 46.665191
+  type: 'test'
+  ...
+# Subtest: illegal commands and Runtime validation rejection show errors without publishing or false success
+ok 12 - illegal commands and Runtime validation rejection show errors without publishing or false success
+  ---
+  duration_ms: 39.320587
+  type: 'test'
+  ...
+# Subtest: revision race reports conflict once; fresh user intent reads latest revision and configuration
+ok 13 - revision race reports conflict once; fresh user intent reads latest revision and configuration
+  ---
+  duration_ms: 85.240808
+  type: 'test'
+  ...
+# Subtest: external commands refresh Inspector and canvas; deleting selected block invalidates selection
+ok 14 - external commands refresh Inspector and canvas; deleting selected block invalidates selection
+  ---
+  duration_ms: 51.189323
+  type: 'test'
+  ...
+# Subtest: missing or ambiguous bindings and missing entities display an explicit error without fallback
+ok 15 - missing or ambiguous bindings and missing entities display an explicit error without fallback
+  ---
+  duration_ms: 127.029075
+  type: 'test'
+  ...
+# Subtest: Phase 1 pointer lifecycle: collision and cancel never submit, valid dragging updates only target layout
+ok 16 - Phase 1 pointer lifecycle: collision and cancel never submit, valid dragging updates only target layout
+  ---
+  duration_ms: 98.80604
+  type: 'test'
+  ...
+# Subtest: different supplied idea plans render one vs three named modules with arbitrary IDs
+ok 17 - different supplied idea plans render one vs three named modules with arbitrary IDs
+  ---
+  duration_ms: 43.358342
+  type: 'test'
+  ...
+# Subtest: the workshop example set renders five readable bricks without changing module kinds
+ok 18 - the workshop example set renders five readable bricks without changing module kinds
+  ---
+  duration_ms: 13.197077
+  type: 'test'
+  ...
+# Subtest: recipes normalize order and reject self, unsupported pairs and unavailable behavior
+ok 19 - recipes normalize order and reject self, unsupported pairs and unavailable behavior
+  ---
+  duration_ms: 1.656545
+  type: 'test'
+  ...
+# Subtest: duplicate detection uses both endpoints and recipe
+ok 20 - duplicate detection uses both endpoints and recipe
+  ---
+  duration_ms: 0.282959
+  type: 'test'
+  ...
+# Subtest: independent scene assertions distinguish body overlap and clearance: complete overlap
+ok 21 - independent scene assertions distinguish body overlap and clearance: complete overlap
+  ---
+  duration_ms: 2.230728
+  type: 'test'
+  ...
+# Subtest: independent scene assertions distinguish body overlap and clearance: partial overlap
+ok 22 - independent scene assertions distinguish body overlap and clearance: partial overlap
+  ---
+  duration_ms: 0.595503
+  type: 'test'
+  ...
+# Subtest: independent scene assertions distinguish body overlap and clearance: normal separation
+ok 23 - independent scene assertions distinguish body overlap and clearance: normal separation
+  ---
+  duration_ms: 0.421477
+  type: 'test'
+  ...
+# Subtest: independent scene assertions distinguish body overlap and clearance: horizontal edge contact
+ok 24 - independent scene assertions distinguish body overlap and clearance: horizontal edge contact
+  ---
+  duration_ms: 0.336248
+  type: 'test'
+  ...
+# Subtest: independent scene assertions distinguish body overlap and clearance: vertical edge contact
+ok 25 - independent scene assertions distinguish body overlap and clearance: vertical edge contact
+  ---
+  duration_ms: 0.644193
+  type: 'test'
+  ...
+# Subtest: independent scene assertions distinguish body overlap and clearance: horizontal 3px gap
+ok 26 - independent scene assertions distinguish body overlap and clearance: horizontal 3px gap
+  ---
+  duration_ms: 0.730976
+  type: 'test'
+  ...
+# Subtest: independent scene assertions distinguish body overlap and clearance: horizontal 4px gap
+ok 27 - independent scene assertions distinguish body overlap and clearance: horizontal 4px gap
+  ---
+  duration_ms: 0.255477
+  type: 'test'
+  ...
+# Subtest: independent scene assertions identify only the overlapping pair among three bricks
+ok 28 - independent scene assertions identify only the overlapping pair among three bricks
+  ---
+  duration_ms: 0.458777
+  type: 'test'
+  ...
+# Subtest: independent scene assertions reject missing, extra, replaced IDs and invalid coordinates
+ok 29 - independent scene assertions reject missing, extra, replaced IDs and invalid coordinates
+  ---
+  duration_ms: 1.979178
+  type: 'test'
+  ...
+# Subtest: five bricks fit narrow, medium, and wide boards with clear spacing
+ok 30 - five bricks fit narrow, medium, and wide boards with clear spacing
+  ---
+  duration_ms: 0.434632
+  type: 'test'
+  ...
+# Subtest: nearby upper or lower edges produce a snap preview; distant edges do not
+ok 31 - nearby upper or lower edges produce a snap preview; distant edges do not
+  ---
+  duration_ms: 0.657268
+  type: 'test'
+  ...
+# Subtest: snapping joins a group, whole group moves without changing spacing, and detach makes separate bricks
+ok 32 - snapping joins a group, whole group moves without changing spacing, and detach makes separate bricks
+  ---
+  duration_ms: 1.200614
+  type: 'test'
+  ...
+# Subtest: arrange removes all stacks and restores five separate, collision-free bricks
+ok 33 - arrange removes all stacks and restores five separate, collision-free bricks
+  ---
+  duration_ms: 41.572364
+  type: 'test'
+  ...
+# Subtest: an unsupported feature is explained rather than rendered as a usable brick
+ok 34 - an unsupported feature is explained rather than rendered as a usable brick
+  ---
+  duration_ms: 5.334948
+  type: 'test'
+  ...
+# Subtest: known kinds are also rejected when the connected preview does not advertise them
+ok 35 - known kinds are also rejected when the connected preview does not advertise them
+  ---
+  duration_ms: 7.675661
+  type: 'test'
+  ...
+# Subtest: selection and saved relations come from external props; legacy mode does not claim new behavior
+ok 36 - selection and saved relations come from external props; legacy mode does not claim new behavior
+  ---
+  duration_ms: 16.979676
+  type: 'test'
+  ...
+# Subtest: AppSpec canvas renders all three kinds and independent instances with stable IDs
+ok 37 - AppSpec canvas renders all three kinds and independent instances with stable IDs
+  ---
+  duration_ms: 18.830696
+  type: 'test'
+  ...
+# Subtest: generic capability filtering, metric configure guard and feedback are explicit
+ok 38 - generic capability filtering, metric configure guard and feedback are explicit
+  ---
+  duration_ms: 34.197426
+  type: 'test'
+  ...
+# Subtest: B module projection follows command add/remove/undo while C records stay intact
+ok 39 - B module projection follows command add/remove/undo while C records stay intact
+  ---
+  duration_ms: 82.124564
+  type: 'test'
+  ...
+# Subtest: narrow fragmented saved positions reflow every card without losing stacks
+ok 40 - narrow fragmented saved positions reflow every card without losing stacks
+  ---
+  duration_ms: 2.305077
+  type: 'test'
+  ...
+# Subtest: contact rules are structural and labeled as local rules
+ok 41 - contact rules are structural and labeled as local rules
+  ---
+  duration_ms: 2.152983
+  type: 'test'
+  ...
+# Subtest: dismissal store dedupes a recommendation until its fingerprint changes
+ok 42 - dismissal store dedupes a recommendation until its fingerprint changes
+  ---
+  duration_ms: 0.47087
+  type: 'test'
+  ...
+# Subtest: rich host context keeps selected block and entity association visible
+ok 43 - rich host context keeps selected block and entity association visible
+  ---
+  duration_ms: 17.984393
+  type: 'test'
+  ...
+# Subtest: overlay exposes an accessible chat button inside a non-interactive motion layer
+ok 44 - overlay exposes an accessible chat button inside a non-interactive motion layer
+  ---
+  duration_ms: 1.677785
+  type: 'test'
+  ...
+# Subtest: renders supplied context, conversation, suggestions and structured plan preview
+ok 45 - renders supplied context, conversation, suggestions and structured plan preview
+  ---
+  duration_ms: 20.077724
+  type: 'test'
+  ...
+# Subtest: renders all supported moods as explicit visual states
+ok 46 - renders all supported moods as explicit visual states
+  ---
+  duration_ms: 27.748286
+  type: 'test'
+  ...
+# Subtest: Enter submits only outside IME composition and Shift+Enter preserves newline
+ok 47 - Enter submits only outside IME composition and Shift+Enter preserves newline
+  ---
+  duration_ms: 0.289981
+  type: 'test'
+  ...
+# Subtest: plan confirmation guard rejects a fast repeat for the same plan
+ok 48 - plan confirmation guard rejects a fast repeat for the same plan
+  ---
+  duration_ms: 0.28891
+  type: 'test'
+  ...
+# Subtest: reduced-motion stylesheet disables the component animations
+ok 49 - reduced-motion stylesheet disables the component animations
+  ---
+  duration_ms: 0.444761
+  type: 'test'
+  ...
+# Subtest: unavailable planner is explicit and disables prompt submission and suggestion drafts
+ok 50 - unavailable planner is explicit and disables prompt submission and suggestion drafts
+  ---
+  duration_ms: 3.675207
+  type: 'test'
+  ...
+# Subtest: TypeScript callback contract accepts synchronous and asynchronous hosts through both UI entries
+ok 51 - TypeScript callback contract accepts synchronous and asynchronous hosts through both UI entries
+  ---
+  duration_ms: 1753.935307
+  type: 'test'
+  ...
+# Subtest: controlled Host states distinguish current receipts, history, explicit failure and unknown outcome
+ok 52 - controlled Host states distinguish current receipts, history, explicit failure and unknown outcome
+  ---
+  duration_ms: 37.750063
+  type: 'test'
+  ...
+# Subtest: preview renders untrusted text safely and keeps shared entity impact visible
+ok 53 - preview renders untrusted text safely and keeps shared entity impact visible
+  ---
+  duration_ms: 7.113201
+  type: 'test'
+  ...
+# Subtest: invalid input feedback coexists with a valid preview; stale feedback removes confirmation
+ok 54 - invalid input feedback coexists with a valid preview; stale feedback removes confirmation
+  ---
+  duration_ms: 11.264504
+  type: 'test'
+  ...
+# Subtest: Mock preview is isolated, immutable, complete; confirm updates real B/C renderers exactly once
+ok 55 - Mock preview is isolated, immutable, complete; confirm updates real B/C renderers exactly once
+  ---
+  duration_ms: 156.40431
+  type: 'test'
+  ...
+# Subtest: callback context cannot grant selection or scope; provider sees only host context
+ok 56 - callback context cannot grant selection or scope; provider sees only host context
+  ---
+  duration_ms: 5.610032
+  type: 'test'
+  ...
+# Subtest: no selection cannot be replaced with a component hint
+ok 57 - no selection cannot be replaced with a component hint
+  ---
+  duration_ms: 11.964435
+  type: 'test'
+  ...
+# Subtest: rejects sibling block sharing entity from provider without changing Runtime
+ok 58 - rejects sibling block sharing entity from provider without changing Runtime
+  ---
+  duration_ms: 2.265864
+  type: 'test'
+  ...
+# Subtest: rejects other entity from provider without changing Runtime
+ok 59 - rejects other entity from provider without changing Runtime
+  ---
+  duration_ms: 3.065368
+  type: 'test'
+  ...
+# Subtest: rejects record command from provider without changing Runtime
+ok 60 - rejects record command from provider without changing Runtime
+  ---
+  duration_ms: 2.876334
+  type: 'test'
+  ...
+# Subtest: rejects provider request ID tampering
+ok 61 - rejects provider request ID tampering
+  ---
+  duration_ms: 5.215424
+  type: 'test'
+  ...
+# Subtest: rejects provider revision tampering
+ok 62 - rejects provider revision tampering
+  ---
+  duration_ms: 1.762774
+  type: 'test'
+  ...
+# Subtest: rejects provider scope injection tampering
+ok 63 - rejects provider scope injection tampering
+  ---
+  duration_ms: 2.459285
+  type: 'test'
+  ...
+# Subtest: rejects provider unsupported capability tampering
+ok 64 - rejects provider unsupported capability tampering
+  ---
+  duration_ms: 2.380728
+  type: 'test'
+  ...
+# Subtest: cancel is idempotent; cancelled and invented planIds cannot execute
+ok 65 - cancel is idempotent; cancelled and invented planIds cannot execute
+  ---
+  duration_ms: 3.1682
+  type: 'test'
+  ...
+# Subtest: selection A→B→A and a newer request both revoke old plans
+ok 66 - selection A→B→A and a newer request both revoke old plans
+  ---
+  duration_ms: 7.21504
+  type: 'test'
+  ...
+# Subtest: records revision invalidates preview and preserves the external update
+ok 67 - records revision invalidates preview and preserves the external update
+  ---
+  duration_ms: 3.216901
+  type: 'test'
+  ...
+# Subtest: layout revision invalidates preview and preserves the external update
+ok 68 - layout revision invalidates preview and preserves the external update
+  ---
+  duration_ms: 2.925756
+  type: 'test'
+  ...
+# Subtest: schema revision invalidates preview and preserves the external update
+ok 69 - schema revision invalidates preview and preserves the external update
+  ---
+  duration_ms: 2.766209
+  type: 'test'
+  ...
+# Subtest: same appId/revision in different Runtime cannot use the other host planId
+ok 70 - same appId/revision in different Runtime cannot use the other host planId
+  ---
+  duration_ms: 3.666301
+  type: 'test'
+  ...
+# Subtest: reentrant confirmation during Runtime publish cannot execute twice
+ok 71 - reentrant confirmation during Runtime publish cannot execute twice
+  ---
+  duration_ms: 5.137179
+  type: 'test'
+  ...
+# Subtest: ignoring suggestions only updates host state and leaves pending plan intact
+ok 72 - ignoring suggestions only updates host state and leaves pending plan intact
+  ---
+  duration_ms: 4.557365
+  type: 'test'
+  ...
+# Subtest: B/C mode changes preserve in-flight requests and previews without rebuilding Runtime
+ok 73 - B/C mode changes preserve in-flight requests and previews without rebuilding Runtime
+  ---
+  duration_ms: 13.062095
+  type: 'test'
+  ...
+# Subtest: obsolete async success cannot clear a newer preview
+ok 74 - obsolete async success cannot clear a newer preview
+  ---
+  duration_ms: 12.104185
+  type: 'test'
+  ...
+# Subtest: obsolete async failure cannot clear a newer preview
+ok 75 - obsolete async failure cannot clear a newer preview
+  ---
+  duration_ms: 4.015012
+  type: 'test'
+  ...
+# Subtest: anchor is host geometry bound to selection, instance, epoch and revision
+ok 76 - anchor is host geometry bound to selection, instance, epoch and revision
+  ---
+  duration_ms: 3.046462
+  type: 'test'
+  ...
+# Subtest: failed next plan or rejected execution retains the previously confirmed application
+ok 77 - failed next plan or rejected execution retains the previously confirmed application
+  ---
+  duration_ms: 4.499737
+  type: 'test'
+  ...
+# Subtest: disposal aborts requests, cancels pending confirmation and releases Runtime subscription
+ok 78 - disposal aborts requests, cancels pending confirmation and releases Runtime subscription
+  ---
+  duration_ms: 6.836283
+  type: 'test'
+  ...
+# Subtest: requestId cancellation ignores late resolve and cannot clear the next busy state
+ok 79 - requestId cancellation ignores late resolve and cannot clear the next busy state
+  ---
+  duration_ms: 4.911878
+  type: 'test'
+  ...
+# Subtest: requestId cancellation ignores late reject and cannot clear the next busy state
+ok 80 - requestId cancellation ignores late reject and cannot clear the next busy state
+  ---
+  duration_ms: 5.738171
+  type: 'test'
+  ...
+# Subtest: new request supersedes old success without requiring cancellation
+ok 81 - new request supersedes old success without requiring cancellation
+  ---
+  duration_ms: 2.251356
+  type: 'test'
+  ...
+# Subtest: new request supersedes old failure without requiring cancellation
+ok 82 - new request supersedes old failure without requiring cancellation
+  ---
+  duration_ms: 3.150877
+  type: 'test'
+  ...
+# Subtest: abort reentrancy starts a newer request without resurrecting the cancelled attempt
+ok 83 - abort reentrancy starts a newer request without resurrecting the cancelled attempt
+  ---
+  duration_ms: 2.164905
+  type: 'test'
+  ...
+# Subtest: request replacement abort callbacks cannot overwrite the newest owner
+ok 84 - request replacement abort callbacks cannot overwrite the newest owner
+  ---
+  duration_ms: 2.500191
+  type: 'test'
+  ...
+# Subtest: authorization identity invalidates plans but never grants scope
+ok 85 - authorization identity invalidates plans but never grants scope
+  ---
+  duration_ms: 5.491871
+  type: 'test'
+  ...
+# Subtest: test wrapper forwards the preview authorization to Runtime
+ok 86 - test wrapper forwards the preview authorization to Runtime
+  ---
+  duration_ms: 6.63675
+  type: 'test'
+  ...
+# Subtest: old preview authorization cannot pass final CAS after authorization generation changes
+ok 87 - old preview authorization cannot pass final CAS after authorization generation changes
+  ---
+  duration_ms: 11.000344
+  type: 'test'
+  ...
+# Subtest: confirm locks before Host observers and own Runtime notifications never publish stale
+ok 88 - confirm locks before Host observers and own Runtime notifications never publish stale
+  ---
+  duration_ms: 8.919886
+  type: 'test'
+  ...
+# Subtest: synchronous context change while publishing CONFIRMING prevents any write
+ok 89 - synchronous context change while publishing CONFIRMING prevents any write
+  ---
+  duration_ms: 12.610592
+  type: 'test'
+  ...
+# Subtest: explicit failure with identical immutable snapshot is COMMIT_FAILED and terminal
+ok 90 - explicit failure with identical immutable snapshot is COMMIT_FAILED and terminal
+  ---
+  duration_ms: 2.316669
+  type: 'test'
+  ...
+# Subtest: unexpected exception before known receipt is UNKNOWN, never a rollback claim
+ok 91 - unexpected exception before known receipt is UNKNOWN, never a rollback claim
+  ---
+  duration_ms: 2.117707
+  type: 'test'
+  ...
+# Subtest: unexpected exception after Runtime writes is UNKNOWN, never a rollback claim
+ok 92 - unexpected exception after Runtime writes is UNKNOWN, never a rollback claim
+  ---
+  duration_ms: 4.059956
+  type: 'test'
+  ...
+# Subtest: a failure receipt after a write is UNKNOWN even without a thrown exception
+ok 93 - a failure receipt after a write is UNKNOWN even without a thrown exception
+  ---
+  duration_ms: 2.635324
+  type: 'test'
+  ...
+# Subtest: new attempts clear current receipt while retaining history across cancel and preview rejection
+ok 94 - new attempts clear current receipt while retaining history across cancel and preview rejection
+  ---
+  duration_ms: 4.229984
+  type: 'test'
+  ...
+# Subtest: disposed host cannot publish a late success into its replacement
+ok 95 - disposed host cannot publish a late success into its replacement
+  ---
+  duration_ms: 2.50473
+  type: 'test'
+  ...
+# Subtest: disposed host cannot publish a late failure into its replacement
+ok 96 - disposed host cannot publish a late failure into its replacement
+  ---
+  duration_ms: 2.318712
+  type: 'test'
+  ...
+# Subtest: invalid initial input reports an attempt without superseding a valid request
+ok 97 - invalid initial input reports an attempt without superseding a valid request
+  ---
+  duration_ms: 2.789682
+  type: 'test'
+  ...
+# Subtest: context invalidation inside Runtime publication cannot hide an uncertain write
+ok 98 - context invalidation inside Runtime publication cannot hide an uncertain write
+  ---
+  duration_ms: 2.1565
+  type: 'test'
+  ...
+# Subtest: invalid input over 4000 characters reports an error without revoking a valid preview; corrected input retries
+ok 99 - invalid input over 4000 characters reports an error without revoking a valid preview; corrected input retries
+  ---
+  duration_ms: 2.640694
+  type: 'test'
+  ...
+# Subtest: missed Runtime notification terminates stale preview before confirm
+ok 100 - missed Runtime notification terminates stale preview before confirm
+  ---
+  duration_ms: 2.486776
+  type: 'test'
+  ...
+# Subtest: missed Runtime notification terminates stale preview before confirm without cancelling a reentrant newer request
+ok 101 - missed Runtime notification terminates stale preview before confirm without cancelling a reentrant newer request
+  ---
+  duration_ms: 3.424599
+  type: 'test'
+  ...
+# Subtest: revision changed by a CONFIRMING observer with missed notification also terminates the preview
+ok 102 - revision changed by a CONFIRMING observer with missed notification also terminates the preview
+  ---
+  duration_ms: 2.266234
+  type: 'test'
+  ...
+# Subtest: missed authorization notification retires in-flight response
+ok 103 - missed authorization notification retires in-flight response
+  ---
+  duration_ms: 1.287856
+  type: 'test'
+  ...
+# Subtest: missed authorization notification retires in-flight response after regrant
+ok 104 - missed authorization notification retires in-flight response after regrant
+  ---
+  duration_ms: 3.186895
+  type: 'test'
+  ...
+# Subtest: missed authorization generation cannot commit an old preview
+ok 105 - missed authorization generation cannot commit an old preview
+  ---
+  duration_ms: 1.852952
+  type: 'test'
+  ...
+# Subtest: missed authorization generation cannot commit from CONFIRMING observer
+ok 106 - missed authorization generation cannot commit from CONFIRMING observer
+  ---
+  duration_ms: 4.30713
+  type: 'test'
+  ...
+# Subtest: observed authorization revocation while CONFIRMING prevents writes
+ok 107 - observed authorization revocation while CONFIRMING prevents writes
+  ---
+  duration_ms: 1.75559
+  type: 'test'
+  ...
+# Subtest: production owner isolates throwing observers and preserves a known successful receipt
+ok 108 - production owner isolates throwing observers and preserves a known successful receipt
+  ---
+  duration_ms: 2.453594
+  type: 'test'
+  ...
+# Subtest: readonly request never reaches provider or changes the sole owner
+ok 109 - readonly request never reaches provider or changes the sole owner
+  ---
+  duration_ms: 1.003264
+  type: 'test'
+  ...
+# Subtest: missed revision notification rejects the in-flight provider response
+ok 110 - missed revision notification rejects the in-flight provider response
+  ---
+  duration_ms: 1.770378
+  type: 'test'
+  ...
+# Subtest: a missed context change while publishing REQUESTING never reaches provider
+ok 111 - a missed context change while publishing REQUESTING never reaches provider
+  ---
+  duration_ms: 1.130763
+  type: 'test'
+  ...
+# Subtest: production provider fails closed and preserves the original runtime
+ok 112 - production provider fails closed and preserves the original runtime
+  ---
+  duration_ms: 1.227002
+  type: 'test'
+  ...
+# Subtest: egress allowlist excludes records, unrelated blocks and arbitrary injected properties
+ok 113 - egress allowlist excludes records, unrelated blocks and arbitrary injected properties
+  ---
+  duration_ms: 1.470397
+  type: 'test'
+  ...
+# Subtest: business text survives preview, confirmation and Runtime unchanged: "x < 10"
+ok 114 - business text survives preview, confirmation and Runtime unchanged: "x < 10"
+  ---
+  duration_ms: 13.853475
+  type: 'test'
+  ...
+# Subtest: business text survives preview, confirmation and Runtime unchanged: "x > 0; x <= 10; x >= 0"
+ok 115 - business text survives preview, confirmation and Runtime unchanged: "x > 0; x <= 10; x >= 0"
+  ---
+  duration_ms: 3.741631
+  type: 'test'
+  ...
+# Subtest: business text survives preview, confirmation and Runtime unchanged: "字段说明：C++、箭头 →、=>"
+ok 116 - business text survives preview, confirmation and Runtime unchanged: "字段说明：C++、箭头 →、=>"
+  ---
+  duration_ms: 2.983755
+  type: 'test'
+  ...
+# Subtest: business text survives preview, confirmation and Runtime unchanged: "HTML 教学：<script>globalThis.__planTextExecuted = true</script>"
+ok 117 - business text survives preview, confirmation and Runtime unchanged: "HTML 教学：<script>globalThis.__planTextExecuted = true</script>"
+  ---
+  duration_ms: 14.651265
+  type: 'test'
+  ...
+# Subtest: business text survives preview, confirmation and Runtime unchanged: "JavaScript: function(x) { return x < 10 }; () => document.title; window.alert(1)"
+ok 118 - business text survives preview, confirmation and Runtime unchanged: "JavaScript: function(x) { return x < 10 }; () => document.title; window.alert(1)"
+  ---
+  duration_ms: 7.371403
+  type: 'test'
+  ...
+# Subtest: business text survives preview, confirmation and Runtime unchanged: "示例：eval(\\"1 + 1\\"); Function(\\"return 1\\"); data:text/html,<b>文本</b>"
+ok 119 - business text survives preview, confirmation and Runtime unchanged: "示例：eval(\\"1 + 1\\"); Function(\\"return 1\\"); data:text/html,<b>文本</b>"
+  ---
+  duration_ms: 6.31582
+  type: 'test'
+  ...
+# Subtest: business text survives preview, confirmation and Runtime unchanged: "中文 English ∑ α ≤ ≥ 😀 é\\n第二行\\t\\"引号\\" & '单引号'"
+ok 120 - business text survives preview, confirmation and Runtime unchanged: "中文 English ∑ α ≤ ≥ 😀 é\\n第二行\\t\\"引号\\" & '单引号'"
+  ---
+  duration_ms: 7.646877
+  type: 'test'
+  ...
+# Subtest: teaching text is escaped by real React renderers in labels, options, records, canvas and Mochi
+ok 121 - teaching text is escaped by real React renderers in labels, options, records, canvas and Mochi
+  ---
+  duration_ms: 95.114685
+  type: 'test'
+  ...
+# Subtest: contact field and form/list display change are previewed in isolation and committed atomically once
+ok 122 - contact field and form/list display change are previewed in isolation and committed atomically once
+  ---
+  duration_ms: 3.608532
+  type: 'test'
+  ...
+# Subtest: existing list and metric primitive capabilities add working blocks on the same entity
+ok 123 - existing list and metric primitive capabilities add working blocks on the same entity
+  ---
+  duration_ms: 3.412937
+  type: 'test'
+  ...
+# Subtest: numeric aggregation adds a running sum and average using existing number field
+ok 124 - numeric aggregation adds a running sum and average using existing number field
+  ---
+  duration_ms: 3.428747
+  type: 'test'
+  ...
+# Subtest: removeBlock removes binding and layout while retaining entity schema and all records
+ok 125 - removeBlock removes binding and layout while retaining entity schema and all records
+  ---
+  duration_ms: 2.085397
+  type: 'test'
+  ...
+# Subtest: cancel is idempotent and permanently prevents confirmation with zero live mutation
+ok 126 - cancel is idempotent and permanently prevents confirmation with zero live mutation
+  ---
+  duration_ms: 1.710015
+  type: 'test'
+  ...
+# Subtest: confirmation submits the exact deeply frozen request and cannot be changed by caller mutation
+ok 127 - confirmation submits the exact deeply frozen request and cannot be changed by caller mutation
+  ---
+  duration_ms: 2.431554
+  type: 'test'
+  ...
+# Subtest: same request is deduplicated; changed request or scope with same ID is rejected
+ok 128 - same request is deduplicated; changed request or scope with same ID is rejected
+  ---
+  duration_ms: 2.929143
+  type: 'test'
+  ...
+# Subtest: Runtime receipts also prevent reusing an ID consumed outside the planner
+ok 129 - Runtime receipts also prevent reusing an ID consumed outside the planner
+  ---
+  duration_ms: 1.768364
+  type: 'test'
+  ...
+# Subtest: shared schema impact includes siblings outside direct block permission
+ok 130 - shared schema impact includes siblings outside direct block permission
+  ---
+  duration_ms: 1.541339
+  type: 'test'
+  ...
+# Subtest: entity and direct block permissions are both required; model cannot grant itself scope
+ok 131 - entity and direct block permissions are both required; model cannot grant itself scope
+  ---
+  duration_ms: 2.073354
+  type: 'test'
+  ...
+# Subtest: five-command contract includes controlled presentation edits and rejects forbidden commands atomically
+ok 132 - five-command contract includes controlled presentation edits and rejects forbidden commands atomically
+  ---
+  duration_ms: 1.264733
+  type: 'test'
+  ...
+# Subtest: invalid fields, references, required backfill and metric configuration reject the whole batch
+ok 133 - invalid fields, references, required backfill and metric configuration reject the whole batch
+  ---
+  duration_ms: 3.732594
+  type: 'test'
+  ...
+# Subtest: cross-entity references, nonunique bindings, duplicate IDs and transient replacement are rejected
+ok 134 - cross-entity references, nonunique bindings, duplicate IDs and transient replacement are rejected
+  ---
+  duration_ms: 3.743925
+  type: 'test'
+  ...
+# Subtest: strict JSON input rejects accessors, prototypes, cycles and non-JSON values without executing them
+ok 135 - strict JSON input rejects accessors, prototypes, cycles and non-JSON values without executing them
+  ---
+  duration_ms: 1.943942
+  type: 'test'
+  ...
+# Subtest: text compatibility does not allow unknown properties, invalid IDs or malformed requests
+ok 136 - text compatibility does not allow unknown properties, invalid IDs or malformed requests
+  ---
+  duration_ms: 1.401558
+  type: 'test'
+  ...
+# Subtest: string length, JSON depth and JSON node limits still reject oversized input
+ok 137 - string length, JSON depth and JSON node limits still reject oversized input
+  ---
+  duration_ms: 13.014767
+  type: 'test'
+  ...
+# Subtest: stale preview and later record/layout/structural revisions reject without rebasing
+ok 138 - stale preview and later record/layout/structural revisions reject without rebasing
+  ---
+  duration_ms: 6.524801
+  type: 'test'
+  ...
+# Subtest: plan handles are bound to the exact planner and app instance, even with equal app IDs/revisions
+ok 139 - plan handles are bound to the exact planner and app instance, even with equal app IDs/revisions
+  ---
+  duration_ms: 2.885822
+  type: 'test'
+  ...
+# Subtest: capability catalog separates business composition and actual primitives and is deeply immutable
+ok 140 - capability catalog separates business composition and actual primitives and is deeply immutable
+  ---
+  duration_ms: 0.365443
+  type: 'test'
+  ...
+# Subtest: unsupported features and unknown declarations cannot create fake executable blocks
+ok 141 - unsupported features and unknown declarations cannot create fake executable blocks
+  ---
+  duration_ms: 1.391049
+  type: 'test'
+  ...
+# Subtest: shared entity CRUD publishes one snapshot and immediately updates derived metrics
+ok 142 - shared entity CRUD publishes one snapshot and immediately updates derived metrics
+  ---
+  duration_ms: 12.901886
+  type: 'test'
+  ...
+# Subtest: invalid writes, duplicate IDs and missing targets are atomic and do not notify
+ok 143 - invalid writes, duplicate IDs and missing targets are atomic and do not notify
+  ---
+  duration_ms: 2.515981
+  type: 'test'
+  ...
+# Subtest: sum and average derive from actual records, optional numbers and empty data
+ok 144 - sum and average derive from actual records, optional numbers and empty data
+  ---
+  duration_ms: 1.427204
+  type: 'test'
+  ...
+# Subtest: input boundary handles five field types, required false, zero and invalid calendars
+ok 145 - input boundary handles five field types, required false, zero and invalid calendars
+  ---
+  duration_ms: 1.544223
+  type: 'test'
+  ...
+# Subtest: projects and caller values are isolated, clearing optional values is supported
+ok 146 - projects and caller values are isolated, clearing optional values is supported
+  ---
+  duration_ms: 6.397899
+  type: 'test'
+  ...
+# Subtest: one session shares structural commands, C writes, layout and B projections
+ok 147 - one session shares structural commands, C writes, layout and B projections
+  ---
+  duration_ms: 30.443707
+  type: 'test'
+  ...
+# Subtest: failed commands, records and moves retain snapshot, history, revision and notifications
+ok 148 - failed commands, records and moves retain snapshot, history, revision and notifications
+  ---
+  duration_ms: 3.629543
+  type: 'test'
+  ...
+# Subtest: structural batches undo atomically with monotonic revision; duplicate undo does not publish
+ok 149 - structural batches undo atomically with monotonic revision; duplicate undo does not publish
+  ---
+  duration_ms: 1.988638
+  type: 'test'
+  ...
+# Subtest: every successful record operation fences old full-state history, including legacy dispatch
+ok 150 - every successful record operation fences old full-state history, including legacy dispatch
+  ---
+  duration_ms: 9.183186
+  type: 'test'
+  ...
+# Subtest: layout fences history, never changes records/bindings, and survives later structural undo
+ok 151 - layout fences history, never changes records/bindings, and survives later structural undo
+  ---
+  duration_ms: 2.539936
+  type: 'test'
+  ...
+# Subtest: revision exhaustion rejects all write paths without a notification
+ok 152 - revision exhaustion rejects all write paths without a notification
+  ---
+  duration_ms: 0.891787
+  type: 'test'
+  ...
+# Subtest: both handwritten examples validate and fresh examples are isolated
+ok 153 - both handwritten examples validate and fresh examples are isolated
+  ---
+  duration_ms: 4.949468
+  type: 'test'
+  ...
+# Subtest: atomic addField and display configuration, inputs are never mutated
+ok 154 - atomic addField and display configuration, inputs are never mutated
+  ---
+  duration_ms: 6.295954
+  type: 'test'
+  ...
+# Subtest: same-type block instances bind independently; deletion keeps business records
+ok 155 - same-type block instances bind independently; deletion keeps business records
+  ---
+  duration_ms: 2.282996
+  type: 'test'
+  ...
+# Subtest: field updates preserve ID and reject record-incompatible changes
+ok 156 - field updates preserve ID and reject record-incompatible changes
+  ---
+  duration_ms: 4.569277
+  type: 'test'
+  ...
+# Subtest: referenced and populated fields cannot be removed; unused fields can
+ok 157 - referenced and populated fields cannot be removed; unused fields can
+  ---
+  duration_ms: 5.075704
+  type: 'test'
+  ...
+# Subtest: exact retries deduplicate before revision check, even after later commits and undo
+ok 158 - exact retries deduplicate before revision check, even after later commits and undo
+  ---
+  duration_ms: 1.648821
+  type: 'test'
+  ...
+# Subtest: JSON key order does not alter retry identity
+ok 159 - JSON key order does not alter retry identity
+  ---
+  duration_ms: 1.668899
+  type: 'test'
+  ...
+# Subtest: stale requests fail and failed requests do not reserve an ID
+ok 160 - stale requests fail and failed requests do not reserve an ID
+  ---
+  duration_ms: 0.504592
+  type: 'test'
+  ...
+# Subtest: batch failure rolls back spec, records, positions, history, receipts and revision
+ok 161 - batch failure rolls back spec, records, positions, history, receipts and revision
+  ---
+  duration_ms: 1.23633
+  type: 'test'
+  ...
+# Subtest: undo restores whole batch and increments revision; no redo toggle
+ok 162 - undo restores whole batch and increments revision; no redo toggle
+  ---
+  duration_ms: 1.084406
+  type: 'test'
+  ...
+# Subtest: multiple undo operations restore prior snapshots in order
+ok 163 - multiple undo operations restore prior snapshots in order
+  ---
+  duration_ms: 4.641563
+  type: 'test'
+  ...
+# Subtest: validation rejects unsupported version
+ok 164 - validation rejects unsupported version
+  ---
+  duration_ms: 5.753991
+  type: 'test'
+  ...
+# Subtest: validation rejects duplicate global ID
+ok 165 - validation rejects duplicate global ID
+  ---
+  duration_ms: 0.30017
+  type: 'test'
+  ...
+# Subtest: validation rejects duplicate field ID across entities
+ok 166 - validation rejects duplicate field ID across entities
+  ---
+  duration_ms: 0.298928
+  type: 'test'
+  ...
+# Subtest: validation rejects unknown entity binding
+ok 167 - validation rejects unknown entity binding
+  ---
+  duration_ms: 0.266458
+  type: 'test'
+  ...
+# Subtest: validation rejects unknown block binding
+ok 168 - validation rejects unknown block binding
+  ---
+  duration_ms: 0.265415
+  type: 'test'
+  ...
+# Subtest: validation rejects missing binding
+ok 169 - validation rejects missing binding
+  ---
+  duration_ms: 0.306592
+  type: 'test'
+  ...
+# Subtest: validation rejects duplicate binding
+ok 170 - validation rejects duplicate binding
+  ---
+  duration_ms: 0.283761
+  type: 'test'
+  ...
+# Subtest: validation rejects cross entity field
+ok 171 - validation rejects cross entity field
+  ---
+  duration_ms: 0.281646
+  type: 'test'
+  ...
+# Subtest: validation rejects duplicate display field
+ok 172 - validation rejects duplicate display field
+  ---
+  duration_ms: 4.411102
+  type: 'test'
+  ...
+# Subtest: validation rejects empty display fields
+ok 173 - validation rejects empty display fields
+  ---
+  duration_ms: 0.269256
+  type: 'test'
+  ...
+# Subtest: validation rejects metric nonnumber field
+ok 174 - validation rejects metric nonnumber field
+  ---
+  duration_ms: 0.285437
+  type: 'test'
+  ...
+# Subtest: validation rejects form excludes required field
+ok 175 - validation rejects form excludes required field
+  ---
+  duration_ms: 0.282071
+  type: 'test'
+  ...
+# Subtest: validation rejects unsupported field
+ok 176 - validation rejects unsupported field
+  ---
+  duration_ms: 0.332936
+  type: 'test'
+  ...
+# Subtest: validation rejects empty select
+ok 177 - validation rejects empty select
+  ---
+  duration_ms: 0.230814
+  type: 'test'
+  ...
+# Subtest: validation rejects duplicate options
+ok 178 - validation rejects duplicate options
+  ---
+  duration_ms: 0.257584
+  type: 'test'
+  ...
+# Subtest: validation rejects invalid required flag
+ok 179 - validation rejects invalid required flag
+  ---
+  duration_ms: 0.219202
+  type: 'test'
+  ...
+# Subtest: validation rejects invalid number
+ok 180 - validation rejects invalid number
+  ---
+  duration_ms: 0.360949
+  type: 'test'
+  ...
+# Subtest: validation rejects invalid date
+ok 181 - validation rejects invalid date
+  ---
+  duration_ms: 3.381227
+  type: 'test'
+  ...
+# Subtest: validation rejects invalid select
+ok 182 - validation rejects invalid select
+  ---
+  duration_ms: 0.298722
+  type: 'test'
+  ...
+# Subtest: validation rejects missing required value
+ok 183 - validation rejects missing required value
+  ---
+  duration_ms: 0.302509
+  type: 'test'
+  ...
+# Subtest: validation rejects unknown record entity
+ok 184 - validation rejects unknown record entity
+  ---
+  duration_ms: 0.316335
+  type: 'test'
+  ...
+# Subtest: validation rejects unknown record field
+ok 185 - validation rejects unknown record field
+  ---
+  duration_ms: 0.287862
+  type: 'test'
+  ...
+# Subtest: validation rejects duplicate record ID
+ok 186 - validation rejects duplicate record ID
+  ---
+  duration_ms: 0.326664
+  type: 'test'
+  ...
+# Subtest: validation rejects invalid coordinates
+ok 187 - validation rejects invalid coordinates
+  ---
+  duration_ms: 0.334028
+  type: 'test'
+  ...
+# Subtest: validation rejects dangling position
+ok 188 - validation rejects dangling position
+  ---
+  duration_ms: 0.311475
+  type: 'test'
+  ...
+# Subtest: validation rejects invalid revision
+ok 189 - validation rejects invalid revision
+  ---
+  duration_ms: 0.216077
+  type: 'test'
+  ...
+# Subtest: validation rejects unexpected executable configuration
+ok 190 - validation rejects unexpected executable configuration
+  ---
+  duration_ms: 0.273284
+  type: 'test'
+  ...
+# Subtest: boolean, text and leap date values are checked without coercion
+ok 191 - boolean, text and leap date values are checked without coercion
+  ---
+  duration_ms: 0.630275
+  type: 'test'
+  ...
+# Subtest: untrusted malformed requests fail cleanly
+ok 192 - untrusted malformed requests fail cleanly
+  ---
+  duration_ms: 0.814912
+  type: 'test'
+  ...
+# Subtest: new required fields and narrowed select options cannot invalidate existing records
+ok 193 - new required fields and narrowed select options cannot invalidate existing records
+  ---
+  duration_ms: 1.092224
+  type: 'test'
+  ...
+# Subtest: unsupported targets and bad addBlock bindings are rejected
+ok 194 - unsupported targets and bad addBlock bindings are rejected
+  ---
+  duration_ms: 1.218661
+  type: 'test'
+  ...
+1..194
+# tests 194
+# suites 0
+# pass 194
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6589.251073
+command=npm run build
+
+> blockcraft-ai@0.1.0 build
+> tsc -b && vite build
+
+[36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 2005 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                              0.62 kB │ gzip:   0.44 kB
+dist/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2    7.90 kB
+dist/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2    8.09 kB
+dist/assets/pixelify-sans-latin-700-normal-BctWAS0u.woff    10.49 kB
+dist/assets/pixelify-sans-latin-500-normal-Bq6pAlou.woff    10.68 kB
+dist/assets/mochi-Btfatr0K.png                             114.52 kB
+dist/assets/index-jCjpDxQz.css                              76.50 kB │ gzip:  15.07 kB
+dist/assets/index-LSTX0FVa.js                              437.47 kB │ gzip: 138.05 kB
+
+[32m✓ built in 319ms[39m
+command=npm --prefix server test
+
+> test
+> npm run build && node --test *.test.mjs
+
+
+> build
+> tsc -p tsconfig.json
+
+TAP version 13
+# Subtest: health works without a key and never calls upstream
+ok 1 - health works without a key and never calls upstream
+  ---
+  duration_ms: 37.405868
+  type: 'test'
+  ...
+# Subtest: missing key produces safe 503 without upstream call
+ok 2 - missing key produces safe 503 without upstream call
+  ---
+  duration_ms: 12.649617
+  type: 'test'
+  ...
+# Subtest: invalid idea, unexpected fields, and malformed JSON never reach upstream
+ok 3 - invalid idea, unexpected fields, and malformed JSON never reach upstream
+  ---
+  duration_ms: 37.490166
+  type: 'test'
+  ...
+# Subtest: body byte limit and content type are enforced before upstream
+ok 4 - body byte limit and content type are enforced before upstream
+  ---
+  duration_ms: 8.007353
+  type: 'test'
+  ...
+# Subtest: chunked body cannot bypass byte limit
+ok 5 - chunked body cannot bypass byte limit
+  ---
+  duration_ms: 6.413585
+  type: 'test'
+  ...
+# Subtest: mock valid result uses official endpoint, default model, JSON mode, and actual AppSpec source
+ok 6 - mock valid result uses official endpoint, default model, JSON mode, and actual AppSpec source
+  ---
+  duration_ms: 15.911093
+  type: 'test'
+  ...
+# Subtest: DEEPSEEK_MODEL overrides the default server-side
+ok 7 - DEEPSEEK_MODEL overrides the default server-side
+  ---
+  duration_ms: 6.122881
+  type: 'test'
+  ...
+# Subtest: rejects non-JSON model content with the existing validator and safe errors
+ok 8 - rejects non-JSON model content with the existing validator and safe errors
+  ---
+  duration_ms: 11.609744
+  type: 'test'
+  ...
+# Subtest: rejects wrong protocol with the existing validator and safe errors
+ok 9 - rejects wrong protocol with the existing validator and safe errors
+  ---
+  duration_ms: 7.477232
+  type: 'test'
+  ...
+# Subtest: rejects extra executable property with the existing validator and safe errors
+ok 10 - rejects extra executable property with the existing validator and safe errors
+  ---
+  duration_ms: 5.027675
+  type: 'test'
+  ...
+# Subtest: rejects missing binding with the existing validator and safe errors
+ok 11 - rejects missing binding with the existing validator and safe errors
+  ---
+  duration_ms: 3.662706
+  type: 'test'
+  ...
+# Subtest: rejects cross-entity field with the existing validator and safe errors
+ok 12 - rejects cross-entity field with the existing validator and safe errors
+  ---
+  duration_ms: 4.729729
+  type: 'test'
+  ...
+# Subtest: handles malformed upstream JSON
+ok 13 - handles malformed upstream JSON
+  ---
+  duration_ms: 2.837512
+  type: 'test'
+  ...
+# Subtest: handles truncated output
+ok 14 - handles truncated output
+  ---
+  duration_ms: 3.083903
+  type: 'test'
+  ...
+# Subtest: handles empty choices
+ok 15 - handles empty choices
+  ---
+  duration_ms: 2.966463
+  type: 'test'
+  ...
+# Subtest: handles upstream HTTP failure
+ok 16 - handles upstream HTTP failure
+  ---
+  duration_ms: 2.810532
+  type: 'test'
+  ...
+# Subtest: handles oversized envelope
+ok 17 - handles oversized envelope
+  ---
+  duration_ms: 2.968948
+  type: 'test'
+  ...
+# Subtest: handles oversized generated content
+ok 18 - handles oversized generated content
+  ---
+  duration_ms: 3.481906
+  type: 'test'
+  ...
+# Subtest: rejects ambiguous completion: multiple choices
+ok 19 - rejects ambiguous completion: multiple choices
+  ---
+  duration_ms: 3.039199
+  type: 'test'
+  ...
+# Subtest: rejects ambiguous completion: tool calls
+ok 20 - rejects ambiguous completion: tool calls
+  ---
+  duration_ms: 3.063685
+  type: 'test'
+  ...
+# Subtest: rejects ambiguous completion: legacy function call
+ok 21 - rejects ambiguous completion: legacy function call
+  ---
+  duration_ms: 5.111692
+  type: 'test'
+  ...
+# Subtest: rejects ambiguous completion: refusal with content
+ok 22 - rejects ambiguous completion: refusal with content
+  ---
+  duration_ms: 2.679337
+  type: 'test'
+  ...
+# Subtest: rejects ambiguous completion: wrong message role
+ok 23 - rejects ambiguous completion: wrong message role
+  ---
+  duration_ms: 2.664338
+  type: 'test'
+  ...
+# Subtest: rejects ambiguous completion: error with choices
+ok 24 - rejects ambiguous completion: error with choices
+  ---
+  duration_ms: 2.403752
+  type: 'test'
+  ...
+# Subtest: invalid UTF-8 input is rejected before upstream, even inside valid JSON strings
+ok 25 - invalid UTF-8 input is rejected before upstream, even inside valid JSON strings
+  ---
+  duration_ms: 2.322119
+  type: 'test'
+  ...
+# Subtest: invalid UTF-8 upstream cannot silently replace bytes inside an otherwise valid AppSpec
+ok 26 - invalid UTF-8 upstream cannot silently replace bytes inside an otherwise valid AppSpec
+  ---
+  duration_ms: 2.490844
+  type: 'test'
+  ...
+# Subtest: timeout aborts an upstream call and returns safe 504
+ok 27 - timeout aborts an upstream call and returns safe 504
+  ---
+  duration_ms: 27.127963
+  type: 'test'
+  ...
+# Subtest: timeout also covers upstream body consumption
+ok 28 - timeout also covers upstream body consumption
+  ---
+  duration_ms: 28.580425
+  type: 'test'
+  ...
+# Subtest: rate limit ignores forged forwarding headers and leaves health available
+ok 29 - rate limit ignores forged forwarding headers and leaves health available
+  ---
+  duration_ms: 17.666564
+  type: 'test'
+  ...
+# Subtest: concurrency cap rejects excess calls without starting another upstream request
+ok 30 - concurrency cap rejects excess calls without starting another upstream request
+  ---
+  duration_ms: 10.22137
+  type: 'test'
+  ...
+# Subtest: cross-origin requests and wrong methods/paths never call upstream
+ok 31 - cross-origin requests and wrong methods/paths never call upstream
+  ---
+  duration_ms: 5.552917
+  type: 'test'
+  ...
+# Subtest: deadline releases ignored-abort transport and cancels its late response body
+ok 32 - deadline releases ignored-abort transport and cancels its late response body
+  ---
+  duration_ms: 12.851866
+  type: 'test'
+  ...
+# Subtest: HTTP and declared-size rejection cancel unused upstream bodies without blocking admission
+ok 33 - HTTP and declared-size rejection cancel unused upstream bodies without blocking admission
+  ---
+  duration_ms: 6.413756
+  type: 'test'
+  ...
+# Subtest: deadline releases ignored-abort body, including nonsettling cancel
+ok 34 - deadline releases ignored-abort body, including nonsettling cancel
+  ---
+  duration_ms: 12.048344
+  type: 'test'
+  ...
+# Subtest: timed-out requests do not retain concurrency slots
+ok 35 - timed-out requests do not retain concurrency slots
+  ---
+  duration_ms: 28.413535
+  type: 'test'
+  ...
+# Subtest: HTTP disconnect aborts upstream and releases admission even when transport ignores cancellation
+ok 36 - HTTP disconnect aborts upstream and releases admission even when transport ignores cancellation
+  ---
+  duration_ms: 6.361127
+  type: 'test'
+  ...
+# Subtest: disconnect at input completion prevents a generation call before upstream dispatch
+ok 37 - disconnect at input completion prevents a generation call before upstream dispatch
+  ---
+  duration_ms: 5.46933
+  type: 'test'
+  ...
+1..37
+# tests 37
+# suites 0
+# pass 37
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 449.909449
+command=npm run test:generation
+
+> blockcraft-ai@0.1.0 test:generation
+> npm --prefix server run build && node --test tests/generation/*.test.mjs
+
+
+> build
+> tsc -p tsconfig.json
+
+TAP version 13
+# Subtest: existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure
+ok 1 - existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure
+  ---
+  duration_ms: 161.197556
+  type: 'test'
+  ...
+# Subtest: route rejects structurally legal but incomplete metric-only app without input, then recovers
+ok 2 - route rejects structurally legal but incomplete metric-only app without input, then recovers
+  ---
+  duration_ms: 36.297341
+  type: 'test'
+  ...
+# Subtest: route rejects structurally legal but incomplete unbound empty entity, then recovers
+ok 3 - route rejects structurally legal but incomplete unbound empty entity, then recovers
+  ---
+  duration_ms: 17.342597
+  type: 'test'
+  ...
+# Subtest: route rejects structurally legal but incomplete hidden optional field, then recovers
+ok 4 - route rejects structurally legal but incomplete hidden optional field, then recovers
+  ---
+  duration_ms: 16.518772
+  type: 'test'
+  ...
+# Subtest: prompt embeds the exact live protocol boundary and keeps idea in its own user message
+ok 5 - prompt embeds the exact live protocol boundary and keeps idea in its own user message
+  ---
+  duration_ms: 6.169305
+  type: 'test'
+  ...
+# Subtest: club-app: independent requirement mapping and real runtime CRUD/aggregations
+ok 6 - club-app: independent requirement mapping and real runtime CRUD/aggregations
+  ---
+  duration_ms: 7.421273
+  type: 'test'
+  ...
+# Subtest: fitness-log: independent requirement mapping and real runtime CRUD/aggregations
+ok 7 - fitness-log: independent requirement mapping and real runtime CRUD/aggregations
+  ---
+  duration_ms: 3.322384
+  type: 'test'
+  ...
+# Subtest: fitness-library: independent requirement mapping and real runtime CRUD/aggregations
+ok 8 - fitness-library: independent requirement mapping and real runtime CRUD/aggregations
+  ---
+  duration_ms: 3.463087
+  type: 'test'
+  ...
+# Subtest: money-app: independent requirement mapping and real runtime CRUD/aggregations
+ok 9 - money-app: independent requirement mapping and real runtime CRUD/aggregations
+  ---
+  duration_ms: 4.721638
+  type: 'test'
+  ...
+# Subtest: lost-found: independent requirement mapping and real runtime CRUD/aggregations
+ok 10 - lost-found: independent requirement mapping and real runtime CRUD/aggregations
+  ---
+  duration_ms: 2.996703
+  type: 'test'
+  ...
+# Subtest: book-log: independent requirement mapping and real runtime CRUD/aggregations
+ok 11 - book-log: independent requirement mapping and real runtime CRUD/aggregations
+  ---
+  duration_ms: 1.269722
+  type: 'test'
+  ...
+# Subtest: movie-log: independent requirement mapping and real runtime CRUD/aggregations
+ok 12 - movie-log: independent requirement mapping and real runtime CRUD/aggregations
+  ---
+  duration_ms: 1.127666
+  type: 'test'
+  ...
+# Subtest: same domain, different goals change entities/fields; no mandatory form/list/metric set
+ok 13 - same domain, different goals change entities/fields; no mandatory form/list/metric set
+  ---
+  duration_ms: 0.492755
+  type: 'test'
+  ...
+# Subtest: record count is supported with empty field evidence and reflects actual rows, not unique objects
+ok 14 - record count is supported with empty field evidence and reflects actual rows, not unique objects
+  ---
+  duration_ms: 2.090492
+  type: 'test'
+  ...
+# Subtest: base v1 empty specs stay legal; only the independent generation policy rejects them
+ok 15 - base v1 empty specs stay legal; only the independent generation policy rejects them
+  ---
+  duration_ms: 0.343043
+  type: 'test'
+  ...
+# Subtest: separate completeness detects empty fields, unbound objects, missing input and inaccessible fields
+ok 16 - separate completeness detects empty fields, unbound objects, missing input and inaccessible fields
+  ---
+  duration_ms: 0.360166
+  type: 'test'
+  ...
+# Subtest: bad binding, required field omission, cross-entity fields, illegal numeric metric and unknown types fail structure
+ok 17 - bad binding, required field omission, cross-entity fields, illegal numeric metric and unknown types fail structure
+  ---
+  duration_ms: 0.663465
+  type: 'test'
+  ...
+# Subtest: structure cannot prove semantics: valid unrelated apps need review; independent mappings expose the mismatch
+ok 18 - structure cannot prove semantics: valid unrelated apps need review; independent mappings expose the mismatch
+  ---
+  duration_ms: 0.463851
+  type: 'test'
+  ...
+# Subtest: independent reviewer receives original goals, spec and actual operations as data without any API call
+ok 19 - independent reviewer receives original goals, spec and actual operations as data without any API call
+  ---
+  duration_ms: 0.563167
+  type: 'test'
+  ...
+# Subtest: review must cover every goal and bind current input/spec/requirements; malformed evidence fails closed
+ok 20 - review must cover every goal and bind current input/spec/requirements; malformed evidence fails closed
+  ---
+  duration_ms: 1.864879
+  type: 'test'
+  ...
+# Subtest: only actual exposed operations count; list required fields are editable, hidden optional fields are not
+ok 21 - only actual exposed operations count; list required fields are editable, hidden optional fields are not
+  ---
+  duration_ms: 0.496702
+  type: 'test'
+  ...
+# Subtest: unsupported operations remain unsupported despite plausible block names, including mixed and unsupported-only goals
+ok 22 - unsupported operations remain unsupported despite plausible block names, including mixed and unsupported-only goals
+  ---
+  duration_ms: 1.521264
+  type: 'test'
+  ...
+# Subtest: legacy demos keep their original protocol and remain usable without requirement reviews
+ok 23 - legacy demos keep their original protocol and remain usable without requirement reviews
+  ---
+  duration_ms: 1.777525
+  type: 'test'
+  ...
+# Subtest: legacy protocol projection does not advertise trusted v2 primitives
+ok 24 - legacy protocol projection does not advertise trusted v2 primitives
+  ---
+  duration_ms: 0.217958
+  type: 'test'
+  ...
+# Subtest: generation rejects unfinished media type uploads and closes without waiting for body
+ok 25 - generation rejects unfinished media type uploads and closes without waiting for body
+  ---
+  duration_ms: 59.09993
+  type: 'test'
+  ...
+# Subtest: generation rejects unfinished cross-origin uploads and closes without waiting for body
+ok 26 - generation rejects unfinished cross-origin uploads and closes without waiting for body
+  ---
+  duration_ms: 13.4215
+  type: 'test'
+  ...
+# Subtest: generation rejects unfinished declared size uploads and closes without waiting for body
+ok 27 - generation rejects unfinished declared size uploads and closes without waiting for body
+  ---
+  duration_ms: 14.289249
+  type: 'test'
+  ...
+# Subtest: generation rejects unfinished method uploads and closes without waiting for body
+ok 28 - generation rejects unfinished method uploads and closes without waiting for body
+  ---
+  duration_ms: 21.047217
+  type: 'test'
+  ...
+# Subtest: generation rejects unfinished route uploads and closes without waiting for body
+ok 29 - generation rejects unfinished route uploads and closes without waiting for body
+  ---
+  duration_ms: 17.211391
+  type: 'test'
+  ...
+# Subtest: over-limit unfinished chunked upload is structured 413 and releases the generation slot
+ok 30 - over-limit unfinished chunked upload is structured 413 and releases the generation slot
+  ---
+  duration_ms: 15.974971
+  type: 'test'
+  ...
+# Subtest: unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect
+ok 31 - unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect
+  ---
+  duration_ms: 19.954518
+  type: 'test'
+  ...
+# (node:2708) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: generation accepts valid multibyte JSON split inside a UTF-8 codepoint
+ok 32 - generation accepts valid multibyte JSON split inside a UTF-8 codepoint
+  ---
+  duration_ms: 12.911714
+  type: 'test'
+  ...
+# Subtest: unfinished request reaches its input deadline, returns structured 408 and releases admission
+ok 33 - unfinished request reaches its input deadline, returns structured 408 and releases admission
+  ---
+  duration_ms: 10.931489
+  type: 'test'
+  ...
+# Subtest: rate-limited unfinished upload receives 429 without reaching upstream or waiting for its body
+ok 34 - rate-limited unfinished upload receives 429 without reaching upstream or waiting for its body
+  ---
+  duration_ms: 52.042729
+  type: 'test'
+  ...
+1..34
+# tests 34
+# suites 0
+# pass 34
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 809.662197
+command=npm run test:mochi-host
+
+> blockcraft-ai@0.1.0 test:mochi-host
+> node --test src/integrations/mochi/host.test.cjs
+
+TAP version 13
+# Subtest: Mock preview is isolated, immutable, complete; confirm updates real B/C renderers exactly once
+ok 1 - Mock preview is isolated, immutable, complete; confirm updates real B/C renderers exactly once
+  ---
+  duration_ms: 60.12867
+  type: 'test'
+  ...
+# Subtest: callback context cannot grant selection or scope; provider sees only host context
+ok 2 - callback context cannot grant selection or scope; provider sees only host context
+  ---
+  duration_ms: 2.935037
+  type: 'test'
+  ...
+# Subtest: no selection cannot be replaced with a component hint
+ok 3 - no selection cannot be replaced with a component hint
+  ---
+  duration_ms: 1.191736
+  type: 'test'
+  ...
+# Subtest: rejects sibling block sharing entity from provider without changing Runtime
+ok 4 - rejects sibling block sharing entity from provider without changing Runtime
+  ---
+  duration_ms: 1.344903
+  type: 'test'
+  ...
+# Subtest: rejects other entity from provider without changing Runtime
+ok 5 - rejects other entity from provider without changing Runtime
+  ---
+  duration_ms: 5.434526
+  type: 'test'
+  ...
+# Subtest: rejects record command from provider without changing Runtime
+ok 6 - rejects record command from provider without changing Runtime
+  ---
+  duration_ms: 1.107648
+  type: 'test'
+  ...
+# Subtest: rejects provider request ID tampering
+ok 7 - rejects provider request ID tampering
+  ---
+  duration_ms: 2.48388
+  type: 'test'
+  ...
+# Subtest: rejects provider revision tampering
+ok 8 - rejects provider revision tampering
+  ---
+  duration_ms: 1.137284
+  type: 'test'
+  ...
+# Subtest: rejects provider scope injection tampering
+ok 9 - rejects provider scope injection tampering
+  ---
+  duration_ms: 1.464989
+  type: 'test'
+  ...
+# Subtest: rejects provider unsupported capability tampering
+ok 10 - rejects provider unsupported capability tampering
+  ---
+  duration_ms: 1.660726
+  type: 'test'
+  ...
+# Subtest: cancel is idempotent; cancelled and invented planIds cannot execute
+ok 11 - cancel is idempotent; cancelled and invented planIds cannot execute
+  ---
+  duration_ms: 1.57246
+  type: 'test'
+  ...
+# Subtest: selection A→B→A and a newer request both revoke old plans
+ok 12 - selection A→B→A and a newer request both revoke old plans
+  ---
+  duration_ms: 3.796513
+  type: 'test'
+  ...
+# Subtest: records revision invalidates preview and preserves the external update
+ok 13 - records revision invalidates preview and preserves the external update
+  ---
+  duration_ms: 2.869964
+  type: 'test'
+  ...
+# Subtest: layout revision invalidates preview and preserves the external update
+ok 14 - layout revision invalidates preview and preserves the external update
+  ---
+  duration_ms: 2.811896
+  type: 'test'
+  ...
+# Subtest: schema revision invalidates preview and preserves the external update
+ok 15 - schema revision invalidates preview and preserves the external update
+  ---
+  duration_ms: 2.589448
+  type: 'test'
+  ...
+# Subtest: same appId/revision in different Runtime cannot use the other host planId
+ok 16 - same appId/revision in different Runtime cannot use the other host planId
+  ---
+  duration_ms: 2.510609
+  type: 'test'
+  ...
+# Subtest: reentrant confirmation during Runtime publish cannot execute twice
+ok 17 - reentrant confirmation during Runtime publish cannot execute twice
+  ---
+  duration_ms: 1.602938
+  type: 'test'
+  ...
+# Subtest: ignoring suggestions only updates host state and leaves pending plan intact
+ok 18 - ignoring suggestions only updates host state and leaves pending plan intact
+  ---
+  duration_ms: 1.648173
+  type: 'test'
+  ...
+# Subtest: B/C mode changes preserve in-flight requests and previews without rebuilding Runtime
+ok 19 - B/C mode changes preserve in-flight requests and previews without rebuilding Runtime
+  ---
+  duration_ms: 2.692682
+  type: 'test'
+  ...
+# Subtest: obsolete async success cannot clear a newer preview
+ok 20 - obsolete async success cannot clear a newer preview
+  ---
+  duration_ms: 2.778974
+  type: 'test'
+  ...
+# Subtest: obsolete async failure cannot clear a newer preview
+ok 21 - obsolete async failure cannot clear a newer preview
+  ---
+  duration_ms: 2.587315
+  type: 'test'
+  ...
+# Subtest: anchor is host geometry bound to selection, instance, epoch and revision
+ok 22 - anchor is host geometry bound to selection, instance, epoch and revision
+  ---
+  duration_ms: 2.040628
+  type: 'test'
+  ...
+# Subtest: failed next plan or rejected execution retains the previously confirmed application
+ok 23 - failed next plan or rejected execution retains the previously confirmed application
+  ---
+  duration_ms: 2.561536
+  type: 'test'
+  ...
+# Subtest: disposal aborts requests, cancels pending confirmation and releases Runtime subscription
+ok 24 - disposal aborts requests, cancels pending confirmation and releases Runtime subscription
+  ---
+  duration_ms: 2.354607
+  type: 'test'
+  ...
+# Subtest: requestId cancellation ignores late resolve and cannot clear the next busy state
+ok 25 - requestId cancellation ignores late resolve and cannot clear the next busy state
+  ---
+  duration_ms: 1.914932
+  type: 'test'
+  ...
+# Subtest: requestId cancellation ignores late reject and cannot clear the next busy state
+ok 26 - requestId cancellation ignores late reject and cannot clear the next busy state
+  ---
+  duration_ms: 1.244354
+  type: 'test'
+  ...
+# Subtest: new request supersedes old success without requiring cancellation
+ok 27 - new request supersedes old success without requiring cancellation
+  ---
+  duration_ms: 1.34833
+  type: 'test'
+  ...
+# Subtest: new request supersedes old failure without requiring cancellation
+ok 28 - new request supersedes old failure without requiring cancellation
+  ---
+  duration_ms: 1.212895
+  type: 'test'
+  ...
+# Subtest: abort reentrancy starts a newer request without resurrecting the cancelled attempt
+ok 29 - abort reentrancy starts a newer request without resurrecting the cancelled attempt
+  ---
+  duration_ms: 1.415926
+  type: 'test'
+  ...
+# Subtest: request replacement abort callbacks cannot overwrite the newest owner
+ok 30 - request replacement abort callbacks cannot overwrite the newest owner
+  ---
+  duration_ms: 1.433359
+  type: 'test'
+  ...
+# Subtest: authorization identity invalidates plans but never grants scope
+ok 31 - authorization identity invalidates plans but never grants scope
+  ---
+  duration_ms: 1.804916
+  type: 'test'
+  ...
+# Subtest: test wrapper forwards the preview authorization to Runtime
+ok 32 - test wrapper forwards the preview authorization to Runtime
+  ---
+  duration_ms: 1.520493
+  type: 'test'
+  ...
+# Subtest: old preview authorization cannot pass final CAS after authorization generation changes
+ok 33 - old preview authorization cannot pass final CAS after authorization generation changes
+  ---
+  duration_ms: 1.503501
+  type: 'test'
+  ...
+# Subtest: confirm locks before Host observers and own Runtime notifications never publish stale
+ok 34 - confirm locks before Host observers and own Runtime notifications never publish stale
+  ---
+  duration_ms: 1.832819
+  type: 'test'
+  ...
+# Subtest: synchronous context change while publishing CONFIRMING prevents any write
+ok 35 - synchronous context change while publishing CONFIRMING prevents any write
+  ---
+  duration_ms: 3.044662
+  type: 'test'
+  ...
+# Subtest: explicit failure with identical immutable snapshot is COMMIT_FAILED and terminal
+ok 36 - explicit failure with identical immutable snapshot is COMMIT_FAILED and terminal
+  ---
+  duration_ms: 1.222304
+  type: 'test'
+  ...
+# Subtest: unexpected exception before known receipt is UNKNOWN, never a rollback claim
+ok 37 - unexpected exception before known receipt is UNKNOWN, never a rollback claim
+  ---
+  duration_ms: 1.3594
+  type: 'test'
+  ...
+# Subtest: unexpected exception after Runtime writes is UNKNOWN, never a rollback claim
+ok 38 - unexpected exception after Runtime writes is UNKNOWN, never a rollback claim
+  ---
+  duration_ms: 2.005953
+  type: 'test'
+  ...
+# Subtest: a failure receipt after a write is UNKNOWN even without a thrown exception
+ok 39 - a failure receipt after a write is UNKNOWN even without a thrown exception
+  ---
+  duration_ms: 1.536031
+  type: 'test'
+  ...
+# Subtest: new attempts clear current receipt while retaining history across cancel and preview rejection
+ok 40 - new attempts clear current receipt while retaining history across cancel and preview rejection
+  ---
+  duration_ms: 2.051208
+  type: 'test'
+  ...
+# Subtest: disposed host cannot publish a late success into its replacement
+ok 41 - disposed host cannot publish a late success into its replacement
+  ---
+  duration_ms: 1.296001
+  type: 'test'
+  ...
+# Subtest: disposed host cannot publish a late failure into its replacement
+ok 42 - disposed host cannot publish a late failure into its replacement
+  ---
+  duration_ms: 1.198519
+  type: 'test'
+  ...
+# Subtest: invalid initial input reports an attempt without superseding a valid request
+ok 43 - invalid initial input reports an attempt without superseding a valid request
+  ---
+  duration_ms: 1.549608
+  type: 'test'
+  ...
+# Subtest: context invalidation inside Runtime publication cannot hide an uncertain write
+ok 44 - context invalidation inside Runtime publication cannot hide an uncertain write
+  ---
+  duration_ms: 1.444761
+  type: 'test'
+  ...
+# Subtest: invalid input over 4000 characters reports an error without revoking a valid preview; corrected input retries
+ok 45 - invalid input over 4000 characters reports an error without revoking a valid preview; corrected input retries
+  ---
+  duration_ms: 1.629717
+  type: 'test'
+  ...
+# Subtest: missed Runtime notification terminates stale preview before confirm
+ok 46 - missed Runtime notification terminates stale preview before confirm
+  ---
+  duration_ms: 1.6899
+  type: 'test'
+  ...
+# Subtest: missed Runtime notification terminates stale preview before confirm without cancelling a reentrant newer request
+ok 47 - missed Runtime notification terminates stale preview before confirm without cancelling a reentrant newer request
+  ---
+  duration_ms: 2.119486
+  type: 'test'
+  ...
+# Subtest: revision changed by a CONFIRMING observer with missed notification also terminates the preview
+ok 48 - revision changed by a CONFIRMING observer with missed notification also terminates the preview
+  ---
+  duration_ms: 1.400939
+  type: 'test'
+  ...
+# Subtest: missed authorization notification retires in-flight response
+ok 49 - missed authorization notification retires in-flight response
+  ---
+  duration_ms: 0.855596
+  type: 'test'
+  ...
+# Subtest: missed authorization notification retires in-flight response after regrant
+ok 50 - missed authorization notification retires in-flight response after regrant
+  ---
+  duration_ms: 0.635863
+  type: 'test'
+  ...
+# Subtest: missed authorization generation cannot commit an old preview
+ok 51 - missed authorization generation cannot commit an old preview
+  ---
+  duration_ms: 1.515163
+  type: 'test'
+  ...
+# Subtest: missed authorization generation cannot commit from CONFIRMING observer
+ok 52 - missed authorization generation cannot commit from CONFIRMING observer
+  ---
+  duration_ms: 1.697695
+  type: 'test'
+  ...
+# Subtest: observed authorization revocation while CONFIRMING prevents writes
+ok 53 - observed authorization revocation while CONFIRMING prevents writes
+  ---
+  duration_ms: 1.237061
+  type: 'test'
+  ...
+# Subtest: production owner isolates throwing observers and preserves a known successful receipt
+ok 54 - production owner isolates throwing observers and preserves a known successful receipt
+  ---
+  duration_ms: 1.35885
+  type: 'test'
+  ...
+# Subtest: readonly request never reaches provider or changes the sole owner
+ok 55 - readonly request never reaches provider or changes the sole owner
+  ---
+  duration_ms: 0.545964
+  type: 'test'
+  ...
+# Subtest: missed revision notification rejects the in-flight provider response
+ok 56 - missed revision notification rejects the in-flight provider response
+  ---
+  duration_ms: 0.950363
+  type: 'test'
+  ...
+# Subtest: a missed context change while publishing REQUESTING never reaches provider
+ok 57 - a missed context change while publishing REQUESTING never reaches provider
+  ---
+  duration_ms: 0.654839
+  type: 'test'
+  ...
+1..57
+# tests 57
+# suites 0
+# pass 57
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1137.562775
+command=npm run test:trusted-interactive
+
+> blockcraft-ai@0.1.0 test:trusted-interactive
+> npm --prefix server run build && node tools/project-zip-export/prepare.mjs && node --test tests/trusted-interactive/*.test.*
+
+
+> build
+> tsc -p tsconfig.json
+
+TAP version 13
+# Subtest: client validates complete v2 envelope and rejects permissions, invalid schemas and fake successful errors
+ok 1 - client validates complete v2 envelope and rejects permissions, invalid schemas and fake successful errors
+  ---
+  duration_ms: 50.114977
+  type: 'test'
+  ...
+# Subtest: pure ZIP boundary explicitly rejects v2 even when caller bypasses UI capture
+ok 2 - pure ZIP boundary explicitly rejects v2 even when caller bypasses UI capture
+  ---
+  duration_ms: 5.900751
+  type: 'test'
+  ...
+# Subtest: access adapter ignoring abort cannot retain a cancelled gate
+ok 3 - access adapter ignoring abort cannot retain a cancelled gate
+  ---
+  duration_ms: 7.240955
+  type: 'test'
+  ...
+# (node:2813) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: budget adapter ignoring abort cannot retain a cancelled gate
+ok 4 - budget adapter ignoring abort cannot retain a cancelled gate
+  ---
+  duration_ms: 2.651484
+  type: 'test'
+  ...
+# Subtest: access adapter is bounded by admission deadline
+ok 5 - access adapter is bounded by admission deadline
+  ---
+  duration_ms: 2.050657
+  type: 'test'
+  ...
+# Subtest: budget adapter is bounded by admission deadline
+ok 6 - budget adapter is bounded by admission deadline
+  ---
+  duration_ms: 1.232032
+  type: 'test'
+  ...
+# Subtest: already disconnected requests do not invoke access or budget adapters
+ok 7 - already disconnected requests do not invoke access or budget adapters
+  ---
+  duration_ms: 0.324169
+  type: 'test'
+  ...
+# Subtest: access adapter failures are normalized without exposing arbitrary codes/status
+ok 8 - access adapter failures are normalized without exposing arbitrary codes/status
+  ---
+  duration_ms: 0.326102
+  type: 'test'
+  ...
+# Subtest: access adapter failures are normalized without exposing arbitrary codes/status
+ok 9 - access adapter failures are normalized without exposing arbitrary codes/status
+  ---
+  duration_ms: 0.278463
+  type: 'test'
+  ...
+# Subtest: access adapter failures are normalized without exposing arbitrary codes/status
+ok 10 - access adapter failures are normalized without exposing arbitrary codes/status
+  ---
+  duration_ms: 0.307176
+  type: 'test'
+  ...
+# Subtest: budget adapter failures are normalized without exposing arbitrary codes/status
+ok 11 - budget adapter failures are normalized without exposing arbitrary codes/status
+  ---
+  duration_ms: 0.539562
+  type: 'test'
+  ...
+# Subtest: budget adapter failures are normalized without exposing arbitrary codes/status
+ok 12 - budget adapter failures are normalized without exposing arbitrary codes/status
+  ---
+  duration_ms: 0.500369
+  type: 'test'
+  ...
+# Subtest: budget adapter failures are normalized without exposing arbitrary codes/status
+ok 13 - budget adapter failures are normalized without exposing arbitrary codes/status
+  ---
+  duration_ms: 0.379131
+  type: 'test'
+  ...
+# Subtest: pomodoro details accurately declare no data binding and expose no CRUD editor
+ok 14 - pomodoro details accurately declare no data binding and expose no CRUD editor
+  ---
+  duration_ms: 14.417262
+  type: 'test'
+  ...
+# Subtest: CRUD details preserve valid entity and warn on missing or ambiguous binding
+ok 15 - CRUD details preserve valid entity and warn on missing or ambiguous binding
+  ---
+  duration_ms: 8.524925
+  type: 'test'
+  ...
+# Subtest: strict v2 config accepts boundaries and rejects executable/unknown/malformed fields
+ok 16 - strict v2 config accepts boundaries and rejects executable/unknown/malformed fields
+  ---
+  duration_ms: 2.578601
+  type: 'test'
+  ...
+# Subtest: timer anchors survive mode-like remounts, pause/resume/reset, completion and backwards wall clock
+ok 17 - timer anchors survive mode-like remounts, pause/resume/reset, completion and backwards wall clock
+  ---
+  duration_ms: 5.827293
+  type: 'test'
+  ...
+# Subtest: same owner preserves CRUD, custom state and layout; read-only and stale CAS fail atomically
+ok 18 - same owner preserves CRUD, custom state and layout; read-only and stale CAS fail atomically
+  ---
+  duration_ms: 6.065669
+  type: 'test'
+  ...
+# Subtest: state schema rejects dangling/invalid timers; removing timer cleans state and undo restores it
+ok 19 - state schema rejects dangling/invalid timers; removing timer cleans state and undo restores it
+  ---
+  duration_ms: 2.264032
+  type: 'test'
+  ...
+# Subtest: timer commits preserve admitted custom props/state and exact render order
+ok 20 - timer commits preserve admitted custom props/state and exact render order
+  ---
+  duration_ms: 19.742005
+  type: 'test'
+  ...
+# Subtest: Mochi can select/read timer metadata but cannot grant timer modification authority
+ok 21 - Mochi can select/read timer metadata but cannot grant timer modification authority
+  ---
+  duration_ms: 90.340816
+  type: 'test'
+  ...
+# Subtest: duplicate actions and rapid switching never extend a running deadline or subtract twice
+ok 22 - duplicate actions and rapid switching never extend a running deadline or subtract twice
+  ---
+  duration_ms: 19.654934
+  type: 'test'
+  ...
+# Subtest: completion is a stable read-only derived state until an explicit reset
+ok 23 - completion is a stable read-only derived state until an explicit reset
+  ---
+  duration_ms: 2.229749
+  type: 'test'
+  ...
+# Subtest: real provider HTTP request shape is reused, paid fetch replaced by fixture, both ends validated
+ok 24 - real provider HTTP request shape is reused, paid fetch replaced by fixture, both ends validated
+  ---
+  duration_ms: 98.646626
+  type: 'test'
+  ...
+# Subtest: all authorization and budget gates reject before upstream; no body can grant approval
+ok 25 - all authorization and budget gates reject before upstream; no body can grant approval
+  ---
+  duration_ms: 187.854159
+  type: 'test'
+  ...
+# Subtest: approved call cap and origin remain enforced
+ok 26 - approved call cap and origin remain enforced
+  ---
+  duration_ms: 33.116359
+  type: 'test'
+  ...
+# Subtest: malformed, incompatible and executable model outputs fail closed; legacy route cannot admit v2
+ok 27 - malformed, incompatible and executable model outputs fail closed; legacy route cannot admit v2
+  ---
+  duration_ms: 50.764101
+  type: 'test'
+  ...
+# Subtest: provider errors, truncated completion and invalid JSON never become successful configurations
+ok 28 - provider errors, truncated completion and invalid JSON never become successful configurations
+  ---
+  duration_ms: 36.897357
+  type: 'test'
+  ...
+# Subtest: HTTP disconnect during access retires admission before model egress
+ok 29 - HTTP disconnect during access retires admission before model egress
+  ---
+  duration_ms: 12.985145
+  type: 'test'
+  ...
+# Subtest: HTTP disconnect during budget retires admission before model egress
+ok 30 - HTTP disconnect during budget retires admission before model egress
+  ---
+  duration_ms: 10.516941
+  type: 'test'
+  ...
+# Subtest: adapter exception metadata cannot become public HTTP codes or invalid status
+ok 31 - adapter exception metadata cannot become public HTTP codes or invalid status
+  ---
+  duration_ms: 5.047937
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1887.140239
+command=npm run test:trusted-pomodoro-ui
+
+> blockcraft-ai@0.1.0 test:trusted-pomodoro-ui
+> node --test tests/trusted-pomodoro-ui/*.test.cjs
+
+TAP version 13
+# Subtest: bundled fixture validates completely, never fetches, and isolates each new project
+ok 1 - bundled fixture validates completely, never fetches, and isolates each new project
+  ---
+  duration_ms: 4.508297
+  type: 'test'
+  ...
+# Subtest: fixture loader refuses both an already cancelled request and cancellation during await
+ok 2 - fixture loader refuses both an already cancelled request and cancellation during await
+  ---
+  duration_ms: 0.901435
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 616.978794
+command=npm run test:workshop-export
+
+> blockcraft-ai@0.1.0 test:workshop-export
+> node tools/project-zip-export/prepare.mjs && node --test tests/workshop-export/*.test.*
+
+TAP version 13
+# Subtest: only explicit dev on strict IPv4 loopback receives a capability; builds and preview never do
+ok 1 - only explicit dev on strict IPv4 loopback receives a capability; builds and preview never do
+  ---
+  duration_ms: 1.903469
+  type: 'test'
+  ...
+# Subtest: local mode refuses wildcard/network hosts, automatic port changes and HTTPS proxy setups
+ok 2 - local mode refuses wildcard/network hosts, automatic port changes and HTTPS proxy setups
+  ---
+  duration_ms: 0.650125
+  type: 'test'
+  ...
+# Subtest: export capture reads the actual sole owner without CAS, authorization change or publication
+ok 3 - export capture reads the actual sole owner without CAS, authorization change or publication
+  ---
+  duration_ms: 5.111508
+  type: 'test'
+  ...
+# Subtest: exact references only, deduplicated; missing registry is rejected
+ok 4 - exact references only, deduplicated; missing registry is rejected
+  ---
+  duration_ms: 45.543924
+  type: 'test'
+  ...
+# Subtest: owner replacement during async resolution or while download is in flight rejects stale data
+ok 5 - owner replacement during async resolution or while download is in flight rejects stale data
+  ---
+  duration_ms: 9.372829
+  type: 'test'
+  ...
+# Subtest: local capability + exact Origin/Host required; errors contain no project data or ZIP
+ok 6 - local capability + exact Origin/Host required; errors contain no project data or ZIP
+  ---
+  duration_ms: 67.14446
+  type: 'test'
+  ...
+# Subtest: reject malformed, oversized and unsupported media requests
+ok 7 - reject malformed, oversized and unsupported media requests
+  ---
+  duration_ms: 16.52881
+  type: 'test'
+  ...
+# Subtest: real HTTP returns complete builtins and exact CustomBlock sources, retaining no previous project
+ok 8 - real HTTP returns complete builtins and exact CustomBlock sources, retaining no previous project
+  ---
+  duration_ms: 248.597557
+  type: 'test'
+  ...
+# Subtest: missing, tampered and non-empty stateSchema artifacts reject the WHOLE response
+ok 9 - missing, tampered and non-empty stateSchema artifacts reject the WHOLE response
+  ---
+  duration_ms: 24.093269
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1209.161024
+NOT RUN test:generation:browser: Playwright is not declared by this repository
+NOT RUN test:mochi:browser: Playwright is not declared by this repository
+NOT RUN test:workshop-export:browser: Playwright is not declared by this repository
+finished=2026-10-19T05:36:46+00:00
