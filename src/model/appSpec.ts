@@ -15,6 +15,9 @@ export interface BlockPresentation {
 export type BlockSpec = { id: string; name: string; presentation?: BlockPresentation } & (
   | { type: 'list' | 'form'; fieldIds: string[] }
   | { type: 'gallery'; protocolVersion: 1; imageIds: string[]; layout: 'grid'; interaction: 'preview' }
+  | { type: 'filter'; fieldIds: string[]; targetBlockIds: string[] }
+  | { type: 'chart'; chartType: 'bar' | 'line'; groupFieldId: string; aggregation: 'count' | 'sum' | 'average'; valueFieldId?: string; targetBlockIds: string[] }
+  | { type: 'details'; fieldIds: string[]; sourceBlockId: string }
   | { type: 'pomodoro'; protocolVersion: 1; durationSeconds: number }
   | { type: 'metric'; aggregation: 'count' }
   | { type: 'metric'; aggregation: 'sum' | 'average'; fieldId: string }
@@ -56,6 +59,7 @@ export type AppCommand =
   | { type: 'updateField'; entityId: string; fieldId: string; field: FieldSpec }
   | { type: 'removeField'; entityId: string; fieldId: string }
   | { type: 'configureBlockFields'; blockId: string; fieldIds: string[] }
+  | { type: 'configureView'; blockId: string; block: Extract<BlockSpec, { type: 'filter' | 'chart' | 'details' }> }
   | { type: 'configureGallery'; blockId: string; imageIds: string[]; layout?: 'grid' }
   | { type: 'addProjectAsset'; asset: ProjectAsset }
   | { type: 'removeProjectAsset'; assetId: string }

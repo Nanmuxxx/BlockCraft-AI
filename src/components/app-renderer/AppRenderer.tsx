@@ -3,6 +3,8 @@ import type { BlockSpec, EntityRecord, FieldSpec } from '../../model/appSpec'
 import { metricValue, parseFieldDraft, type AppRuntime, type FieldDraft } from '../../model/appRuntime'
 import './app-renderer.css'
 import { readBlockPresentation, blockCardStyle } from '../blocks/presentation'
+import { visibleRecords } from '../../model/appInteractions'
+import { FilterControls, GroupChart, RecordDetails, InteractionScope } from './InteractiveBlocks'
 import { Pomodoro } from './Pomodoro'
 
 function RecordEditor({ fields, initial, onSave, onCancel, buttonText }: {
@@ -46,11 +48,13 @@ function RecordEditor({ fields, initial, onSave, onCancel, buttonText }: {
   </form>
 }
 
-function RecordList({ runtime, entityId, fieldIds }: { runtime: AppRuntime; entityId: string; fieldIds: string[] }) {
+function RecordList({ runtime, blockId, entityId, fieldIds }: { runtime: AppRuntime; blockId: string; entityId: string; fieldIds: string[] }) {
   const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
   const entity = state.spec.entities.find(entity => entity.id === entityId)!
   const fields = fieldIds.map(id => entity.fields.find(field => field.id === id)!)
-  const rows = state.records[entityId] ?? []
+  const view = useSyncExternalStore(runtime.subscribeInteractions, runtime.getInteractionSnapshot, runtime.getInteractionSnapshot)
+  const rows = visibleRecords(state, view, blockId)
+  const hasDetails = state.spec.blocks.some(b => b.type === 'details' && b.sourceBlockId === blockId)
   const [editing, setEditing] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
   const [error, setError] = useState('')
@@ -61,13 +65,15 @@ function RecordList({ runtime, entityId, fieldIds }: { runtime: AppRuntime; enti
     setAdding(false)
   }
   return <>
+    <InteractionScope runtime={runtime} blockId={blockId} />
+    <p role="status">显示 {rows.length} / {(state.records[entityId] ?? []).length} 条记录</p>
     <button type="button" onClick={() => { setAdding(true); setEditing(null) }}>新增记录</button>
     {adding && <RecordEditor fields={editorFields} onSave={create} onCancel={() => setAdding(false)} />}
     {rows.length === 0 && <p>暂无记录</p>}
     <div className="renderer-table"><table>
       <thead><tr>{fields.map(field => <th key={field.id}>{field.name}</th>)}<th>操作</th></tr></thead>
       <tbody>{rows.map(row => <tr key={row.id}>{fields.map(field => <td key={field.id}>{typeof row.values[field.id] === 'boolean' ? row.values[field.id] ? '是' : '否' : String(row.values[field.id] ?? '—')}</td>)}
-        <td><div className="renderer-actions"><button type="button" onClick={() => { setEditing(row.id); setAdding(false) }}>编辑</button><button type="button" onClick={() => {
+        <td><div className="renderer-actions">{hasDetails && <button type="button" aria-pressed={view.records[blockId] === row.id} onClick={() => { const result = runtime.interact({ type: 'selectRecord', blockId, recordId: row.id }); setError(result.ok ? '' : result.error.message) }}>查看详情</button>}<button type="button" onClick={() => { setEditing(row.id); setAdding(false) }}>编辑</button><button type="button" onClick={() => {
           try { runtime.dispatch({ type: 'delete', entityId, recordId: row.id }); if (editing === row.id) setEditing(null); setError('') }
           catch (error) { setError(error instanceof Error ? error.message : '删除失败') }
         }}>删除</button></div></td></tr>)}</tbody>
@@ -124,6 +130,7 @@ function GalleryBlock({ runtime, block }: { runtime: AppRuntime; block: Extract<
 /** Render exactly one trusted builtin against the shared runtime facade. */
 export function BuiltinBlockRenderer({ runtime, blockId }: { runtime: AppRuntime; blockId: BlockSpec['id'] }) {
   const state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot, runtime.getSnapshot)
+  const view = useSyncExternalStore(runtime.subscribeInteractions, runtime.getInteractionSnapshot, runtime.getInteractionSnapshot)
   const block = state.spec.blocks.find(block => block.id === blockId)
   const binding = state.spec.relations.find(relation => relation.blockId === blockId)
   const entity = state.spec.entities.find(entity => entity.id === binding?.entityId)
@@ -133,8 +140,11 @@ export function BuiltinBlockRenderer({ runtime, blockId }: { runtime: AppRuntime
   const presentation = readBlockPresentation(block)
   return <section className={`renderer-block renderer-block--${block.type}`} aria-label={block.name} style={blockCardStyle(presentation)}>
     <h2>{block.name}</h2>
-    {block.type === 'metric' ? <output className="renderer-metric" aria-live="polite">{metricValue(state, block).toLocaleString('zh-CN', { maximumFractionDigits: 2 })}</output>
-      : block.type === 'list' ? <RecordList runtime={runtime} entityId={entity.id} fieldIds={block.fieldIds} />
+    {block.type === 'filter' ? <FilterControls runtime={runtime} block={block} />
+      : block.type === 'chart' ? <GroupChart runtime={runtime} block={block} />
+      : block.type === 'details' ? <RecordDetails runtime={runtime} block={block} />
+      : block.type === 'metric' ? <><InteractionScope runtime={runtime} blockId={blockId} /><output className="renderer-metric" aria-live="polite">{metricValue(state, block, visibleRecords(state, view, blockId)).toLocaleString('zh-CN', { maximumFractionDigits: 2 })}</output></>
+      : block.type === 'list' ? <RecordList runtime={runtime} blockId={blockId} entityId={entity.id} fieldIds={block.fieldIds} />
         : <RecordEditor buttonText={presentation.buttonText} fields={block.fieldIds.map(id => entity.fields.find(field => field.id === id)!)} onSave={values => runtime.dispatch({ type: 'create', entityId: entity.id, record: { id: `record-${crypto.randomUUID()}`, values } })} />}
   </section>
 }

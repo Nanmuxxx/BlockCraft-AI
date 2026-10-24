@@ -177,6 +177,7 @@ function validateTargets(state: ProjectState, request: AiChangeRequest, scope: A
       entityId = command.entityId
       reserve(command.field.id)
     } else if (command.type === 'addBlock') {
+      ensure(!['filter', 'chart', 'details'].includes(command.block.type), 'Interactive view AI edits are not enabled; use the properties panel', 'AI_COMMAND_FORBIDDEN')
       ensure(command.block.type !== 'pomodoro', 'Pomodoro AI edits are not enabled', 'AI_COMMAND_FORBIDDEN')
       if (command.block.type === 'gallery') {
         ensure(!('binding' in command), 'Gallery blocks cannot bind entities', 'INVALID_BINDING')
@@ -197,6 +198,7 @@ function validateTargets(state: ProjectState, request: AiChangeRequest, scope: A
       const addedCommand = added.get(command.blockId)
       const target = state.spec.blocks.find(block => block.id === command.blockId) ?? addedCommand?.block
       ensure(target, `Unknown block: ${command.blockId}`, 'UNKNOWN_TARGET')
+      ensure(!['filter', 'chart', 'details'].includes(target.type), 'Interactive view AI edits are not enabled; use the properties panel', 'AI_COMMAND_FORBIDDEN')
       ensure(target.type !== 'pomodoro', 'Pomodoro AI edits are not enabled', 'AI_COMMAND_FORBIDDEN')
       entityId = target.type === 'gallery' ? null : addedCommand && 'binding' in addedCommand ? addedCommand.binding.entityId : resolveBlockEntityId(state, command.blockId)
       if (command.type === 'configureGallery') {

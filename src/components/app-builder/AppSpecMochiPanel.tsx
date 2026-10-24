@@ -8,7 +8,7 @@ export function AppSpecMochiPanel({ snapshot, blockId }: { snapshot: ProjectStat
   const block = snapshot.spec.blocks.find(item => item.id === blockId)
   const binding = snapshot.spec.relations.find(item => item.blockId === block?.id)
   const entity = snapshot.spec.entities.find(item => item.id === binding?.entityId)
-  const kind = block ? { gallery: '图片画廊', pomodoro: '番茄钟', form: '表单', list: '列表', metric: '统计' }[block.type] : ''
+  const kind = block ? { filter: '搜索筛选', chart: '分组图表', details: '记录详情', gallery: '图片画廊', pomodoro: '番茄钟', form: '表单', list: '列表', metric: '统计' }[block.type] : ''
   return <section className="mochi-panel app-spec-mochi" aria-label="Mochi 的小窝">
     <header className="mochi-panel__header">
       <div className="mochi-panel__title-wrap"><span className="mochi-panel__avatar" aria-hidden="true"><MochiCat className="mochi-panel__avatar-image" /></span><div><h2>Mochi 的小窝</h2><p>陪你一起搭建</p></div></div>

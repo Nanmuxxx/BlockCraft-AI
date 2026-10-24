@@ -157,6 +157,7 @@ export function AiCreate() {
     {mode !== 'trusted-fixture' && <div className="ai-create-examples" aria-label="创意灵感">
       <button type="button" disabled={pending} onClick={() => { changeMode('legacy-v1'); setIdea('创建一个社团活动报名工具：包含姓名、专业、报名活动三个字段的表单，可查看报名名单，并统计报名总人数。所有数据从空白开始，由用户真实填写。') }}>社团报名</button>
       <button type="button" disabled={pending} onClick={() => { changeMode('legacy-v1'); setIdea('创建一个个人读书清单：可以录入书名、作者、阅读状态和笔记，查看全部书籍，并统计书籍数量。所有数据初始为空。') }}>读书清单</button>
+      <button type="button" disabled={pending} onClick={() => { changeMode('legacy-v1'); setIdea('创建一个活动报名管理工具：录入姓名、部门和报名人数；搜索姓名并按部门筛选名单与人数统计，按部门显示人数合计柱状图，点击图表分组筛选名单，点击名单查看完整报名详情。所有记录初始为空。') }}>交互报名管理</button>
       <button type="button" disabled={pending} onClick={() => { changeMode('trusted-interactive'); setIdea('创建一个名叫「星光专注站」的 25 分钟学习番茄钟，要能开始、暂停、继续和重置计时。') }}>专注番茄钟</button>
     </div>}
     {mode !== 'trusted-fixture' ? <>
@@ -165,7 +166,7 @@ export function AiCreate() {
     </> : <p className="ai-create-hint">{trustedPomodoroSource}。加载固定的 25 分钟番茄钟配置，由可信内置组件计时；此演示不会根据自然语言生成内容。</p>}
     <div className="composer__bar"><small className="composer__count">{mode === 'trusted-fixture' ? '固定配置 · 25 分钟' : `${idea.length} / 4000`}</small>{pending && <button type="button" className="btn-secondary" onClick={cancelGeneration}>取消生成</button>}<button className="btn-primary" type="submit" disabled={pending || (mode !== 'trusted-fixture' && (!idea.trim() || Boolean(studio && !studio.authenticated) || Boolean(studio?.budget?.halted) || Boolean(studio?.budget && studio.budget.maxCalls !== null && studio.budget.calls >= studio.budget.maxCalls) || studio?.budget?.remainingCny === 0))}>{pending ? <><LoaderCircle size={18} className="spin" aria-hidden="true" />处理中…</> : <>{mode === 'trusted-fixture' ? '加载离线番茄钟' : error ? '重试生成' : app ? '生成新应用' : '生成应用'}<ArrowRight size={18} aria-hidden="true" /></>}</button></div>
     {!app && <><ProjectJsonLandingImport onImportProject={importProject} /><ProjectJsonBackups onRestore={importProject} /></>}
-    <p className="ai-create-hint">{mode === 'legacy-v1' && 'DeepSeek 根据描述设计表单、列表和统计积木；生成结果经过结构校验。'}{mode === 'trusted-interactive' && 'AI 设计番茄钟配置，内置计时组件负责真实交互。'}成功创建后可预览、编辑和导出，替换前自动保留本地备份；失败或取消保留原应用和数据。刷新前请下载项目 ZIP 或 JSON，稍后导入可继续编辑。Mochi 修改会先展示预览，经你确认后应用。</p>
+    <p className="ai-create-hint">{mode === 'legacy-v1' && 'DeepSeek 根据描述设计表单、列表、统计、搜索筛选、分组图表和记录详情；生成结果经过结构校验。'}{mode === 'trusted-interactive' && 'AI 设计番茄钟配置，内置计时组件负责真实交互。'}成功创建后可预览、编辑和导出，替换前自动保留本地备份；失败或取消保留原应用和数据。刷新前请下载项目 ZIP 或 JSON，稍后导入可继续编辑。Mochi 修改会先展示预览，经你确认后应用。</p>
   </form>
   return <main className={`ai-create${app ? ' ai-create--workshop' : ' app'}`}>
     {!app && <><div className="app__bg" aria-hidden="true" /><header className="topbar"><Logo /><span className="topbar__tag"><span className="pixel-dot" aria-hidden="true" />AI 创作</span></header></>}

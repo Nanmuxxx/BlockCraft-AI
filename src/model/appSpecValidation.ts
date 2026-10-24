@@ -96,6 +96,18 @@ function block(value: unknown) {
     ensure(value.protocolVersion === 1, 'Unsupported gallery protocol')
     ids(value.imageIds); ensure(value.imageIds.length <= PROJECT_ASSET_LIMITS.maxCount, 'Gallery has too many images'); ensure(value.layout === 'grid', 'Unsupported gallery layout')
     ensure(value.interaction === 'preview', 'Unsupported gallery interaction')
+  } else if (value.type === 'filter' || value.type === 'details') {
+    keys(value, ['id', 'name', 'type', 'fieldIds', value.type === 'filter' ? 'targetBlockIds' : 'sourceBlockId'], ['presentation'])
+    ids(value.fieldIds); ensure(value.fieldIds.length > 0, 'Empty view fields')
+    if (value.type === 'filter') { ids(value.targetBlockIds); ensure(value.targetBlockIds.length > 0, 'Filter needs explicit targets') }
+    else id(value.sourceBlockId)
+  } else if (value.type === 'chart') {
+    keys(value, ['id', 'name', 'type', 'chartType', 'groupFieldId', 'aggregation', 'targetBlockIds'], ['valueFieldId', 'presentation'])
+    ensure(value.chartType === 'bar' || value.chartType === 'line', 'Unsupported chart type')
+    id(value.groupFieldId); ids(value.targetBlockIds)
+    ensure(['count', 'sum', 'average'].includes(value.aggregation as string), 'Unsupported chart aggregation')
+    if (value.aggregation === 'count') ensure(!hasOwn(value, 'valueFieldId'), 'Count forbids valueFieldId')
+    else id(value.valueFieldId)
   } else if (value.type === 'list' || value.type === 'form') {
     keys(value, ['id', 'name', 'type', 'fieldIds'], ['presentation']); ids(value.fieldIds); ensure(value.fieldIds.length > 0, 'Empty display fields')
   } else {
@@ -144,11 +156,23 @@ export function assertAppSpec(value: unknown): asserts value is AppSpec {
     }
     ensure(links.length === 1, 'Block requires exactly one binding')
     const entity = spec.entities.find(e => e.id === links[0].entityId)!
-    const refs = b.type === 'metric' ? (b.aggregation === 'count' ? [] : [b.fieldId]) : b.fieldIds
+    const refs = b.type === 'chart' ? [b.groupFieldId, ...(b.valueFieldId ? [b.valueFieldId] : [])] : b.type === 'metric' ? (b.aggregation === 'count' ? [] : [b.fieldId]) : b.fieldIds
     for (const ref of refs) {
       const f = entity.fields.find(f => f.id === ref)
       ensure(f, 'Unknown field in bound entity')
       if (b.type === 'metric') ensure(f.type === 'number', 'Numeric metric requires number field')
+    }
+    if (b.type === 'chart' && b.aggregation !== 'count') ensure(entity.fields.find(f => f.id === b.valueFieldId)?.type === 'number', 'Chart values require a numeric field')
+    if (b.type === 'filter' || b.type === 'chart') {
+      for (const targetId of b.targetBlockIds) {
+        const target = spec.blocks.find(item => item.id === targetId)
+        ensure(target && target.id !== b.id && (target.type === 'list' || target.type === 'metric' || (b.type === 'filter' && target.type === 'chart')), 'Unsupported interaction target')
+        ensure(spec.relations.find(r => r.blockId === targetId)?.entityId === entity.id, 'Interaction requires the same entity')
+      }
+    }
+    if (b.type === 'details') {
+      ensure(spec.blocks.find(item => item.id === b.sourceBlockId)?.type === 'list', 'Details source must be a list')
+      ensure(spec.relations.find(r => r.blockId === b.sourceBlockId)?.entityId === entity.id, 'Details source requires the same entity')
     }
     if (b.type === 'form') ensure(entity.fields.filter(f => f.required).every(f => refs.includes(f.id)), 'Form must expose all required fields')
   }
@@ -218,6 +242,11 @@ export function assertCommandRequest(value: unknown): asserts value is CommandRe
       case 'removeField': keys(c, ['type', 'entityId', 'fieldId']); id(c.entityId); id(c.fieldId); break
       case 'configureBlockPresentation': keys(c, ['type', 'blockId', 'presentation']); id(c.blockId); presentation(c.presentation); break
       case 'configureBlockFields': keys(c, ['type', 'blockId', 'fieldIds']); id(c.blockId); ids(c.fieldIds); break
+      case 'configureView':
+        keys(c, ['type', 'blockId', 'block']); id(c.blockId); block(c.block)
+        ensure(['filter', 'chart', 'details'].includes((c.block as Obj).type as string), 'Unsupported view configuration')
+        ensure((c.block as Obj).id === c.blockId, 'View ID is immutable')
+        break
       case 'configureGallery': keys(c, ['type', 'blockId', 'imageIds'], ['layout']); id(c.blockId); ids(c.imageIds); if (hasOwn(c, 'layout')) ensure(c.layout === 'grid', 'Unsupported gallery layout'); break
       case 'addProjectAsset': keys(c, ['type', 'asset']); asset(c.asset); break
       case 'removeProjectAsset': keys(c, ['type', 'assetId']); id(c.assetId); break

@@ -10,6 +10,7 @@ import { CustomBlockImport } from '../../integrations/custom-block-bc/CustomBloc
 import { createGeneratedArtifactUI, type GeneratedArtifactUI } from '../../integrations/generated-artifact/ui'
 import { useInstallLifecycle } from '../../integrations/generated-artifact/useInstallLifecycle'
 import { useWorkshopAdapter } from '../../integrations/custom-block-bc/useWorkshopAdapter'
+import { AddInteractionBlock } from './InteractionInspector'
 import { AppSpecInspector } from './AppSpecInspector'
 import { ExportProjectButton } from '../../integrations/project-export/ExportProjectButton'
 import { ProjectJsonControls } from '../../integrations/project-json/ProjectJsonControls'
@@ -130,7 +131,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
       </nav>
       <div className="workshop__workspace">
         <div className="workshop__canvas-header"><div><p className="workshop__eyebrow">{mode === 'blocks' ? 'BUILD WITH BLOCKS' : 'A GLIMPSE OF YOUR APP'}</p><h2>{mode === 'blocks' ? '从一块积木开始' : '让想法有个模样'}</h2><p>{mode === 'blocks' ? '每一块，都是软件的一种可能。' : `这里是「${snapshot.spec.name}」的预览空间。`}</p></div><span className="workshop__badge">{project.renderOrder.length} 块功能积木</span></div>
-        <div className="workshop__blocks-layer" id="generated-blocks" hidden={mode !== 'blocks'}>{installGateError && <p role="alert">{installGateError}</p>}<div className="block-canvas-toolbar"><button type="button" disabled={!runtime.canUndo() || runtime.customProject.getAuthorization().readOnly} onClick={undo}><Undo2 size={14} aria-hidden="true" />撤销结构修改</button></div>{undoError && <p role="alert">{undoError}</p>}<CustomBlockImport owner={runtime.customProject} generated={installation} />{adapter ? <CustomBlockCanvas adapter={adapter} selectedId={selected} onSelect={setSelectedId} /> : admission}</div>
+        <div className="workshop__blocks-layer" id="generated-blocks" hidden={mode !== 'blocks'}>{installGateError && <p role="alert">{installGateError}</p>}<div className="block-canvas-toolbar"><button type="button" disabled={!runtime.canUndo() || runtime.customProject.getAuthorization().readOnly} onClick={undo}><Undo2 size={14} aria-hidden="true" />撤销结构修改</button></div>{undoError && <p role="alert">{undoError}</p>}<AddInteractionBlock runtime={runtime} /><CustomBlockImport owner={runtime.customProject} generated={installation} />{adapter ? <CustomBlockCanvas adapter={adapter} selectedId={selected} onSelect={setSelectedId} /> : admission}</div>
         <div className="workshop__preview-stage" id="generated-preview" hidden={mode !== 'run'}><div className="study-app"><header className="study-app__topbar"><div className="study-app__brand"><span><Blocks size={18} aria-hidden="true" /></span><strong>{snapshot.spec.name}</strong><small>YOUR APP</small></div></header><div className="app-spec-preview-content">{adapter ? <CustomBlockRunSurface adapter={adapter} renderBuiltin={block => <BuiltinBlockRenderer runtime={runtime} blockId={block.id} />} /> : admission}</div></div></div>
         <footer className="workshop__canvas-footer"><span className="pixel-dot" aria-hidden="true" />把想法，一块块搭成现实<span>{mode === 'blocks' ? 'B / 功能积木' : 'C / 应用预览'}</span></footer>
       </div>
