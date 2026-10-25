@@ -1,0 +1,9 @@
+{
+  "sha": "63a4ab2b65b9ffba72875a383a4ad82f472725fe",
+  "build_exit": 0,
+  "dist_files_scanned": 9,
+  "canary_hits": [],
+  "build_output_canary_leak": false,
+  "real_model_calls": 0,
+  "scope": "Vite dist and build output only, no container image/Studio build claim"
+}
