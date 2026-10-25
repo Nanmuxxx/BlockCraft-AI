@@ -1,0 +1,627 @@
+RUN todo 1440
+RUN club 1440
+RUN fitness-log 1440
+RUN money-app 1440
+RUN learning 1440
+RUN todo 390
+RUN club 390
+RUN fitness-log 390
+RUN money-app 390
+RUN learning 390
+{
+  "repositoryHead": "4a95cae50f772cd242d932cdbd93366381d1df74",
+  "provenance": "two recorded real responses + three hand-authored fixtures; no live inference",
+  "sourceFiles": [
+    "PR #44 sanitized todo.response.json",
+    "PR #44 sanitized club.response.json"
+  ],
+  "responseSha256": {
+    "todo": "1dbe4fc23b93d5f7075e311350eea12d1dafb884f0c831e9cd2ea7ba5d972de2",
+    "club": "348bb62c3c24ad87029b40e3390a0a870c2a6925aef80ce517b96cd74da1ca14"
+  },
+  "liveCalls": 0,
+  "replayProviderInvocations": 50,
+  "screenshots": [
+    "todo-task-1440-b.png",
+    "todo-task-1440-c.png",
+    "club-applicant-1440-b.png",
+    "club-applicant-1440-c.png",
+    "fitness-log-sessions-1440-b.png",
+    "fitness-log-sessions-1440-c.png",
+    "money-app-income-1440-b.png",
+    "money-app-income-1440-c.png",
+    "money-app-expenses-1440-b.png",
+    "money-app-expenses-1440-c.png",
+    "learning-books-1440-b.png",
+    "learning-books-1440-c.png",
+    "learning-reading-sessions-1440-b.png",
+    "learning-reading-sessions-1440-c.png",
+    "todo-task-390-b.png",
+    "todo-task-390-c.png",
+    "club-applicant-390-b.png",
+    "club-applicant-390-c.png",
+    "fitness-log-sessions-390-b.png",
+    "fitness-log-sessions-390-c.png",
+    "money-app-income-390-b.png",
+    "money-app-income-390-c.png",
+    "money-app-expenses-390-b.png",
+    "money-app-expenses-390-c.png",
+    "learning-books-390-b.png",
+    "learning-books-390-c.png",
+    "learning-reading-sessions-390-b.png",
+    "learning-reading-sessions-390-c.png"
+  ],
+  "cases": [
+    {
+      "id": "todo",
+      "width": 1440,
+      "height": 900,
+      "source": "recorded-real-response-replay",
+      "validatedFromAssistantContent": true,
+      "bSelectedAndEdited": true,
+      "cCreateReadUpdateDelete": true,
+      "metricsUpdatedAndRestored": true,
+      "bCRoundTrips": 3,
+      "failures": [
+        {
+          "zip": "todo-1440.zip",
+          "bytes": 39288,
+          "sha256": "fdaf01d6a2c62ed254608e7e8a930987db3436cb9408bcfa19a1b3a2cb024088",
+          "revision": 4,
+          "validatedEditedSnapshot": true
+        },
+        {
+          "failure": "failure",
+          "status": 502,
+          "code": "AI_UNAVAILABLE",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "invalid",
+          "status": 502,
+          "code": "AI_INVALID_SPEC",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "timeout",
+          "status": 504,
+          "code": "AI_TIMEOUT",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "unauthorized",
+          "status": 401,
+          "code": "UNAUTHORIZED",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "budget",
+          "status": 502,
+          "code": "AI_INVALID_RESPONSE",
+          "retained": true,
+          "layer": "injected provider budget rejection (gateway ledger tested separately)"
+        }
+      ],
+      "errors": [],
+      "external": []
+    },
+    {
+      "id": "club",
+      "width": 1440,
+      "height": 900,
+      "source": "recorded-real-response-replay",
+      "validatedFromAssistantContent": true,
+      "bSelectedAndEdited": true,
+      "cCreateReadUpdateDelete": true,
+      "metricsUpdatedAndRestored": true,
+      "bCRoundTrips": 3,
+      "failures": [
+        {
+          "zip": "club-1440.zip",
+          "bytes": 39464,
+          "sha256": "7e7550554243450f4eb2414a93dd8d2281f94f371019a78c0a1367fb36cd3466",
+          "revision": 4,
+          "validatedEditedSnapshot": true
+        },
+        {
+          "failure": "failure",
+          "status": 502,
+          "code": "AI_UNAVAILABLE",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "invalid",
+          "status": 502,
+          "code": "AI_INVALID_SPEC",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "timeout",
+          "status": 504,
+          "code": "AI_TIMEOUT",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "unauthorized",
+          "status": 401,
+          "code": "UNAUTHORIZED",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "budget",
+          "status": 502,
+          "code": "AI_INVALID_RESPONSE",
+          "retained": true,
+          "layer": "injected provider budget rejection (gateway ledger tested separately)"
+        }
+      ],
+      "errors": [],
+      "external": []
+    },
+    {
+      "id": "fitness-log",
+      "width": 1440,
+      "height": 900,
+      "source": "hand-authored-fixture",
+      "validatedFromAssistantContent": true,
+      "bSelectedAndEdited": true,
+      "cCreateReadUpdateDelete": true,
+      "metricsUpdatedAndRestored": true,
+      "bCRoundTrips": 3,
+      "failures": [
+        {
+          "zip": "fitness-log-1440.zip",
+          "bytes": 39483,
+          "sha256": "c1f19677192da804321d7e41bda09882043f1299f90154d0c01a787e022ae152",
+          "revision": 4,
+          "validatedEditedSnapshot": true
+        },
+        {
+          "failure": "failure",
+          "status": 502,
+          "code": "AI_UNAVAILABLE",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "invalid",
+          "status": 502,
+          "code": "AI_INVALID_SPEC",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "timeout",
+          "status": 504,
+          "code": "AI_TIMEOUT",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "unauthorized",
+          "status": 401,
+          "code": "UNAUTHORIZED",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "budget",
+          "status": 502,
+          "code": "AI_INVALID_RESPONSE",
+          "retained": true,
+          "layer": "injected provider budget rejection (gateway ledger tested separately)"
+        }
+      ],
+      "errors": [],
+      "external": []
+    },
+    {
+      "id": "money-app",
+      "width": 1440,
+      "height": 900,
+      "source": "hand-authored-fixture",
+      "validatedFromAssistantContent": true,
+      "bSelectedAndEdited": true,
+      "cCreateReadUpdateDelete": true,
+      "metricsUpdatedAndRestored": true,
+      "bCRoundTrips": 3,
+      "failures": [
+        {
+          "zip": "money-app-1440.zip",
+          "bytes": 40052,
+          "sha256": "1ef230fa268b7cf95362b82a64ab8b09109e017091568093f2cb5397ea5c5689",
+          "revision": 4,
+          "validatedEditedSnapshot": true
+        },
+        {
+          "failure": "failure",
+          "status": 502,
+          "code": "AI_UNAVAILABLE",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "invalid",
+          "status": 502,
+          "code": "AI_INVALID_SPEC",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "timeout",
+          "status": 504,
+          "code": "AI_TIMEOUT",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "unauthorized",
+          "status": 401,
+          "code": "UNAUTHORIZED",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "budget",
+          "status": 502,
+          "code": "AI_INVALID_RESPONSE",
+          "retained": true,
+          "layer": "injected provider budget rejection (gateway ledger tested separately)"
+        }
+      ],
+      "errors": [],
+      "external": []
+    },
+    {
+      "id": "learning",
+      "width": 1440,
+      "height": 900,
+      "source": "hand-authored-fixture",
+      "validatedFromAssistantContent": true,
+      "bSelectedAndEdited": true,
+      "cCreateReadUpdateDelete": true,
+      "metricsUpdatedAndRestored": true,
+      "bCRoundTrips": 3,
+      "failures": [
+        {
+          "zip": "learning-1440.zip",
+          "bytes": 39953,
+          "sha256": "ddf296288a0230ca1e0e128be838d42e9e427cebd0a25cc9a209a229991006e0",
+          "revision": 4,
+          "validatedEditedSnapshot": true
+        },
+        {
+          "failure": "failure",
+          "status": 502,
+          "code": "AI_UNAVAILABLE",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "invalid",
+          "status": 502,
+          "code": "AI_INVALID_SPEC",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "timeout",
+          "status": 504,
+          "code": "AI_TIMEOUT",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "unauthorized",
+          "status": 401,
+          "code": "UNAUTHORIZED",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "budget",
+          "status": 502,
+          "code": "AI_INVALID_RESPONSE",
+          "retained": true,
+          "layer": "injected provider budget rejection (gateway ledger tested separately)"
+        }
+      ],
+      "errors": [],
+      "external": []
+    },
+    {
+      "id": "todo",
+      "width": 390,
+      "height": 844,
+      "source": "recorded-real-response-replay",
+      "validatedFromAssistantContent": true,
+      "bSelectedAndEdited": true,
+      "cCreateReadUpdateDelete": true,
+      "metricsUpdatedAndRestored": true,
+      "bCRoundTrips": 3,
+      "failures": [
+        {
+          "zip": "todo-390.zip",
+          "bytes": 39288,
+          "sha256": "e507d2321d088f8964f5a78bfc0080724c0b8aa11144878b96506f232316d636",
+          "revision": 4,
+          "validatedEditedSnapshot": true
+        },
+        {
+          "failure": "failure",
+          "status": 502,
+          "code": "AI_UNAVAILABLE",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "invalid",
+          "status": 502,
+          "code": "AI_INVALID_SPEC",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "timeout",
+          "status": 504,
+          "code": "AI_TIMEOUT",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "unauthorized",
+          "status": 401,
+          "code": "UNAUTHORIZED",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "budget",
+          "status": 502,
+          "code": "AI_INVALID_RESPONSE",
+          "retained": true,
+          "layer": "injected provider budget rejection (gateway ledger tested separately)"
+        }
+      ],
+      "errors": [],
+      "external": []
+    },
+    {
+      "id": "club",
+      "width": 390,
+      "height": 844,
+      "source": "recorded-real-response-replay",
+      "validatedFromAssistantContent": true,
+      "bSelectedAndEdited": true,
+      "cCreateReadUpdateDelete": true,
+      "metricsUpdatedAndRestored": true,
+      "bCRoundTrips": 3,
+      "failures": [
+        {
+          "zip": "club-390.zip",
+          "bytes": 39464,
+          "sha256": "52e26cb1d1aefc023206706515e9e64cfc709184b40f03c660e83a52ef6b97be",
+          "revision": 4,
+          "validatedEditedSnapshot": true
+        },
+        {
+          "failure": "failure",
+          "status": 502,
+          "code": "AI_UNAVAILABLE",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "invalid",
+          "status": 502,
+          "code": "AI_INVALID_SPEC",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "timeout",
+          "status": 504,
+          "code": "AI_TIMEOUT",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "unauthorized",
+          "status": 401,
+          "code": "UNAUTHORIZED",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "budget",
+          "status": 502,
+          "code": "AI_INVALID_RESPONSE",
+          "retained": true,
+          "layer": "injected provider budget rejection (gateway ledger tested separately)"
+        }
+      ],
+      "errors": [],
+      "external": []
+    },
+    {
+      "id": "fitness-log",
+      "width": 390,
+      "height": 844,
+      "source": "hand-authored-fixture",
+      "validatedFromAssistantContent": true,
+      "bSelectedAndEdited": true,
+      "cCreateReadUpdateDelete": true,
+      "metricsUpdatedAndRestored": true,
+      "bCRoundTrips": 3,
+      "failures": [
+        {
+          "zip": "fitness-log-390.zip",
+          "bytes": 39483,
+          "sha256": "2d0d7b686b894eb56709e7687260201d234f25fcb6b5aeeac447ed415d4ad118",
+          "revision": 4,
+          "validatedEditedSnapshot": true
+        },
+        {
+          "failure": "failure",
+          "status": 502,
+          "code": "AI_UNAVAILABLE",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "invalid",
+          "status": 502,
+          "code": "AI_INVALID_SPEC",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "timeout",
+          "status": 504,
+          "code": "AI_TIMEOUT",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "unauthorized",
+          "status": 401,
+          "code": "UNAUTHORIZED",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "budget",
+          "status": 502,
+          "code": "AI_INVALID_RESPONSE",
+          "retained": true,
+          "layer": "injected provider budget rejection (gateway ledger tested separately)"
+        }
+      ],
+      "errors": [],
+      "external": []
+    },
+    {
+      "id": "money-app",
+      "width": 390,
+      "height": 844,
+      "source": "hand-authored-fixture",
+      "validatedFromAssistantContent": true,
+      "bSelectedAndEdited": true,
+      "cCreateReadUpdateDelete": true,
+      "metricsUpdatedAndRestored": true,
+      "bCRoundTrips": 3,
+      "failures": [
+        {
+          "zip": "money-app-390.zip",
+          "bytes": 40052,
+          "sha256": "8a1c8817ff04618ec52ffa1968789100707f73e623d23cf70f31eccbe1004ce2",
+          "revision": 4,
+          "validatedEditedSnapshot": true
+        },
+        {
+          "failure": "failure",
+          "status": 502,
+          "code": "AI_UNAVAILABLE",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "invalid",
+          "status": 502,
+          "code": "AI_INVALID_SPEC",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "timeout",
+          "status": 504,
+          "code": "AI_TIMEOUT",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "unauthorized",
+          "status": 401,
+          "code": "UNAUTHORIZED",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "budget",
+          "status": 502,
+          "code": "AI_INVALID_RESPONSE",
+          "retained": true,
+          "layer": "injected provider budget rejection (gateway ledger tested separately)"
+        }
+      ],
+      "errors": [],
+      "external": []
+    },
+    {
+      "id": "learning",
+      "width": 390,
+      "height": 844,
+      "source": "hand-authored-fixture",
+      "validatedFromAssistantContent": true,
+      "bSelectedAndEdited": true,
+      "cCreateReadUpdateDelete": true,
+      "metricsUpdatedAndRestored": true,
+      "bCRoundTrips": 3,
+      "failures": [
+        {
+          "zip": "learning-390.zip",
+          "bytes": 39953,
+          "sha256": "a222e5afd7505b360f9bf451e7823909b65a349e5467b2b6a4586c77736caae9",
+          "revision": 4,
+          "validatedEditedSnapshot": true
+        },
+        {
+          "failure": "failure",
+          "status": 502,
+          "code": "AI_UNAVAILABLE",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "invalid",
+          "status": 502,
+          "code": "AI_INVALID_SPEC",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "timeout",
+          "status": 504,
+          "code": "AI_TIMEOUT",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "unauthorized",
+          "status": 401,
+          "code": "UNAUTHORIZED",
+          "retained": true,
+          "layer": "real local HTTP route"
+        },
+        {
+          "failure": "budget",
+          "status": 502,
+          "code": "AI_INVALID_RESPONSE",
+          "retained": true,
+          "layer": "injected provider budget rejection (gateway ledger tested separately)"
+        }
+      ],
+      "errors": [],
+      "external": []
+    }
+  ],
+  "browser": "156.0.8078.4"
+}

@@ -1,0 +1,17 @@
+{
+  "model": "deepseek-flash",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "message": {
+        "role": "assistant",
+        "content": "{\"version\":1,\"id\":\"personal-todo\",\"name\":\"个人待办清单\",\"entities\":[{\"id\":\"task\",\"name\":\"任务\",\"fields\":[{\"id\":\"title\",\"name\":\"任务标题\",\"required\":true,\"type\":\"text\"},{\"id\":\"dueDate\",\"name\":\"截止日期\",\"required\":false,\"type\":\"date\"},{\"id\":\"done\",\"name\":\"是否完成\",\"required\":false,\"type\":\"boolean\"}]}],\"blocks\":[{\"id\":\"taskForm\",\"name\":\"新增任务\",\"type\":\"form\",\"fieldIds\":[\"title\",\"dueDate\",\"done\"]},{\"id\":\"taskList\",\"name\":\"任务列表\",\"type\":\"list\",\"fieldIds\":[\"title\",\"dueDate\",\"done\"]},{\"id\":\"taskCount\",\"name\":\"任务总数\",\"type\":\"metric\",\"aggregation\":\"count\"}],\"relations\":[{\"id\":\"relTaskForm\",\"type\":\"dataBinding\",\"blockId\":\"taskForm\",\"entityId\":\"task\"},{\"id\":\"relTaskList\",\"type\":\"dataBinding\",\"blockId\":\"taskList\",\"entityId\":\"task\"},{\"id\":\"relTaskCount\",\"type\":\"dataBinding\",\"blockId\":\"taskCount\",\"entityId\":\"task\"}]}"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 1381,
+    "completion_tokens": 237,
+    "total_tokens": 1618
+  }
+}

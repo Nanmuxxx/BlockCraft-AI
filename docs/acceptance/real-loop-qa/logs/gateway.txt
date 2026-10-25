@@ -1,0 +1,28 @@
+✔ hung audit callback obeys deadline; concurrency releases without refunding settled usage (89.148208ms)
+✔ cancel during audit rejects promptly and late callback resolution/rejection cannot succeed (98.571875ms)
+✔ untrusted model metadata never enters callback/response; only configured priced model is emitted (350.557166ms)
+✔ audit callback exception is sanitized; trustworthy usage remains settled with reservation retained (55.17675ms)
+✔ legacy model names fail before reservation/network in all three consumers; no alias rewriting (56.686041ms)
+✔ explicit priced model composes entry/Mochi/CustomBlock with one shared audited call ceiling (230.921708ms)
+✔ branded paid transport selects the priced default in all three consumers without a model override (134.738084ms)
+✔ explicit invalid environment or constructor model never falls back for a paid transport (43.776959ms)
+✔ ordinary injected offline adapters keep the historical default in all consumers (2.205167ms)
+✔ anonymous legacy and v2 (no Origin, forged Host/XFF/Origin/body approval) reject before Provider (21.600542ms)
+✔ default disabled even with injected Provider/key; untrusted auth exceptions and late identity fail closed (2006.859792ms)
+✔ all native Provider defaults blocked without controlled transport (2.752125ms)
+✔ durable reserve precedes one fixed official request; no caller headers, tools, retries or secret audit (38.003166ms)
+✔ concurrent attempts rejected before Provider and before a second reservation (35.74925ms)
+✔ request policy rejects other endpoint/model/tools/token limits and oversized input with zero network (20.487084ms)
+✔ durable call cap survives reopen and reservations never refunded (127.801166ms)
+✔ conservative money ceiling stops BEFORE ¥1, consequently before ¥8 and ¥10 (88.877834ms)
+✔ missing or over-bound usage halts automatic calls permanently; no refund (193.250458ms)
+✔ unknown upstream failures, bounded body, timeout, cancel and late results keep reservation and halt (557.647875ms)
+✔ exclusive lease, private permissions, corrupted ledger and unresolved reservation fail closed (48.579084ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3298.765916

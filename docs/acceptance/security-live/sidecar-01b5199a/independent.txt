@@ -1,0 +1,14 @@
+{"case":"settled","first":{"mode":"settled","code":"OK","entries":1,"halted":false,"claims":1},"next":{"mode":"replay","code":"IDEMPOTENCY_REPLAY","entries":1,"halted":false,"claims":1},"third":{"mode":"replay","code":"IDEMPOTENCY_REPLAY","entries":1,"halted":false,"claims":1},"mockEgress":1,"clock":"historical test process only"}
+{"case":"unknown","first":{"mode":"unknown","code":"OK","entries":1,"halted":true,"claims":1},"next":{"mode":"replay","code":"IDEMPOTENCY_REPLAY","entries":1,"halted":true,"claims":1},"third":{"mode":"replay","code":"IDEMPOTENCY_REPLAY","entries":1,"halted":true,"claims":1},"mockEgress":1,"clock":"historical test process only"}
+{"case":"native-expiry","first":{"mode":"expired","code":"PRICING_EXPIRED","entries":0,"halted":false,"claims":1},"retry":{"mode":"expired","code":"IDEMPOTENCY_REPLAY","entries":0,"halted":false,"claims":1},"mockEgress":0,"zeroClaim":false}
+✔ separate OS process restart preserves settled claim and at most one Mock egress (190.778833ms)
+✔ separate OS process restart preserves unknown claim and at most one Mock egress (177.80775ms)
+✔ native expired clock denies reserve/egress but retains prior durable claim (115.344333ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 519.439083
