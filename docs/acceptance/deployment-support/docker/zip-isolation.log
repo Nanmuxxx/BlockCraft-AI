@@ -1,0 +1,4 @@
+PASS POST /api/local-project-export expected=404 actual=404 content-type=application/json; charset=utf-8 export=rejected
+PASS POST /api/local-project-export?probe=1 expected=404 actual=404 content-type=application/json; charset=utf-8 export=rejected
+PASS GET /api%2Flocal-project-export expected=400 actual=400 content-type=application/json; charset=utf-8 export=rejected
+PASS production image has no successful local-project-export route

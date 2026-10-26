@@ -1,0 +1,50 @@
+
+> blockcraft-ai@0.1.0 test:generation
+> npm --prefix server run build && node --test tests/generation/*.test.mjs
+
+
+> build
+> tsc -p tsconfig.json
+
+✔ existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure (81.4241ms)
+✔ route rejects structurally legal but incomplete metric-only app without input, then recovers (6.1652ms)
+✔ route rejects structurally legal but incomplete unbound empty entity, then recovers (6.3762ms)
+✔ route rejects structurally legal but incomplete hidden optional field, then recovers (4.346ms)
+✔ prompt embeds the exact live protocol boundary and keeps idea in its own user message (5.4637ms)
+✔ club-app: independent requirement mapping and real runtime CRUD/aggregations (5.3957ms)
+✔ fitness-log: independent requirement mapping and real runtime CRUD/aggregations (5.4744ms)
+✔ fitness-library: independent requirement mapping and real runtime CRUD/aggregations (1.4843ms)
+✔ money-app: independent requirement mapping and real runtime CRUD/aggregations (1.9459ms)
+✔ lost-found: independent requirement mapping and real runtime CRUD/aggregations (1.5381ms)
+✔ book-log: independent requirement mapping and real runtime CRUD/aggregations (0.7502ms)
+✔ movie-log: independent requirement mapping and real runtime CRUD/aggregations (0.7176ms)
+✔ same domain, different goals change entities/fields; no mandatory form/list/metric set (0.2508ms)
+✔ record count is supported with empty field evidence and reflects actual rows, not unique objects (1.3902ms)
+✔ base v1 empty specs stay legal; only the independent generation policy rejects them (0.2349ms)
+✔ separate completeness detects empty fields, unbound objects, missing input and inaccessible fields (0.2674ms)
+✔ bad binding, required field omission, cross-entity fields, illegal numeric metric and unknown types fail structure (0.4638ms)
+✔ structure cannot prove semantics: valid unrelated apps need review; independent mappings expose the mismatch (0.2776ms)
+✔ independent reviewer receives original goals, spec and actual operations as data without any API call (0.3857ms)
+✔ review must cover every goal and bind current input/spec/requirements; malformed evidence fails closed (0.8226ms)
+✔ only actual exposed operations count; list required fields are editable, hidden optional fields are not (0.288ms)
+✔ unsupported operations remain unsupported despite plausible block names, including mixed and unsupported-only goals (1.008ms)
+✔ legacy demos keep their original protocol and remain usable without requirement reviews (1.1807ms)
+✔ legacy protocol projection does not advertise trusted v2 primitives (0.4583ms)
+✔ generation rejects unfinished media type uploads and closes without waiting for body (47.9999ms)
+✔ generation rejects unfinished cross-origin uploads and closes without waiting for body (8.1605ms)
+✔ generation rejects unfinished declared size uploads and closes without waiting for body (5.3838ms)
+✔ generation rejects unfinished method uploads and closes without waiting for body (5.2921ms)
+✔ generation rejects unfinished route uploads and closes without waiting for body (5.5526ms)
+✔ over-limit unfinished chunked upload is structured 413 and releases the generation slot (5.4253ms)
+✔ unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect (7.6815ms)
+✔ generation accepts valid multibyte JSON split inside a UTF-8 codepoint (6.6466ms)
+✔ unfinished request reaches its input deadline, returns structured 408 and releases admission (5.0269ms)
+✔ rate-limited unfinished upload receives 429 without reaching upstream or waiting for its body (17.7739ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 505.8212
