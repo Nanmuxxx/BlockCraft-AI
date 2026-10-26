@@ -1,0 +1,21 @@
+{
+  "pptx_pages": 15,
+  "pdf_pages": 15,
+  "missing_pdf_text": [],
+  "media_assets_unchanged": 20,
+  "native_PowerPoint": "NOT VERIFIED",
+  "pdf_font_mapping": "DengXian -> PingFang SC, export only",
+  "local_real_evidence_commit": "7fb98ffd401d08fcc4188a03619fb420860cc2eb",
+  "tested_code": "e4d65ac77e02d41668d260c082dc2788c64b5975",
+  "result": "ONE REAL AI PASS - LOCAL ONLY; PUBLIC NOT VERIFIED",
+  "files": {
+    "BlockCraftAI_BP_Reconciled_Candidate.pptx": {
+      "bytes": 2243501,
+      "sha256": "03a54b18b8a4726fb0645f31c451c7fa662159f62f372b78f96affab79fea85a"
+    },
+    "BlockCraftAI_BP_Reconciled_Candidate.pdf": {
+      "bytes": 1020899,
+      "sha256": "8b753700a34bd782e4b1f8eabaf82047a67a4d43d38e69b49f66672f14f5dccf"
+    }
+  }
+}
