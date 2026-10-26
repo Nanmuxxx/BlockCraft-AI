@@ -7,7 +7,7 @@
 - 仓库：`Nanmuxxx/BlockCraft-AI`；开发分支：`codex/gallery-single-offline`。
 - 固定历史审计 SHA：`c5e0f77878098fd9cfe35514992256bd7abd7343`。
 - 本轮测试时 HEAD、fetch 后的 `origin/main`：`01e78916807108031e30056cd1aeb6b0c6c89358`，二者无分叉。测试针对这个 HEAD 加本功能工作区改动；精确文件摘要见 [local-results.json](local-results.json)。提交后的精确 SHA 由 PR HEAD 和 CI `tested-sha.txt` 记录，避免把基准 SHA 说成实现 SHA。
-- 历史审计基准到当前 base 为 4 个既有提交（图片、README 及合并），不属于本 PR。未更新本地 main。
+- 历史审计基准到当前 base 为 4 个既有提交（图片、README 及合并），不属于本 PR。本轮开始本地 main 仍为审计基准；GitHub Desktop 发布开发分支期间自动将本地 main 快进至上述 origin/main，reflog 为 `2026-10-26 14:30:04 +0800: pull: fast-forward`。这是桌面客户端的非预期副作用，已向负责人披露；没有向远端 main 推送、合并 PR 或重置本地指针。
 - 开始时暂存区为空，6 个已跟踪文件修改、11 个未跟踪文件。与前次交付的 17 个文件摘要核对，功能源码相同；本轮只调整测试的 CI 适配和可复现文档，另加工作流及交付材料，未发现额外不明改动。
 - 曾报告的 `controller.ts` TS1005 已在本轮开始前修好。本轮 `tsc -b` 再次通过，未为通过测试删除既有功能。
 
