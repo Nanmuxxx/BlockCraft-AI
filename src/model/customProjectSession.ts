@@ -6,7 +6,7 @@ import { assertArtifactReference, migrateProjectState, parseCustomProject, resol
 import { assertCustomProjectStructure } from '../custom-block/project'
 import { assertSchemaValue } from '../custom-block/schema'
 import { assertJson, check, cloneJson, CustomBlockError, keys, object, revision } from '../custom-block/json'
-import { createProjectRevisionOwner, type ProjectRevisionOwner, type WriteAuthorization } from '../integrations/custom-block-bc/owner'
+import { createProjectRevisionOwner, type ProjectRevisionOwner, type WriteAuthorization, type PersistenceLease } from '../integrations/custom-block-bc/owner'
 
 export interface CustomProjectSession extends ProjectRevisionOwner {
   registry: ArtifactRegistry
@@ -14,6 +14,7 @@ export interface CustomProjectSession extends ProjectRevisionOwner {
   install: (request: unknown, authorization?: WriteAuthorization) => Promise<RuntimeResult>
   /** Trusted host permission control; never exposed to artifact code or JSON. */
   setReadOnly: (readOnly: boolean) => void
+  acquirePersistence: (expected: CustomProject, authorization: WriteAuthorization) => PersistenceLease
 }
 function freeze<T>(value: T): T {
   if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value) }
@@ -52,24 +53,21 @@ export function createProjectSession(initial: ProjectState, onCustomCommit: () =
   const owner: CustomProjectSession = Object.freeze({
     ...authority,
     registry,
+    acquirePersistence(expected: CustomProject, authorization: WriteAuthorization) {
+      const lease = authority.acquirePersistence(expected, authorization)
+      return { ...lease, publish(next: CustomProject) {
+        // Use the same full-project validation as ordinary CAS before the lease
+        // publishes. No new artifact can enter through a saved image candidate.
+        try { validateCandidate(next); return lease.publish(next) }
+        catch (error) { return failure(error) }
+      } }
+    },
     compareAndSwap(expected: CustomProject, next: CustomProject, authorization: WriteAuthorization): RuntimeResult {
       try {
         // As in #24, callers must parse artifacts/Schema before this trusted CAS.
         // Structure validation is synchronous; authorization is checked last by
         // the authority, with no await before its persist/publication boundary.
-        assertCustomProjectStructure(next)
-        for (const instance of next.custom.instances) {
-          const staged = admissions.get(next)
-          const registered = staged && staged.versionDigest === instance.versionDigest && staged.artifact.manifest.definitionId === instance.definitionId
-            ? staged : artifacts.get(key(instance))
-          check(registered, '此版本制品尚未准入。', 'VERSION_MISSING')
-          assertSchemaValue(registered.artifact.manifest.propsSchema, instance.props)
-          const state = next.custom.states[instance.id]
-          if (state) assertSchemaValue(registered.artifact.manifest.stateSchema, state.value)
-          for (const cap of registered.artifact.manifest.requestedCapabilities) if (cap.kind === 'records.create') {
-            check(next.base.spec.entities.some(entity => entity.id === cap.entityId), 'Capability references unknown project entity')
-          }
-        }
+        validateCandidate(next)
         return authority.compareAndSwap(expected, next, authorization)
       } catch (error) { return failure(error) }
     },
@@ -109,6 +107,21 @@ export function createProjectSession(initial: ProjectState, onCustomCommit: () =
       } catch (error) { return failure(error) }
     },
   })
+  function validateCandidate(next: CustomProject) {
+    assertCustomProjectStructure(next)
+    for (const instance of next.custom.instances) {
+      const staged = admissions.get(next)
+      const registered = staged && staged.versionDigest === instance.versionDigest && staged.artifact.manifest.definitionId === instance.definitionId
+        ? staged : artifacts.get(key(instance))
+      check(registered, '此版本制品尚未准入。', 'VERSION_MISSING')
+      assertSchemaValue(registered.artifact.manifest.propsSchema, instance.props)
+      const state = next.custom.states[instance.id]
+      if (state) assertSchemaValue(registered.artifact.manifest.stateSchema, state.value)
+      for (const cap of registered.artifact.manifest.requestedCapabilities) if (cap.kind === 'records.create') {
+        check(next.base.spec.entities.some(entity => entity.id === cap.entityId), 'Capability references unknown project entity')
+      }
+    }
+  }
   return {
     owner, getBaseSnapshot: () => {
       const current = authority.getSnapshot()

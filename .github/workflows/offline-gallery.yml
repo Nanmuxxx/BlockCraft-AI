@@ -1,0 +1,81 @@
+name: Offline gallery acceptance
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/offline-gallery.yml
+      - package.json
+      - package-lock.json
+      - tsconfig*.json
+      - vite.config.ts
+      - index.html
+      - src/**
+      - public/**
+      - tests/gallery-generation/**
+      - tests/project-json/**
+      - tests/project-package/**
+      - tests/custom-block-bc/**
+      - tests/workshop-export/**
+      - tools/project-zip-export/**
+      - server/custom-block/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-gallery:
+    name: Types, regressions and offline browser M00-M13
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install project and isolated browser tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npm install --prefix "$RUNNER_TEMP/gallery-browser" --no-package-lock --ignore-scripts playwright@1.62.1
+          echo "NODE_PATH=$RUNNER_TEMP/gallery-browser/node_modules" >> "$GITHUB_ENV"
+          node "$RUNNER_TEMP/gallery-browser/node_modules/playwright/cli.js" install --with-deps chromium
+      - name: Run offline checks and record exit codes
+        shell: bash
+        env:
+          GALLERY_EVIDENCE_DIR: artifacts/offline-gallery/browser
+          GALLERY_EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          set -uo pipefail
+          mkdir -p artifacts/offline-gallery
+          git rev-parse HEAD > artifacts/offline-gallery/tested-sha.txt
+          overall=0
+          run_check() {
+            name="$1"; shift
+            printf '%s\n' "command: $*" > "artifacts/offline-gallery/$name.log"
+            "$@" >> "artifacts/offline-gallery/$name.log" 2>&1
+            result=$?
+            printf '%s\n' "exit_code: $result" >> "artifacts/offline-gallery/$name.log"
+            cat "artifacts/offline-gallery/$name.log"
+            if [ "$result" -ne 0 ]; then overall=1; fi
+          }
+          run_check typescript node node_modules/typescript/bin/tsc -b
+          run_check build node node_modules/vite/bin/vite.js build
+          run_check default-tests npm test
+          run_check prepare-export node tools/project-zip-export/prepare.mjs
+          run_check regression node --test tests/project-json/*.test.cjs tests/project-package/*.test.cjs tests/custom-block-bc/*.test.cjs tests/workshop-export/*.test.*
+          run_check project-zip-browser npm run test:project-package:browser
+          run_check gallery-browser npm run test:gallery-offline:browser
+          exit "$overall"
+      - name: Upload logs, screenshots, portable projects and browser traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-gallery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/offline-gallery
+          if-no-files-found: warn
+          retention-days: 14

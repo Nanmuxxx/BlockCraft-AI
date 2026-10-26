@@ -34,6 +34,7 @@
     "test:project-json:browser": "node tests/project-json/browser.cjs",
     "test:project-package": "node --test tests/project-package/*.test.cjs",
     "test:project-package:browser": "node tests/project-package/browser.cjs",
+    "test:gallery-offline:browser": "node tests/gallery-generation/browser.cjs",
     "test:mochi-proactive": "npm --prefix server run build && node --test tests/mochi-proactive/*.test.*",
     "test:mochi-proactive:browser": "node tests/mochi-proactive/browser.cjs",
     "test:mochi-proactive:offline": "npm --prefix server run build && node tools/mochi-proactive/sample.cjs --offline",
