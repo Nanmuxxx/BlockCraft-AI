@@ -15,6 +15,9 @@ import { AppSpecInspector } from './AppSpecInspector'
 import { ExportProjectButton } from '../../integrations/project-export/ExportProjectButton'
 import { ProjectJsonControls } from '../../integrations/project-json/ProjectJsonControls'
 import type { RestoredProject } from '../../integrations/project-json/format'
+import type { WorkspaceSession } from '../../integrations/project-workspace/session'
+import { WorkspaceControls } from '../../integrations/project-workspace/WorkspaceControls'
+import { GalleryImagePanel } from '../../integrations/gallery-generation/GalleryImagePanel'
 import { createMochiHost, type HostView } from '../../integrations/mochi/host'
 import { createHttpPlanProvider, fieldPlanningStatus } from '../../integrations/mochi/httpPlanProvider'
 import { WorkshopMochi, type MochiHost, type WorkshopMochiProps } from '../../integrations/mochi/WorkshopMochi'
@@ -28,6 +31,8 @@ export interface WorkshopPanelMount {
   renderMochi?: (props: WorkshopMochiProps) => ReactNode
   /** Parent must synchronously gate runtime replacement using this same binding. */
   installation?: GeneratedArtifactUI
+  workspace?: WorkspaceSession
+  onRecoverSaved?: () => Promise<void>
 }
 
 function RunFormSelector({ blocks, selectedBlockId, onSelect }: {
@@ -47,7 +52,7 @@ function RunFormSelector({ blocks, selectedBlockId, onSelect }: {
   </div>
 }
 
-export function AppSpecWorkshop({ runtime, renderMochi, installation, onImportProject }: { runtime: AppRuntime; onImportProject?: (restored: RestoredProject) => void | Promise<void> } & WorkshopPanelMount) {
+export function AppSpecWorkshop({ runtime, renderMochi, installation, onImportProject, workspace, onRecoverSaved }: { runtime: AppRuntime; onImportProject?: (restored: RestoredProject) => void | Promise<void> } & WorkshopPanelMount) {
   const [owner, setOwner] = useState<{ runtime: AppRuntime; host: MochiHost } | null>(null)
   const [planningDisabledReason, setPlanningDisabledReason] = useState<string | undefined>('正在检查字段计划服务…')
   useEffect(() => {
@@ -63,11 +68,11 @@ export function AppSpecWorkshop({ runtime, renderMochi, installation, onImportPr
     return () => { controller.abort(); host.dispose() }
   }, [runtime])
   if (!owner || owner.runtime !== runtime) return null
-  return <MochiWorkshop runtime={runtime} host={owner.host} installation={installation} renderMochi={renderMochi} planningDisabledReason={planningDisabledReason} onImportProject={onImportProject} />
+  return <MochiWorkshop runtime={runtime} host={owner.host} installation={installation} renderMochi={renderMochi} planningDisabledReason={planningDisabledReason} onImportProject={onImportProject} workspace={workspace} onRecoverSaved={onRecoverSaved} />
 }
 
 /** Internal composition seam for offline integration tests; production uses the wrapper above. */
-export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMochi, installation: suppliedInstallation, onImportProject }: {
+export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMochi, installation: suppliedInstallation, onImportProject, workspace, onRecoverSaved }: {
   runtime: AppRuntime; host: MochiHost; planningDisabledReason?: string; onImportProject?: (restored: RestoredProject) => void | Promise<void>
 } & WorkshopPanelMount) {
   const root = useRef<HTMLElement>(null)
@@ -123,6 +128,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
       </div>
       <div className="workshop__project-actions">{onImportProject && <ProjectJsonControls owner={runtime.customProject} onImportProject={onImportProject} />}<ExportProjectButton owner={runtime.customProject} /></div>
     </header>
+    {workspace && onRecoverSaved && <WorkspaceControls workspace={workspace} onRecover={onRecoverSaved} />}
     <div className="workshop__body">
       <nav className="workshop__nav" aria-label="工坊导航">
         <a href="/"><ArrowLeft size={21} aria-hidden="true" /><span>首页</span></a><div className="workshop__nav-divider" />
@@ -130,6 +136,7 @@ export function MochiWorkshop({ runtime, host, planningDisabledReason, renderMoc
         <button type="button" aria-pressed={mode === 'run'} onClick={() => setMode('run')}><Monitor size={23} aria-hidden="true" /><span>预览</span></button>
       </nav>
       <div className="workshop__workspace">
+        {workspace && <div hidden={mode !== 'blocks'}><GalleryImagePanel workspace={workspace} /></div>}
         <div className="workshop__canvas-header"><div><p className="workshop__eyebrow">{mode === 'blocks' ? 'BUILD WITH BLOCKS' : 'A GLIMPSE OF YOUR APP'}</p><h2>{mode === 'blocks' ? '从一块积木开始' : '让想法有个模样'}</h2><p>{mode === 'blocks' ? '每一块，都是软件的一种可能。' : `这里是「${snapshot.spec.name}」的预览空间。`}</p></div><span className="workshop__badge">{project.renderOrder.length} 块功能积木</span></div>
         <div className="workshop__blocks-layer" id="generated-blocks" hidden={mode !== 'blocks'}>{installGateError && <p role="alert">{installGateError}</p>}<div className="block-canvas-toolbar"><button type="button" disabled={!runtime.canUndo() || runtime.customProject.getAuthorization().readOnly} onClick={undo}><Undo2 size={14} aria-hidden="true" />撤销结构修改</button></div>{undoError && <p role="alert">{undoError}</p>}<AddInteractionBlock runtime={runtime} /><CustomBlockImport owner={runtime.customProject} generated={installation} />{adapter ? <CustomBlockCanvas adapter={adapter} selectedId={selected} onSelect={setSelectedId} /> : admission}</div>
         <div className="workshop__preview-stage" id="generated-preview" hidden={mode !== 'run'}><div className="study-app"><header className="study-app__topbar"><div className="study-app__brand"><span><Blocks size={18} aria-hidden="true" /></span><strong>{snapshot.spec.name}</strong><small>YOUR APP</small></div></header><div className="app-spec-preview-content">{adapter ? <CustomBlockRunSurface adapter={adapter} renderBuiltin={block => <BuiltinBlockRenderer runtime={runtime} blockId={block.id} />} /> : admission}</div></div></div>

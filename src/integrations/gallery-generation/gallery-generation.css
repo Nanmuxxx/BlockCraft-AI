@@ -1,0 +1,13 @@
+.gallery-generation { margin: 12px 0; padding: 18px; border: 1px solid #c8d5c4; border-radius: 14px; background: #f7faf4; color: #24332a; }
+.gallery-generation h3 { margin: 0 0 6px; }
+.gallery-generation p, .gallery-generation figcaption { font-size: 13px; line-height: 1.6; }
+.gallery-generation label { display: block; margin: 10px 0; font-size: 13px; font-weight: 600; }
+.gallery-generation textarea, .gallery-generation select { display: block; width: 100%; max-width: 560px; margin-top: 6px; padding: 9px; border: 1px solid #b5c3b0; border-radius: 8px; background: white; color: inherit; font: inherit; }
+.gallery-generation textarea { min-height: 60px; resize: vertical; }
+.gallery-generation button, .workspace-save button { border: 1px solid #8ea289; border-radius: 8px; padding: 8px 12px; background: white; color: #24332a; font: inherit; cursor: pointer; }
+.gallery-generation button:disabled, .workspace-save button:disabled { opacity: .5; cursor: default; }
+.gallery-generation__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.gallery-generation figure { margin: 16px 0 0; }
+.gallery-generation img { display: block; max-width: 100%; width: 320px; height: auto; border-radius: 10px; }
+.workspace-save { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 12px; background: #f7faf4; }
+.workspace-save p { margin: 0; font-size: 12px; max-width: 460px; }

@@ -1,0 +1,475 @@
+{
+  "generatedAt": "2026-10-26T06:25:06.020Z",
+  "scope": "Fresh local verification of base HEAD plus listed worktree files; not a CI claim",
+  "baseSha": "01e78916807108031e30056cd1aeb6b0c6c89358",
+  "remoteMainSha": "01e78916807108031e30056cd1aeb6b0c6c89358",
+  "sourceFiles": [
+    {
+      "file": ".github/workflows/offline-gallery.yml",
+      "sha256": "0f65f21aad3080433175c49fd874abe0aaffc962475ce412fbd9c6d4bd32a795"
+    },
+    {
+      "file": "package.json",
+      "sha256": "16773b2a5a7a3999545a05cabd6a1b93545412994fb723645cf1c0e0c9f9c24a"
+    },
+    {
+      "file": "src/components/ai-create/AiCreate.tsx",
+      "sha256": "3e3d40a0fb58e9fedc59ffdf498dcb16a41630ae3a676084ad1888992ac25e68"
+    },
+    {
+      "file": "src/components/app-builder/AppSpecWorkshop.tsx",
+      "sha256": "e26d5524b5521334ac5ef8fda3a9475065502b799dbe4e382c6fb34935bbca9f"
+    },
+    {
+      "file": "src/integrations/custom-block-bc/owner.ts",
+      "sha256": "db64a33cb60282bf59df16f6faaf103a014927d13226ebd03d1cc85dc5b10c60"
+    },
+    {
+      "file": "src/integrations/gallery-generation/GalleryImagePanel.tsx",
+      "sha256": "ebb8d74c20e6c72c3ffa801d55069a3bd73c341637a676308384415355666c76"
+    },
+    {
+      "file": "src/integrations/gallery-generation/controller.ts",
+      "sha256": "d05a71d4c6798f8fe46c49be44122354693faa67be4ac19a911dfce9f5acab21"
+    },
+    {
+      "file": "src/integrations/gallery-generation/gallery-generation.css",
+      "sha256": "c8518d6c47e268e17c51abd1209dd9df03f433e1f28e526314439d0b6b709c47"
+    },
+    {
+      "file": "src/integrations/gallery-generation/offline.ts",
+      "sha256": "317d3b4c233ead2f816cb1b7f70560b79133c4aa9e1d0e37f05c9c724e126afe"
+    },
+    {
+      "file": "src/integrations/project-json/backups.ts",
+      "sha256": "79f21cbaec8ac3e923ea8354ddea410fb3ad70f1590cffd1c0649d537d73c931"
+    },
+    {
+      "file": "src/integrations/project-json/database.ts",
+      "sha256": "fb477e7649f0aa062d9be5072bd45c7d88261d26bb2cb306ed7b9b71a4f8275c"
+    },
+    {
+      "file": "src/integrations/project-workspace/WorkspaceControls.tsx",
+      "sha256": "d76bd9fab7b59ac2ed6eabf24f0910cd05f20c3c803bb9424907436de9fd709f"
+    },
+    {
+      "file": "src/integrations/project-workspace/repository.ts",
+      "sha256": "254e4a628dbbe1e1d98766b412c3aa6e680f603cef2050f5f34e5007411287a9"
+    },
+    {
+      "file": "src/integrations/project-workspace/session.ts",
+      "sha256": "28d6b199ccb73db9f2fef7d369a7da638ba98c67861341ab9284fe1a3137dff0"
+    },
+    {
+      "file": "src/model/customProjectSession.ts",
+      "sha256": "ba44bf4296f763e2b982ccb34ab5e0e9dc74340250898e65d3a835b18ed96e76"
+    },
+    {
+      "file": "tests/gallery-generation/README.md",
+      "sha256": "23a2d740a83e6319e530a2de6d0cba6bcda57266c304066468c3858cf05fdc79"
+    },
+    {
+      "file": "tests/gallery-generation/browser-cases.js",
+      "sha256": "fbf7058eb4d7971310c42d72bd0cd7ac307b5d2710f3a53845bf88ef9ab48579"
+    },
+    {
+      "file": "tests/gallery-generation/browser.cjs",
+      "sha256": "dd46cb2347ce40f92471802f864830a6dc9e1be12b00083a4011bbd1439ce02c"
+    }
+  ],
+  "commands": [
+    {
+      "name": "build",
+      "command": "node node_modules/vite/bin/vite.js build",
+      "started": "2026-10-26T06:17:34.477Z",
+      "finished": "2026-10-26T06:17:36.766Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build.log",
+      "logSha256": "c2fb42f3dc52a8b222c06d5967335b1da8cf4b267ab385016b057cb0eb9852b3"
+    },
+    {
+      "name": "default-tests",
+      "command": "node --run test",
+      "started": "2026-10-26T06:16:36.329Z",
+      "finished": "2026-10-26T06:16:38.059Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "default-tests.log",
+      "logSha256": "cf23c7ebe87fd20b2d0333b4a618e0a0a5be9ea90de5db4e00ac4f050dd558f4"
+    },
+    {
+      "name": "gallery-browser",
+      "command": "node --run test:gallery-offline:browser",
+      "started": "2026-10-26T06:18:09.125Z",
+      "finished": "2026-10-26T06:18:34.346Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "gallery-browser.log",
+      "logSha256": "53fe210052c3133c53ee9f96159549ff305cd19b38b7420269085d17c8cbdeb9"
+    },
+    {
+      "name": "prepare-export",
+      "command": "node tools/project-zip-export/prepare.mjs",
+      "started": "2026-10-26T06:17:34.474Z",
+      "finished": "2026-10-26T06:17:35.448Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "prepare-export.log",
+      "logSha256": "f10e15c4fc810b84f33bc8b1233abccbaaf7e1cb030e230738d3e7b0aea885ea"
+    },
+    {
+      "name": "project-zip-browser",
+      "command": "node tests/project-package/browser.cjs",
+      "started": "2026-10-26T06:19:36.696Z",
+      "finished": "2026-10-26T06:19:44.272Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "project-zip-browser.log",
+      "logSha256": "3f0e5685b8da5f17b42ca22cb042fa4768a52817f75bf7800d00ba9f9f711da9"
+    },
+    {
+      "name": "regression-local-network",
+      "command": "node --test tests/project-json/*.test.cjs tests/project-package/*.test.cjs tests/custom-block-bc/*.test.cjs tests/workshop-export/*.test.*",
+      "started": "2026-10-26T06:19:26.925Z",
+      "finished": "2026-10-26T06:19:28.597Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "regression-local-network.log",
+      "logSha256": "ab8ad8b59cf2514304eed4dc8eb073e9b6781438f6cfd9b0aec88f003ebe9807"
+    },
+    {
+      "name": "regression",
+      "command": "node --test tests/project-json/*.test.cjs tests/project-package/*.test.cjs tests/custom-block-bc/*.test.cjs tests/workshop-export/*.test.*",
+      "started": "2026-10-26T06:17:37.749Z",
+      "finished": "2026-10-26T06:17:39.415Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "regression.log",
+      "logSha256": "c4c690158ece4e00f59384c9d4bf4853a66da5c0e6c9f94882e67a9aba00caab"
+    },
+    {
+      "name": "typescript",
+      "command": "node node_modules/typescript/bin/tsc -b",
+      "started": "2026-10-26T06:16:32.028Z",
+      "finished": "2026-10-26T06:16:35.465Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "typescript.log",
+      "logSha256": "16803229042f638418a59ae7914ba430762ca272644c8889aa0ba6b2beb44a38"
+    }
+  ],
+  "browser": {
+    "mode": "OFFLINE_CANVAS",
+    "passed": true,
+    "cases": [
+      {
+        "id": "M00",
+        "status": "PASS",
+        "description": "local worktree identity and served source",
+        "evidence": {
+          "platform": "win32",
+          "node": "v24.19.0",
+          "browser": "155.0.8059.85",
+          "origin": "http://127.0.0.1:55836",
+          "head": "01e78916807108031e30056cd1aeb6b0c6c89358",
+          "branch": "codex/gallery-single-offline",
+          "status": "M package.json\n M src/components/ai-create/AiCreate.tsx\n M src/components/app-builder/AppSpecWorkshop.tsx\n M src/integrations/custom-block-bc/owner.ts\n M src/integrations/project-json/backups.ts\n M src/model/customProjectSession.ts\n?? .github/workflows/offline-gallery.yml\n?? src/integrations/gallery-generation/\n?? src/integrations/project-json/database.ts\n?? src/integrations/project-workspace/\n?? tests/gallery-generation/"
+        }
+      },
+      {
+        "id": "M01",
+        "status": "PASS",
+        "description": "one candidate, no project change before confirmation; discard preserves original",
+        "evidence": {
+          "revision": 0,
+          "assets": 0,
+          "candidatesPerOperation": 1,
+          "discardedUnchanged": true
+        }
+      },
+      {
+        "id": "M02",
+        "status": "PASS",
+        "description": "preview decodes and identifies actual PNG bytes, size and destination",
+        "evidence": {
+          "width": 320,
+          "height": 240,
+          "mime": "image/png",
+          "bytes": 8375,
+          "sha256": "141bdd31f4af48946254a37292b12a7016c5070f96cdaf5c7357ba823ab29f17",
+          "target": "practice-gallery"
+        }
+      },
+      {
+        "id": "M03",
+        "status": "PASS",
+        "description": "confirm saves one asset and reference atomically; B and C expose identical bytes",
+        "evidence": {
+          "revision": 1,
+          "assetId": "image-93ea26ad-076d-4a3a-8819-e51d06fcb070",
+          "receipt": {
+            "confirmationId": "confirm-d43362c2-3d4a-43f5-8710-3b1faf0240a0",
+            "digest": "b5f9fc7e1a9401bb840115303568f205c03ecf11977404284b70014255f11970",
+            "assetId": "image-93ea26ad-076d-4a3a-8819-e51d06fcb070",
+            "revision": 1
+          },
+          "storageSequence": 1
+        }
+      },
+      {
+        "id": "M04",
+        "status": "PASS",
+        "description": "page reload restores the latest saved project, references and image bytes",
+        "evidence": {
+          "fullProjectEqual": true,
+          "savedRecordEqual": true
+        }
+      },
+      {
+        "id": "M05",
+        "status": "PASS",
+        "description": "ZIP crosses an empty browser context; imported JSON/ZIP and decoded PNG match",
+        "evidence": {
+          "zipSha256": "43358c14c717216e169d1de50d65413a43459ca7027e7a9c4bc67321c0bb92dc",
+          "members": [
+            {
+              "path": "manifest.json",
+              "bytes": 553,
+              "sha256": "471b91601c20f89ace4f4fa7c04d1566a6f39a5ca7ac2091fdeddf5bbb4e8dbb"
+            },
+            {
+              "path": "project.json",
+              "bytes": 828,
+              "sha256": "ef2d8ed858b388df6a8e6b699584bf5245c947e3a2302a2a14d68697fb6274d3"
+            },
+            {
+              "path": "assets/image-93ea26ad-076d-4a3a-8819-e51d06fcb070.png",
+              "bytes": 8375,
+              "sha256": "141bdd31f4af48946254a37292b12a7016c5070f96cdaf5c7357ba823ab29f17"
+            }
+          ],
+          "isolatedContext": true,
+          "reexportByteIdentical": true,
+          "importSaveReload": true
+        }
+      },
+      {
+        "id": "M06",
+        "status": "PASS",
+        "description": "provider, retrieval, decode, format and capacity failures preserve old project",
+        "evidence": {
+          "results": [
+            {
+              "stage": "provider",
+              "calls": 1,
+              "message": "offline provider failure",
+              "oldHeadPreserved": true
+            },
+            {
+              "stage": "retrieval",
+              "calls": 1,
+              "message": "offline bytes unavailable",
+              "oldHeadPreserved": true
+            },
+            {
+              "stage": "format",
+              "calls": 1,
+              "message": "候选必须是限额内的静态 PNG。",
+              "oldHeadPreserved": true
+            },
+            {
+              "stage": "signature",
+              "calls": 1,
+              "message": "候选未通过项目容量或引用校验：PNG signature mismatch",
+              "oldHeadPreserved": true
+            },
+            {
+              "stage": "native decode",
+              "calls": 1,
+              "message": "The source image could not be decoded.",
+              "oldHeadPreserved": true
+            },
+            {
+              "stage": "byte capacity",
+              "calls": 1,
+              "message": "候选必须是限额内的静态 PNG。",
+              "oldHeadPreserved": true
+            }
+          ],
+          "providerBilling": "NOT RUN: offline canvas, no reservation or live provider"
+        }
+      },
+      {
+        "id": "M07",
+        "status": "PASS",
+        "description": "quota/transaction abort preserve old head; activation failure recovers committed head",
+        "evidence": [
+          {
+            "mode": "quota",
+            "oldRuntimePreserved": true,
+            "savedHead": 1,
+            "recovery": false
+          },
+          {
+            "mode": "abort",
+            "oldRuntimePreserved": true,
+            "savedHead": 3,
+            "recovery": false
+          },
+          {
+            "mode": "activation",
+            "oldRuntimePreserved": true,
+            "savedHead": 6,
+            "recovery": true
+          }
+        ]
+      },
+      {
+        "id": "M08",
+        "status": "PASS",
+        "description": "duplicate confirmation, lost response and restored receipt never append twice",
+        "evidence": {
+          "concurrentConfirmations": 3,
+          "imageProviderCalls": 1,
+          "adoptionReceipts": 1,
+          "refreshedRetryDuplicate": true,
+          "lostResponseRecovered": true,
+          "unknownOutcomeBlocksRetry": true
+        }
+      },
+      {
+        "id": "M09",
+        "status": "PASS",
+        "description": "edit, removed target, changed workspace and revoked permission reject stale candidates",
+        "evidence": {
+          "cases": [
+            {
+              "mode": "edit",
+              "preserved": true,
+              "message": "作品、图库或权限已变化，请重新生成预览。"
+            },
+            {
+              "mode": "delete gallery",
+              "preserved": true,
+              "message": "作品、图库或权限已变化，请重新生成预览。"
+            },
+            {
+              "mode": "replace workspace",
+              "preserved": true,
+              "message": "该项目已关闭。"
+            },
+            {
+              "mode": "revoke and regrant",
+              "preserved": true,
+              "message": "作品、图库或权限已变化，请重新生成预览。"
+            }
+          ],
+          "revocationWhileGenerating": true
+        }
+      },
+      {
+        "id": "M10",
+        "status": "PASS",
+        "description": "cancellation and timeout never adopt, retry or invoke a live provider",
+        "evidence": {
+          "cases": [
+            {
+              "mode": "cancel",
+              "calls": 1,
+              "state": "idle",
+              "lateResponseIgnored": true
+            },
+            {
+              "mode": "timeout",
+              "calls": 1,
+              "state": "failed",
+              "lateResponseIgnored": true
+            }
+          ],
+          "costs": "OFFLINE_ZERO; live-provider uncertain billing and key rotation NOT RUN"
+        }
+      },
+      {
+        "id": "M11",
+        "status": "PASS",
+        "description": "old IndexedDB backups and absent/empty/existing assets retain compatibility",
+        "evidence": {
+          "results": [
+            {
+              "assets": "absent",
+              "saveJsonZipRestore": true,
+              "danglingReferenceRejected": true
+            },
+            {
+              "assets": "empty",
+              "saveJsonZipRestore": true,
+              "danglingReferenceRejected": true
+            },
+            {
+              "assets": "existing",
+              "saveJsonZipRestore": true,
+              "danglingReferenceRejected": true
+            }
+          ],
+          "indexedDbV1ToV2BackupsPreserved": true
+        }
+      },
+      {
+        "id": "M12",
+        "status": "PASS",
+        "description": "exact and exceeded image, total, count, JSON and ZIP boundaries",
+        "evidence": {
+          "checks": [
+            "512 KiB valid decodable PNG: PASS",
+            "512 KiB + 1: rejected",
+            "1 MiB aggregate (unreferenced included): PASS",
+            "1 MiB + 1 aggregate byte: rejected",
+            "32 unreferenced PNGs: PASS",
+            "33rd image: rejected",
+            "JSON exact 4,000,000 bytes accepted; +1 rejected",
+            "large valid business text plus candidate exceeds serialized JSON budget: rejected before save",
+            "ZIP per-file 4,000,000 and total 5,100,000 accepted; +1 and archive cap +1 rejected"
+          ],
+          "scope": "Real PNG resource limits; JSON serializer/container byte limits also tested independently of domain admission"
+        }
+      },
+      {
+        "id": "M13",
+        "status": "PASS",
+        "description": "two tabs conflict instead of overwriting the newer saved head",
+        "evidence": {
+          "results": [
+            {
+              "ok": false,
+              "code": "STORAGE_CONFLICT"
+            },
+            {
+              "ok": true,
+              "workspaceId": "workspace-76515c24-b830-486b-a59f-d41a0c94291b"
+            }
+          ],
+          "sequence": 1
+        }
+      }
+    ],
+    "notRun": [
+      "M06 live-provider billing independence",
+      "M10 live-provider reservations, uncertain charges and credential rotation",
+      "real image-model quality/cost"
+    ],
+    "externalRequests": [],
+    "aiRequests": [],
+    "pageErrors": [],
+    "environment": {
+      "platform": "win32",
+      "node": "v24.19.0",
+      "browser": "155.0.8059.85",
+      "origin": "http://127.0.0.1:55836",
+      "head": "01e78916807108031e30056cd1aeb6b0c6c89358",
+      "branch": "codex/gallery-single-offline",
+      "status": "M package.json\n M src/components/ai-create/AiCreate.tsx\n M src/components/app-builder/AppSpecWorkshop.tsx\n M src/integrations/custom-block-bc/owner.ts\n M src/integrations/project-json/backups.ts\n M src/model/customProjectSession.ts\n?? .github/workflows/offline-gallery.yml\n?? src/integrations/gallery-generation/\n?? src/integrations/project-json/database.ts\n?? src/integrations/project-workspace/\n?? tests/gallery-generation/"
+    },
+    "finishedAt": "2026-10-26T06:18:34.290Z"
+  }
+}

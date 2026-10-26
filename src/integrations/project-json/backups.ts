@@ -1,4 +1,4 @@
-const DB_NAME = 'blockcraft-project-backups'
+import { openProjectDatabase as openDb } from './database'
 const STORE_NAME = 'projects'
 export const PROJECT_BACKUPS_CHANGED = 'blockcraft-project-backups-changed'
 
@@ -7,21 +7,6 @@ export interface ProjectBackupEntry {
   name: string
   createdAt: number
   text: string
-}
-
-function openDb(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    let blocked = false
-    const request = indexedDB.open(DB_NAME, 1)
-    request.onupgradeneeded = () => request.result.createObjectStore(STORE_NAME, { keyPath: 'id' })
-    request.onsuccess = () => {
-      if (blocked) { request.result.close(); return }
-      request.result.onversionchange = () => request.result.close()
-      resolve(request.result)
-    }
-    request.onblocked = () => { blocked = true; reject(new Error('本地备份暂时被其他页面占用，请关闭其他 BlockCraft 页面后重试。')) }
-    request.onerror = () => reject(request.error ?? new Error('无法打开本地项目备份。'))
-  })
 }
 
 export async function saveProjectBackup(text: string, name: string): Promise<void> {
