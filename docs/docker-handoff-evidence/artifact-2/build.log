@@ -1,0 +1,130 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.80kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:24-bookworm-slim
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:24-bookworm-slim
+#2 DONE 0.8s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 655B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 975.55kB 0.0s done
+#5 DONE 0.0s
+
+#6 [build  1/10] FROM docker.io/library/node:24-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5
+#6 resolve docker.io/library/node:24-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5 done
+#6 sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5 3.93kB / 3.93kB done
+#6 sha256:ec857ea6bb60cb3d0fa4d97495590c5fe7d51be8572c307b55957eeb06569cf7 1.93kB / 1.93kB done
+#6 sha256:a797d6440ed0b09e51fb884f30e47ec14cbf58482c5e19db681a0cb8df45b089 6.71kB / 6.71kB done
+#6 sha256:7fd1ebe418b5079d4aa36f416af9b143d127bc75b0155d71cb5fd559b5e04d39 0B / 28.25MB 0.1s
+#6 sha256:fb7da8a11632ec8a1daa7a740e634c10c151eccee31d49ba459b25877c5780e4 0B / 3.31kB 0.1s
+#6 sha256:b9a701dba9fbaed52af5239f5eeaeec384346d232313fe2278e50f9259b8e3bc 0B / 51.04MB 0.1s
+#6 sha256:7fd1ebe418b5079d4aa36f416af9b143d127bc75b0155d71cb5fd559b5e04d39 10.49MB / 28.25MB 0.3s
+#6 sha256:fb7da8a11632ec8a1daa7a740e634c10c151eccee31d49ba459b25877c5780e4 3.31kB / 3.31kB 0.2s done
+#6 sha256:182ecac4702d154abbcf12044dcb36915e067902b76ad52919b967c71be97f53 0B / 1.71MB 0.3s
+#6 sha256:7fd1ebe418b5079d4aa36f416af9b143d127bc75b0155d71cb5fd559b5e04d39 28.25MB / 28.25MB 0.4s done
+#6 sha256:b9a701dba9fbaed52af5239f5eeaeec384346d232313fe2278e50f9259b8e3bc 7.34MB / 51.04MB 0.4s
+#6 sha256:182ecac4702d154abbcf12044dcb36915e067902b76ad52919b967c71be97f53 1.71MB / 1.71MB 0.4s done
+#6 extracting sha256:7fd1ebe418b5079d4aa36f416af9b143d127bc75b0155d71cb5fd559b5e04d39 0.1s
+#6 sha256:4cec569cef036288a370045819d1a4fed7630cc6eb5e0c8051745f2b7d37c5f2 0B / 446B 0.4s
+#6 sha256:b9a701dba9fbaed52af5239f5eeaeec384346d232313fe2278e50f9259b8e3bc 51.04MB / 51.04MB 0.5s done
+#6 sha256:4cec569cef036288a370045819d1a4fed7630cc6eb5e0c8051745f2b7d37c5f2 446B / 446B 0.4s done
+#6 extracting sha256:7fd1ebe418b5079d4aa36f416af9b143d127bc75b0155d71cb5fd559b5e04d39 1.1s done
+#6 extracting sha256:fb7da8a11632ec8a1daa7a740e634c10c151eccee31d49ba459b25877c5780e4 done
+#6 extracting sha256:b9a701dba9fbaed52af5239f5eeaeec384346d232313fe2278e50f9259b8e3bc
+#6 extracting sha256:b9a701dba9fbaed52af5239f5eeaeec384346d232313fe2278e50f9259b8e3bc 1.3s done
+#6 extracting sha256:182ecac4702d154abbcf12044dcb36915e067902b76ad52919b967c71be97f53
+#6 extracting sha256:182ecac4702d154abbcf12044dcb36915e067902b76ad52919b967c71be97f53 0.0s done
+#6 extracting sha256:4cec569cef036288a370045819d1a4fed7630cc6eb5e0c8051745f2b7d37c5f2 done
+#6 DONE 3.1s
+
+#7 [build  2/10] WORKDIR /app
+#7 DONE 0.0s
+
+#8 [build  3/10] COPY package.json package-lock.json ./
+#8 DONE 0.0s
+
+#9 [build  4/10] RUN npm ci
+#9 3.193 
+#9 3.193 added 25 packages, and audited 26 packages in 3s
+#9 3.193 
+#9 3.193 9 packages are looking for funding
+#9 3.194   run `npm fund` for details
+#9 3.195 
+#9 3.195 found 0 vulnerabilities
+#9 3.197 npm notice
+#9 3.197 npm notice New major version of npm available! 11.19.1 -> 12.2.0
+#9 3.197 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#9 3.197 npm notice To update run: npm install -g npm@12.2.0
+#9 3.197 npm notice
+#9 DONE 3.4s
+
+#10 [build  5/10] COPY index.html vite.config.ts tsconfig.json ./
+#10 DONE 0.0s
+
+#11 [build  6/10] COPY src ./src
+#11 DONE 0.0s
+
+#12 [build  7/10] COPY public ./public
+#12 DONE 0.0s
+
+#13 [build  8/10] COPY server/ ./server/
+#13 DONE 0.0s
+
+#14 [build  9/10] RUN npm run build && npm --prefix server run build
+#14 0.211 
+#14 0.211 > blockcraft-ai@0.1.0 build
+#14 0.211 > tsc -b && vite build
+#14 0.211 
+#14 3.850 vite v8.3.4 building client environment for production...
+#14 3.863 transforming...
+#14 4.120 ✓ 2005 modules transformed.
+#14 4.177 rendering chunks...
+#14 4.247 computing gzip size...
+#14 4.256 dist/index.html                                              0.62 kB │ gzip:   0.44 kB
+#14 4.256 dist/assets/pixelify-sans-latin-700-normal-D3Xxx3QE.woff2    7.90 kB
+#14 4.256 dist/assets/pixelify-sans-latin-500-normal-DC052d-m.woff2    8.09 kB
+#14 4.256 dist/assets/pixelify-sans-latin-700-normal-BctWAS0u.woff    10.49 kB
+#14 4.256 dist/assets/pixelify-sans-latin-500-normal-Bq6pAlou.woff    10.68 kB
+#14 4.256 dist/assets/mochi-Btfatr0K.png                             114.52 kB
+#14 4.256 dist/assets/index-jCjpDxQz.css                              76.50 kB │ gzip:  15.07 kB
+#14 4.256 dist/assets/index-LSTX0FVa.js                              437.47 kB │ gzip: 138.05 kB
+#14 4.256 
+#14 4.257 ✓ built in 406ms
+#14 4.392 
+#14 4.392 > build
+#14 4.392 > tsc -p tsconfig.json
+#14 4.392 
+#14 DONE 5.1s
+
+#15 [build 10/10] RUN set -eu;     mkdir -p /app/runtime-server;     cp server/index.mjs server/trusted-interactive.mjs server/aiGenerationPrompt.mjs server/aiGenerationQuality.mjs /app/runtime-server/;     cp -R server/mochi-ai /app/runtime-server/mochi-ai;     cp -R server/.generated /app/runtime-server/.generated;     if [ -f server/ai-abort.mjs ]; then cp server/ai-abort.mjs /app/runtime-server/; fi;     if [ -d server/paid-gateway ]; then mkdir -p /app/runtime-server/paid-gateway; cp server/paid-gateway/*.mjs /app/runtime-server/paid-gateway/; fi
+#15 DONE 0.2s
+
+#16 [runtime 3/6] COPY --from=build /app/dist ./dist
+#16 DONE 0.0s
+
+#17 [runtime 4/6] COPY --from=build /app/runtime-server/ ./server/
+#17 DONE 0.0s
+
+#18 [runtime 5/6] COPY --from=build /app/src/model/appSpec.ts /app/src/model/trustedInteractive.schema.json ./src/model/
+#18 DONE 0.0s
+
+#19 [runtime 6/6] COPY --from=build /app/src/integrations/mochi-ai/protocol.mjs ./src/integrations/mochi-ai/protocol.mjs
+#19 DONE 0.0s
+
+#20 exporting to image
+#20 exporting layers
+#20 exporting layers 1.0s done
+#20 writing image sha256:6c505b8fa083d1f86f61ffcf47132d203013f286f3e11747859994aeb4763130 done
+#20 naming to docker.io/library/blockcraft-ci:39205412867-1 done
+#20 DONE 1.0s
