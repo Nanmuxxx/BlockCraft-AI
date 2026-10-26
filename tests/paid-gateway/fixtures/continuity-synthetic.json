@@ -1,0 +1,21 @@
+{
+  "source": {
+    "profile": { "name": "local-smoke", "version": 2 },
+    "accounting": {
+      "consumedCalls": 1,
+      "conservativeReserveNano": 36658000,
+      "unknownItems": [],
+      "uncertain": false
+    }
+  },
+  "target": {
+    "policyId": "budget-continuity-v1",
+    "profile": { "name": "production", "version": 1 },
+    "limits": { "maxCalls": 3, "maxSpendNano": 20000000000 }
+  },
+  "sourceReceipt": {
+    "reference": "SYNTHETIC-RECEIPT-001",
+    "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "importedSourceDigests": []
+}
