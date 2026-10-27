@@ -22,9 +22,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: supervisor/learning-coordination-20261027
           persist-credentials: false
       - name: Snapshot only (no AI execution, no merge, no deployment)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COORDINATION_ISSUE: "57"
+          COORDINATION_ISSUE: "92"
         run: python3 .github/scripts/supervisor_monitor.py
