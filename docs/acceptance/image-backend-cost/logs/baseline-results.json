@@ -1,0 +1,133 @@
+[
+  {
+    "name": "server-typecheck",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "server/tsconfig.json",
+      "--noEmit"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  },
+  {
+    "name": "server-build",
+    "command": [
+      "npm",
+      "--prefix",
+      "server",
+      "run",
+      "build"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  },
+  {
+    "name": "root-typecheck",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-b"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  },
+  {
+    "name": "root-build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  },
+  {
+    "name": "server-tests",
+    "command": [
+      "npm",
+      "--prefix",
+      "server",
+      "test"
+    ],
+    "exit_code": 0,
+    "classification": "MOCK"
+  },
+  {
+    "name": "gateway-tests",
+    "command": [
+      "node",
+      "--test",
+      "--test-timeout=30000",
+      "tests/paid-gateway/audit-boundary.test.mjs",
+      "tests/paid-gateway/idempotency-sidecar.test.mjs",
+      "tests/paid-gateway/live-pricing.test.mjs",
+      "tests/paid-gateway/main-compatibility.test.mjs",
+      "tests/paid-gateway/mochi-budget.test.mjs",
+      "tests/paid-gateway/model-contract.test.mjs",
+      "tests/paid-gateway/principal-runtime.test.mjs",
+      "tests/paid-gateway/principal-smoke.test.mjs",
+      "tests/paid-gateway/runtime.test.mjs",
+      "tests/paid-gateway/security.test.mjs",
+      "tests/paid-gateway/smoke-profile.test.mjs",
+      "tests/paid-gateway/studio-budget.test.mjs",
+      "tests/paid-gateway/unified-ledger.test.mjs",
+      "tests/paid-gateway/unified-runtime.test.mjs"
+    ],
+    "exit_code": 1,
+    "classification": "MOCK"
+  },
+  {
+    "name": "generation-tests",
+    "command": [
+      "npm",
+      "run",
+      "test:generation"
+    ],
+    "exit_code": 0,
+    "classification": "MOCK"
+  },
+  {
+    "name": "default-tests",
+    "command": [
+      "npm",
+      "test"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  },
+  {
+    "name": "prepare-custom-protocol",
+    "command": [
+      "node",
+      "server/custom-block/build-protocol.mjs"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  },
+  {
+    "name": "gateway-tests-prepared",
+    "command": [
+      "node",
+      "--test",
+      "--test-timeout=30000",
+      "tests/paid-gateway/audit-boundary.test.mjs",
+      "tests/paid-gateway/idempotency-sidecar.test.mjs",
+      "tests/paid-gateway/live-pricing.test.mjs",
+      "tests/paid-gateway/main-compatibility.test.mjs",
+      "tests/paid-gateway/mochi-budget.test.mjs",
+      "tests/paid-gateway/model-contract.test.mjs",
+      "tests/paid-gateway/principal-runtime.test.mjs",
+      "tests/paid-gateway/principal-smoke.test.mjs",
+      "tests/paid-gateway/runtime.test.mjs",
+      "tests/paid-gateway/security.test.mjs",
+      "tests/paid-gateway/smoke-profile.test.mjs",
+      "tests/paid-gateway/studio-budget.test.mjs",
+      "tests/paid-gateway/unified-ledger.test.mjs",
+      "tests/paid-gateway/unified-runtime.test.mjs"
+    ],
+    "exit_code": 0,
+    "classification": "MOCK"
+  }
+]

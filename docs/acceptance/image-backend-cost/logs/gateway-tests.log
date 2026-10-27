@@ -1,0 +1,185 @@
+classification: MOCK
+tested_sha: bcb6c1a7402ad4b4514feb4865c38d769d7244d1
+command: node --test --test-timeout=30000 tests/paid-gateway/audit-boundary.test.mjs tests/paid-gateway/idempotency-sidecar.test.mjs tests/paid-gateway/live-pricing.test.mjs tests/paid-gateway/main-compatibility.test.mjs tests/paid-gateway/mochi-budget.test.mjs tests/paid-gateway/model-contract.test.mjs tests/paid-gateway/principal-runtime.test.mjs tests/paid-gateway/principal-smoke.test.mjs tests/paid-gateway/runtime.test.mjs tests/paid-gateway/security.test.mjs tests/paid-gateway/smoke-profile.test.mjs tests/paid-gateway/studio-budget.test.mjs tests/paid-gateway/unified-ledger.test.mjs tests/paid-gateway/unified-runtime.test.mjs
+✔ hung audit callback obeys deadline; concurrency releases without refunding settled usage (258.470542ms)
+✔ cancel during audit rejects promptly and late callback resolution/rejection cannot succeed (383.603416ms)
+✔ untrusted model metadata never enters callback/response; only configured priced model is emitted (948.035666ms)
+✔ audit callback exception is sanitized; trustworthy usage remains settled with reservation retained (239.956542ms)
+✔ same principal/key is single-use concurrently and remains claimed after restart (342.6505ms)
+✔ same principal/key with different payload conflicts without a second reservation (261.38175ms)
+✔ invalid identity or idempotency key fails closed before claim and reservation (157.738542ms)
+✔ claim-store creation failure and corruption happen before any reservation (292.718875ms)
+✔ claim persistence failure poisons the sidecar before reservation and later retries (225.537875ms)
+✔ capacity and binding-key mismatch fail closed before reserve (404.28175ms)
+✔ unknown outcome keeps claim and ledger halt across restart (376.961167ms)
+✔ a second handle cannot retain stale claims; close/reopen reloads settled claims (268.518334ms)
+✔ directory-wide ownership excludes different ledgers, aliases and another process (461.065792ms)
+✔ ledger close cannot transfer sidecar ownership; stale sidecar locks deny startup (202.839792ms)
+✔ concurrent cold and expired verification share one official fetch; freshness is never extended by cache hits (24.36375ms)
+✔ failed refresh rejects all waiters, keeps the quote expired, and allows verified retry (0.66ms)
+✔ timeout bounds a non-cooperative fetch and its late response cannot revive quote freshness (2.481709ms)
+✔ timeout also bounds a stalled body read without marking the quote verified (0.70575ms)
+✔ timed out cleanup cannot mark a late quote current while a retry verifies (0.48925ms)
+✔ historical Studio metadata does not replace main production pricing or policy defaults (99.312708ms)
+✔ production injection preserves priced model, rates, tighter policy, clock and persisted compatibility (358.773291ms)
+✔ main production still refuses raised resource or money bounds and mismatched profile entry (59.988375ms)
+✔ seeds original eight calls and their conservative amount without consuming primary call budget (326.974083ms)
+✔ 100-call cap includes samples, survives restart and shared handles never use stale counts (6977.215583ms)
+✔ money cap stops independently of call cap and does not refund after restart (1307.950042ms)
+✔ expiry rejects reserve and snapshot with no additional receipt or mock egress (168.044958ms)
+✔ invalid bounds and non-hash request identity fail before persistence without poisoning valid input (173.120083ms)
+✔ requires canonical active lease and an adequate binding key (130.572625ms)
+✔ modified signed receipt or manifest and wrong binding key fail closed across restart (465.524875ms)
+✔ truncated receipt, missing manifest and receipt sequence gaps cannot initialize a new budget (577.556167ms)
+✔ symlink directories, linked receipts and permissive files are rejected (692.898875ms)
+✔ failed exclusive append poisons handle and leaves malformed entry fail closed on restart (181.114333ms)
+✔ mounted parent compatibility never relaxes newly created budget directory/files (162.800625ms)
+✔ lost receipt tails, whole stores and independent anchors cannot roll back allowance after restart (988.903625ms)
+✔ a reservation interrupted between parent anchor and receipt stays fail closed (121.080916ms)
+✔ paired receipt/anchor tail deletion and total subordinate loss cannot roll back the primary checkpoint (307.050833ms)
+✔ initialization or reservation interrupted after its primary checkpoint stays fail closed on restart (205.186834ms)
+✔ legacy primary ledgers retain settled entries and initialize the optional checkpoint once (147.426875ms)
+✔ primary checkpoints reject unknown fields, inconsistent counts and nonmonotonic advances (133.07375ms)
+✔ malformed persisted primary checkpoints refuse ledger restart while old ledgers remain compatible (285.87675ms)
+✔ checkpoint persistence failure prevents receipts and egress and poisons the ledger (96.328166ms)
+node:internal/modules/cjs/loader:1564
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './.generated/custom-block/index.js'
+Require stack:
+- /Users/nanmuxun/BlockAI/BlockCraft-AI-image-backend-cost-20261027/server/custom-block/protocol.mjs
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1564:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)
+    at Module._load (node:internal/modules/cjs/loader:1341:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.require (node:internal/modules/cjs/loader:1674:12)
+    at require (node:internal/modules/helpers:157:16)
+    at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-image-backend-cost-20261027/server/custom-block/protocol.mjs:5:25
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/nanmuxun/BlockAI/BlockCraft-AI-image-backend-cost-20261027/server/custom-block/protocol.mjs'
+  ]
+}
+
+Node.js v24.22.0
+✖ tests/paid-gateway/model-contract.test.mjs (156.825417ms)
+✔ one claim and reservation, canonical request replay/conflict, restart, single use (357.704375ms)
+✔ request closures cannot cross principals; shared gate rejects concurrent distinct request (443.852375ms)
+✔ invalid identity, payload, key and missing binding configuration are rejected without claim/reserve/egress (154.0235ms)
+✔ timeout preserves claim and unknown outcome halt across restart (455.959458ms)
+✔ disconnect preserves claim and unknown outcome halt across restart (490.522625ms)
+✔ throw preserves claim and unknown outcome halt across restart (354.87ms)
+✔ sidecar persist failure, lock and exhausted durable budget deny before egress (1080.788416ms)
+✔ native clock is never extended: expiry denies real ledger and composed runtime with zero reserve/egress (234.8975ms)
+✔ HTTP mapping is explicit and unknown/storage/config/pricing errors default503 (0.237209ms)
+✔ principal runtime honors explicit local-smoke profile and rejects mismatched profiles (322.320083ms)
+✔ principal-scoped idempotency claims and budget survive runtime reopen (403.3635ms)
+✔ invalid identity fails before a durable reservation or provider egress (178.235542ms)
+✔ default main cap is shared across principals and denies the next call before egress (1320.854083ms)
+✔ concurrent principals share one in-flight gate and only the admitted call reserves (246.634917ms)
+✔ timeout and disconnect mark reservations uncertain and halt after restart (677.404792ms)
+✔ isolated smoke composition requires a synthetic key and an absolute ledger path (1.943875ms)
+✔ smoke transport uses the local-smoke profile and enforces the configured output bound (186.046667ms)
+node:internal/modules/cjs/loader:1564
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './.generated/custom-block/index.js'
+Require stack:
+- /Users/nanmuxun/BlockAI/BlockCraft-AI-image-backend-cost-20261027/server/custom-block/protocol.mjs
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1564:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)
+    at Module._load (node:internal/modules/cjs/loader:1341:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.require (node:internal/modules/cjs/loader:1674:12)
+    at require (node:internal/modules/helpers:157:16)
+    at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-image-backend-cost-20261027/server/custom-block/protocol.mjs:5:25
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/nanmuxun/BlockAI/BlockCraft-AI-image-backend-cost-20261027/server/custom-block/protocol.mjs'
+  ]
+}
+
+Node.js v24.22.0
+✖ tests/paid-gateway/security.test.mjs (136.762916ms)
+✔ smoke runtime loads only the synthetic environment key and binds the isolated 3-call policy (413.348875ms)
+✔ smoke cap persists across process restart and cannot be bypassed with the production ledger profile (455.583041ms)
+✔ smoke output hard limit and profile mismatch reject before mock egress (214.169292ms)
+✔ smoke concurrency remains one and rejects a second in-flight call before reservation (205.681833ms)
+✔ smoke timeout, connection failure, and unresolved reservation fail closed without retry (448.451708ms)
+✔ new price snapshot is short lived and the worst-case three-request reserve fits ¥0.50 (0.485375ms)
+node:internal/modules/cjs/loader:1564
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './.generated/custom-block/index.js'
+Require stack:
+- /Users/nanmuxun/BlockAI/BlockCraft-AI-image-backend-cost-20261027/server/custom-block/protocol.mjs
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1564:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)
+    at Module._load (node:internal/modules/cjs/loader:1341:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.require (node:internal/modules/cjs/loader:1674:12)
+    at require (node:internal/modules/helpers:157:16)
+    at file:///Users/nanmuxun/BlockAI/BlockCraft-AI-image-backend-cost-20261027/server/custom-block/protocol.mjs:5:25
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/nanmuxun/BlockAI/BlockCraft-AI-image-backend-cost-20261027/server/custom-block/protocol.mjs'
+  ]
+}
+
+Node.js v24.22.0
+✖ tests/paid-gateway/studio-budget.test.mjs (123.072291ms)
+✔ explicit initialization creates zero counters for both accounts, refuses reset and missing state (157.093042ms)
+✔ exclusive process lease prevents concurrent roots; account handles are shared (141.388958ms)
+✔ all AI features reserve the same customer account and charge actual usage, not maximum (343.847333ms)
+✔ customer exceeds 1000 persistent claims without hidden call cap; duplicate remains blocked after restart (27005.535917ms)
+✔ all agents share 200 calls while customer spending is independent (3550.789208ms)
+✔ customer rejects reservation beyond monetary limit before charging (1609.172959ms)
+✔ agent-test rejects reservation beyond monetary limit before charging (417.41975ms)
+✔ unknown/network failure costs maximum reservation, permits further calls and survives restart (75.35675ms)
+✔ missing usage remains fully charged, but usage outside reservation halts affected account (64.712ms)
+✔ corruption and incompatible pricing fail closed without replacing ledger (26.710208ms)
+✔ pricing guard blocks charge and no expired default can make paid reservation (33.636292ms)
+✔ persist failure makes handle unusable, leaves no partial reservation and cannot reach egress (35.870583ms)
+✔ mounted compatibility accepts only approved modes, canonical owned regular files; active lease cannot be recovered (44.527084ms)
+✔ paid transport persists reservation before offline egress; replay never submits twice (60.197375ms)
+✔ generation, modification and advice share one customer balance; agent identities share only the test balance (714.493833ms)
+✔ request payload cannot select accounts; similar untrusted principal strings do not obtain test budget (353.571292ms)
+✔ manual retry is rejected without egress or charge, including after process restart; changed intent conflicts (281.913166ms)
+✔ pre-aborted request consumes neither balance nor idempotency key (224.813042ms)
+✔ all test identities and AI features stop at the shared 200-call ceiling before any extra egress (10138.53125ms)
+ℹ tests 86
+ℹ suites 0
+ℹ pass 83
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 33869.927541
+
+✖ failing tests:
+
+test at tests/paid-gateway/model-contract.test.mjs:1:1
+✖ tests/paid-gateway/model-contract.test.mjs (156.825417ms)
+  'test failed'
+
+test at tests/paid-gateway/security.test.mjs:1:1
+✖ tests/paid-gateway/security.test.mjs (136.762916ms)
+  'test failed'
+
+test at tests/paid-gateway/studio-budget.test.mjs:1:1
+✖ tests/paid-gateway/studio-budget.test.mjs (123.072291ms)
+  'test failed'
+
+exit_code: 1
