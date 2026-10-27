@@ -23,8 +23,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Test snapshot and duplicate suppression offline
+        run: python3 .github/scripts/test_supervisor_monitor.py
       - name: Snapshot only (no AI execution, no merge, no deployment)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COORDINATION_ISSUE: "57"
+          COORDINATION_ISSUE: "92"
         run: python3 .github/scripts/supervisor_monitor.py
