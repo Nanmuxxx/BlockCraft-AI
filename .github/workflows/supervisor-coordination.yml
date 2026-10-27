@@ -22,7 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: supervisor/learning-coordination-20261027
           persist-credentials: false
       - name: Snapshot only (no AI execution, no merge, no deployment)
         env:
