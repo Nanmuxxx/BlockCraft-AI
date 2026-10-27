@@ -1,0 +1,5 @@
+classification: OFFLINE
+tested_sha: bcb6c1a7402ad4b4514feb4865c38d769d7244d1
+command: node node_modules/typescript/bin/tsc -p server/tsconfig.json --noEmit
+
+exit_code: 0
