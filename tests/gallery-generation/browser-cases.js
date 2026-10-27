@@ -3,6 +3,7 @@ import { createAppRuntime } from '../../src/model/appRuntime.ts'
 import { createClubRegistrationExample } from '../../src/model/appSpecExamples.ts'
 import { createGalleryPractice, offlineImageProvider } from '../../src/integrations/gallery-generation/offline.ts'
 import { createGalleryImageController } from '../../src/integrations/gallery-generation/controller.ts'
+import { createMockImageAdapter, fixedMockImageSource, mockImageProvider } from '../../src/integrations/gallery-generation/mock.ts'
 import { createWorkspaceSession, restoreWorkspace } from '../../src/integrations/project-workspace/session.ts'
 import { workspaceRepository, createWorkspaceRepository } from '../../src/integrations/project-workspace/repository.ts'
 import { createProjectJson, serializeProjectJson, parseProjectJsonText, PROJECT_JSON_MAX_BYTES } from '../../src/integrations/project-json/format.ts'
@@ -21,7 +22,7 @@ async function fixture(options = {}) {
   const stored = await workspaceRepository.read()
   const runtime = createAppRuntime(options.state || createGalleryPractice())
   const workspace = createWorkspaceSession(runtime, { sequence: stored?.sequence || 0, ...options })
-  const controller = createGalleryImageController(workspace, options.provider, options.timeout || 10000)
+  const controller = createGalleryImageController(workspace, options.provider, options.timeout || 10000, options.source)
   return { runtime, workspace, controller, snapshot: () => runtime.customProject.getSnapshot(),
     close() { controller.dispose(); workspace.dispose() } }
 }
@@ -186,6 +187,86 @@ export async function cancellation() {
     cases.push({ mode, calls, state: f.controller.getSnapshot().phase, lateResponseIgnored: true }); f.close()
   }
   return { cases, costs: 'OFFLINE_ZERO; live-provider uncertain billing and key rotation NOT RUN' }
+}
+
+export async function mockAdapterFailures() {
+  const valid = await fixedMockImageSource.generate({ prompt: 'fixture' }, { signal: new AbortController().signal })
+  const damagedCrc = new Uint8Array(valid.bytes); damagedCrc[damagedCrc.length - 1] ^= 1
+  const invalidRaster = new Uint8Array(valid.bytes), rasterView = new DataView(invalidRaster.buffer)
+  const rasterLength = rasterView.getUint32(33)
+  invalidRaster[41] = 0 // invalid deflate header, with valid enclosing PNG CRC
+  rasterView.setUint32(41 + rasterLength, crc(invalidRaster.slice(37, 41 + rasterLength)))
+  const animated = new Uint8Array(valid.bytes.length + 20), chunk = new Uint8Array(20), view = new DataView(chunk.buffer)
+  view.setUint32(0, 8); chunk.set(new TextEncoder().encode('acTL'), 4); view.setUint32(8, 1); view.setUint32(16, crc(chunk.slice(4, 16)))
+  animated.set(valid.bytes.slice(0, -12)); animated.set(chunk, valid.bytes.length - 12); animated.set(valid.bytes.slice(-12), animated.length - 12)
+  const cases = [
+    ['wrong provenance', { ...valid, kind: 'REAL' }], ['wrong MIME', { ...valid, mimeType: 'image/jpeg' }],
+    ['missing envelope', null], ['not bytes', { ...valid, bytes: [...valid.bytes] }],
+    ['metadata width mismatch', { ...valid, width: valid.width + 1 }], ['nonfinite dimension', { ...valid, height: Infinity }],
+    ['pixel limit', { ...valid, width: 16777217 }], ['oversize', { ...valid, bytes: new Uint8Array(524289) }],
+    ['short signature', { ...valid, bytes: new Uint8Array(32) }], ['extra field', { ...valid, url: 'https://untrusted.invalid/image.png' }],
+    ['bad CRC', { ...valid, bytes: damagedCrc }], ['missing IEND', { ...valid, bytes: valid.bytes.slice(0, -12) }],
+    ['animated PNG', { ...valid, bytes: animated }],
+    ['native raster decode', { ...valid, bytes: invalidRaster }],
+  ]
+  const results = []
+  for (const [name, value] of cases) {
+    let calls = 0
+    const f = await fixture({ source: 'MOCK', provider: createMockImageAdapter({ async generate() { calls++; return value } }) })
+    await f.workspace.save(); const before = f.snapshot(), saved = await workspaceRepository.read()
+    await f.controller.generate('reject invalid mock', 'practice-gallery')
+    check(f.controller.getSnapshot().phase === 'failed', name); check(!f.controller.getSnapshot().candidate, name)
+    await f.controller.confirm(); equal(f.snapshot(), before); equal(await workspaceRepository.read(), saved); check(calls === 1, name)
+    results.push({ name, calls, originalPreserved: true }); f.close()
+  }
+  const exactBytes = Uint8Array.from(atob((await sizedPng(524288)).split(',')[1]), c => c.charCodeAt(0))
+  const exact = await fixture({ source: 'MOCK', provider: createMockImageAdapter({ async generate() { return { ...valid, bytes: exactBytes } } }) })
+  const accepted = await ready(exact); check(accepted.bytes === 524288); exact.close()
+  return { results, exact512KiBAccepted: true, noNetworkTransport: true }
+}
+
+export async function mockRaces() {
+  const f = await fixture({ source: 'MOCK', provider: mockImageProvider })
+  await f.workspace.save(); const before = f.snapshot(), saved = await workspaceRepository.read()
+  await ready(f)
+  for (const prompt of ['', ' ', 'x'.repeat(501)]) {
+    await f.controller.generate(prompt, 'practice-gallery')
+    check(f.controller.getSnapshot().phase === 'failed' && !f.controller.getSnapshot().candidate)
+    await f.controller.confirm(); equal(f.snapshot(), before); equal(await workspaceRepository.read(), saved)
+    await ready(f)
+  }
+  const candidate = f.controller.getSnapshot().candidate
+  check(candidate.asset.name === 'Mock测试图片.png' && candidate.asset.altText.includes('与描述无关'))
+  await Promise.all([f.controller.confirm(), f.controller.confirm(), f.controller.confirm()])
+  const adopted = await workspaceRepository.read(); check(adopted.receipts.length === 1)
+  await f.controller.confirm(); equal(await workspaceRepository.read(), adopted); check(f.snapshot().revision === 1)
+  f.close()
+  const races = []
+  for (const mode of ['cancel', 'timeout', 'dispose']) {
+    let calls = 0
+    const releases = []
+    const item = await fixture({ source: 'MOCK', timeout: 20, provider: createMockImageAdapter({
+      generate() { calls++; return new Promise(resolve => releases.push(resolve)) },
+    }) })
+    await item.workspace.save(); const old = item.snapshot(), oldSaved = await workspaceRepository.read()
+    const first = item.controller.generate('old', 'practice-gallery')
+    await item.controller.generate('duplicate', 'practice-gallery'); check(calls === 1)
+    if (mode === 'dispose') item.controller.dispose()
+    else if (mode === 'cancel') item.controller.cancel()
+    await first
+    const next = mode === 'cancel' ? item.controller.generate('new', 'practice-gallery') : null
+    if (next) check(calls === 2)
+    releases[0](await fixedMockImageSource.generate({ prompt: 'late' }, { signal: new AbortController().signal }))
+    await new Promise(resolve => setTimeout(resolve, 0))
+    check(!item.controller.getSnapshot().candidate); equal(item.snapshot(), old); equal(await workspaceRepository.read(), oldSaved)
+    if (mode === 'cancel') {
+      check(item.controller.getSnapshot().phase === 'generating', 'Old result must not end or replace new pending request')
+      releases[1](await fixedMockImageSource.generate({ prompt: 'new' }, { signal: new AbortController().signal })); await next
+      check(item.controller.getSnapshot().phase === 'ready')
+    }
+    races.push({ mode, calls, lateResultIgnored: true }); item.close()
+  }
+  return { invalidInputClearsStaleCandidate: true, duplicateAdoptionReceipts: 1, races }
 }
 
 export async function compatibility() {

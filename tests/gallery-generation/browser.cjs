@@ -12,6 +12,13 @@ const report = { mode: 'OFFLINE_CANVAS', passed: false, cases: Array.from({ leng
   notRun: ['M06 live-provider billing independence', 'M10 live-provider reservations, uncertain charges and credential rotation', 'real image-model quality/cost'],
   externalRequests: [], aiRequests: [], pageErrors: [] }
 const sha = bytes => createHash('sha256').update(bytes).digest('hex')
+const mockMode = process.env.GALLERY_TEST_PROVIDER === 'MOCK'
+if (mockMode) {
+  report.mode = 'MOCK_FIXED_BROWSER_SOURCE'
+  report.cases.push({ id: 'W01', status: 'NOT RUN' }, { id: 'W02', status: 'NOT RUN' })
+}
+const generateButton = mockMode ? '生成一张 Mock 测试图片' : '生成一张离线示例'
+const previewName = mockMode ? '待采用的 Mock 图片预览' : '待采用的离线图片预览'
 async function main() {
   await fs.mkdir(output, { recursive: true })
   const { createServer } = await import('vite')
@@ -45,7 +52,7 @@ async function main() {
     assert.match(report.environment.head, /^[a-f0-9]{40}$/)
     // GitHub checks out PR commits detached; verify the tested commit, not a local branch name.
     if (process.env.GALLERY_EXPECTED_SHA) assert.equal(report.environment.head, process.env.GALLERY_EXPECTED_SHA)
-    async function fresh({ trace = false, width = 1440 } = {}) {
+    async function fresh({ trace = false, width = Number(process.env.GALLERY_VIEWPORT_WIDTH || 1440) } = {}) {
       const context = await browser.newContext({ viewport: { width, height: 1100 }, acceptDownloads: true, serviceWorkers: 'block' })
       contexts.push(context)
       if (trace) {
@@ -93,26 +100,44 @@ async function main() {
     await page.locator('#generation-mode').selectOption('gallery-fixture')
     await page.getByRole('button', { name: '打开离线图库', exact: true }).click()
     await expect(page.getByRole('heading', { name: '我的图库练习', exact: true })).toBeVisible()
+    if (mockMode) {
+      await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption('MOCK')
+      await expect(page.locator('.gallery-generation')).toContainText('每次返回同一张固定图片，与描述无关')
+      await page.getByRole('textbox', { name: '图片描述', exact: true }).fill('Mock 验收：一只小猫')
+    }
     const before = await project(page, '01-before.json')
     let candidate, adopted, stored, zip
     await run('M01', 'one candidate, no project change before confirmation; discard preserves original', async () => {
-      await page.getByRole('button', { name: '生成一张离线示例', exact: true }).click()
-      const preview = page.getByRole('img', { name: '待采用的离线图片预览', exact: true })
+      await page.getByRole('button', { name: generateButton, exact: true }).click()
+      const preview = page.getByRole('img', { name: previewName, exact: true })
       await expect(preview).toBeVisible(); assert.equal(await preview.count(), 1)
+      const originalSrc = await preview.getAttribute('src')
       assert.deepEqual(await project(page, '02-preview-only.json'), before)
       assert.equal(await saved(page), null)
       await page.getByRole('button', { name: '放弃预览', exact: true }).click()
       await expect(preview).toHaveCount(0)
       assert.deepEqual(await project(page, '03-cancelled.json'), before)
-      await page.getByRole('button', { name: '生成一张离线示例', exact: true }).click()
+      if (mockMode) {
+        await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption('OFFLINE_CANVAS')
+        await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption('MOCK')
+        await expect(page.getByRole('textbox', { name: '图片描述', exact: true })).toHaveValue('Mock 验收：一只小猫')
+        await page.getByRole('textbox', { name: '图片描述', exact: true }).fill('Mock 验收：另一段描述')
+      }
+      await page.getByRole('button', { name: generateButton, exact: true }).click()
       await expect(preview).toBeVisible()
+      if (mockMode) await expect(preview).toHaveAttribute('src', originalSrc)
       return { revision: before.revision, assets: Object.keys(before.base.assets || {}).length, candidatesPerOperation: 1, discardedUnchanged: true }
     })
     await run('M02', 'preview decodes and identifies actual PNG bytes, size and destination', async () => {
-      candidate = await page.getByRole('img', { name: '待采用的离线图片预览', exact: true }).evaluate(async img => {
+      candidate = await page.getByRole('img', { name: previewName, exact: true }).evaluate(async img => {
         await img.decode(); return { src: img.src, width: img.naturalWidth, height: img.naturalHeight }
       })
       assert.equal(candidate.width, 320); assert.equal(candidate.height, 240)
+      const layout = await page.locator('.gallery-generation').evaluate(panel => {
+        const rect = panel.getBoundingClientRect()
+        return { left: rect.left, right: rect.right, viewport: window.innerWidth }
+      })
+      assert.ok(layout.left >= 0 && layout.right <= layout.viewport + 1, `Gallery controls overflow viewport: ${JSON.stringify(layout)}`)
       assert.equal(await page.getByRole('combobox', { name: '图片目标图库' }).inputValue(), 'practice-gallery')
       await screenshot(page, '02-candidate.png')
       return { width: candidate.width, height: candidate.height, mime: 'image/png', bytes: Buffer.from(candidate.src.split(',')[1], 'base64').length,
@@ -200,6 +225,14 @@ async function main() {
         const record = await saved(item.page); assert.equal(record.sequence, 1)
         evidence = { results, sequence: record.sequence }
       } else evidence = await item.page.evaluate(async method => (await import('/tests/gallery-generation/browser-cases.js'))[method](), method)
+      await closeContext(item.context); return evidence
+    })
+    if (mockMode) for (const [id, method, description] of [
+      ['W01', 'mockAdapterFailures', 'Mock envelope bounds, metadata and native image validation preserve project/storage'],
+      ['W02', 'mockRaces', 'Mock input/duplicate generation/cancel/late response isolation and duplicate adoption'],
+    ]) await run(id, description, async () => {
+      const item = await fresh()
+      const evidence = await item.page.evaluate(async method => (await import('/tests/gallery-generation/browser-cases.js'))[method](), method)
       await closeContext(item.context); return evidence
     })
     assert.deepEqual(report.externalRequests, []); assert.deepEqual(report.aiRequests, []); assert.deepEqual(report.pageErrors, [])
