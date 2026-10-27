@@ -34,4 +34,10 @@ Environment and versions: see README. No credentials were read for troubleshooti
 
 6. Web reader twice timed out retrieving Alibaba pricing; a separate certificate-verified `curl -fsSL --max-time 30` GET succeeded, exit 0, HTML parsed locally and relevant rows recorded with retrieval hash. No model API or console was accessed. A guessed OpenAI `/guides/deprecations` URL returned 404 through the web reader; it was not used as evidence. Lifecycle comments in the cost study use actually read image/pricing pages.
 
-No unexpected terminal failures were resolved by speculative paid writes, ledger resets, deletion, remote pushing, production configuration changes or weakening security.
+7. Authorized feature-branch `git push -u origin audit/image-backend-cost-20261027`, exit **128**:
+   ```text
+   fatal: could not read Username for 'https://github.com': Device not configured
+   ```
+   Stopped shell push retries. [GitHub authentication troubleshooting](https://docs.github.com/en/desktop/installing-and-authenticating-to-github-desktop/authenticating-to-github-in-github-desktop?platform=mac) consulted; it does not prove which credential mechanism this shell lacks. Read-only Desktop Accounts UI confirmed an existing Nanmuxxx login. Selected this isolated worktree, verified its branch/commit, then used the already-authorized normal Desktop Publish branch action. `git ls-remote` independently verified remote head `ee2f49a344ea1952fcd3a90ed97777ae57f05031`; no credentials read/exported and no account/config change. Subsequent publication likewise uses Desktop, not speculative shell authentication fixes.
+
+No unexpected terminal failures were resolved by speculative paid writes, ledger resets, deletion, production configuration changes or weakening security. Feature branch publication is separately authorized by the user's PR instruction.
