@@ -1,0 +1,12 @@
+{
+  "source_sha": "9b16b249e57e4929a843f49ea9cdc58792606d40",
+  "sha256": {
+    ".github/workflows/offline-gallery.yml": "60ff587cadbc2a5a6d6e61c247a853f418f77802a4d0bc517cf925e8d099b5c3",
+    "src/integrations/gallery-generation/GalleryImagePanel.tsx": "282dec643406f84c01888dbb7cfd781049fb2e8167af30e95dc23107030d6a6a",
+    "src/integrations/gallery-generation/controller.ts": "99f6889a139a12641d0d187bfdcb9214a7623574ffbe1ddeacd48a13e1c8b3f1",
+    "src/integrations/gallery-generation/mock.ts": "e071243fbfbf25c1c9a8ff8bf749254990cc63ea38684c69acb4e59a22a4e359",
+    "tests/gallery-generation/README.md": "db967f0517143b4e327646cc483a508a390e7cb546aa4627161c2721e6da8195",
+    "tests/gallery-generation/browser-cases.js": "d2cefd973ab637e92f94829fcb96161bb8e33fb4190cf482f747f038d8b17b8d",
+    "tests/gallery-generation/browser.cjs": "5e34f2ad26533f6ca0f9eb417848b69ea5613a88734e3d1215218f59bdbed409"
+  }
+}
