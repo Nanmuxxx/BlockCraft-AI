@@ -34,8 +34,8 @@ Task JSON: `{"kind":"git-smoke","issue":95,"base_sha":"FULL_40_HEX_SHA","files":
 python3 -m tools.supervisor_v2.cli --state /private/operator/queue stop
 python3 -m tools.supervisor_v2.cli --state /private/operator/queue reconcile
 # Inspect events and confirm the old process and all descendants are terminated FIRST:
-python3 -m tools.supervisor_v2.cli --state /private/operator/queue recover TASK_ID --termination-evidence 'verified PID/session exited; evidence path or operator record'
 python3 -m tools.supervisor_v2.cli --state /private/operator/queue resume
+python3 -m tools.supervisor_v2.cli --state /private/operator/queue recover TASK_ID --termination-evidence 'verified PID/session exited; evidence path or operator record'
 ```
 
 Stop remains durable across restarts. Resume before recover if stop is active; resume does not clear BLOCKED reservations. Never acknowledge termination based on heartbeat age alone. Recovery creates a new task ID, original session stays fenced, max two retries. Assign the retry to a fresh READY worker. Worker's default TTL is 30 seconds and active subprocess pulse is 50 ms; queue/process failures stop execution. A separate periodic `reconcile` or running Supervisor is needed to detect missing workers while the worker machine sleeps. No process can report during its own host shutdown.

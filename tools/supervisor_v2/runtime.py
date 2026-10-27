@@ -44,11 +44,12 @@ def scopes(paths):
         require(isinstance(p, str) and re.fullmatch(r'[A-Za-z0-9_./-]{1,240}', p), 'literal relative scopes only')
         require(not p.startswith('/') and not any(x in ('', '.', '..', '.git') for x in p.split('/')), 'unsafe scope')
         require(str(PurePosixPath(p)) == p, 'noncanonical scope')
-        out.append(p.casefold())
+        out.append(p)
     return sorted(set(out))
 
 
 def overlap(left, right):
+    left, right = [p.casefold() for p in left], [p.casefold() for p in right]
     return any(a == b or a.startswith(b + '/') or b.startswith(a + '/') for a in left for b in right)
 
 
