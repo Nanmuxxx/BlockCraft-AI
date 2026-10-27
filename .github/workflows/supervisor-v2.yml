@@ -1,0 +1,28 @@
+name: Supervisor V2 offline acceptance
+on:
+  pull_request:
+    paths:
+      - tools/supervisor_v2/**
+      - tests/supervisor-v2/**
+      - .github/workflows/supervisor-v2.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Offline protocol and subprocess tests (no models or secrets)
+        run: python -m unittest discover -s tests/supervisor-v2 -v

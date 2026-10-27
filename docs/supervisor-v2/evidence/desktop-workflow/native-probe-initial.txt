@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2/tools/supervisor_v2/offline_jail.py", line 81, in <module>
+    print(json.dumps(probe(), indent=2))
+                     ~~~~~^^
+  File "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2/tools/supervisor_v2/offline_jail.py", line 67, in probe
+    require(run['exit_code'] == 0, 'offline jail probe failed: ' + run['stderr'])
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2/tools/supervisor_v2/security.py", line 17, in require
+    raise GateError(reason)
+tools.supervisor_v2.security.GateError: offline jail probe failed: 

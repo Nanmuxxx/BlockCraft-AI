@@ -1,0 +1,267 @@
+{
+  "classification": "REAL_PROCESS_OFFLINE_NO_MODEL",
+  "system_status": "NOT_OPERATIONAL",
+  "tested_sha": "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+  "started_at": 1793115425.5537238,
+  "finished_at": 1793115433.228802,
+  "worker_process": {
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+      "-m",
+      "tools.supervisor_v2.cli",
+      "--repo",
+      "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2",
+      "--state",
+      "/private/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-proof-0xhk5596/state",
+      "worker",
+      "4351406e-49ff-4c88-8641-22bef967eadb",
+      "--once"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  "worker_id": "4351406e-49ff-4c88-8641-22bef967eadb",
+  "task_id": "b7e6d4ef-92ab-4a33-8f84-6af6f3692766",
+  "receipt": {
+    "protocol": 1,
+    "classification": "OFFLINE_NO_MODEL",
+    "task_id": "b7e6d4ef-92ab-4a33-8f84-6af6f3692766",
+    "worker_id": "4351406e-49ff-4c88-8641-22bef967eadb",
+    "session": "243efc7f-f045-428c-a30e-b25397657044",
+    "base_sha": "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+    "head_sha": "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+    "tested_sha": "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+    "started_at": 1793115425.5870368,
+    "finished_at": 1793115429.212687,
+    "preparation": [
+      {
+        "argv": [
+          "git",
+          "-c",
+          "core.hooksPath=/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-cdc83usq/home/hooks",
+          "clone",
+          "--no-local",
+          "--no-checkout",
+          "--",
+          "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2",
+          "/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-cdc83usq/work"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "Cloning into '/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-cdc83usq/work'...\n",
+        "started_at": 1793115425.5881338,
+        "finished_at": 1793115428.874162
+      },
+      {
+        "argv": [
+          "git",
+          "-c",
+          "core.hooksPath=/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-cdc83usq/home/hooks",
+          "checkout",
+          "--detach",
+          "96b2694ef5115fde7c8c61d95f673bddf8f1a779"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "HEAD is now at 96b2694 feat(supervisor): add fenced local workers and guarded Codex decision adapter\n",
+        "started_at": 1793115428.874184,
+        "finished_at": 1793115428.986159
+      },
+      {
+        "argv": [
+          "git",
+          "remote",
+          "remove",
+          "origin"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "started_at": 1793115428.986173,
+        "finished_at": 1793115429.043537
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "96b2694ef5115fde7c8c61d95f673bddf8f1a779\n",
+        "stderr": "",
+        "started_at": 1793115429.0436091,
+        "finished_at": 1793115429.1011012
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "started_at": 1793115429.101117,
+        "finished_at": 1793115429.212665
+      }
+    ],
+    "changed_files": [],
+    "pr": null,
+    "artifact_sha256": "7adb99c11fd3582f18b4cb64ac09b83371d7a9a5366fc24c7903d1612209fada"
+  },
+  "events": [
+    {
+      "seq": 1,
+      "time": 1793115425.5518332,
+      "actor": "4351406e-49ff-4c88-8641-22bef967eadb",
+      "task": null,
+      "issue": 95,
+      "sha": null,
+      "old": null,
+      "new": "READY",
+      "reason": "registered; identity is operator-local",
+      "evidence": "{}"
+    },
+    {
+      "seq": 2,
+      "time": 1793115425.552821,
+      "actor": "Supervisor",
+      "task": "b7e6d4ef-92ab-4a33-8f84-6af6f3692766",
+      "issue": 95,
+      "sha": "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+      "old": null,
+      "new": "READY",
+      "reason": "bounded task created",
+      "evidence": "{}"
+    },
+    {
+      "seq": 3,
+      "time": 1793115425.553438,
+      "actor": "Supervisor",
+      "task": "b7e6d4ef-92ab-4a33-8f84-6af6f3692766",
+      "issue": 95,
+      "sha": "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+      "old": "READY",
+      "new": "READY",
+      "reason": "explicit assignment reserves files",
+      "evidence": "{\"worker_id\": \"4351406e-49ff-4c88-8641-22bef967eadb\"}"
+    },
+    {
+      "seq": 4,
+      "time": 1793115425.585553,
+      "actor": "4351406e-49ff-4c88-8641-22bef967eadb",
+      "task": null,
+      "issue": 95,
+      "sha": null,
+      "old": "READY",
+      "new": "READY",
+      "reason": "session started",
+      "evidence": "{\"session\": \"243efc7f-f045-428c-a30e-b25397657044\"}"
+    },
+    {
+      "seq": 5,
+      "time": 1793115425.5867178,
+      "actor": "4351406e-49ff-4c88-8641-22bef967eadb",
+      "task": "b7e6d4ef-92ab-4a33-8f84-6af6f3692766",
+      "issue": 95,
+      "sha": "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+      "old": "READY",
+      "new": "CLAIMED",
+      "reason": "worker ACK at assigned base SHA",
+      "evidence": "{\"session\": \"243efc7f-f045-428c-a30e-b25397657044\"}"
+    },
+    {
+      "seq": 6,
+      "time": 1793115425.587261,
+      "actor": "4351406e-49ff-4c88-8641-22bef967eadb",
+      "task": "b7e6d4ef-92ab-4a33-8f84-6af6f3692766",
+      "issue": 95,
+      "sha": "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+      "old": "CLAIMED",
+      "new": "RUNNING",
+      "reason": "isolated execution started",
+      "evidence": "{}"
+    },
+    {
+      "seq": 7,
+      "time": 1793115429.2130718,
+      "actor": "4351406e-49ff-4c88-8641-22bef967eadb",
+      "task": "b7e6d4ef-92ab-4a33-8f84-6af6f3692766",
+      "issue": 95,
+      "sha": "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+      "old": "RUNNING",
+      "new": "REVIEW",
+      "reason": "durable receipt; Supervisor review pending",
+      "evidence": "{\"protocol\": 1, \"classification\": \"OFFLINE_NO_MODEL\", \"task_id\": \"b7e6d4ef-92ab-4a33-8f84-6af6f3692766\", \"worker_id\": \"4351406e-49ff-4c88-8641-22bef967eadb\", \"session\": \"243efc7f-f045-428c-a30e-b25397657044\", \"base_sha\": \"96b2694ef5115fde7c8c61d95f673bddf8f1a779\", \"head_sha\": \"96b2694ef5115fde7c8c61d95f673bddf8f1a779\", \"tested_sha\": \"96b2694ef5115fde7c8c61d95f673bddf8f1a779\", \"started_at\": 1793115425.5870368, \"finished_at\": 1793115429.212687, \"preparation\": [{\"argv\": [\"git\", \"-c\", \"core.hooksPath=/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-cdc83usq/home/hooks\", \"clone\", \"--no-local\", \"--no-checkout\", \"--\", \"/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2\", \"/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-cdc83usq/work\"], \"exit_code\": 0, \"stdout\": \"\", \"stderr\": \"Cloning into '/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-cdc83usq/work'...\\n\", \"started_at\": 1793115425.5881338, \"finished_at\": 1793115428.874162}, {\"argv\": [\"git\", \"-c\", \"core.hooksPath=/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-cdc83usq/home/hooks\", \"checkout\", \"--detach\", \"96b2694ef5115fde7c8c61d95f673bddf8f1a779\"], \"exit_code\": 0, \"stdout\": \"\", \"stderr\": \"HEAD is now at 96b2694 feat(supervisor): add fenced local workers and guarded Codex decision adapter\\n\", \"started_at\": 1793115428.874184, \"finished_at\": 1793115428.986159}, {\"argv\": [\"git\", \"remote\", \"remove\", \"origin\"], \"exit_code\": 0, \"stdout\": \"\", \"stderr\": \"\", \"started_at\": 1793115428.986173, \"finished_at\": 1793115429.043537}], \"commands\": [{\"argv\": [\"git\", \"rev-parse\", \"HEAD\"], \"exit_code\": 0, \"stdout\": \"96b2694ef5115fde7c8c61d95f673bddf8f1a779\\n\", \"stderr\": \"\", \"started_at\": 1793115429.0436091, \"finished_at\": 1793115429.1011012}, {\"argv\": [\"git\", \"status\", \"--porcelain=v1\", \"--untracked-files=all\"], \"exit_code\": 0, \"stdout\": \"\", \"stderr\": \"\", \"started_at\": 1793115429.101117, \"finished_at\": 1793115429.212665}], \"changed_files\": [], \"pr\": null, \"artifact_sha256\": \"7adb99c11fd3582f18b4cb64ac09b83371d7a9a5366fc24c7903d1612209fada\"}"
+    }
+  ],
+  "independent_replay": {
+    "task_id": "b7e6d4ef-92ab-4a33-8f84-6af6f3692766",
+    "reviewed_sha": "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+    "checks": [
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "96b2694ef5115fde7c8c61d95f673bddf8f1a779\n",
+        "stderr": "",
+        "started_at": 1793115432.971117,
+        "finished_at": 1793115433.0229352
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "started_at": 1793115433.022955,
+        "finished_at": 1793115433.134568
+      }
+    ],
+    "failures": [],
+    "source_head": {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "96b2694ef5115fde7c8c61d95f673bddf8f1a779\n",
+      "stderr": "",
+      "started_at": 1793115429.2557938,
+      "finished_at": 1793115429.312086
+    },
+    "diff": {
+      "argv": [
+        "git",
+        "diff",
+        "--stat",
+        "96b2694ef5115fde7c8c61d95f673bddf8f1a779",
+        "96b2694ef5115fde7c8c61d95f673bddf8f1a779"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "started_at": 1793115433.134594,
+      "finished_at": 1793115433.191087
+    },
+    "ci": {
+      "required": false,
+      "reason": "read-only git-smoke/codex-audit, no code delivery; PR delivery unsupported"
+    },
+    "passed": true
+  },
+  "task_state": "REVIEW",
+  "ai_acceptance": "NOT_RUN",
+  "paid_requests": 0
+}

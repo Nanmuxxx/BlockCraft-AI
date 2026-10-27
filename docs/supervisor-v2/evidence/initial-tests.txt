@@ -1,0 +1,52 @@
+test_clean_env_and_log_redaction (test_runtime.RuntimeTests.test_clean_env_and_log_redaction) ... ok
+test_codex_adapter_fails_closed_without_isolation_or_local_provider (test_runtime.RuntimeTests.test_codex_adapter_fails_closed_without_isolation_or_local_provider) ... ok
+test_disjoint_file_scopes_can_be_reserved (test_runtime.RuntimeTests.test_disjoint_file_scopes_can_be_reserved) ... ok
+test_duplicate_task_rejected_even_after_completion (test_runtime.RuntimeTests.test_duplicate_task_rejected_even_after_completion) ... ok
+test_expired_heartbeat_cannot_be_resurrected_without_reconcile (test_runtime.RuntimeTests.test_expired_heartbeat_cannot_be_resurrected_without_reconcile) ... ok
+test_expiry_blocks_and_retains_ownership (test_runtime.RuntimeTests.test_expiry_blocks_and_retains_ownership) ... ok
+test_failed_process_blocks_and_requires_termination_proof (test_runtime.RuntimeTests.test_failed_process_blocks_and_requires_termination_proof) ... ok
+test_late_receipt_cannot_finish_expired_task (test_runtime.RuntimeTests.test_late_receipt_cannot_finish_expired_task) ... ok
+test_mock_model_accept_then_select_next_dependency (test_runtime.RuntimeTests.test_mock_model_accept_then_select_next_dependency) ... ok
+test_mock_model_rework_records_owner_failure_and_retest (test_runtime.RuntimeTests.test_mock_model_rework_records_owner_failure_and_retest) ... ok
+test_model_cannot_accept_failed_gate (test_runtime.RuntimeTests.test_model_cannot_accept_failed_gate) ... ok
+test_model_cannot_bypass_approval_or_change_during_decision (test_runtime.RuntimeTests.test_model_cannot_bypass_approval_or_change_during_decision) ... ok
+test_normalize_scope_rejects_aliases (test_runtime.RuntimeTests.test_normalize_scope_rejects_aliases) ... ok
+test_only_assigned_worker_can_claim (test_runtime.RuntimeTests.test_only_assigned_worker_can_claim) ... ok
+test_process_limits_and_stop_kill_child (test_runtime.RuntimeTests.test_process_limits_and_stop_kill_child) ... /Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py:1139: ResourceWarning: subprocess 99970 is still running
+  _warn("subprocess %s is still running" % self.pid,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ERROR
+test_real_worker_claim_exec_receipt_and_independent_verification (test_runtime.RuntimeTests.test_real_worker_claim_exec_receipt_and_independent_verification) ... ok
+test_receipt_tampering_and_sha_drift_fail_independent_gate (test_runtime.RuntimeTests.test_receipt_tampering_and_sha_drift_fail_independent_gate) ... ok
+test_safe_recovery_succeeds_with_fresh_session (test_runtime.RuntimeTests.test_safe_recovery_succeeds_with_fresh_session) ... ok
+test_stop_prevents_assignment_and_claim (test_runtime.RuntimeTests.test_stop_prevents_assignment_and_claim) ... ok
+test_supervisor_os_lock_excludes_other_owner (test_runtime.RuntimeTests.test_supervisor_os_lock_excludes_other_owner) ... ok
+test_transactional_conflicting_assignments (test_runtime.RuntimeTests.test_transactional_conflicting_assignments) ... ok
+test_two_process_sessions_cannot_start_same_worker (test_runtime.RuntimeTests.test_two_process_sessions_cannot_start_same_worker) ... ok
+
+======================================================================
+ERROR: test_process_limits_and_stop_kill_child (test_runtime.RuntimeTests.test_process_limits_and_stop_kill_child)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2/tools/supervisor_v2/runtime.py", line 308, in command
+    require(not overflow.is_set(), 'process output limit exceeded')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2/tools/supervisor_v2/runtime.py", line 29, in require
+    raise GateError(reason)
+tools.supervisor_v2.runtime.GateError: process output limit exceeded
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2/tests/supervisor-v2/test_runtime.py", line 157, in test_process_limits_and_stop_kill_child
+    command([sys.executable, '-c', 'print("x"*100000)'], self.root, home)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2/tools/supervisor_v2/runtime.py", line 315, in command
+    with contextlib.suppress(ProcessLookupError): os.killpg(p.pid, signal.SIGKILL)
+                                                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 1] Operation not permitted
+
+----------------------------------------------------------------------
+Ran 22 tests in 6.374s
+
+FAILED (errors=1)

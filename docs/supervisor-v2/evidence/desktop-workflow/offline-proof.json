@@ -1,0 +1,267 @@
+{
+  "classification": "REAL_PROCESS_OFFLINE_NO_MODEL",
+  "system_status": "NOT_OPERATIONAL",
+  "tested_sha": "5652c16882b8548fb2930f600eb01274f0081094",
+  "started_at": 1793120804.330364,
+  "finished_at": 1793120812.675075,
+  "worker_process": {
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+      "-m",
+      "tools.supervisor_v2.cli",
+      "--repo",
+      "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2",
+      "--state",
+      "/private/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-proof-gqambn0l/state",
+      "worker",
+      "d52b7487-5d56-47da-9ef7-85847313b443",
+      "--once"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  "worker_id": "d52b7487-5d56-47da-9ef7-85847313b443",
+  "task_id": "16237c60-ca12-42b8-a659-1dbf46fba628",
+  "receipt": {
+    "protocol": 1,
+    "classification": "OFFLINE_NO_MODEL",
+    "task_id": "16237c60-ca12-42b8-a659-1dbf46fba628",
+    "worker_id": "d52b7487-5d56-47da-9ef7-85847313b443",
+    "session": "c3ed3f93-3472-494e-8431-01ec245ba5eb",
+    "base_sha": "5652c16882b8548fb2930f600eb01274f0081094",
+    "head_sha": "5652c16882b8548fb2930f600eb01274f0081094",
+    "tested_sha": "5652c16882b8548fb2930f600eb01274f0081094",
+    "started_at": 1793120804.371211,
+    "finished_at": 1793120808.260837,
+    "preparation": [
+      {
+        "argv": [
+          "git",
+          "-c",
+          "core.hooksPath=/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-ogiwvjkn/home/hooks",
+          "clone",
+          "--no-local",
+          "--no-checkout",
+          "--",
+          "/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2",
+          "/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-ogiwvjkn/work"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "Cloning into '/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-ogiwvjkn/work'...\n",
+        "started_at": 1793120804.372223,
+        "finished_at": 1793120807.925117
+      },
+      {
+        "argv": [
+          "git",
+          "-c",
+          "core.hooksPath=/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-ogiwvjkn/home/hooks",
+          "checkout",
+          "--detach",
+          "5652c16882b8548fb2930f600eb01274f0081094"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "HEAD is now at 5652c16 feat(supervisor): add gated local ChatGPT Codex backend and independent acceptance checks\n",
+        "started_at": 1793120807.925139,
+        "finished_at": 1793120808.088841
+      },
+      {
+        "argv": [
+          "git",
+          "remote",
+          "remove",
+          "origin"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "started_at": 1793120808.0888672,
+        "finished_at": 1793120808.1456761
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "5652c16882b8548fb2930f600eb01274f0081094\n",
+        "stderr": "",
+        "started_at": 1793120808.1457632,
+        "finished_at": 1793120808.2046561
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "started_at": 1793120808.2046762,
+        "finished_at": 1793120808.260803
+      }
+    ],
+    "changed_files": [],
+    "pr": null,
+    "artifact_sha256": "67e0e3056bc021302f93c50ae48201017deaeb756d0000be9e9ef82ecb0e36f9"
+  },
+  "events": [
+    {
+      "seq": 1,
+      "time": 1793120804.3284311,
+      "actor": "d52b7487-5d56-47da-9ef7-85847313b443",
+      "task": null,
+      "issue": 95,
+      "sha": null,
+      "old": null,
+      "new": "READY",
+      "reason": "registered; identity is operator-local",
+      "evidence": "{}"
+    },
+    {
+      "seq": 2,
+      "time": 1793120804.329366,
+      "actor": "Supervisor",
+      "task": "16237c60-ca12-42b8-a659-1dbf46fba628",
+      "issue": 95,
+      "sha": "5652c16882b8548fb2930f600eb01274f0081094",
+      "old": null,
+      "new": "READY",
+      "reason": "bounded task created",
+      "evidence": "{}"
+    },
+    {
+      "seq": 3,
+      "time": 1793120804.330013,
+      "actor": "Supervisor",
+      "task": "16237c60-ca12-42b8-a659-1dbf46fba628",
+      "issue": 95,
+      "sha": "5652c16882b8548fb2930f600eb01274f0081094",
+      "old": "READY",
+      "new": "READY",
+      "reason": "explicit assignment reserves files",
+      "evidence": "{\"worker_id\": \"d52b7487-5d56-47da-9ef7-85847313b443\"}"
+    },
+    {
+      "seq": 4,
+      "time": 1793120804.369366,
+      "actor": "d52b7487-5d56-47da-9ef7-85847313b443",
+      "task": null,
+      "issue": 95,
+      "sha": null,
+      "old": "READY",
+      "new": "READY",
+      "reason": "session started",
+      "evidence": "{\"session\": \"c3ed3f93-3472-494e-8431-01ec245ba5eb\"}"
+    },
+    {
+      "seq": 5,
+      "time": 1793120804.370833,
+      "actor": "d52b7487-5d56-47da-9ef7-85847313b443",
+      "task": "16237c60-ca12-42b8-a659-1dbf46fba628",
+      "issue": 95,
+      "sha": "5652c16882b8548fb2930f600eb01274f0081094",
+      "old": "READY",
+      "new": "CLAIMED",
+      "reason": "worker ACK at assigned base SHA",
+      "evidence": "{\"session\": \"c3ed3f93-3472-494e-8431-01ec245ba5eb\"}"
+    },
+    {
+      "seq": 6,
+      "time": 1793120804.371506,
+      "actor": "d52b7487-5d56-47da-9ef7-85847313b443",
+      "task": "16237c60-ca12-42b8-a659-1dbf46fba628",
+      "issue": 95,
+      "sha": "5652c16882b8548fb2930f600eb01274f0081094",
+      "old": "CLAIMED",
+      "new": "RUNNING",
+      "reason": "isolated execution started",
+      "evidence": "{}"
+    },
+    {
+      "seq": 7,
+      "time": 1793120808.306699,
+      "actor": "d52b7487-5d56-47da-9ef7-85847313b443",
+      "task": "16237c60-ca12-42b8-a659-1dbf46fba628",
+      "issue": 95,
+      "sha": "5652c16882b8548fb2930f600eb01274f0081094",
+      "old": "RUNNING",
+      "new": "REVIEW",
+      "reason": "durable receipt; Supervisor review pending",
+      "evidence": "{\"protocol\": 1, \"classification\": \"OFFLINE_NO_MODEL\", \"task_id\": \"16237c60-ca12-42b8-a659-1dbf46fba628\", \"worker_id\": \"d52b7487-5d56-47da-9ef7-85847313b443\", \"session\": \"c3ed3f93-3472-494e-8431-01ec245ba5eb\", \"base_sha\": \"5652c16882b8548fb2930f600eb01274f0081094\", \"head_sha\": \"5652c16882b8548fb2930f600eb01274f0081094\", \"tested_sha\": \"5652c16882b8548fb2930f600eb01274f0081094\", \"started_at\": 1793120804.371211, \"finished_at\": 1793120808.260837, \"preparation\": [{\"argv\": [\"git\", \"-c\", \"core.hooksPath=/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-ogiwvjkn/home/hooks\", \"clone\", \"--no-local\", \"--no-checkout\", \"--\", \"/Users/nanmuxun/BlockAI/BlockCraft-AI-supervisor-v2\", \"/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-ogiwvjkn/work\"], \"exit_code\": 0, \"stdout\": \"\", \"stderr\": \"Cloning into '/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-ogiwvjkn/work'...\\n\", \"started_at\": 1793120804.372223, \"finished_at\": 1793120807.925117}, {\"argv\": [\"git\", \"-c\", \"core.hooksPath=/var/folders/f1/__d9jv9d3c1bwf1twzbwd3k40000gn/T/supervisor-v2-ogiwvjkn/home/hooks\", \"checkout\", \"--detach\", \"5652c16882b8548fb2930f600eb01274f0081094\"], \"exit_code\": 0, \"stdout\": \"\", \"stderr\": \"HEAD is now at 5652c16 feat(supervisor): add gated local ChatGPT Codex backend and independent acceptance checks\\n\", \"started_at\": 1793120807.925139, \"finished_at\": 1793120808.088841}, {\"argv\": [\"git\", \"remote\", \"remove\", \"origin\"], \"exit_code\": 0, \"stdout\": \"\", \"stderr\": \"\", \"started_at\": 1793120808.0888672, \"finished_at\": 1793120808.1456761}], \"commands\": [{\"argv\": [\"git\", \"rev-parse\", \"HEAD\"], \"exit_code\": 0, \"stdout\": \"5652c16882b8548fb2930f600eb01274f0081094\\n\", \"stderr\": \"\", \"started_at\": 1793120808.1457632, \"finished_at\": 1793120808.2046561}, {\"argv\": [\"git\", \"status\", \"--porcelain=v1\", \"--untracked-files=all\"], \"exit_code\": 0, \"stdout\": \"\", \"stderr\": \"\", \"started_at\": 1793120808.2046762, \"finished_at\": 1793120808.260803}], \"changed_files\": [], \"pr\": null, \"artifact_sha256\": \"67e0e3056bc021302f93c50ae48201017deaeb756d0000be9e9ef82ecb0e36f9\"}"
+    }
+  ],
+  "independent_replay": {
+    "task_id": "16237c60-ca12-42b8-a659-1dbf46fba628",
+    "reviewed_sha": "5652c16882b8548fb2930f600eb01274f0081094",
+    "checks": [
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "5652c16882b8548fb2930f600eb01274f0081094\n",
+        "stderr": "",
+        "started_at": 1793120812.409725,
+        "finished_at": 1793120812.466702
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "started_at": 1793120812.466722,
+        "finished_at": 1793120812.578346
+      }
+    ],
+    "failures": [],
+    "source_head": {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "5652c16882b8548fb2930f600eb01274f0081094\n",
+      "stderr": "",
+      "started_at": 1793120808.314186,
+      "finished_at": 1793120808.366718
+    },
+    "diff": {
+      "argv": [
+        "git",
+        "diff",
+        "--stat",
+        "5652c16882b8548fb2930f600eb01274f0081094",
+        "5652c16882b8548fb2930f600eb01274f0081094"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "started_at": 1793120812.578379,
+      "finished_at": 1793120812.6315122
+    },
+    "ci": {
+      "required": false,
+      "reason": "read-only git-smoke/codex-audit, no code delivery; PR delivery unsupported"
+    },
+    "passed": true
+  },
+  "task_state": "REVIEW",
+  "ai_acceptance": "NOT_RUN",
+  "paid_requests": 0
+}
