@@ -1,0 +1,41 @@
+[
+  {
+    "name": "mock-desktop",
+    "exit_code": 0,
+    "script": "tests/gallery-generation/browser.cjs",
+    "env": {
+      "NODE_PATH": "/tmp/blockcraft-workshop-browser-tools/node_modules",
+      "GALLERY_TEST_PROVIDER": "MOCK",
+      "GALLERY_EVIDENCE_DIR": ".cache/workshop-mock/mock-desktop"
+    }
+  },
+  {
+    "name": "mock-mobile",
+    "exit_code": 0,
+    "script": "tests/gallery-generation/browser.cjs",
+    "env": {
+      "NODE_PATH": "/tmp/blockcraft-workshop-browser-tools/node_modules",
+      "GALLERY_TEST_PROVIDER": "MOCK",
+      "GALLERY_VIEWPORT_WIDTH": "390",
+      "GALLERY_EVIDENCE_DIR": ".cache/workshop-mock/mock-mobile"
+    }
+  },
+  {
+    "name": "canvas-regression",
+    "exit_code": 0,
+    "script": "tests/gallery-generation/browser.cjs",
+    "env": {
+      "NODE_PATH": "/tmp/blockcraft-workshop-browser-tools/node_modules",
+      "GALLERY_EVIDENCE_DIR": ".cache/workshop-mock/canvas-regression"
+    }
+  },
+  {
+    "name": "zip-browser",
+    "exit_code": 0,
+    "script": "tests/project-package/browser.cjs",
+    "env": {
+      "NODE_PATH": "/tmp/blockcraft-workshop-browser-tools/node_modules",
+      "GALLERY_EVIDENCE_DIR": ".cache/workshop-mock/zip-browser"
+    }
+  }
+]

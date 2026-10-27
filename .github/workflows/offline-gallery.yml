@@ -70,6 +70,7 @@ jobs:
           run_check regression node --test tests/project-json/*.test.cjs tests/project-package/*.test.cjs tests/custom-block-bc/*.test.cjs tests/workshop-export/*.test.*
           run_check project-zip-browser npm run test:project-package:browser
           run_check gallery-browser npm run test:gallery-offline:browser
+          run_check gallery-mock-browser env GALLERY_TEST_PROVIDER=MOCK GALLERY_EVIDENCE_DIR=artifacts/offline-gallery/mock-browser npm run test:gallery-offline:browser
           exit "$overall"
       - name: Upload logs, screenshots, portable projects and browser traces
         if: always()
