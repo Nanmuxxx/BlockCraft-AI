@@ -1,3 +1,5 @@
+> Historical S0/S1 record (2026-10-27). Current existing-ChatGPT backend, gates and limitations: [DESKTOP-WORKFLOW.md](DESKTOP-WORKFLOW.md). OSS-only statements below describe the earlier candidate, not current team requirements.
+
 # Runtime protocol v1
 
 Only the single Supervisor assigns a READY task to a UUID worker_id. Each task has immutable id, issue, kind, base SHA (40 lowercase hex), normalized literal file scopes, dependencies, priority, acceptance criteria, risk gate and explicit worker_id. No glob/absolute/traversal/symlink scope aliases. Case-folded prefix overlap reserves directories conservatively across macOS/Windows. READY assigned tasks reserve ownership too; conflicting allocation is rejected transactionally.

@@ -6,7 +6,8 @@ import sys
 import time
 
 from .runtime import (GateError, Store, LocalCodex, collect_github, independently_verify,
-                      run_worker, supervisor_lock, supervisor_round)
+                      run_worker, supervisor_lock, supervisor_round, load_backend)
+from .security import private_json
 
 
 def main():
@@ -31,7 +32,7 @@ def main():
     def config(path):
         if path is None: return None
         if path.resolve().is_relative_to(repo): p.error('isolation config must be operator-owned outside repository')
-        return LocalCodex(**json.loads(path.read_text()))
+        return load_backend(private_json(path, repo))
     if args.command == 'register': result = store.register(args.name)
     elif args.command == 'enqueue':
         with supervisor_lock(store): result = store.enqueue(json.loads(args.spec.read_text()), args.id)

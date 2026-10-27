@@ -1,3 +1,5 @@
+> Historical S0/S1 record (2026-10-27). Current existing-ChatGPT backend, gates and limitations: [DESKTOP-WORKFLOW.md](DESKTOP-WORKFLOW.md). OSS-only statements below describe the earlier candidate, not current team requirements.
+
 # S0 — capability audit and architecture decision
 
 Audit started 2026-10-27 Asia/Shanghai; sources fetched fresh, not inferred from old reports.

@@ -1,3 +1,5 @@
+> Historical S0/S1 record (2026-10-27). Current existing-ChatGPT backend, gates and limitations: [DESKTOP-WORKFLOW.md](DESKTOP-WORKFLOW.md). OSS-only statements below describe the earlier candidate, not current team requirements.
+
 # S1 evidence and remaining gates
 
 Implementation tested at **96b2694ef5115fde7c8c61d95f673bddf8f1a779** (later scope-case hardening is retested in the final PR checks). Evidence files are immutable records for the named SHA, never silently relabelled as a later commit.

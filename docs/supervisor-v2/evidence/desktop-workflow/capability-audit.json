@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-28 Asia/Shanghai",
+  "main_sha": "bcb6c1a7402ad4b4514feb4865c38d769d7244d1",
+  "starting_pr97_sha": "905a25573377c205c5a1f0a969961001552a39e5",
+  "starting_ci": "https://github.com/Nanmuxxx/BlockCraft-AI/actions/runs/40533708123",
+  "starting_checks": "all3 success; browser observed at exact original HEAD",
+  "codex_version": "0.164.0-alpha.11.1",
+  "login_status": "Logged in using ChatGPT",
+  "authentication_files_read": false,
+  "sdk_installed": false,
+  "sdk_registry_version": "0.163.0",
+  "sdk_pinned_runtime": "0.163.0",
+  "model_requests": 0,
+  "native_offline_probe": "BLOCKED; inner SIGABRT -6",
+  "live_auth_isolation": "NOT_VERIFIED",
+  "source": "DESKTOP-WORKFLOW.md"
+}

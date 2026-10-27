@@ -1,19 +1,17 @@
-# Supervisor V2 — S1 local pilot
+# Supervisor V2 — existing local Codex/ChatGPT workflow
 
-Requires Python 3.12+, Git, no extra packages. State must be outside the repository, owned by the operator with mode 0700. The structured queue is the S1 source of task assignment. This pilot has no network broker and is not a multi-user authentication service.
+**Current status: BLOCKED / NOT OPERATIONAL for model execution.** The no-model local queue/Worker chain is verified. T1/T2 backend and fail-closed interfaces are implemented/MOCK-tested; actual Codex inference and independent AI acceptance are NOT_VERIFIED. No Agents API or OSS requirement. [Current audit and boundaries](DESKTOP-WORKFLOW.md); [remote design only](CROSS-DEVICE-DESIGN.md); [original protocol](PROTOCOL.md); [historical evidence](EVIDENCE.md).
 
-## Run the harmless proof
-
-From repository root:
+Requires Python3.12+, Git; offline tests need no packages, models, network or auth files. Keep operator state outside the repository in an owned0700 directory.
 
 ```sh
 python3 -m unittest discover -s tests/supervisor-v2 -v
-python3 -m tools.supervisor_v2.proof --output /absolute/private/output.json
+python3 -m tools.supervisor_v2.proof --output /absolute/private/offline-proof.json
 ```
 
-The proof creates a private queue, registers a UUID worker, explicitly assigns a read-only task at the current full commit SHA, launches a separate CLI worker process, observes CLAIMED/RUNNING/REVIEW events, then independently reruns Git checks from a second clone. It changes no production files, executes no repository scripts, makes no network/model request, and leaves the task in REVIEW. It never converts OFFLINE proof into AI acceptance. JSON includes actual command output, exit codes, worker/session/task IDs, timestamps and receipt hash.
+Proof creates an operator-local UUID Worker, explicitly assigns a fixed-SHA read-only task, runs a **separate CLI Worker process**, records claim/run/receipt, and independently replays Git checks in another clone. It changes no production files, executes no repository script and makes no model request. Task remains REVIEW; AI acceptance NOT_RUN. Claims, heartbeats, receipts, duplicate/conflict/expiry controls are real process/protocol behavior, not model execution evidence.
 
-For manual operation (replace placeholders):
+## Operator-local commands
 
 ```sh
 python3 -m tools.supervisor_v2.cli --state /private/operator/queue register --name mac-owner
@@ -24,38 +22,39 @@ python3 -m tools.supervisor_v2.cli --state /private/operator/queue verify TASK_I
 python3 -m tools.supervisor_v2.cli --state /private/operator/queue snapshot
 ```
 
-Task JSON: `{"kind":"git-smoke","issue":95,"base_sha":"FULL_40_HEX_SHA","files":["docs/supervisor-v2"],"acceptance":"Assigned HEAD and clean snapshot; fixed Git checks exit 0","risk":"NONE","priority":100,"depends":[]}`. Only `git-smoke` and read-only `codex-audit` exist; code-writing jobs, arbitrary commands and PR delivery are deliberately unsupported until isolation and independent product gates are implemented. Supervisor decides file ownership before execution. Scope is a literal prefix, never a glob. Symlink scopes are blocked in the snapshot.
+Task spec: `{"kind":"git-smoke","issue":95,"base_sha":"FULL_40_HEX_SHA","files":["docs/supervisor-v2"],"acceptance":"Assigned HEAD and clean snapshot; fixed Git checks exit0","risk":"NONE","priority":100,"depends":[]}`. Only `git-smoke` and read-only `codex-audit` are supported. No code-writing, arbitrary repo commands or PR acceptance. Literal conservative file reservations are assigned before Worker execution. Workers never race for unassigned tasks. `worker` without `--once` polls only its own assignment; one task per invocation, no hidden replay.
 
-`worker` without `--once` polls only its own assignment. Each invocation executes at most one task and returns DONE after receipt. A service manager may restart it after acceptance resets registration to READY. Starting the same active registration twice fails. No unassigned-task races.
+## Existing-login model backend (gated; not enabled)
 
-## Stop / recover
+First evaluated official Python `openai-codex` SDK. It is not installed in this interpreter; published0.163 runtime compatibility with the device's0.164 alpha is NOT_VERIFIED. This iteration explicitly selects the existing CLI fallback. No implicit installation, unsupported API claim or backend fallback. [Evaluation and official sources](DESKTOP-WORKFLOW.md).
+
+Model config must be an operator-owned0600 JSON in a0700 directory **outside the checkout**. Required fields: `backend:"codex-chatgpt-exec"`, absolute `executable`, absolute independently reviewed `launcher`, exact owner-approved `model`, existing `auth_home`, `grant_file`, `isolation_file`. Do not put authentication contents in this config. The adapter never opens/enumerates/copies auth_home. Omitted grant/QA blocks before any subprocess. Legacy OSS/Agents/unknown backend selection is rejected. No live config/grant is supplied in the repository.
+
+Grant has owner/reference, exact model/auth/roles, expiry<=24h, attempts<=10, timeout<=120s, zero additional API spend and no credit purchase. QA record requires independent reviewer, matching OS, profile/runtime/launcher hashes, all capabilities and verified runtime/tool credential separation. Profile is an operator-owned JSON at `profile_file`, hash-bound to QA and passed only to the trusted launcher as `SUPERVISOR_ISOLATION_PROFILE`. A launcher must actually enforce that reviewed profile; a manifest alone is not isolation proof. MOCK/stale/missing records cannot authorize. No helper generates or approves these records.
+
+After separate owner approval **and** passing independent isolation QA:
+
+```sh
+python3 -m tools.supervisor_v2.cli --state /private/operator/queue worker WORKER_ID --once --codex-config /private/operator/codex.json
+python3 -m tools.supervisor_v2.cli --state /private/operator/queue supervise --codex-config /private/operator/codex.json
+```
+
+Normal Codex runtime authenticates using that operator's existing ChatGPT login. It is a local harness making model requests, distinct from both desktop GUI and cloud inference. New runtime threads are not promised to appear in an existing GUI chat. Preflight accepts only ChatGPT login status. API keys, extra APIs, cloud execution/Agents API, OSS and credit purchases are not fallback paths. Model errors, auth changes, malformed/schema-invalid output, missing session/completion, failed cleanup, cancellation or expired heartbeat block with no success receipt. Model logs/prompts are withheld; bounded summaries are redacted.
+
+Independent review reruns checks from another clone, checks receipt identity/hash/actual SHA/output, and requires a different completed Codex model session bound to the exact receipt for model ACCEPT. Mock tests are logged Supervisor/MOCK. REWORK includes owner, criterion and retest; rejected dependencies remain held. The real ACCEPT/REWORK/next-task loop remains NOT_VERIFIED until approved runs demonstrate it.
+
+## Stop and recovery
 
 ```sh
 python3 -m tools.supervisor_v2.cli --state /private/operator/queue stop
 python3 -m tools.supervisor_v2.cli --state /private/operator/queue reconcile
-# Inspect events and confirm the old process and all descendants are terminated FIRST:
+# Inspect events and independently confirm the old process AND descendants exited.
 python3 -m tools.supervisor_v2.cli --state /private/operator/queue resume
-python3 -m tools.supervisor_v2.cli --state /private/operator/queue recover TASK_ID --termination-evidence 'verified PID/session exited; evidence path or operator record'
+python3 -m tools.supervisor_v2.cli --state /private/operator/queue recover TASK_ID --termination-evidence 'confirmed process/session exit; evidence reference'
 ```
 
-Stop remains durable across restarts. Resume before recover if stop is active; resume does not clear BLOCKED reservations. Never acknowledge termination based on heartbeat age alone. Recovery creates a new task ID, original session stays fenced, max two retries. Assign the retry to a fresh READY worker. Worker's default TTL is 30 seconds and active subprocess pulse is 50 ms; queue/process failures stop execution. A separate periodic `reconcile` or running Supervisor is needed to detect missing workers while the worker machine sleeps. No process can report during its own host shutdown.
+Stop is durable. Resume does not clear BLOCKED reservations. Expiry retains ownership until confirmed termination, never steals leases; retry creates a new task ID, fences the old session and allows max two retries. Default heartbeat TTL30s. Separate Supervisor/reconcile must observe sleeping Workers; no machine reports while shut down. Process-group cleanup cannot prove containment of detached processes; authenticated outer launcher QA is still missing. Windows model execution is blocked pending ACL/process-tree verification, although offline CI runs on Windows.
 
-## Codex execution and decision loop
+`python3 -m tools.supervisor_v2.offline_jail` is an experimental **OFFLINE synthetic probe only**, not an authenticated launcher. On this host its native child exited SIGABRT; result is BLOCKED. It denies network/auth-home reads and cannot launch signed-in Codex. Do not treat mocked probe tests or a generated profile as completed isolation.
 
-Existing Codex CLI is reused; no model executor is reimplemented. CLI invocation is `codex exec --oss --local-provider ollama|lmstudio --model EXPLICIT_LOCAL_MODEL --sandbox read-only --ephemeral --ignore-user-config ... --output-schema ...`. Cloud/account/API execution is absent. A local model must already be running and available; the runtime never downloads one or changes a budget. This host has no ollama/lms in PATH, so live inference is NOT validated.
-
-An operator-owned JSON config **outside the checkout** contains absolute `executable`, absolute `launcher`, `provider`, `model`. Launcher must be installed outside the repo, executable, not writable by other users. ABI: `launcher WORKSPACE CLEAN_HOME -- CODEX ARGS...`. This is a trusted deployment prerequisite, NOT an arbitrary task-supplied command. Before installing one, independently validate it confines the full process tree to workspace/clean home, denies access to real home/keychain/SSH/GitHub credentials/control DB/other workspaces, permits only the local model socket, and cleans descendants on cancellation/exit. Changing HOME alone is not sufficient. No launcher is bundled or implicitly trusted. Windows is explicitly blocked for model execution until a validated outer jail exists; use a separately reviewed WSL/Linux installation later. Do not grant more privileges to make a launcher work.
-
-```sh
-python3 -m tools.supervisor_v2.cli --state /private/operator/queue supervise --codex-config /private/operator/local-codex.json
-```
-
-Each round reconciles liveness, reads #91/#92/#95 and current PR93/94 files/checks/HEAD, independently replays read-only receipts, calls Codex for a schema-constrained decision, then applies only if the queue version is unchanged. Failed API/model/JSON/isolation reads stop that round; no fixed-format decision fallback. Acceptance requires exact SHA/clean/hash/exit-code gates plus Codex decision. ACCEPT/REWORK are tested with explicitly MOCK decision providers; they are not live model evidence. REWORK creates a bounded child task assigned to the same owner with criterion and retest. Dependencies on a rejected task remain held for operator reconciliation, never silently satisfied by a child. Next poll chooses the next unblocked task. Other READY tasks can proceed despite a held risk-gated task. PR/code acceptance is unsupported, so no CI can be silently waived as "not required" for code delivery.
-
-## Permission and publication boundary
-
-Runtime children inherit only an allowlisted environment with fresh HOME/CODEX_HOME and no Git config, token, API key, proxy or agent socket. Snapshots use clone --no-local, disable hooks, remove origin, and never execute package scripts. Existing Codex auth is neither read nor copied. Cross-person authentication, task transport, automated Worker Draft PR publishing and GitHub report outbox are remaining work, not claimed features. The operator publishes this implementation Draft PR and phase reports through existing Desktop/browser authentication. No GitHub write identity is passed to a Worker. Do not run PR-controlled code with write tokens. The CI workflow has contents:read and persist-credentials:false; it invokes only offline tests, no model.
-
-## Status
-
-S0 audit/protocol: delivered. S1 local queue/actual no-model worker execution: verified by included receipts/tests. S1 live Codex worker with external isolation: BLOCKED on installed local model + validated launcher. Cross-machine/two independent identities, Windows runtime verification and S2 autonomous AI review: pending. System status remains NOT OPERATIONAL. [Audit](S0-AUDIT.md), [protocol](PROTOCOL.md), [evidence](EVIDENCE.md).
+Rollback: stop, confirm child termination, preserve operator queue/evidence, leave Draft97 unmerged or close it. No production migration/configuration or credential change exists. See current audit for exact blockers, sources, troubleshooting and the owner/security-QA responsibilities for the unique next step.

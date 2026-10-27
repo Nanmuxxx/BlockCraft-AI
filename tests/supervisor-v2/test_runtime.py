@@ -260,26 +260,9 @@ class RuntimeTests(unittest.TestCase):
         t = self.task(); self.store.assign(t, w)
         self.assertIsNotNone(run_worker(self.store, w, self.repo, once=True))
 
-    @unittest.skipIf(os.name == 'nt', 'model launcher intentionally blocked on Windows')
-    def test_local_codex_argv_contract_with_explicit_fake_launcher(self):
-        # This fixture is NOT isolation/model evidence. It validates adapter argv,
-        # clean environment and schema plumbing with a clearly fake process.
-        launcher = self.root / 'fake-launcher'
-        launcher.write_text('#!' + sys.executable + "\n" +
-            "import json,os,pathlib,sys\n" +
-            "a=sys.argv; assert '--oss' in a and '--sandbox' in a\n" +
-            "assert a[a.index('--local-provider')+1]=='ollama'\n" +
-            "assert 'GH_TOKEN' not in os.environ and 'OPENAI_API_KEY' not in os.environ\n" +
-            "pathlib.Path(a[a.index('--output-last-message')+1]).write_text(json.dumps({'findings':'MOCK adapter only'}))\n")
-        launcher.chmod(0o700)
-        home = self.root / 'clean-model-home'; home.mkdir()
-        fake_cli = self.root / 'fake-codex'; fake_cli.write_text('MOCK CLI marker'); fake_cli.chmod(0o700)
-        adapter = LocalCodex(fake_cli, launcher, 'ollama', 'fixture-local-model')
-        with patch.dict(os.environ, {'GH_TOKEN': 'must-not-reach-child'}):
-            result = adapter.execute(self.repo, home, 'read fixture only')
-        self.assertEqual(result['exit_code'], 0)
-        self.assertEqual(result['answer']['findings'], 'MOCK adapter only')
-        self.assertIn('--ignore-user-config', result['argv'])
+    def test_legacy_oss_cannot_be_mistaken_for_chatgpt_backend(self):
+        with self.assertRaisesRegex(GateError, 'legacy OSS'):
+            LocalCodex('/unused', '/unused', 'ollama', 'fixture')
 
 
 
