@@ -1,0 +1,55 @@
+4:17:49 PM [vite] (client) Re-optimizing dependencies because vite config has changed
+{
+  "mode": "HTTP MOCK REWORK",
+  "before": false,
+  "width": 1440,
+  "cases": [],
+  "pageErrors": [],
+  "externalRequests": [],
+  "environment": {
+    "node": "v24.22.0",
+    "platform": "darwin",
+    "browser": "151.0.7922.34",
+    "head": "f325e2fc9f9574fdead27ed7265e851a93cbd849"
+  },
+  "error": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('combobox', { name: '图片生成方式', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <select disabled aria-label=\"图片生成方式\">…</select>\u001b[22m\n\u001b[2m  - attempting select option action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    60 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying select option action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at openGallery (/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/tests/image-http-integration/rework.browser.cjs:36:64)\n    at async main (/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/tests/image-http-integration/rework.browser.cjs:101:26)"
+}
+locator.selectOption: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('combobox', { name: '图片生成方式', exact: true })[22m
+[2m    - locator resolved to <select disabled aria-label="图片生成方式">…</select>[22m
+[2m  - attempting select option action[22m
+[2m    2 × waiting for element to be visible and enabled[22m
+[2m      - element is not enabled[22m
+[2m    - retrying select option action[22m
+[2m    - waiting 20ms[22m
+[2m    2 × waiting for element to be visible and enabled[22m
+[2m      - element is not enabled[22m
+[2m    - retrying select option action[22m
+[2m      - waiting 100ms[22m
+[2m    60 × waiting for element to be visible and enabled[22m
+[2m       - element is not enabled[22m
+[2m     - retrying select option action[22m
+[2m       - waiting 500ms[22m
+
+    at openGallery (/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/tests/image-http-integration/rework.browser.cjs:36:64)
+    at async main (/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/tests/image-http-integration/rework.browser.cjs:101:26) {
+  log: [
+    "  - waiting for getByRole('combobox', { name: '图片生成方式', exact: true })",
+    '    - locator resolved to <select disabled aria-label="图片生成方式">…</select>',
+    '  - attempting select option action',
+    '    2 × waiting for element to be visible and enabled',
+    '      - element is not enabled',
+    '    - retrying select option action',
+    '    - waiting 20ms',
+    '    2 × waiting for element to be visible and enabled',
+    '      - element is not enabled',
+    '    - retrying select option action',
+    '      - waiting 100ms',
+    '    60 × waiting for element to be visible and enabled',
+    '       - element is not enabled',
+    '     - retrying select option action',
+    '       - waiting 500ms'
+  ],
+  name: 'TimeoutError'
+}

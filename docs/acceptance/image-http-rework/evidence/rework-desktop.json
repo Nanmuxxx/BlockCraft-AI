@@ -1,0 +1,71 @@
+{
+  "mode": "HTTP MOCK REWORK",
+  "before": false,
+  "width": 1440,
+  "cases": [
+    {
+      "scenario": "uncertain",
+      "passed": true,
+      "review": {
+        "requestId": "b16c4394-29e9-402e-9656-0d8b0b413412",
+        "jobId": "0b66c30f-0d55-4b53-ba24-bed3c18666cb",
+        "state": "UNCERTAIN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "lost-create",
+      "passed": true,
+      "review": {
+        "requestId": "afab1427-a016-4c46-901c-b5d30657e541",
+        "jobId": null,
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "lost-cancel",
+      "passed": true,
+      "review": {
+        "requestId": "e347887b-9e06-4950-be22-4927fe073b68",
+        "jobId": "21ae1239-b1d9-4b1f-82df-945e4aec1a15",
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "unknown-job",
+      "passed": true,
+      "review": {
+        "requestId": "e986f58f-3986-4c1b-8e88-5643738f7cf0",
+        "jobId": "e3c439e8-4492-488c-9264-51a3287d35e3",
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "poll-network",
+      "passed": true,
+      "review": {
+        "requestId": "808bfcb2-93f8-49f5-a013-815c0fdbd94a",
+        "jobId": "0950ff85-1152-4b5f-abb3-6bde835d26f2",
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    }
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "environment": {
+    "node": "v24.22.0",
+    "platform": "darwin",
+    "browser": "151.0.7922.34",
+    "head": "d4fec9ff07d239dc66de0b51ff8d8d6680706aa2"
+  },
+  "passed": true
+}

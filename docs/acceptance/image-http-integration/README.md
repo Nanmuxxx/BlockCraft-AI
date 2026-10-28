@@ -1,5 +1,7 @@
 # Image Phase 2 — HTTP MOCK integration
 
+Update: independent QA at f325e2f issued REWORK for R1/R2. See [focused rework and new verification](../image-http-rework/README.md); original evidence below is historical, not final acceptance.
+
 Developer self-test: isolated HTTP MOCK loop PASS. Production authorization BLOCKED; durable image budget ledger BLOCKED; REAL MODEL NOT_RUN; INDEPENDENT_QA PENDING. This is not completion/acceptance of the real-provider milestone #91.
 
 ## Scope and provenance

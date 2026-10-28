@@ -1,0 +1,226 @@
+
+> blockcraft-ai@0.1.0 test:generation
+> npm --prefix server run build && node --test tests/generation/*.test.mjs
+
+
+> build
+> tsc -p tsconfig.json
+
+✔ existing route accepts variable offline AppSpecs unchanged, keeps response shape, and recovers after failure (46.662625ms)
+✔ route rejects structurally legal but incomplete metric-only app without input, then recovers (6.501459ms)
+✔ route rejects structurally legal but incomplete unbound empty entity, then recovers (4.25275ms)
+✔ route rejects structurally legal but incomplete hidden optional field, then recovers (4.602416ms)
+✔ prompt embeds the exact live protocol boundary and keeps idea in its own user message (1.423417ms)
+✔ club-app: independent requirement mapping and real runtime CRUD/aggregations (3.251042ms)
+✔ fitness-log: independent requirement mapping and real runtime CRUD/aggregations (2.071625ms)
+✔ fitness-library: independent requirement mapping and real runtime CRUD/aggregations (1.223458ms)
+✔ money-app: independent requirement mapping and real runtime CRUD/aggregations (3.160792ms)
+✔ lost-found: independent requirement mapping and real runtime CRUD/aggregations (3.474833ms)
+✔ book-log: independent requirement mapping and real runtime CRUD/aggregations (0.588625ms)
+✔ movie-log: independent requirement mapping and real runtime CRUD/aggregations (0.472542ms)
+✔ same domain, different goals change entities/fields; no mandatory form/list/metric set (0.114584ms)
+✔ record count is supported with empty field evidence and reflects actual rows, not unique objects (0.910375ms)
+✔ base v1 empty specs stay legal; only the independent generation policy rejects them (0.108125ms)
+✔ separate completeness detects empty fields, unbound objects, missing input and inaccessible fields (0.1315ms)
+✔ bad binding, required field omission, cross-entity fields, illegal numeric metric and unknown types fail structure (0.290667ms)
+✔ structure cannot prove semantics: valid unrelated apps need review; independent mappings expose the mismatch (0.149666ms)
+✔ independent reviewer receives original goals, spec and actual operations as data without any API call (0.18725ms)
+✔ review must cover every goal and bind current input/spec/requirements; malformed evidence fails closed (0.367792ms)
+✔ only actual exposed operations count; list required fields are editable, hidden optional fields are not (0.123167ms)
+✔ unsupported operations remain unsupported despite plausible block names, including mixed and unsupported-only goals (0.447ms)
+✔ legacy demos keep their original protocol and remain usable without requirement reviews (0.56325ms)
+✔ legacy protocol projection does not advertise trusted v2 primitives (0.142667ms)
+✔ generation prompt permits an empty-resource gallery and quality accepts a pure gallery app (0.27875ms)
+✔ generation rejects unfinished media type uploads and closes without waiting for body (32.630792ms)
+✔ generation rejects unfinished cross-origin uploads and closes without waiting for body (5.915792ms)
+✔ generation rejects unfinished declared size uploads and closes without waiting for body (4.134709ms)
+✔ generation rejects unfinished method uploads and closes without waiting for body (4.236916ms)
+✔ generation rejects unfinished route uploads and closes without waiting for body (3.621541ms)
+✔ over-limit unfinished chunked upload is structured 413 and releases the generation slot (3.314667ms)
+✔ unfinished uploads occupy bounded slots, reject the fifth and release slots on disconnect (5.203042ms)
+✔ generation accepts valid multibyte JSON split inside a UTF-8 codepoint (2.514917ms)
+✔ unfinished request reaches its input deadline, returns structured 408 and releases admission (3.891084ms)
+✔ rate-limited unfinished upload receives 429 without reaching upstream or waiting for its body (8.193417ms)
+✔ ordinary start is closed by default and shuts down idempotently (23.937875ms)
+✔ key and ledger configuration cannot activate generation without trusted identity (85.691625ms)
+✔ explicit paid runtime keeps the ledger lock until an in-flight request is aborted (240.354417ms)
+✔ explicit paid runtime serves a validated Mock AppSpec and settles before shutdown closes the ledger (253.832625ms)
+✔ startup failure closes an explicitly opened paid runtime (179.586583ms)
+✔ listen failure closes an explicitly opened paid runtime (196.043458ms)
+✔ SIGINT and SIGTERM hooks invoke one idempotent shutdown task (0.448334ms)
+✔ real process signals do not interrupt request drain or release the ledger early (1165.011833ms)
+✔ expired pricing denies before model egress (213.74225ms)
+✔ principal resolver is bounded and rejects boolean, malformed, errors and late results (13.235291ms)
+✔ boolean identity alone cannot construct a runtime even with key and ledger configuration (16.316ms)
+✔ invalid principal rejects before request context construction (4.837709ms)
+✔ request contexts isolate principals, keys and normalized semantic payload under concurrency (33.114459ms)
+✔ invalid input and duplicate or malformed idempotency headers never construct request context (7.17075ms)
+✔ request context errors return a fixed sanitized response (1.314084ms)
+✔ opaque cookie adapter rejects absent, expired, revoked, unknown and forged-header identities before runtime work (4.769334ms)
+✔ opaque cookie hashes resolve stable principals and isolate identical keys across principals (1.825709ms)
+✔ CLI identity mode stays closed by default and requires a private explicit allowlist (34.781792ms)
+✔ authenticated HTTP composition returns a generated AppSpec through the real Gateway runtime (284.191833ms)
+✔ missing session rejects before request context, reservation, or provider egress (192.769209ms)
+✔ trusted v2 admission uses principal identity and leaves the sole durable reservation to Gateway (348.302417ms)
+✔ budget exhaustion maps to HTTP 429 without provider egress beyond POLICY.maxCalls (1204.486ms)
+✔ upstream timeout maps to HTTP 504 and records uncertain spend before shutdown (405.900625ms)
+✔ client disconnect aborts the Mock upstream and preserves the uncertain ledger claim (343.591791ms)
+✔ protocol projection treats LF and CRLF source bytes equivalently (0.469333ms)
+✔ protocol projection still rejects actual AppSpec extension changes (0.613041ms)
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":true,"mochiEnabled":true,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"persistent-scope-reused","expiresAt":9007199254740991}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":true,"mochiEnabled":true,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"persistent-scope-reused","expiresAt":9007199254740991}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":true,"mochiEnabled":true,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"persistent-scope-reused","expiresAt":9007199254740991}
+✔ explicit lifetime authorization works after original deadline; original records and cumulative allowance survive restart (1128.005083ms)
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"lifetime-receipt"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+{"event":"studio-test-mvp-history-check","ledgerEntries":0,"attemptReceipts":1,"countersContinuous":true}
+{"event":"studio-test-mvp-history-provenance","readable":false}
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"mvp-history-mismatch"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+{"event":"studio-test-paid-disabled","code":"PRICING_UNVERIFIED","stage":"pricing-verification"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ tampered lifetime renewal and mismatched attempt history disable paid startup without resetting history (1083.829292ms)
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ unverified current quote disables startup before any paid attempt; legacy default retains expiry (254.340458ms)
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":true,"mochiEnabled":true,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"persistent-scope-reused","expiresAt":9007199254740991}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ history mismatch diagnostics expose only counts and booleans while paid startup remains locked (1391.575375ms)
+✔ independent fixed known-answer actual LF state is accepted before listening (303.603959ms)
+✔ independent fixed backslash+n MAC is rejected before any listen or state change (335.784833ms)
+✔ all Studio launches refuse missing ledger before creating ledger, issuer state or authorization (373.980041ms)
+✔ Studio ledger metadata preflight rejects unsafe mode, hardlink, symlink and nonregular file (226.072666ms)
+✔ issuer commits consume+hash before exact Secure cookie, then actual v2 Mock works across restart (664.697084ms)
+✔ five durable attempts including malformed fields survive restart; no recovery or reset (636.135125ms)
+✔ simultaneous redemption issues at most one session; second process cannot lock ledger (346.448875ms)
+✔ grant field order is canonical, live expiry/revocation and fixed scope fail closed (329.151625ms)
+✔ header/path rejects consume no attempt and never reflect credentials (265.181792ms)
+✔ missing/corrupt/unsafe state or missing/invalid ledger refuses startup without resetting state (812.935792ms)
+✔ fault before-open commit 1: no cookie, halted; restart respects committed consumption (310.761958ms)
+✔ fault after-open commit 1: no cookie, halted; restart respects committed consumption (325.066291ms)
+✔ fault before-write commit 1: no cookie, halted; restart respects committed consumption (301.801625ms)
+✔ fault after-write commit 1: no cookie, halted; restart respects committed consumption (351.486958ms)
+✔ fault before-file-fsync commit 1: no cookie, halted; restart respects committed consumption (297.255375ms)
+✔ fault after-file-fsync commit 1: no cookie, halted; restart respects committed consumption (285.785125ms)
+✔ fault before-rename commit 1: no cookie, halted; restart respects committed consumption (322.006792ms)
+✔ fault after-rename commit 1: no cookie, halted; restart respects committed consumption (266.628417ms)
+✔ fault before-dir-fsync commit 1: no cookie, halted; restart respects committed consumption (252.473542ms)
+✔ fault after-dir-fsync commit 1: no cookie, halted; restart respects committed consumption (247.721ms)
+✔ fault before-open commit 2: no cookie, halted; restart respects committed consumption (266.773292ms)
+✔ fault after-open commit 2: no cookie, halted; restart respects committed consumption (317.873291ms)
+✔ fault before-write commit 2: no cookie, halted; restart respects committed consumption (315.535542ms)
+✔ fault after-write commit 2: no cookie, halted; restart respects committed consumption (314.672584ms)
+✔ fault before-file-fsync commit 2: no cookie, halted; restart respects committed consumption (304.473458ms)
+✔ fault after-file-fsync commit 2: no cookie, halted; restart respects committed consumption (337.754667ms)
+✔ fault before-rename commit 2: no cookie, halted; restart respects committed consumption (316.275958ms)
+✔ fault after-rename commit 2: no cookie, halted; restart respects committed consumption (242.092583ms)
+✔ fault before-dir-fsync commit 2: no cookie, halted; restart respects committed consumption (233.1325ms)
+✔ fault after-dir-fsync commit 2: no cookie, halted; restart respects committed consumption (236.452666ms)
+✔ shutdown aborts outstanding issuer body before releasing Gateway lifetime lock (234.299417ms)
+✔ body concurrency, 1KiB ceiling, two-second deadline and disconnect are bounded without spending attempts (2200.526583ms)
+✔ issuer session expiry and duplicate cookies deny without extra upstream calls (212.497958ms)
+✔ shutdown during synchronous consume commit retains lock until admitted transition settles (275.131708ms)
+✔ Studio defaults closed: flags, absent approval, HTTP or nonexact origin cannot start (109.976333ms)
+✔ private approval/key and exact policy verification fail closed (329.618959ms)
+✔ trusted Studio composition returns v2 pomodoro; no anonymous cookie minting or local-owner entry (424.082ms)
+✔ anonymous, forged, unknown, expired, revoked, duplicate cookies reject without egress (299.871417ms)
+✔ wrong, missing and duplicate Origin reject 403, regardless of forwarded identity (247.731833ms)
+✔ persisted budget and idempotency survive shutdown/restart; a second process cannot acquire ledger (1508.570708ms)
+✔ live approval revocation/change or unsafe permissions close active authorization (277.241625ms)
+✔ Studio accepts only fixed pomodoro app scope, including live config reload (344.94675ms)
+✔ encoded generation path cannot bypass strict Origin and approval expiry is live (255.174959ms)
+✔ shutdown drains an admitted request before releasing durable ledger (377.276667ms)
+{"event":"studio-test-legacy-debit-verified","calls":1,"conservativeNano":212992000,"markerAt":1792598340000,"attemptAt":1792598340000,"responseAt":1792598340001,"responseStatus":200,"separateFromKnownSamples":true}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":true,"mochiEnabled":true,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"persistent-scope-reused","expiresAt":9007199254740991}
+{"event":"studio-test-legacy-debit-verified","calls":1,"conservativeNano":212992000,"markerAt":1792598340000,"attemptAt":1792598340000,"responseAt":1792598340001,"responseStatus":200,"separateFromKnownSamples":true}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":true,"mochiEnabled":true,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"persistent-scope-reused","expiresAt":9007199254740991}
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"legacy-history-unverified"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ actual 1 legacy + 73 current + 8 local layout seeds 82, preserves original bytes, and survives restart (7282.781625ms)
+{"event":"studio-test-paid-disabled","code":"ENOENT","stage":"isolated-state"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ legacy signature fails closed, preserves current entries, and sends no provider request (3837.436416ms)
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"legacy-history-unverified"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ legacy missing-response fails closed, preserves current entries, and sends no provider request (2745.681ms)
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"legacy-history-unverified"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ legacy overlap fails closed, preserves current entries, and sends no provider request (2393.483667ms)
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"legacy-history-unverified"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ legacy wrong-status fails closed, preserves current entries, and sends no provider request (1516.920458ms)
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"legacy-history-unverified"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ legacy negative-time fails closed, preserves current entries, and sends no provider request (1397.276458ms)
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"legacy-history-unverified"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ legacy old-scope fails closed, preserves current entries, and sends no provider request (1414.158208ms)
+{"event":"studio-test-legacy-debit-verified","calls":1,"conservativeNano":212992000,"markerAt":1792598340000,"attemptAt":1792598340000,"responseAt":1792598340001,"responseStatus":200,"separateFromKnownSamples":true}
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"legacy-history-unverified"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ legacy old-pricing fails closed, preserves current entries, and sends no provider request (1457.456458ms)
+{"event":"studio-test-mvp-history-check","ledgerEntries":73,"attemptReceipts":75,"countersContinuous":false}
+{"event":"studio-test-mvp-history-provenance","readable":false}
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"mvp-history-mismatch"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ legacy extra-response fails closed, preserves current entries, and sends no provider request (1417.561584ms)
+{"event":"studio-test-legacy-debit-verified","calls":1,"conservativeNano":212992000,"markerAt":1792598340000,"attemptAt":1792598340000,"responseAt":1792598340001,"responseStatus":200,"separateFromKnownSamples":true}
+{"event":"studio-test-mvp-history-check","ledgerEntries":73,"attemptReceipts":74,"receiptIndex":2,"versionMatches":true,"bootMatches":false,"counterMatches":true,"stateMatches":true,"signatureMatches":true}
+{"event":"studio-test-mvp-history-provenance","legacySignatureMatches":true,"signaturesMatch":true,"metadataMatches":true,"groups":{"current":{"count":72,"first":3,"last":74},"legacy":{"count":2,"first":1,"last":2},"unmatched":{"count":0,"first":null,"last":null}},"scopes":{"20261021":{"entries":0,"halted":false,"settled":0,"reserved":0,"uncertain":0},"20261022":{"entries":73,"halted":false,"settled":73,"reserved":0,"uncertain":0}}}
+{"event":"studio-test-paid-disabled","code":"UNCLASSIFIED","stage":"mvp-history-mismatch"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ legacy extra-attempt fails closed, preserves current entries, and sends no provider request (1388.9315ms)
+{"event":"studio-test-legacy-debit-verified","calls":1,"conservativeNano":212992000,"markerAt":1792598340000,"attemptAt":1792598340000,"responseAt":1792598340001,"responseStatus":200,"separateFromKnownSamples":true}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":true,"mochiEnabled":true,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"persistent-scope-reused","expiresAt":9007199254740991}
+✔ legacy second-legacy fails closed, preserves current entries, and sends no provider request (1438.551166ms)
+{"event":"studio-test-legacy-debit-verified","calls":1,"conservativeNano":212992000,"markerAt":1792598340000,"attemptAt":1792598340000,"responseAt":1792598340001,"responseStatus":200,"separateFromKnownSamples":true}
+{"event":"studio-test-paid-disabled","code":"STUDIO_BUDGET_INVALID","stage":"studio-server"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+{"event":"studio-test-legacy-debit-verified","calls":1,"conservativeNano":212992000,"markerAt":1792598340000,"attemptAt":1792598340000,"responseAt":1792598340001,"responseStatus":200,"separateFromKnownSamples":true}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":true,"mochiEnabled":true,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"persistent-scope-reused","expiresAt":9007199254740991}
+✔ legacy migration-missing-copy fails closed, preserves current entries, and sends no provider request (1482.60225ms)
+{"event":"studio-test-legacy-debit-verified","calls":1,"conservativeNano":212992000,"markerAt":1792598340000,"attemptAt":1792598340000,"responseAt":1792598340002,"responseStatus":200,"separateFromKnownSamples":true}
+{"event":"studio-test-paid-disabled","code":"STUDIO_BUDGET_HISTORY_UNVERIFIED","stage":"studio-server"}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ legacy evidence-change fails closed, preserves current entries, and sends no provider request (1463.605166ms)
+✔ activation uses authenticated local structure, explicit consent, controlled advice and separately requested plan; restart never resets usage (1226.593375ms)
+✔ activation does not grant anonymous, revoked, expired, invalid-origin or C-mode egress (413.651042ms)
+✔ Mochi launch remains default disabled without opt-in (288.779917ms)
+✔ exhausted feature allowance rejects advice and plan before egress while preserving primary ledger (7644.598666ms)
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":true,"mochiEnabled":true,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"persistent-scope-reused","expiresAt":9007199254740991}
+{"event":"studio-test-ready","host":"127.0.0.1","port":0,"configured":false,"mochiEnabled":false,"policy":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022","state":"disabled","expiresAt":9007199254740991}
+✔ authenticated status refreshes expired pricing once, rejects failures, and never changes cumulative budget or receipts (1143.638375ms)
+✔ an unconfigured deployment never triggers a status pricing fetch (3.466416ms)
+{"event":"studio-test-mvp-grant-migrated","from":"OWNER-APPROVED-STUDIO-MVP-5-CNY-20261022","to":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022"}
+{"event":"studio-test-directory-check","directoryType":true,"ownerMatches":true,"mode":"755","canonical":true}
+{"event":"studio-test-directory-check","directoryType":true,"ownerMatches":true,"mode":"755","canonical":true}
+{"event":"studio-test-empty-receipt-repaired"}
+{"event":"studio-test-policy-migrated","from":"OWNER-APPROVED-STUDIO-MVP-5-CNY-20261022","to":"OWNER-APPROVED-STUDIO-MVP-15-CNY-20261022"}
+✔ startup diagnostics expose only bounded error code and stage (0.786292ms)
+✔ supplemental Studio grant preserves legacy receipts, caps calls, and carries usage across restart (16516.015708ms)
+✔ supplemental Studio grant creates a missing directory on first declaration (71.752042ms)
+✔ MVP cap migration preserves the signed 5 CNY predecessor receipt and continues old call numbering (76.425875ms)
+✔ mounted directory compatibility is opt-in and keeps ordinary state strict (7.898208ms)
+✔ mounted first-init interruption can resume only from an empty receipt (82.160833ms)
+✔ 15 CNY policy migration rewrites metadata and preserves settled ledger entries (66.881958ms)
+{"event":"unified-studio-ready","configured":true,"epochId":"owner-unified-ai-20261023-v1","state":"new-authorized-epoch","accounts":{"customer":{"calls":0,"chargedCny":0,"capCny":20,"maxCalls":null},"agent-test":{"calls":0,"chargedCny":0,"capCny":5,"maxCalls":200}}}
+✔ explicit new epoch starts both shared accounts at zero, preserves credentials, archives old statistics, and reuses epoch on restart (678.307208ms)
+✔ test credentials are a separate deterministic server identity and never appear in persisted approval or receipts (676.445083ms)
+✔ missing ledger or epoch never reinitializes the allowance (511.398709ms)
+✔ interruption after migration intent or install fails closed, without mutating old credentials/statistics (908.566ms)
+✔ tampered migration receipt and mismatched original access are rejected (416.976458ms)
+{"event":"unified-studio-ready","configured":true,"epochId":"owner-unified-ai-20261023-v1","state":"persistent-epoch-reused","accounts":{"customer":{"calls":0,"chargedCny":0,"capCny":20,"maxCalls":null},"agent-test":{"calls":1,"chargedCny":0.00018,"capCny":5,"maxCalls":200}}}
+{"event":"unified-studio-paid-disabled","stage":"unified-state","code":"ENOENT"}
+{"event":"unified-studio-ready","configured":false,"epochId":"owner-unified-ai-20261023-v1","state":"disabled"}
+✔ deployment endpoints enforce dedicated test authentication, same origin, unified routing, and restart continuity (638.881959ms)
+{"event":"unified-studio-ready","configured":true,"epochId":"owner-unified-ai-20261023-v1","state":"new-authorized-epoch","accounts":{"customer":{"calls":0,"chargedCny":0,"capCny":20,"maxCalls":null},"agent-test":{"calls":0,"chargedCny":0,"capCny":5,"maxCalls":200}}}
+✔ missing persistent ledger disables paid routes after restart rather than issuing a fresh allowance (403.95175ms)
+✔ a valid ledger from a different epoch is rejected without issuing another allowance (421.08075ms)
+✔ status follows the paid resolver for live session revocation and expiry (454.446167ms)
+ℹ tests 144
+ℹ suites 0
+ℹ pass 144
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29425.60275

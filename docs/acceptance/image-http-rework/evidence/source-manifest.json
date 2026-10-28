@@ -1,0 +1,17 @@
+{
+  "functional_sha": "d4fec9ff07d239dc66de0b51ff8d8d6680706aa2",
+  "sha256": {
+    ".github/workflows/image-http-mock.yml": "cc1550dcaf2b6c199a95f5dbac645e0e6e1fa73668f1673f611f77a532f2c411",
+    "server/image-generation/coordinator.mjs": "fccfa5471010bf3c2e16d32aa481570082e33dfabfaa6e7f84d7d44039ef2187",
+    "server/image-generation/isolated-mock.mjs": "ed438e0754f6ba7d40936abe7cac1f011b96d3c70d71e00da7b8a11a61610415",
+    "server/image-generation/mock-worker.mjs": "2452794f0ad5c1ebe8900edca2cca46cce1062946f3d64b1177098962b05a4a1",
+    "src/integrations/gallery-generation/GalleryImagePanel.tsx": "5e7191606142e40187bbe864c35de54c68cdf4bfdc8be8e2c07d86029907a4f3",
+    "src/integrations/gallery-generation/controller.ts": "d35352a9421e4f843dfa85f51f6a7aa4c2118491a65b8cfbb432be190d5f7820",
+    "src/integrations/gallery-generation/http.ts": "9c32b4667bc7f6bdaccb9c5a284bbfa0d7435f4f0cd271ab63bba5d9d86a814c",
+    "tests/image-http-contract/http.test.mjs": "2e04eb5dd5d17d8824e5966fda606b7a97f7d6321044487dbc2e3e1b74464f9a",
+    "tests/image-http-contract/isolation.test.mjs": "7a5facfd892fab3a9c992240e1d4e930c46bbb3b95c788c1f74f5c4522724394",
+    "tests/image-http-contract/worker-fixture.mjs": "6ffa7c512aa02c359cfa475a8ef3c32f3cf0172024f329203967ab614b19c5ac",
+    "tests/image-http-integration/fixture.mjs": "7e8b3793e26177cd78ed978483becbff49f45e39ec637fd0c815f9243435bab4",
+    "tests/image-http-integration/rework.browser.cjs": "c7ad3584a0ef5d4785070d3c2469e4d6a3f9f2e586d5d6745ab43124141cb30c"
+  }
+}
