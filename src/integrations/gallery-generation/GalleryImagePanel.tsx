@@ -11,7 +11,7 @@ type Source = 'OFFLINE_CANVAS' | 'MOCK' | 'HTTP_MOCK'
 const httpFixture = import.meta.env.DEV && import.meta.env.VITE_IMAGE_HTTP_FIXTURE === '1'
 
 export function GalleryImagePanel({ workspace }: { workspace: WorkspaceSession }) {
-  const [source, setSource] = useState<Source>('OFFLINE_CANVAS')
+  const [source, setSource] = useState<Source>(() => httpFixture && createHttpMockImageProvider('fixture-project').getReview() ? 'HTTP_MOCK' : 'OFFLINE_CANVAS')
   const [prompt, setPrompt] = useState('清晨的山与太阳')
   const [target, setTarget] = useState('')
   const [binding, setBinding] = useState<{ workspace: WorkspaceSession; source: typeof source; controller: ReturnType<typeof createGalleryImageController> } | null>(null)
@@ -41,7 +41,7 @@ function ImagePanel({ workspace, controller, source, setSource, prompt, setPromp
   }
   return <section className="gallery-generation" aria-label="图库单张生成">
     <div><h3>为图库创作一张图片</h3><p>{source === 'HTTP_MOCK' ? 'HTTP MOCK 隔离测试：通过本机服务器返回固定图片；非 AI，不产生模型费用。' : source === 'MOCK' ? 'MOCK 测试：每次返回同一张固定图片，与描述无关；不调用模型、不产生费用。' : '离线练习：按描述生成配色风景示例，不调用 AI 模型，不产生费用。'}</p></div>
-    <label>图片生成方式<select aria-label="图片生成方式" value={source} disabled={busy || unavailable} onChange={event => { controller.cancel(); setSource(event.target.value as typeof source) }}>
+    <label>图片生成方式<select aria-label="图片生成方式" value={source} disabled={busy || unavailable || !!state.review} onChange={event => { controller.cancel(); setSource(event.target.value as typeof source) }}>
       <option value="OFFLINE_CANVAS">离线配色风景示例</option><option value="MOCK">固定 Mock 图片（非 AI）</option>
     {httpFixture && <option value="HTTP_MOCK">HTTP Mock 隔离测试（非 AI）</option>}
     </select></label>
@@ -51,7 +51,7 @@ function ImagePanel({ workspace, controller, source, setSource, prompt, setPromp
       </select></label>
       <label>图片描述<textarea aria-label="图片描述" maxLength={500} value={prompt} disabled={busy || unavailable} onChange={event => setPrompt(event.target.value)} /></label>
       <div className="gallery-generation__actions">
-        <button type="button" disabled={busy || unavailable || !prompt.trim()} onClick={() => void controller.generate(prompt, selected)}>{source === 'HTTP_MOCK' ? '生成一张 HTTP Mock 测试图片' : source === 'MOCK' ? '生成一张 Mock 测试图片' : '生成一张离线示例'}</button>
+        <button type="button" disabled={busy || unavailable || !!state.review || !prompt.trim()} onClick={() => void controller.generate(prompt, selected)}>{source === 'HTTP_MOCK' ? '生成一张 HTTP Mock 测试图片' : source === 'MOCK' ? '生成一张 Mock 测试图片' : '生成一张离线示例'}</button>
         {state.phase === 'generating' && <button type="button" onClick={controller.cancel}>取消生成图片</button>}
       </div>
       {state.candidate && <figure>
@@ -63,6 +63,7 @@ function ImagePanel({ workspace, controller, source, setSource, prompt, setPromp
         </div>}
       </figure>}
     </>}
+    {state.review && <button type="button" disabled={busy || unavailable || !state.review.jobId} onClick={() => void controller.reconcile()}>核对原任务状态（不重试）</button>}
     <p role={state.phase === 'failed' || error ? 'alert' : 'status'} aria-live="polite">{error || state.message}</p>
   </section>
 }

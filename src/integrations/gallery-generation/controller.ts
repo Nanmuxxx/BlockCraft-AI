@@ -5,6 +5,7 @@ import { projectBuiltinChange } from '../../model/appProjectCommands'
 import type { WriteAuthorization } from '../custom-block-bc/owner'
 import type { WorkspaceSession } from '../project-workspace/session'
 import { WorkspaceError } from '../project-workspace/repository'
+import {httpReviewMessage,type HttpMockProvider,type HttpReview} from './http'
 import { offlineImageProvider, type ImageProvider } from './offline'
 
 export interface ImageCandidate {
@@ -14,7 +15,7 @@ export interface ImageCandidate {
 }
 export interface GalleryGenerationView {
   phase: 'idle' | 'generating' | 'ready' | 'saving' | 'adopted' | 'failed'
-  candidate: Readonly<ImageCandidate> | null; message: string
+  candidate: Readonly<ImageCandidate> | null; message: string; review?: HttpReview | null
 }
 function freeze<T>(value: T): T {
   if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value) }
@@ -82,17 +83,31 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
   const runtime = workspace.runtime, owner = runtime.customProject
   let state: GalleryGenerationView = Object.freeze({ phase: 'idle', candidate: null, message: '' })
   let active: AbortController | null = null, disposed = false, confirming: Promise<void> | null = null
+  const http = source === 'HTTP_MOCK' ? provider as Partial<HttpMockProvider> : null
   const listeners = new Set<() => void>()
   const update = (changes: Partial<GalleryGenerationView>) => {
     if (disposed) return
     state = Object.freeze({ ...state, ...changes }); listeners.forEach(listener => listener())
   }
+  const reviewChanged = () => {
+    const review = http?.getReview?.() ?? null
+    if (review && (!active || review.state !== 'PENDING')) update({ phase: 'failed', candidate: null, review, message: httpReviewMessage(review) })
+    else update({ review })
+  }
+  const unsubscribeReview = http?.subscribeReview?.(reviewChanged)
+  reviewChanged()
   return {
     getSnapshot: () => state,
+    async reconcile() {
+      if (active || confirming || disposed || !http?.reconcile || owner.getAuthorization().readOnly) return
+      await http.reconcile(); reviewChanged()
+      if (!http.getReview?.()) update({ phase: 'idle', candidate: null, review: null, message: '已通过服务端权限检查核对原任务终态；未采用或重试。可明确发起新的测试任务。' })
+    },
     reportHttpStatus(status: string) { if (active) update({ message: `HTTP MOCK：${status}；测试图片尚未加入作品。` }) },
     subscribe(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener) } },
     async generate(prompt: string, targetId: string) {
       if (disposed || active || confirming) return
+      if (http?.getReview?.()) { reviewChanged(); return }
       if (!prompt.trim() || prompt.length > 500) { update({ phase: 'failed', candidate: null, message: '请输入 1–500 字的图片描述。' }); return }
       const expected = owner.getSnapshot(), authorization = owner.getAuthorization()
       const gallery = expected.base.spec.blocks.find(b => b.id === targetId && b.type === 'gallery')
@@ -119,7 +134,10 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
         const candidate = freeze({ confirmationId: requestId, digest, asset, targetId, expected, authorization, prepared, ...dimensions })
         update({ phase: 'ready', candidate, message: '预览尚未加入作品。确认后采用这一张图片并保存到本机。' })
       } catch (error) {
-        if (active === controller) update({ phase: 'failed', candidate: null, message: error instanceof Error ? error.message : '离线生成失败，原作品未更改。' })
+        if (active === controller) {
+          const review = http?.getReview?.()
+          update({ phase: 'failed', candidate: null, review, message: review ? httpReviewMessage(review) : error instanceof Error ? error.message : '离线生成失败，原作品未更改。' })
+        }
       } finally { clearTimeout(timer); if (active === controller) active = null }
     },
     confirm(): Promise<void> {
@@ -149,8 +167,9 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
     cancel() {
       if (confirming) return
       active?.abort(); active = null
+      if (http?.getReview?.()) { reviewChanged(); return }
       update({ phase: 'idle', candidate: null, message: source === 'HTTP_MOCK' ? '已停止等待 HTTP MOCK；已请求取消，结果可能尚未确认，原作品未更改。' : '已取消；原作品未更改，没有模型调用或费用。' })
     },
-    dispose() { disposed = true; active?.abort(); active = null; listeners.clear() },
+    dispose() { disposed = true; unsubscribeReview?.(); active?.abort(); active = null; listeners.clear() },
   }
 }

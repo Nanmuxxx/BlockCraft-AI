@@ -43,12 +43,14 @@ jobs:
           node node_modules/typescript/bin/tsc -b
           node node_modules/typescript/bin/tsc -p server/image-generation/tsconfig.json
           npm --prefix server test
-          node --test tests/image-backend/provider.test.mjs tests/image-http-contract/*.test.mjs | tee artifacts/image-http/contracts.log
+          node --test --test-timeout=10000 tests/image-backend/provider.test.mjs tests/image-http-contract/*.test.mjs | tee artifacts/image-http/contracts.log
           npm test
           node tools/project-zip-export/prepare.mjs
           node --test tests/project-json/*.test.cjs tests/project-package/*.test.cjs tests/custom-block-bc/*.test.cjs tests/workshop-export/*.test.*
           GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_EVIDENCE_DIR=artifacts/image-http/desktop node tests/gallery-generation/browser.cjs
           GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_VIEWPORT_WIDTH=390 GALLERY_EVIDENCE_DIR=artifacts/image-http/mobile node tests/gallery-generation/browser.cjs
+          GALLERY_EVIDENCE_DIR=artifacts/image-http/rework-desktop node tests/image-http-integration/rework.browser.cjs
+          GALLERY_VIEWPORT_WIDTH=390 GALLERY_EVIDENCE_DIR=artifacts/image-http/rework-mobile node tests/image-http-integration/rework.browser.cjs
           GALLERY_TEST_PROVIDER=MOCK GALLERY_EVIDENCE_DIR=artifacts/image-http/fixed node tests/gallery-generation/browser.cjs
           GALLERY_EVIDENCE_DIR=artifacts/image-http/canvas node tests/gallery-generation/browser.cjs
           node tests/project-package/browser.cjs
