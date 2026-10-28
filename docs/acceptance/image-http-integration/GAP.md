@@ -1,0 +1,13 @@
+# P0 Gap Analysis — 2026-10-28 Asia/Shanghai
+
+Fresh fetch: main bcb6c1a7402ad4b4514feb4865c38d769d7244d1; #94 79080e450ff667eae7c2c8acd700b7b367752f12; #96 906cdea3558b1ae4f7ec2e54795033be02949966. #91/#92 and all available #92 comments reviewed. Existing HTTP RFC task remains unclaimed/no PR at read; owner Codex ACK posted before implementation. Local candidate combines original commits with merge commits in a NEW worktree only; no GitHub PR merge/main change.
+
+- Implemented/reusable: #94 strict fixed 1x1 server Mock; #96 local 320x240 Mock adapter, native decode, preview/discard/explicit adopt; common B/C owner state, atomic IndexedDB receipts, JSON/ZIP compatibility. Both individual HEADs have freshly retrieved successful check-runs (94:40526326955;96:40531592773 +40531592635). Those CI checks bind merge refs to source HEADs, not this combination.
+- Designed only: HTTP envelope, image authority, image-specific persistent ledger/reservations/reconciliation and supplier decode/moderation. Existing text principal resolver and text-price ledger do not establish image project permission or budget approval.
+- Must develop: executable v1 contract, strict Mock-only HTTP coordinator/negative tests, frontend polling/cancel adapter, test-only loopback wiring and full regression.
+- Manual gates: independent QA, merge/deploy approval, supplier/model/cost/environment approval, trusted project authority + durable image store before production/REAL. No keys read or paid transport invoked.
+- Ownership: #94 server/image-generation/provider.ts and #96 gallery files remain on their original branches. Integration-only modifications in new branch extend gallery/controller/panel and add separate HTTP modules/tests/docs; no concurrent new image PR/claim observed. #97 Supervisor files untouched.
+
+Baseline commands/results/environment on combined candidate are in logs/baseline.json and corresponding complete logs. This is developer self-test, not independent QA.
+
+Tooling: `gh --version` =>127 `zsh: command not found: gh`; Git2.50.1/Node24.22.0/npm11.19.1. Read-only path checks found no CLI at standard locations. Official install docs: https://github.com/cli/cli/blob/trunk/docs/install_macos.md . Use system curl verified TLS for public metadata; authenticated Safari/Desktop for authorized comments/branch publication, no credential inspection. Initial unquoted curl URL =>1 zsh NOMATCH; quoted URL fixed, exit0. Two discovery commands referenced absent glob/files (exit1/2); switched to existing file inventory, no product error or authentication change. zsh source: https://zsh.sourceforge.io/Doc/Release/Options.html .

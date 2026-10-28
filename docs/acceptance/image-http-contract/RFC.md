@@ -1,0 +1,31 @@
+# Image HTTP Contract v1 — isolated HTTP MOCK
+
+Status: implemented for isolated fixtures; production authorization and durable image accounting NOT IMPLEMENTED. Extends existing #92 task 6447681821 under owner's P0–P6 authorization. Sources: #94 provider at 79080e450ff667eae7c2c8acd700b7b367752f12; #96 Workshop at 906cdea3558b1ae4f7ec2e54795033be02949966; main bcb6c1a7402ad4b4514feb4865c38d769d7244d1. No production image route is registered.
+
+## Wire
+
+Single stable protocol `image-generation/1`, same-origin JSON. POST `/api/image-generations`, exactly one `Idempotency-Key` (16–128 ASCII alphanumeric/underscore/hyphen), body `{version:"image-generation/1",projectId:"…",prompt:"…"}` only. No provider/model/identity/price overrides. Request <=4096 UTF-8 bytes; prompt 1–500 UTF-16 units, <=2000 UTF-8 bytes, no controls. Strings are canonicalized by trimming prompt; project ID matches `[A-Za-z0-9_-]{1,128}`.
+
+Create => 202, including replay of an existing task; GET `/api/image-generations/:id` =>200; POST `/:id/cancel` with no body =>200. Envelope `{version,kind:"HTTP_MOCK",id,status,charge:"NONE"|"UNCERTAIN",expiresAt}`. `SUCCEEDED` additionally has `image:{kind:"MOCK",mimeType:"image/png",encoding:"base64",data,width,height}`. No URL or Uint8Array on wire. Failure optionally has `error:{code}`. Each response is `Cache-Control:no-store`, `X-Content-Type-Options:nosniff`, JSON; frontend enforces <=710000 bytes before JSON parse.
+
+Errors: `{version:"image-generation/1",error:{code,message:<constant generic message>}}`. `contract.ts` is the executable status table: 400 INVALID_INPUT;401 UNAUTHORIZED;403 FORBIDDEN/BUDGET_DENIED;404 NOT_FOUND;409 IDEMPOTENCY_CONFLICT;410 EXPIRED;413 PAYLOAD_TOO_LARGE;415 UNSUPPORTED_MEDIA;429 CAPACITY;502 PROVIDER_FAILED/INVALID_IMAGE;503 IMAGE_DISABLED/LEDGER_UNAVAILABLE/BILLING_UNCERTAIN;504 TIMEOUT. No exception text, upstream detail, prompt, account membership or credentials in responses/audit. Unknown resource/wrong owner uses 404. No CORS; cross-origin mutation rejected. Origin is a CSRF boundary, never identity.
+
+## Authority and idempotency
+
+Every create/read/replay/cancel resolves a server-trusted principal and independently rechecks project permission, including revocation. Browser projectId/workspaceId/local WriteAuthorization is only a selector. Deny anonymous, forged projects and cache retrieval after revocation. Production currently has a principal resolver for text generation but NO image project-membership authority: keep application image routes absent. Tests inject per-fixture identity and explicit membership, never enable a fixed production user or anonymous success.
+
+Key scope: protocol + principal + project + key. Same canonical body => same job and one dispatch; changed prompt =>409, even after failure/cancel. Network loss never triggers another create automatically. Client uses a new key only for explicit new attempt; uncertain creation/cancel warns against resubmission until reconciliation. Retain keys/tombstones for entire fixture lifetime; bounded capacity rejects admission rather than evicting keys and redispatching. Result retention 15 minutes, expired get/replay =>410 without releasing/reusing key.
+
+## State machine and deadlines
+
+QUEUED -> RUNNING -> SUCCEEDED | FAILED | CANCELLED | UNCERTAIN. QUEUED may cancel without dispatch. Terminal states immutable; repeated cancel returns current state. Running cancel/timeout fences late completion and aborts provider; Mock has known zero cost so CANCELLED/FAILED+NONE. Mock settlement uncertainty =>UNCERTAIN with no image. A late result cannot revive cancellation/timeout/expiry. Permission is rechecked before dispatch and result publication as well as retrieval. Concurrent fixture work bounded; all state is explicitly ephemeral, never a production budget ledger.
+
+OFFLINE Canvas/fixed MOCK retain 10-second controller cap. HTTP MOCK is asynchronous: each HTTP exchange <=10 seconds, polls report QUEUED/RUNNING, overall job deadline <=120 seconds. Client deadline abort/disposal requests best-effort cancellation with a separate bounded signal, drops results after project switch, and never adopts automatically. A lost cancel response is not evidence of successful cancellation. GET network interruption preserves pending job; no automatic POST retry. No paid fallback.
+
+## Image and resource boundary
+
+Server validates actual PNG signature/chunk CRC/order/IEND, rejects animation/metadata/unsupported formats, validates IHDR vs provider dimensions, bounded zlib raster length and scanline filters. Supported normalized subset: 8-bit noninterlaced gray/RGB/gray-alpha/RGBA static PNG; arbitrary supplier formats require future sandboxed decode/normalize. <=512KiB encoded PNG bytes; <=4096 each axis; <=16,777,216 pixels; decompressed raster <=64MiB plus bounded filter bytes. JSON base64 and browser data URL <=699100 chars; native browser decode mandatory before candidate adoption. Existing ProjectAsset 512KiB each/1MiB total/32 assets, gallery reference validation and ZIP/IndexedDB formats unchanged. No regeneration on oversized output: reject. Future conversion must have fixed CPU/memory budget and preserve independent safety review.
+
+## Durable paid design (not implemented)
+
+An image-specific transactional store must bind immutable price/policy/model/size/quality/n=1, reserve global UTC-day + principal UTC-day + project lifetime + owner-grant lifetime amounts in integer currency units atomically with unique scoped idempotency claim. Fence dispatch with durable lease epoch and pre-egress authority recheck. On success settle actual receipt/usage atomically and persist verified result. Known pre-egress failure releases reservation. Crash/disconnect/timeout/cancel after possible egress => durable UNCERTAIN, retain maximum reservation, freeze further paid work in affected scopes, no automatic retry/failover; operator reconciles supplier request ID + actual receipt before unfreezing. Store failures fail closed, never reset on restart; recovery must reconcile RUNNING leases to UNCERTAIN before admission. Multi-process and crash-injection acceptance is required. Current text ledger is not image-priced/project-authorized and cannot be reused by relabelling. In-memory fixture Map and injected budget faults prove HTTP semantics only.
