@@ -7,17 +7,18 @@ import { crc32, deflateSync } from 'node:zlib'
 import { createMockImageHandler } from '../../server/image-generation/coordinator.mjs'
 import { createImageProvider } from '../../server/image-generation/provider.ts'
 import { IMAGE_PROTOCOL, validJob } from '../../server/image-generation/contract.ts'
+import {createIsolatedMockProvider} from '../../server/image-generation/isolated-mock.mjs'
 import { validateMockPng } from '../../server/image-generation/validation.mjs'
 const input={version:IMAGE_PROTOCOL,projectId:'project-a',prompt:'一只小猫'}
 const fixture=createImageProvider({mode:'mock'})
 const png=()=>fixture.generate({prompt:'cat'},{signal:new AbortController().signal})
 async function harness(t,options={}) {
- let calls=0; const members=new Set(['alice/project-a','bob/project-b'])
- const provider=options.provider||{kind:'MOCK',async generate(...args){calls++;return fixture.generate(...args)}}
+ const members=new Set(['alice/project-a','bob/project-b'])
+ const provider=options.provider||createIsolatedMockProvider({moduleUrl:new URL('./worker-fixture.mjs',import.meta.url),dataForRequest:()=>({mode:options.mode||'normal',delayMs:options.delayMs||0})})
  const handler=createMockImageHandler({fixture:true,resolveIdentity:req=>req.headers['x-fixture-user'],authorizeProject:(p,id)=>members.has(`${p}/${id}`),provider,...options})
  const server=createServer(handler);server.requestTimeout=10000;server.headersTimeout=10000
  server.listen(0,'127.0.0.1');await once(server,'listening')
- t.after(()=>{handler.close?.();server.closeAllConnections();return new Promise(resolve=>server.close(resolve))})
+ t.after(async()=>{await handler.close?.();server.closeAllConnections();await new Promise(resolve=>server.close(resolve))})
  const base=`http://127.0.0.1:${server.address().port}`
  const send=async(path='',{user='alice',method=path?'GET':'POST',body=path?undefined:input,key='request-1234567890',headers={}}={})=>{
  const response=await fetch(base+'/api/image-generations'+path,{method,headers:{...(user?{'x-fixture-user':user}:{}),'Content-Type':'application/json','Idempotency-Key':key,...headers},...(body===undefined?{}:{body:typeof body==='string'?body:JSON.stringify(body)})})
@@ -25,7 +26,7 @@ async function harness(t,options={}) {
  return {status:response.status,body:await response.json()}
  }
  const settled=async id=>{for(let i=0;i<100;i++){const x=await send('/'+id);if(!['QUEUED','RUNNING'].includes(x.body.status))return x;await delay(5)}throw Error('fixture did not settle')}
- return {send,settled,base,members,handler,get calls(){return calls}}
+ return {send,settled,base,members,handler,get calls(){return provider.resources().spawned}}
 }
 test('HTTP MOCK: create/poll/replay is serializable, bounded, exactly one dispatch',async t=>{
  const h=await harness(t); const [a,b]=await Promise.all([h.send(),h.send()]);assert.equal(a.status,202);assert.equal(a.body.id,b.body.id)
@@ -58,17 +59,17 @@ test('HTTP MOCK: strict JSON, version, input bounds, duplicate key and cross-ori
  assert.equal(status,400);assert.equal(h.calls,0)
 })
 test('HTTP MOCK: cancel twice fences late provider success',async t=>{
- let finish;const h=await harness(t,{provider:{kind:'MOCK',generate:()=>new Promise(resolve=>{finish=resolve})}})
+ const h=await harness(t,{mode:'normal',delayMs:200})
  const a=await h.send();await delay(10)
  for(let i=0;i<2;i++)assert.equal((await h.send('/'+a.body.id+'/cancel',{method:'POST'})).body.status,'CANCELLED')
- finish(await png());await delay(10)
+ await delay(250)
  assert.equal((await h.send('/'+a.body.id)).body.status,'CANCELLED');assert.equal((await h.send()).body.id,a.body.id)
 })
 test('HTTP MOCK: timeout fences late success and provider errors are safe',async t=>{
- let finish;const h=await harness(t,{deadlineMs:15,provider:{kind:'MOCK',generate:()=>new Promise(resolve=>finish=resolve)}})
+ const h=await harness(t,{deadlineMs:60,mode:'hang'})
  const a=await h.send();const result=await h.settled(a.body.id);assert.equal(result.body.error.code,'TIMEOUT')
- finish(await png());await delay(5);assert.equal((await h.send('/'+a.body.id)).body.status,'FAILED')
- const broken=await harness(t,{provider:{kind:'MOCK',async generate(){throw Error('private-upstream-detail')}}})
+ await delay(50);assert.equal((await h.send('/'+a.body.id)).body.status,'FAILED')
+ const broken=await harness(t,{mode:'fail'})
  const b=await broken.send();const failure=await broken.settled(b.body.id)
  assert.equal(failure.body.error.code,'PROVIDER_FAILED');assert.ok(!JSON.stringify(failure).includes('private'))
 })
@@ -83,10 +84,10 @@ test('HTTP MOCK: budget denial and ledger outage prevent dispatch; uncertain set
  assert.equal((await h.send()).body.id,a.body.id);assert.equal(h.calls,1)
 })
 test('HTTP MOCK: bounded concurrency, immutable tombstones and expiry never redispatch',async t=>{
- let clock=100,finish;const h=await harness(t,{now:()=>clock,retentionMs:20,maxJobs:1,maxRunning:1,provider:{kind:'MOCK',generate:()=>new Promise(resolve=>finish=resolve)}})
+ let clock=100;const h=await harness(t,{now:()=>clock,retentionMs:20,maxJobs:1,maxRunning:1,mode:'hang'})
  const a=await h.send();assert.equal((await h.send('',{key:'another-1234567890'})).status,429)
  clock=121;assert.equal((await h.send('/'+a.body.id)).status,410);assert.equal((await h.send()).status,410)
- finish(await png());await delay(5);assert.equal((await h.send('',{key:'another-1234567890'})).status,429)
+ await delay(50);assert.equal((await h.send('',{key:'another-1234567890'})).status,429)
 })
 test('HTTP MOCK: missing authority defaults closed; live provider construction rejected',async t=>{
  const h=await harness(t,{fixture:false});assert.equal((await h.send()).body.error.code,'IMAGE_DISABLED');assert.equal(h.calls,0)
@@ -103,7 +104,7 @@ test('MOCK: byte-level PNG checks reject MIME, corruption, dimensions, oversize,
  assert.throws(()=>validateMockPng({...good,bytes:Buffer.concat([prefix,chunk('acTL',Buffer.alloc(8)),Buffer.from(good.bytes.slice(33))])}),{code:'INVALID_IMAGE'})
 })
 test('HTTP MOCK: invalid provider bytes fail safely through HTTP',async t=>{
- const h=await harness(t,{provider:{kind:'MOCK',async generate(){return {...await png(),mimeType:'image/jpeg'}}}})
+ const h=await harness(t,{mode:'bad-image'})
  const a=await h.send();assert.equal((await h.settled(a.body.id)).body.error.code,'INVALID_IMAGE')
 })
 

@@ -1,5 +1,5 @@
 import { randomUUID, createHash } from 'node:crypto'
-import { createImageProvider } from './provider.ts'
+import {createIsolatedMockProvider,isIsolatedMockProvider} from './isolated-mock.mjs'
 import { IMAGE_PROTOCOL, IMAGE_PATH, IMAGE_LIMITS, IMAGE_ERRORS, validInput, validKey } from './contract.ts'
 import { validateMockPng } from './validation.mjs'
 
@@ -28,8 +28,8 @@ export function createMockImageHandler(options) {
   }
   const {resolveIdentity,authorizeProject,now=Date.now,deadlineMs=IMAGE_LIMITS.jobDeadlineMs,
     retentionMs=IMAGE_LIMITS.retentionMs,maxJobs=256,maxRunning=4,
-    budget={admit(){},settle(){}},provider=createImageProvider({mode:'mock'})}=options
-  if (provider.kind!=='MOCK') throw failure('IMAGE_DISABLED')
+    budget={admit(){},settle(){}},provider=createIsolatedMockProvider()}=options
+  if (!isIsolatedMockProvider(provider)) throw failure('IMAGE_DISABLED')
   const jobs=new Map(), keys=new Map(), audit=[]; let running=0
   const record=(job,event) => { audit.push({id:job.id,projectTag:hash(job.projectId),event,at:now()}); if(audit.length>512) audit.shift() }
   const publish=job => ({version:IMAGE_PROTOCOL,kind:'HTTP_MOCK',id:job.id,status:job.status,charge:job.status==='UNCERTAIN'?'UNCERTAIN':'NONE',
@@ -98,6 +98,7 @@ export function createMockImageHandler(options) {
         if(now()>=existing.expiresAt) throw failure('EXPIRED')
         return reply(res,202,publish(existing))
       }
+      if(provider.resources().blocked) throw failure('IMAGE_DISABLED')
       if(jobs.size>=maxJobs||running>=maxRunning) throw failure('CAPACITY')
       // Atomic synchronous fixture admission, no await between uniqueness check and claim.
       try {const admission=budget.admit({kind:'MOCK',principal,projectId:input.projectId,maximum:0}); if(admission?.then) throw failure('LEDGER_UNAVAILABLE')}
@@ -113,6 +114,7 @@ export function createMockImageHandler(options) {
     }
   }
   handler.audit=()=>structuredClone(audit)
-  handler.close=()=>{for(const job of jobs.values()){if(!terminal(job))end(job,'CANCELLED');job.abort.abort();clearTimeout(job.timer)}}
+  handler.resources=()=>({running,...provider.resources()})
+  handler.close=async()=>{for(const job of jobs.values()){if(!terminal(job))end(job,'CANCELLED');job.abort.abort();clearTimeout(job.timer)}return provider.close()}
   return handler
 }
