@@ -39,7 +39,10 @@
     "test:mochi-proactive:browser": "node tests/mochi-proactive/browser.cjs",
     "test:mochi-proactive:offline": "npm --prefix server run build && node tools/mochi-proactive/sample.cjs --offline",
     "test:interactive-blocks": "npm --prefix server run build && node tools/project-zip-export/prepare.mjs && node --test tests/interactive-blocks/*.test.cjs",
-    "test:interactive-blocks:browser": "npm --prefix server run build && node tests/interactive-blocks/browser.cjs"
+    "test:interactive-blocks:browser": "npm --prefix server run build && node tests/interactive-blocks/browser.cjs",
+    "dev:image-http-fixture": "node tests/image-http-integration/serve.mjs",
+    "test:image-http-contract": "node --test tests/image-http-contract/*.test.mjs",
+    "test:image-http:browser": "GALLERY_TEST_PROVIDER=HTTP_MOCK node tests/gallery-generation/browser.cjs"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "5.3.0",
