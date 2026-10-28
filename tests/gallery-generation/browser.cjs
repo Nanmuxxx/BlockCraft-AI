@@ -257,6 +257,20 @@ async function main() {
         })
       }
       fixture.controls.mode='normal'
+      report.cases.push({id:'H11',status:'NOT RUN'})
+      await run('H11','HTTP MOCK asset JSON export imports into an empty context and restores after save/reload',async()=>{
+        const item=await fresh()
+        await item.page.locator('.project-json-landing-import input[type=file]').setInputFiles(path.join(output,'04-adopted.json'))
+        await expect(item.page.getByRole('heading',{name:'我的图库练习',exact:true})).toBeVisible()
+        assert.deepEqual(await project(item.page,'08-json-imported.json'),adopted)
+        await item.page.getByRole('button',{name:'保存到本机',exact:true}).click()
+        await expect(item.page.locator('.workspace-save')).toContainText('已保存到本机')
+        await item.page.reload()
+        await expect(item.page.getByRole('heading',{name:'我的图库练习',exact:true})).toBeVisible()
+        assert.deepEqual(await project(item.page,'09-json-reloaded.json'),adopted)
+        await closeContext(item.context)
+        return {emptyContext:true,fullProjectEqual:true,jsonImportSaveReload:true}
+      })
       report.httpRequests = fixture.requests; report.httpAudit = fixture.handler.audit()
       assert.ok(report.httpRequests.some(x => x.method === 'POST' && x.path === '/api/image-generations'))
       assert.ok(report.httpRequests.some(x => x.method === 'GET' && x.path.startsWith('/api/image-generations/')))

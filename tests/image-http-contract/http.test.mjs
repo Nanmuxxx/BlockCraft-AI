@@ -57,7 +57,7 @@ test('HTTP MOCK: strict JSON, version, input bounds, duplicate key and cross-ori
  const status=await new Promise(resolve=>{const req=request(h.base+'/api/image-generations',{method:'POST',headers:{'Content-Type':'application/json','x-fixture-user':'alice','Idempotency-Key':['request-1234567890','request-1234567890']}},res=>{res.resume();res.on('end',()=>resolve(res.statusCode))});req.end(JSON.stringify(input))})
  assert.equal(status,400);assert.equal(h.calls,0)
 })
-test('HTTP MOCK: cancel twice fences late provider success; new key is explicit new task',async t=>{
+test('HTTP MOCK: cancel twice fences late provider success',async t=>{
  let finish;const h=await harness(t,{provider:{kind:'MOCK',generate:()=>new Promise(resolve=>{finish=resolve})}})
  const a=await h.send();await delay(10)
  for(let i=0;i<2;i++)assert.equal((await h.send('/'+a.body.id+'/cancel',{method:'POST'})).body.status,'CANCELLED')
@@ -105,4 +105,16 @@ test('MOCK: byte-level PNG checks reject MIME, corruption, dimensions, oversize,
 test('HTTP MOCK: invalid provider bytes fail safely through HTTP',async t=>{
  const h=await harness(t,{provider:{kind:'MOCK',async generate(){return {...await png(),mimeType:'image/jpeg'}}}})
  const a=await h.send();assert.equal((await h.settled(a.body.id)).body.error.code,'INVALID_IMAGE')
+})
+
+test('HTTP MOCK: same key scoped across owners/projects; distinct keys execute concurrently',async t=>{
+ const h=await harness(t)
+ const results=await Promise.all([h.send(),h.send('',{key:'different-1234567890'}),h.send('',{user:'bob',body:{...input,projectId:'project-b'}})])
+ assert.equal(new Set(results.map(x=>x.body.id)).size,3)
+ for(const [i,x]of results.entries()){
+  const end= i===2 ? await h.send('/'+x.body.id,{user:'bob'}) : await h.settled(x.body.id)
+  assert.equal(end.body.status,'SUCCEEDED')
+ }
+ assert.equal(h.calls,3)
+ const replay=await h.send('',{body:{...input,prompt:'  '+input.prompt+'  '}});assert.equal(replay.body.id,results[0].body.id)
 })
