@@ -1,0 +1,5 @@
+classification: OFFLINE
+source: new files in this PR (final committed SHA in PR/#92 report)
+command: node node_modules/typescript/bin/tsc -p server/image-generation/tsconfig.json
+
+exit_code: 0

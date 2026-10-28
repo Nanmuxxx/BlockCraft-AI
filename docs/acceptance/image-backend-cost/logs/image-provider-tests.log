@@ -1,0 +1,19 @@
+classification: MOCK
+source: new files in this PR (final committed SHA in PR/#92 report)
+command: node --test tests/image-backend/provider.test.mjs
+✔ disabled by default; unrecognized/extra provider options never select live transport (0.505708ms)
+✔ explicit fixture is MOCK, bounded PNG with independent bytes on each call (0.56275ms)
+✔ prompt validation rejects override fields, invalid shape, controls and excessive input (0.254375ms)
+✔ cancellation before and during pending fixture delivery returns stable safe error (0.101042ms)
+✔ server guard refuses browser-like construction and subsequent use (0.254833ms)
+✔ current HTTP server has no image route and cannot route image payload to text provider (16.843209ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 103.997666
+
+exit_code: 0

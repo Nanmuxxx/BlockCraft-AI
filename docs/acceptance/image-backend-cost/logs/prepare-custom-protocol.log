@@ -1,0 +1,6 @@
+classification: MOCK (protocol compiler OFFLINE)
+tested_sha: bcb6c1a7402ad4b4514feb4865c38d769d7244d1
+command: node server/custom-block/build-protocol.mjs
+Trusted Phase 1A protocol compiled; no component source compiled or executed.
+
+exit_code: 0

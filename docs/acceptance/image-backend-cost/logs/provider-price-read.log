@@ -1,0 +1,9 @@
+source: https://www.alibabacloud.com/help/en/model-studio/model-pricing
+query_date: 2026-10-27 Asia/Shanghai
+command: curl -fsSL --max-time 30 https://www.alibabacloud.com/help/en/model-studio/model-pricing -o /tmp/blockcraft-image-pricing-20261027.html
+exit_code: 0
+html_sha256: 8c2618fca5e058b70aa983118bd5d32f014326a107ff25d87e122bddca848211
+selected billing rows (Singapore International; not a full copied page):
+qwen-image-2.0-2026-03-03 International $0.035/image 100 images China (Beijing) Model ID Deployment
+qwen-image-2.1-turbo International $0.016/image 10 images qwen-image-2.0-pro International $0.075/im
+qwen-image-3.0 International 1k $0.003/image $0.03/image 10 images 2k $0.03/image China (Beijing) Mo
