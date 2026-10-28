@@ -12,21 +12,25 @@ const report = { mode: 'OFFLINE_CANVAS', passed: false, cases: Array.from({ leng
   notRun: ['M06 live-provider billing independence', 'M10 live-provider reservations, uncertain charges and credential rotation', 'real image-model quality/cost'],
   externalRequests: [], aiRequests: [], pageErrors: [] }
 const sha = bytes => createHash('sha256').update(bytes).digest('hex')
-const mockMode = process.env.GALLERY_TEST_PROVIDER === 'MOCK'
+const httpMode = process.env.GALLERY_TEST_PROVIDER === 'HTTP_MOCK'
+const mockMode = httpMode || process.env.GALLERY_TEST_PROVIDER === 'MOCK'
+const imageWidth = httpMode ? 1 : 320, imageHeight = httpMode ? 1 : 240
 if (mockMode) {
-  report.mode = 'MOCK_FIXED_BROWSER_SOURCE'
+  report.mode = httpMode ? 'HTTP_MOCK_LOOPBACK_SERVER' : 'MOCK_FIXED_BROWSER_SOURCE'
   report.cases.push({ id: 'W01', status: 'NOT RUN' }, { id: 'W02', status: 'NOT RUN' })
 }
-const generateButton = mockMode ? '生成一张 Mock 测试图片' : '生成一张离线示例'
-const previewName = mockMode ? '待采用的 Mock 图片预览' : '待采用的离线图片预览'
+const generateButton = httpMode ? '生成一张 HTTP Mock 测试图片' : mockMode ? '生成一张 Mock 测试图片' : '生成一张离线示例'
+const previewName = httpMode ? '待采用的 HTTP Mock 图片预览' : mockMode ? '待采用的 Mock 图片预览' : '待采用的离线图片预览'
 async function main() {
   await fs.mkdir(output, { recursive: true })
   const { createServer } = await import('vite')
   const fontRoot = path.dirname(require.resolve('@fontsource/pixelify-sans/package.json'))
-  const server = await createServer({ root, server: { host: '127.0.0.1', port: 0, fs: { allow: [root, fontRoot] } },
-    plugins: [{ name: 'offline-acceptance-api-denial', configureServer(s) {
+  const fixture = httpMode ? (await import('../image-http-integration/fixture.mjs')).createHttpMockFixture() : null
+  const server = await createServer({ root,
+    define: { 'import.meta.env.VITE_IMAGE_HTTP_FIXTURE': JSON.stringify(httpMode ? '1' : '0') }, server: { host: '127.0.0.1', port: 0, fs: { allow: [root, fontRoot] } },
+    plugins: [...(fixture ? [fixture.plugin] : []), { name: 'offline-acceptance-api-denial', configureServer(s) {
       s.middlewares.use((req, res, next) => {
-        if (!req.url.startsWith('/api/')) return next()
+        if (!req.url.startsWith('/api/') || (httpMode && req.url.startsWith('/api/image-generations'))) return next()
         res.statusCode = 503; res.setHeader('Content-Type', 'application/json')
         res.end(JSON.stringify({ enabled: false, error: { code: 'OFFLINE_ACCEPTANCE' } }))
       })
@@ -62,6 +66,7 @@ async function main() {
       await context.route('**/*', route => {
         const url = new URL(route.request().url())
         if (url.origin !== origin) { report.externalRequests.push(url.origin + url.pathname); return route.abort() }
+        if (httpMode && url.pathname.startsWith('/api/image-generations')) return route.continue()
         if (url.pathname.startsWith('/api/')) {
           if (!['/api/studio/status', '/api/mochi-plan/status'].includes(url.pathname) && route.request().method() !== 'GET') report.aiRequests.push(url.pathname)
           return route.fulfill({ status: 503, json: { enabled: false, error: { code: 'OFFLINE_ACCEPTANCE' } } })
@@ -101,8 +106,8 @@ async function main() {
     await page.getByRole('button', { name: '打开离线图库', exact: true }).click()
     await expect(page.getByRole('heading', { name: '我的图库练习', exact: true })).toBeVisible()
     if (mockMode) {
-      await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption('MOCK')
-      await expect(page.locator('.gallery-generation')).toContainText('每次返回同一张固定图片，与描述无关')
+      await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption(httpMode ? 'HTTP_MOCK' : 'MOCK')
+      await expect(page.locator('.gallery-generation')).toContainText(httpMode ? 'HTTP MOCK 隔离测试' : '每次返回同一张固定图片，与描述无关')
       await page.getByRole('textbox', { name: '图片描述', exact: true }).fill('Mock 验收：一只小猫')
     }
     const before = await project(page, '01-before.json')
@@ -119,7 +124,7 @@ async function main() {
       assert.deepEqual(await project(page, '03-cancelled.json'), before)
       if (mockMode) {
         await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption('OFFLINE_CANVAS')
-        await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption('MOCK')
+        await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption(httpMode ? 'HTTP_MOCK' : 'MOCK')
         await expect(page.getByRole('textbox', { name: '图片描述', exact: true })).toHaveValue('Mock 验收：一只小猫')
         await page.getByRole('textbox', { name: '图片描述', exact: true }).fill('Mock 验收：另一段描述')
       }
@@ -132,7 +137,7 @@ async function main() {
       candidate = await page.getByRole('img', { name: previewName, exact: true }).evaluate(async img => {
         await img.decode(); return { src: img.src, width: img.naturalWidth, height: img.naturalHeight }
       })
-      assert.equal(candidate.width, 320); assert.equal(candidate.height, 240)
+      assert.equal(candidate.width, imageWidth); assert.equal(candidate.height, imageHeight)
       const layout = await page.locator('.gallery-generation').evaluate(panel => {
         const rect = panel.getBoundingClientRect()
         return { left: rect.left, right: rect.right, viewport: window.innerWidth }
@@ -158,7 +163,7 @@ async function main() {
       await page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
       const image = page.locator('#generated-preview img').filter({ visible: true })
       await expect(image).toHaveCount(1); await expect(image).toHaveAttribute('src', candidate.src)
-      await expect(image).toHaveJSProperty('naturalWidth', 320)
+      await expect(image).toHaveJSProperty('naturalWidth', imageWidth)
       assert.deepEqual(await project(page, '05-c-mode.json'), adopted)
       await screenshot(page, '03-adopted-c-mode.png')
       return { revision: adopted.revision, assetId: ids[0], receipt: stored.receipts[0], storageSequence: stored.sequence }
@@ -197,7 +202,7 @@ async function main() {
       await expect(clean.page.getByRole('heading', { name: '我的图库练习', exact: true })).toBeVisible()
       await clean.page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
       await expect(clean.page.locator('#generated-preview img')).toHaveAttribute('src', candidate.src)
-      await expect(clean.page.locator('#generated-preview img')).toHaveJSProperty('naturalWidth', 320)
+      await expect(clean.page.locator('#generated-preview img')).toHaveJSProperty('naturalWidth', imageWidth)
       await screenshot(clean.page, '06-isolated-import-restored.png')
       await closeContext(clean.context)
       return { zipSha256: sha(zip.bytes), members: contents.map(f => ({ path: f.path, bytes: f.bytes.length, sha256: sha(Buffer.from(f.bytes)) })),
@@ -235,6 +240,28 @@ async function main() {
       const evidence = await item.page.evaluate(async method => (await import('/tests/gallery-generation/browser-cases.js'))[method](), method)
       await closeContext(item.context); return evidence
     })
+    if (fixture) {
+      for (const [id, mode, serverMode] of [
+        ['H01','forbidden','normal'], ['H02','provider-failure','fail'], ['H03','bad-image','bad-image'],
+        ['H04','cancel','late'], ['H05','deadline','late'], ['H06','request-timeout','slow-response'],
+        ['H07','dispose','late'], ['H08','storage','normal'], ['H09','adopt','normal'], ['H10','network','normal'],
+      ]) {
+        report.cases.push({id,status:'NOT RUN'})
+        await run(id, `HTTP MOCK ${mode}: real loopback handler with fixture fault, preserve prior work`, async () => {
+          fixture.controls.mode=serverMode; fixture.controls.delayMs=150
+          const item=await fresh()
+          if(mode==='network') await item.page.route('**/api/image-generations/*',route => route.abort('connectionreset'))
+          const evidence=await item.page.evaluate(async mode => (await import('/tests/image-http-integration/browser-cases.js')).httpCase(mode),mode)
+          await closeContext(item.context)
+          return evidence
+        })
+      }
+      fixture.controls.mode='normal'
+      report.httpRequests = fixture.requests; report.httpAudit = fixture.handler.audit()
+      assert.ok(report.httpRequests.some(x => x.method === 'POST' && x.path === '/api/image-generations'))
+      assert.ok(report.httpRequests.some(x => x.method === 'GET' && x.path.startsWith('/api/image-generations/')))
+      assert.ok(report.httpAudit.some(x => x.event === 'SUCCEEDED'))
+    }
     assert.deepEqual(report.externalRequests, []); assert.deepEqual(report.aiRequests, []); assert.deepEqual(report.pageErrors, [])
     report.passed = true
   } catch (error) {

@@ -32,11 +32,11 @@ export function validJob(value: unknown): value is ImageJob {
     || !/^[a-f0-9-]{36}$/.test(x.id) || !Number.isSafeInteger(x.expiresAt)
     || !['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'CANCELLED', 'UNCERTAIN'].includes(x.status)
     || x.charge !== (x.status === 'UNCERTAIN' ? 'UNCERTAIN' : 'NONE')) return false
-  if (x.status !== 'SUCCEEDED') return !x.image && (!x.error || Object.hasOwn(IMAGE_ERRORS, x.error.code))
+  if (x.status !== 'SUCCEEDED') return !x.image && (!x.error || Object.prototype.hasOwnProperty.call(IMAGE_ERRORS, x.error.code))
   const i = x.image
   return !x.error && !!i && i.kind === 'MOCK' && i.mimeType === 'image/png' && i.encoding === 'base64'
     && typeof i.data === 'string' && i.data.length <= Math.ceil(IMAGE_LIMITS.pngBytes / 3) * 4
-    && /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(i.data)
+    && i.data.length > 0 && i.data.length % 4 === 0 && /^[A-Za-z0-9+/]*={0,2}$/.test(i.data)
     && Number.isSafeInteger(i.width) && Number.isSafeInteger(i.height)
     && i.width > 0 && i.height > 0 && i.width <= IMAGE_LIMITS.width && i.height <= IMAGE_LIMITS.height
     && i.width * i.height <= IMAGE_LIMITS.pixels

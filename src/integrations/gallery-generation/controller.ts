@@ -78,7 +78,7 @@ async function decodePng(dataUrl: string, signal: AbortSignal) {
 
 /** One candidate and one confirmation per controller; the project remains untouched
  * until the workspace transaction commits. The provider never owns project state. */
-export function createGalleryImageController(workspace: WorkspaceSession, provider: ImageProvider = offlineImageProvider, timeoutMs = 10_000, source: 'OFFLINE_CANVAS' | 'MOCK' = 'OFFLINE_CANVAS') {
+export function createGalleryImageController(workspace: WorkspaceSession, provider: ImageProvider = offlineImageProvider, timeoutMs = 10_000, source: 'OFFLINE_CANVAS' | 'MOCK' | 'HTTP_MOCK' = 'OFFLINE_CANVAS') {
   const runtime = workspace.runtime, owner = runtime.customProject
   let state: GalleryGenerationView = Object.freeze({ phase: 'idle', candidate: null, message: '' })
   let active: AbortController | null = null, disposed = false, confirming: Promise<void> | null = null
@@ -89,6 +89,7 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
   }
   return {
     getSnapshot: () => state,
+    reportHttpStatus(status: string) { if (active) update({ message: `HTTP MOCK：${status}；测试图片尚未加入作品。` }) },
     subscribe(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener) } },
     async generate(prompt: string, targetId: string) {
       if (disposed || active || confirming) return
@@ -97,13 +98,13 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
       const gallery = expected.base.spec.blocks.find(b => b.id === targetId && b.type === 'gallery')
       if (!gallery || !workspace.isCurrent(expected, authorization)) { update({ phase: 'failed', message: '请先选择可编辑图库。' }); return }
       const controller = new AbortController(); active = controller
-      const timer = setTimeout(() => controller.abort(), timeoutMs)
-      update({ phase: 'generating', candidate: null, message: source === 'MOCK' ? '正在加载固定 Mock 测试图片，不调用 AI 模型…' : '正在生成离线示例，不调用 AI 模型…' })
+      const timer = source === 'HTTP_MOCK' ? undefined : setTimeout(() => controller.abort(), timeoutMs)
+      update({ phase: 'generating', candidate: null, message: source === 'HTTP_MOCK' ? 'HTTP MOCK：正在提交并查询测试任务；不调用 AI 模型…' : source === 'MOCK' ? '正在加载固定 Mock 测试图片，不调用 AI 模型…' : '正在生成离线示例，不调用 AI 模型…' })
       try {
         const dataUrl = await bounded(provider.generate(prompt.trim(), controller.signal), controller.signal)
         controller.signal.throwIfAborted()
         if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/png;base64,') || dataUrl.length > 699100) throw new Error('候选必须是限额内的静态 PNG。')
-        const asset: ProjectAsset = { id: `image-${crypto.randomUUID()}`, name: source === 'MOCK' ? 'Mock测试图片.png' : '离线插图.png', altText: source === 'MOCK' ? '固定 Mock 测试风景图，与描述无关' : '离线练习风景图', mimeType: 'image/png', dataUrl }
+        const asset: ProjectAsset = { id: `image-${crypto.randomUUID()}`, name: source !== 'OFFLINE_CANVAS' ? 'Mock测试图片.png' : '离线插图.png', altText: source !== 'OFFLINE_CANVAS' ? '固定 Mock 测试风景图，与描述无关' : '离线练习风景图', mimeType: 'image/png', dataUrl }
         const commands = [{ type: 'addProjectAsset' as const, asset }, { type: 'configureGallery' as const, blockId: targetId,
           imageIds: [...(gallery as Extract<typeof gallery, { type: 'gallery' }>).imageIds, asset.id] }]
         const requestId = `confirm-${crypto.randomUUID()}`
@@ -148,7 +149,7 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
     cancel() {
       if (confirming) return
       active?.abort(); active = null
-      update({ phase: 'idle', candidate: null, message: '已取消；原作品未更改，没有模型调用或费用。' })
+      update({ phase: 'idle', candidate: null, message: source === 'HTTP_MOCK' ? '已停止等待 HTTP MOCK；已请求取消，结果可能尚未确认，原作品未更改。' : '已取消；原作品未更改，没有模型调用或费用。' })
     },
     dispose() { disposed = true; active?.abort(); active = null; listeners.clear() },
   }
