@@ -1,0 +1,53 @@
+
+> test
+> npm run build && node --test *.test.mjs
+
+
+> build
+> tsc -p tsconfig.json
+
+✔ health works without a key and never calls upstream (20.242292ms)
+✔ missing key produces safe 503 without upstream call (4.511042ms)
+✔ invalid idea, unexpected fields, and malformed JSON never reach upstream (8.273875ms)
+✔ body byte limit and content type are enforced before upstream (2.877292ms)
+✔ chunked body cannot bypass byte limit (2.075958ms)
+✔ mock valid result uses official endpoint, default model, JSON mode, and actual AppSpec source (3.786791ms)
+✔ DEEPSEEK_MODEL overrides the default server-side (0.996917ms)
+✔ rejects non-JSON model content with the existing validator and safe errors (0.788458ms)
+✔ rejects wrong protocol with the existing validator and safe errors (0.759792ms)
+✔ rejects extra executable property with the existing validator and safe errors (1.189375ms)
+✔ rejects missing binding with the existing validator and safe errors (1.605041ms)
+✔ rejects cross-entity field with the existing validator and safe errors (1.190708ms)
+✔ handles malformed upstream JSON (1.664083ms)
+✔ handles truncated output (1.269ms)
+✔ handles empty choices (0.890625ms)
+✔ handles upstream HTTP failure (0.940292ms)
+✔ handles oversized envelope (1.006125ms)
+✔ handles oversized generated content (1.001708ms)
+✔ rejects ambiguous completion: multiple choices (0.904375ms)
+✔ rejects ambiguous completion: tool calls (0.686875ms)
+✔ rejects ambiguous completion: legacy function call (0.74375ms)
+✔ rejects ambiguous completion: refusal with content (1.16125ms)
+✔ rejects ambiguous completion: wrong message role (0.625917ms)
+✔ rejects ambiguous completion: error with choices (0.58575ms)
+✔ invalid UTF-8 input is rejected before upstream, even inside valid JSON strings (0.706ms)
+✔ invalid UTF-8 upstream cannot silently replace bytes inside an otherwise valid AppSpec (0.896166ms)
+✔ timeout aborts an upstream call and returns safe 504 (26.722875ms)
+✔ timeout also covers upstream body consumption (27.894791ms)
+✔ rate limit ignores forged forwarding headers and leaves health available (9.307834ms)
+✔ concurrency cap rejects excess calls without starting another upstream request (7.463041ms)
+✔ cross-origin requests and wrong methods/paths never call upstream (1.596417ms)
+✔ deadline releases ignored-abort transport and cancels its late response body (12.233583ms)
+✔ HTTP and declared-size rejection cancel unused upstream bodies without blocking admission (1.574ms)
+✔ deadline releases ignored-abort body, including nonsettling cancel (12.268791ms)
+✔ timed-out requests do not retain concurrency slots (24.257417ms)
+✔ HTTP disconnect aborts upstream and releases admission even when transport ignores cancellation (5.745416ms)
+✔ disconnect at input completion prevents a generation call before upstream dispatch (1.565958ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 248.611458

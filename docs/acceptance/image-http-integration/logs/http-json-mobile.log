@@ -1,0 +1,141 @@
+PASS M00: local worktree identity and served source
+PASS M01: one candidate, no project change before confirmation; discard preserves original
+PASS M02: preview decodes and identifies actual PNG bytes, size and destination
+PASS M03: confirm saves one asset and reference atomically; B and C expose identical bytes
+PASS M04: page reload restores the latest saved project, references and image bytes
+PASS M05: ZIP crosses an empty browser context; imported JSON/ZIP and decoded PNG match
+PASS M06: provider, retrieval, decode, format and capacity failures preserve old project
+PASS M07: quota/transaction abort preserve old head; activation failure recovers committed head
+PASS M08: duplicate confirmation, lost response and restored receipt never append twice
+PASS M09: edit, removed target, changed workspace and revoked permission reject stale candidates
+PASS M10: cancellation and timeout never adopt, retry or invoke a live provider
+PASS M11: old IndexedDB backups and absent/empty/existing assets retain compatibility
+PASS M12: exact and exceeded image, total, count, JSON and ZIP boundaries
+PASS M13: two tabs conflict instead of overwriting the newer saved head
+PASS W01: Mock envelope bounds, metadata and native image validation preserve project/storage
+PASS W02: Mock input/duplicate generation/cancel/late response isolation and duplicate adoption
+PASS H01: HTTP MOCK forbidden: real loopback handler with fixture fault, preserve prior work
+PASS H02: HTTP MOCK provider-failure: real loopback handler with fixture fault, preserve prior work
+PASS H03: HTTP MOCK bad-image: real loopback handler with fixture fault, preserve prior work
+PASS H04: HTTP MOCK cancel: real loopback handler with fixture fault, preserve prior work
+PASS H05: HTTP MOCK deadline: real loopback handler with fixture fault, preserve prior work
+PASS H06: HTTP MOCK request-timeout: real loopback handler with fixture fault, preserve prior work
+PASS H07: HTTP MOCK dispose: real loopback handler with fixture fault, preserve prior work
+PASS H08: HTTP MOCK storage: real loopback handler with fixture fault, preserve prior work
+PASS H09: HTTP MOCK adopt: real loopback handler with fixture fault, preserve prior work
+PASS H10: HTTP MOCK network: real loopback handler with fixture fault, preserve prior work
+PASS H11: HTTP MOCK asset JSON export imports into an empty context and restores after save/reload
+{
+  "passed": true,
+  "cases": [
+    {
+      "id": "M00",
+      "status": "PASS"
+    },
+    {
+      "id": "M01",
+      "status": "PASS"
+    },
+    {
+      "id": "M02",
+      "status": "PASS"
+    },
+    {
+      "id": "M03",
+      "status": "PASS"
+    },
+    {
+      "id": "M04",
+      "status": "PASS"
+    },
+    {
+      "id": "M05",
+      "status": "PASS"
+    },
+    {
+      "id": "M06",
+      "status": "PASS"
+    },
+    {
+      "id": "M07",
+      "status": "PASS"
+    },
+    {
+      "id": "M08",
+      "status": "PASS"
+    },
+    {
+      "id": "M09",
+      "status": "PASS"
+    },
+    {
+      "id": "M10",
+      "status": "PASS"
+    },
+    {
+      "id": "M11",
+      "status": "PASS"
+    },
+    {
+      "id": "M12",
+      "status": "PASS"
+    },
+    {
+      "id": "M13",
+      "status": "PASS"
+    },
+    {
+      "id": "W01",
+      "status": "PASS"
+    },
+    {
+      "id": "W02",
+      "status": "PASS"
+    },
+    {
+      "id": "H01",
+      "status": "PASS"
+    },
+    {
+      "id": "H02",
+      "status": "PASS"
+    },
+    {
+      "id": "H03",
+      "status": "PASS"
+    },
+    {
+      "id": "H04",
+      "status": "PASS"
+    },
+    {
+      "id": "H05",
+      "status": "PASS"
+    },
+    {
+      "id": "H06",
+      "status": "PASS"
+    },
+    {
+      "id": "H07",
+      "status": "PASS"
+    },
+    {
+      "id": "H08",
+      "status": "PASS"
+    },
+    {
+      "id": "H09",
+      "status": "PASS"
+    },
+    {
+      "id": "H10",
+      "status": "PASS"
+    },
+    {
+      "id": "H11",
+      "status": "PASS"
+    }
+  ],
+  "output": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/.cache/http-mock/json-mobile"
+}

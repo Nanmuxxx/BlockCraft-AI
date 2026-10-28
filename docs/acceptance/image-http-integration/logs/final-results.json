@@ -1,0 +1,114 @@
+{
+  "sha": "7011425b2c891d674a0ad59d73856d958c27d236",
+  "status": "?? docs/acceptance/image-http-integration/logs/browser-results.json\n",
+  "environment": "macOS-26.6-arm64-arm-64bit-Mach-O",
+  "node": "v24.22.0",
+  "npm": "11.19.1",
+  "records": [
+    {
+      "classification": "OFFLINE",
+      "command": "node node_modules/typescript/bin/tsc -b",
+      "exit_code": 0,
+      "seconds": 1.41,
+      "log": "typecheck.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "node node_modules/typescript/bin/tsc -p server/image-generation/tsconfig.json",
+      "exit_code": 0,
+      "seconds": 0.33,
+      "log": "provider-types.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "VITE_IMAGE_HTTP_FIXTURE=1 npm run build",
+      "exit_code": 0,
+      "seconds": 1.83,
+      "log": "production-build.log"
+    },
+    {
+      "classification": "MOCK",
+      "command": "npm --prefix server test",
+      "exit_code": 0,
+      "seconds": 0.65,
+      "log": "server.log"
+    },
+    {
+      "classification": "OFFLINE/MOCK/HTTP MOCK",
+      "command": "node --test tests/image-backend/provider.test.mjs tests/image-http-contract/*.test.mjs",
+      "exit_code": 0,
+      "seconds": 0.22,
+      "log": "contracts.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "npm test",
+      "exit_code": 0,
+      "seconds": 1.38,
+      "log": "default.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "node tools/project-zip-export/prepare.mjs",
+      "exit_code": 0,
+      "seconds": 0.3,
+      "log": "prepare-export.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "node --test tests/project-json/*.test.cjs tests/project-package/*.test.cjs tests/custom-block-bc/*.test.cjs tests/workshop-export/*.test.*",
+      "exit_code": 0,
+      "seconds": 1.26,
+      "log": "regressions.log"
+    },
+    {
+      "classification": "MOCK",
+      "command": "npm run test:generation",
+      "exit_code": 0,
+      "seconds": 29.26,
+      "log": "generation.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules node tests/image-http-integration/production.cjs",
+      "exit_code": 0,
+      "seconds": 0.7,
+      "log": "production-browser.log"
+    },
+    {
+      "classification": "HTTP MOCK",
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_EVIDENCE_DIR=.cache/http-mock/final-desktop node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 17.81,
+      "log": "final-http-desktop.log"
+    },
+    {
+      "classification": "HTTP MOCK",
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_VIEWPORT_WIDTH=390 GALLERY_EVIDENCE_DIR=.cache/http-mock/final-mobile node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 17.6,
+      "log": "final-http-mobile.log"
+    },
+    {
+      "classification": "MOCK",
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules GALLERY_TEST_PROVIDER=MOCK GALLERY_EVIDENCE_DIR=.cache/http-mock/final-fixed node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 13.76,
+      "log": "final-fixed.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules GALLERY_EVIDENCE_DIR=.cache/http-mock/final-canvas node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 13.49,
+      "log": "final-canvas.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules node tests/project-package/browser.cjs",
+      "exit_code": 0,
+      "seconds": 2.72,
+      "log": "zip-browser.log"
+    }
+  ]
+}

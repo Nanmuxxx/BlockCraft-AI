@@ -1,0 +1,23 @@
+{
+  "sha": "16143d1791b294ebd121f81b538f555fd04e55c2",
+  "records": [
+    {
+      "command": "node --test tests/image-backend/provider.test.mjs tests/image-http-contract/*.test.mjs",
+      "exit_code": 0,
+      "seconds": 0.23,
+      "log": "contracts-json.log"
+    },
+    {
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_EVIDENCE_DIR=.cache/http-mock/json-desktop node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 18.35,
+      "log": "http-json-desktop.log"
+    },
+    {
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_VIEWPORT_WIDTH=390 GALLERY_EVIDENCE_DIR=.cache/http-mock/json-mobile node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 18.55,
+      "log": "http-json-mobile.log"
+    }
+  ]
+}
