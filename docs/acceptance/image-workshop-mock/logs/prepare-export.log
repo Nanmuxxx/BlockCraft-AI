@@ -1,0 +1,4 @@
+classification: OFFLINE
+command: node tools/project-zip-export/prepare.mjs
+
+exit_code: 0

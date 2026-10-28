@@ -2,6 +2,15 @@
 
 本套验收只使用 Canvas PNG。运行时创建独立浏览器上下文，拦截全部外网和 `/api/` 请求，不启动模型服务，不访问使用者的 Chrome 配置或 IndexedDB。不代表真实 AI 图像生成、供应商计费或线上部署验收。
 
+也可使用 `GALLERY_TEST_PROVIDER=MOCK` 执行固定 Mock 图片主流程及 W01/W02 负面测试。该模式的字节源在浏览器本地，不导入服务端 Provider，不构造假 HTTP 成功响应。现有故障/兼容性场景仍复用隔离替身；报告 mode 明确区分 `MOCK_FIXED_BROWSER_SOURCE` 与 `OFFLINE_CANVAS`。
+
+```sh
+NODE_PATH=/path/to/playwright/node_modules GALLERY_TEST_PROVIDER=MOCK GALLERY_EVIDENCE_DIR=.cache/gallery-mock/browser node tests/gallery-generation/browser.cjs
+# 可加 GALLERY_VIEWPORT_WIDTH=390 检查移动宽度下的同一交互闭环。
+```
+
+W01 覆盖响应形状、来源、MIME、字节/像素上限、尺寸不一致、CRC、截断、动画和原生解码失败，拒绝后项目和 IndexedDB 不变；精确 512 KiB 的有效 PNG 必须接收。W02 覆盖非法新输入清除旧候选、重复提交/采用、取消后新请求与晚到旧结果隔离、超时及释放。固定 Mock 图片为 320×240、1092 字节，与描述无关；界面与导出资产元数据明确标注 Mock。
+
 ## 运行
 
 依赖项目已有依赖、Playwright 和 Chromium。若 Playwright 不在项目依赖中，可通过当前进程的 `NODE_PATH` 指向已有安装；`PLAYWRIGHT_CHROMIUM_EXECUTABLE` 可指定本机 Chrome。不要把密钥作为参数。

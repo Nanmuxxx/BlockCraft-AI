@@ -1,0 +1,4 @@
+classification: OFFLINE
+command: node node_modules/typescript/bin/tsc -b
+
+exit_code: 0
