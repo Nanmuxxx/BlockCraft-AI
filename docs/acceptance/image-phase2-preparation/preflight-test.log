@@ -1,0 +1,19 @@
+✔ OFFLINE injected transport: zero-default egress and exact HTTPS URL policy (1.380917ms)
+✔ OFFLINE: all resolved records must be public IPv4; no IPv6/mapped/private/special fallback (1.03075ms)
+✔ OFFLINE: pinned connection uses original TLS hostname, no agent/cookies/auth, single GET, validated bytes (2.231875ms)
+✔ OFFLINE: redirects, incorrect MIME/compression/length and oversized streamed bodies rejected without retry (1.305083ms)
+✔ OFFLINE: abort and timeout bound stuck response; no second dispatch before actual close (31.396583ms)
+✔ OFFLINE: DNS timeout holds capacity and late DNS completion cannot open a socket (21.3355ms)
+✔ OFFLINE: safe diagnostics never include upstream message or signed URL; pre-abort zero dispatch (0.234417ms)
+✔ OFFLINE: genuine bounded PNG bytes, dimensions, ownership, hash and base64 round-trip (4.556042ms)
+✔ OFFLINE: rejects malformed/animated/metadata/oversized/dimension-mismatched images (0.990708ms)
+✔ OFFLINE: canonical base64 only, bounded before decode and no URL/whitespace (0.094458ms)
+✔ OFFLINE: maximum admitted 1024-square image stays within scanline budget (6.321208ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 108.89675

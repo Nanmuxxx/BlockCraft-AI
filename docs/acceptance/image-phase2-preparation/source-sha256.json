@@ -1,0 +1,7 @@
+{
+  "server/image-generation/preflight/png.mjs": "7af2a5e9b15a1410f282f14927f9a3f7ad0d9b3d3da458f4dd03762e0f0f92d9",
+  "server/image-generation/preflight/download.mjs": "5cc6c02c2b5f220aecfdea546df6d568ec8e9d51ea323e8f7339a8e95f7e015a",
+  "tests/image-preflight/png.test.mjs": "bd329ca95cc79b6d7af5fb48e0a06317a53ee5b396b66294e5a789b4904baacf",
+  "tests/image-preflight/fixtures.mjs": "6f0aeabc587872595025b1486a315b6a60ec06263d819e7eb1761abc11715fec",
+  "tests/image-preflight/download.test.mjs": "5df73c3f8f27eb4951ccbd62209393e1c676c9fb3ad945ad1b4dcf379f9f7b4d"
+}

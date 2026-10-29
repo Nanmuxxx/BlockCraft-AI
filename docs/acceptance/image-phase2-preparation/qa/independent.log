@@ -1,0 +1,16 @@
+✔ QA PNG parser: exact 512 KiB accepted and +1 denied without changing valid bytes (36.080167ms)
+✔ QA PNG parser: duplicate IHDR, non-contiguous IDAT, high-bit chunk, overinflation and concatenated zlib denied (6.752875ms)
+✔ QA maximum raster: dimensions and hashes based on actual decoded bounded bytes (6.233625ms)
+✔ QA abort while headers pending: late response destroyed and never delivers a candidate (1.815875ms)
+✔ QA truncated response/connection: failed, safe diagnostics, one request (0.555916ms)
+✔ QA native-like premature close rejects before successful candidate (0.246625ms)
+✔ QA success cannot release slot until request close; new request busy (0.270333ms)
+✔ QA DNS abort resolution: late public address cannot cause a request (0.217333ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 95.013333

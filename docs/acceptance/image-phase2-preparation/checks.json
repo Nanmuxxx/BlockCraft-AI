@@ -1,0 +1,124 @@
+{
+  "source_sha": "26a97e3eac2ff5f816621c2265b29e4ae4a0a804",
+  "platform": "macOS-26.6-arm64-arm-64bit-Mach-O",
+  "results": [
+    {
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-b"
+      ],
+      "exit": 0,
+      "seconds": 1.24,
+      "log": "docs/acceptance/image-phase2-preparation/check-1.log",
+      "classification": "OFFLINE/MOCK"
+    },
+    {
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "server/tsconfig.json"
+      ],
+      "exit": 0,
+      "seconds": 0.19,
+      "log": "docs/acceptance/image-phase2-preparation/check-2.log",
+      "classification": "OFFLINE/MOCK"
+    },
+    {
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "server/image-generation/tsconfig.json"
+      ],
+      "exit": 0,
+      "seconds": 0.27,
+      "log": "docs/acceptance/image-phase2-preparation/check-3.log",
+      "classification": "OFFLINE/MOCK"
+    },
+    {
+      "argv": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exit": 0,
+      "seconds": 5.8,
+      "log": "docs/acceptance/image-phase2-preparation/check-4.log",
+      "classification": "OFFLINE/MOCK"
+    },
+    {
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "exit": 0,
+      "seconds": 1.03,
+      "log": "docs/acceptance/image-phase2-preparation/check-5.log",
+      "classification": "OFFLINE/MOCK"
+    },
+    {
+      "argv": [
+        "npm",
+        "--prefix",
+        "server",
+        "test"
+      ],
+      "exit": 0,
+      "seconds": 0.58,
+      "log": "docs/acceptance/image-phase2-preparation/check-6.log",
+      "classification": "OFFLINE/MOCK"
+    },
+    {
+      "argv": [
+        "node",
+        "tools/project-zip-export/prepare.mjs"
+      ],
+      "exit": 0,
+      "seconds": 0.26,
+      "log": "docs/acceptance/image-phase2-preparation/check-7.log",
+      "classification": "OFFLINE/MOCK"
+    },
+    {
+      "argv": [
+        "node",
+        "--test",
+        "--test-timeout=10000",
+        "tests/image-backend/provider.test.mjs",
+        "tests/image-http-contract/contract.test.mjs",
+        "tests/image-http-contract/http.test.mjs",
+        "tests/image-http-contract/isolation.test.mjs",
+        "tests/image-http-contract/supplier.test.mjs"
+      ],
+      "exit": 0,
+      "seconds": 2.29,
+      "log": "docs/acceptance/image-phase2-preparation/check-8.log",
+      "classification": "OFFLINE/MOCK"
+    },
+    {
+      "argv": [
+        "node",
+        "--test",
+        "tests/custom-block-bc/adapter.test.cjs",
+        "tests/custom-block-bc/authorization.test.cjs",
+        "tests/custom-block-bc/layout-order.test.cjs",
+        "tests/custom-block-bc/owner.test.cjs",
+        "tests/custom-block-bc/viewer.test.cjs",
+        "tests/project-json/format.test.cjs",
+        "tests/project-package/acceptance.test.cjs",
+        "tests/project-package/file.test.cjs",
+        "tests/project-package/format.test.cjs",
+        "tests/project-package/image.test.cjs",
+        "tests/project-package/zip.test.cjs",
+        "tests/workshop-export/boundary.test.mjs",
+        "tests/workshop-export/capture.test.cjs",
+        "tests/workshop-export/http.test.mjs"
+      ],
+      "exit": 0,
+      "seconds": 0.95,
+      "log": "docs/acceptance/image-phase2-preparation/check-9.log",
+      "classification": "OFFLINE/MOCK"
+    }
+  ]
+}

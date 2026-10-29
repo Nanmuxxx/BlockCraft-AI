@@ -1,0 +1,1 @@
+PASS OFFLINE production: fixture option absent even with build flag, all image routes 404, provider calls=0

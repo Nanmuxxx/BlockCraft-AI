@@ -1,0 +1,57 @@
+node:internal/modules/esm/resolve:272
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/Users/nanmuxun/BlockAI/BlockCraft-AI-image-phase2-qa-20261029/server/.generated/appSpecValidation.js' imported from /Users/nanmuxun/BlockAI/BlockCraft-AI-image-phase2-qa-20261029/server/trusted-interactive.mjs
+    at finalizeResolution (node:internal/modules/esm/resolve:272:11)
+    at moduleResolve (node:internal/modules/esm/resolve:879:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1006:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:705:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:725:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:763:56)
+    at #resolve (node:internal/modules/esm/loader:687:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:607:35)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:276:33)
+    at ModuleJob.link (node:internal/modules/esm/module_job:381:17) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///Users/nanmuxun/BlockAI/BlockCraft-AI-image-phase2-qa-20261029/server/.generated/appSpecValidation.js'
+}
+
+Node.js v24.22.0
+✖ tests/image-backend/provider.test.mjs (80.037916ms)
+✔ OFFLINE: strict versioned input and key; JSON round trip (1.02775ms)
+✔ OFFLINE: terminal wire state cannot expose image before success or uncertain spend (0.279791ms)
+✔ HTTP MOCK: create/poll/replay is serializable, bounded, exactly one dispatch (57.230833ms)
+✔ HTTP MOCK: anonymous, forged identity/project, other owner and revoked cached results denied (32.602125ms)
+✔ HTTP MOCK: strict JSON, version, input bounds, duplicate key and cross-origin rejected (5.932542ms)
+✔ HTTP MOCK: cancel twice fences late provider success (267.378459ms)
+✔ HTTP MOCK: timeout fences late success and provider errors are safe (147.575459ms)
+✔ HTTP MOCK: budget denial and ledger outage prevent dispatch; uncertain settlement withholds image (33.225166ms)
+✔ HTTP MOCK: bounded concurrency, immutable tombstones and expiry never redispatch (53.892666ms)
+✔ HTTP MOCK: missing authority defaults closed; live provider construction rejected (2.303875ms)
+✔ MOCK: byte-level PNG checks reject MIME, corruption, dimensions, oversize, raster and animation (0.820125ms)
+✔ HTTP MOCK: invalid provider bytes fail safely through HTTP (26.308541ms)
+✔ HTTP MOCK: same key scoped across owners/projects; distinct keys execute concurrently (37.302334ms)
+✔ HTTP MOCK: terminal polling times out with owner/job/last-state diagnostics and bounded cleanup (87.348583ms)
+{"outcome":"cancel","before":{"permanentPending":4},"after":{"running":0,"active":0,"spawned":4,"entered":4,"exited":4,"highWater":4,"blocked":false},"fifth":"SUCCEEDED","final":{"running":0,"active":0,"spawned":5,"entered":5,"exited":5,"highWater":4,"blocked":false},"settlements":1}
+✔ HTTP MOCK R2: four permanent abort-ignoring workers cancel; confirmed exit, tombstones, fifth admission (98.070458ms)
+{"outcome":"timeout","before":{"permanentPending":4},"after":{"running":0,"active":0,"spawned":4,"entered":4,"exited":4,"highWater":4,"blocked":false},"fifth":"SUCCEEDED","final":{"running":0,"active":0,"spawned":5,"entered":5,"exited":5,"highWater":4,"blocked":false},"settlements":1}
+✔ HTTP MOCK R2: four permanent abort-ignoring workers timeout; confirmed exit, tombstones, fifth admission (2068.380417ms)
+✔ MOCK R2: arbitrary in-process provider rejected rather than pretending cancellation terminates it (0.494959ms)
+✔ MOCK R2: terminate also stops a CPU loop, with bounded cleanup (34.346458ms)
+✔ MOCK TRANSPORT ONLY: pinned Qwen request, fixed safe parameters and serializable schema (0.736875ms)
+✔ MOCK TRANSPORT ONLY: supplier reference requires explicit host policy and remains unverified (0.489583ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 20
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2282.775916
+
+✖ failing tests:
+
+test at tests/image-backend/provider.test.mjs:1:1
+✖ tests/image-backend/provider.test.mjs (80.037916ms)
+  'test failed'

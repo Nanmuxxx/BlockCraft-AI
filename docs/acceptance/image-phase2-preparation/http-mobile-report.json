@@ -1,0 +1,1169 @@
+{
+  "mode": "HTTP_MOCK_LOOPBACK_SERVER",
+  "passed": true,
+  "cases": [
+    {
+      "id": "M00",
+      "status": "PASS",
+      "description": "local worktree identity and served source",
+      "evidence": {
+        "platform": "darwin",
+        "node": "v24.22.0",
+        "browser": "151.0.7922.34",
+        "origin": "http://127.0.0.1:61155",
+        "head": "26a97e3eac2ff5f816621c2265b29e4ae4a0a804",
+        "branch": "feat/image-phase2-preparation-20261029",
+        "status": "?? .github/workflows/image-preflight.yml\n?? docs/acceptance/image-phase2-preparation/"
+      }
+    },
+    {
+      "id": "M01",
+      "status": "PASS",
+      "description": "one candidate, no project change before confirmation; discard preserves original",
+      "evidence": {
+        "revision": 0,
+        "assets": 0,
+        "candidatesPerOperation": 1,
+        "discardedUnchanged": true
+      }
+    },
+    {
+      "id": "M02",
+      "status": "PASS",
+      "description": "preview decodes and identifies actual PNG bytes, size and destination",
+      "evidence": {
+        "width": 1,
+        "height": 1,
+        "mime": "image/png",
+        "bytes": 68,
+        "sha256": "5e3d382db4dd83d59aa5742793ad6b7903409e865c83bcbc54835049f043bc15",
+        "target": "practice-gallery"
+      }
+    },
+    {
+      "id": "M03",
+      "status": "PASS",
+      "description": "confirm saves one asset and reference atomically; B and C expose identical bytes",
+      "evidence": {
+        "revision": 1,
+        "assetId": "image-8a516100-0b63-433e-9a71-fea256f3907c",
+        "receipt": {
+          "confirmationId": "confirm-d25bb246-76b1-481c-8649-0e8c0ac486a0",
+          "digest": "c13a0f2d9ebcb2d3b2b082ab9026423079cb51b3ede076840bdba5f8b3894fd4",
+          "assetId": "image-8a516100-0b63-433e-9a71-fea256f3907c",
+          "revision": 1
+        },
+        "storageSequence": 1
+      }
+    },
+    {
+      "id": "M04",
+      "status": "PASS",
+      "description": "page reload restores the latest saved project, references and image bytes",
+      "evidence": {
+        "fullProjectEqual": true,
+        "savedRecordEqual": true
+      }
+    },
+    {
+      "id": "M05",
+      "status": "PASS",
+      "description": "ZIP crosses an empty browser context; imported JSON/ZIP and decoded PNG match",
+      "evidence": {
+        "zipSha256": "ee850fc66d4a17659b07aba03e03aec594d0e4f763d4414e452a0b356d23ba5f",
+        "members": [
+          {
+            "path": "manifest.json",
+            "bytes": 551,
+            "sha256": "616f64cdad0c01082e054837a26cd01ac345ed5fc46e0d93e7556d0fb9262d95"
+          },
+          {
+            "path": "project.json",
+            "bytes": 856,
+            "sha256": "4b2192aaa2a1bc22ab26a2e85097b22bd078f0014bad580b3e0369ef825e6104"
+          },
+          {
+            "path": "assets/image-8a516100-0b63-433e-9a71-fea256f3907c.png",
+            "bytes": 68,
+            "sha256": "5e3d382db4dd83d59aa5742793ad6b7903409e865c83bcbc54835049f043bc15"
+          }
+        ],
+        "isolatedContext": true,
+        "reexportByteIdentical": true,
+        "importSaveReload": true
+      }
+    },
+    {
+      "id": "M06",
+      "status": "PASS",
+      "description": "provider, retrieval, decode, format and capacity failures preserve old project",
+      "evidence": {
+        "results": [
+          {
+            "stage": "provider",
+            "calls": 1,
+            "message": "offline provider failure",
+            "oldHeadPreserved": true
+          },
+          {
+            "stage": "retrieval",
+            "calls": 1,
+            "message": "offline bytes unavailable",
+            "oldHeadPreserved": true
+          },
+          {
+            "stage": "format",
+            "calls": 1,
+            "message": "候选必须是限额内的静态 PNG。",
+            "oldHeadPreserved": true
+          },
+          {
+            "stage": "signature",
+            "calls": 1,
+            "message": "候选未通过项目容量或引用校验：PNG signature mismatch",
+            "oldHeadPreserved": true
+          },
+          {
+            "stage": "native decode",
+            "calls": 1,
+            "message": "候选 PNG 校验失败。",
+            "oldHeadPreserved": true
+          },
+          {
+            "stage": "byte capacity",
+            "calls": 1,
+            "message": "候选必须是限额内的静态 PNG。",
+            "oldHeadPreserved": true
+          }
+        ],
+        "providerBilling": "NOT RUN: offline canvas, no reservation or live provider"
+      }
+    },
+    {
+      "id": "M07",
+      "status": "PASS",
+      "description": "quota/transaction abort preserve old head; activation failure recovers committed head",
+      "evidence": [
+        {
+          "mode": "quota",
+          "oldRuntimePreserved": true,
+          "savedHead": 1,
+          "recovery": false
+        },
+        {
+          "mode": "abort",
+          "oldRuntimePreserved": true,
+          "savedHead": 3,
+          "recovery": false
+        },
+        {
+          "mode": "activation",
+          "oldRuntimePreserved": true,
+          "savedHead": 6,
+          "recovery": true
+        }
+      ]
+    },
+    {
+      "id": "M08",
+      "status": "PASS",
+      "description": "duplicate confirmation, lost response and restored receipt never append twice",
+      "evidence": {
+        "concurrentConfirmations": 3,
+        "imageProviderCalls": 1,
+        "adoptionReceipts": 1,
+        "refreshedRetryDuplicate": true,
+        "lostResponseRecovered": true,
+        "unknownOutcomeBlocksRetry": true
+      }
+    },
+    {
+      "id": "M09",
+      "status": "PASS",
+      "description": "edit, removed target, changed workspace and revoked permission reject stale candidates",
+      "evidence": {
+        "cases": [
+          {
+            "mode": "edit",
+            "preserved": true,
+            "message": "作品、图库或权限已变化，请重新生成预览。"
+          },
+          {
+            "mode": "delete gallery",
+            "preserved": true,
+            "message": "作品、图库或权限已变化，请重新生成预览。"
+          },
+          {
+            "mode": "replace workspace",
+            "preserved": true,
+            "message": "该项目已关闭。"
+          },
+          {
+            "mode": "revoke and regrant",
+            "preserved": true,
+            "message": "作品、图库或权限已变化，请重新生成预览。"
+          }
+        ],
+        "revocationWhileGenerating": true
+      }
+    },
+    {
+      "id": "M10",
+      "status": "PASS",
+      "description": "cancellation and timeout never adopt, retry or invoke a live provider",
+      "evidence": {
+        "cases": [
+          {
+            "mode": "cancel",
+            "calls": 1,
+            "state": "idle",
+            "lateResponseIgnored": true
+          },
+          {
+            "mode": "timeout",
+            "calls": 1,
+            "state": "failed",
+            "lateResponseIgnored": true
+          }
+        ],
+        "costs": "OFFLINE_ZERO; live-provider uncertain billing and key rotation NOT RUN"
+      }
+    },
+    {
+      "id": "M11",
+      "status": "PASS",
+      "description": "old IndexedDB backups and absent/empty/existing assets retain compatibility",
+      "evidence": {
+        "results": [
+          {
+            "assets": "absent",
+            "saveJsonZipRestore": true,
+            "danglingReferenceRejected": true
+          },
+          {
+            "assets": "empty",
+            "saveJsonZipRestore": true,
+            "danglingReferenceRejected": true
+          },
+          {
+            "assets": "existing",
+            "saveJsonZipRestore": true,
+            "danglingReferenceRejected": true
+          }
+        ],
+        "indexedDbV1ToV2BackupsPreserved": true
+      }
+    },
+    {
+      "id": "M12",
+      "status": "PASS",
+      "description": "exact and exceeded image, total, count, JSON and ZIP boundaries",
+      "evidence": {
+        "checks": [
+          "512 KiB valid decodable PNG: PASS",
+          "512 KiB + 1: rejected",
+          "1 MiB aggregate (unreferenced included): PASS",
+          "1 MiB + 1 aggregate byte: rejected",
+          "32 unreferenced PNGs: PASS",
+          "33rd image: rejected",
+          "JSON exact 4,000,000 bytes accepted; +1 rejected",
+          "large valid business text plus candidate exceeds serialized JSON budget: rejected before save",
+          "ZIP per-file 4,000,000 and total 5,100,000 accepted; +1 and archive cap +1 rejected"
+        ],
+        "scope": "Real PNG resource limits; JSON serializer/container byte limits also tested independently of domain admission"
+      }
+    },
+    {
+      "id": "M13",
+      "status": "PASS",
+      "description": "two tabs conflict instead of overwriting the newer saved head",
+      "evidence": {
+        "results": [
+          {
+            "ok": true,
+            "workspaceId": "workspace-9cad181e-4af1-42e8-9a2f-28788e1adb6d"
+          },
+          {
+            "ok": false,
+            "code": "STORAGE_CONFLICT"
+          }
+        ],
+        "sequence": 1
+      }
+    },
+    {
+      "id": "W01",
+      "status": "PASS",
+      "description": "Mock envelope bounds, metadata and native image validation preserve project/storage",
+      "evidence": {
+        "results": [
+          {
+            "name": "wrong provenance",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "wrong MIME",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "missing envelope",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "not bytes",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "metadata width mismatch",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "nonfinite dimension",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "pixel limit",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "oversize",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "short signature",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "extra field",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "bad CRC",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "missing IEND",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "animated PNG",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "native raster decode",
+            "calls": 1,
+            "originalPreserved": true
+          }
+        ],
+        "exact512KiBAccepted": true,
+        "noNetworkTransport": true
+      }
+    },
+    {
+      "id": "W02",
+      "status": "PASS",
+      "description": "Mock input/duplicate generation/cancel/late response isolation and duplicate adoption",
+      "evidence": {
+        "invalidInputClearsStaleCandidate": true,
+        "duplicateAdoptionReceipts": 1,
+        "races": [
+          {
+            "mode": "cancel",
+            "calls": 2,
+            "lateResultIgnored": true
+          },
+          {
+            "mode": "timeout",
+            "calls": 1,
+            "lateResultIgnored": true
+          },
+          {
+            "mode": "dispose",
+            "calls": 1,
+            "lateResultIgnored": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "H01",
+      "status": "PASS",
+      "description": "HTTP MOCK forbidden: real loopback handler with fixture fault, preserve prior work",
+      "evidence": {
+        "states": [],
+        "phase": "failed",
+        "message": "任务/费用状态未确认；核对前不要重新提交。任务 ID：未取得；请求 ID：7af361cb-5a6b-4740-af13-a414f87dcb40。原作品未更改。",
+        "unchanged": true
+      }
+    },
+    {
+      "id": "H02",
+      "status": "PASS",
+      "description": "HTTP MOCK provider-failure: real loopback handler with fixture fault, preserve prior work",
+      "evidence": {
+        "states": [
+          "QUEUED",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "FAILED"
+        ],
+        "phase": "failed",
+        "message": "HTTP Mock 任务未成功；原作品未更改。",
+        "unchanged": true
+      }
+    },
+    {
+      "id": "H03",
+      "status": "PASS",
+      "description": "HTTP MOCK bad-image: real loopback handler with fixture fault, preserve prior work",
+      "evidence": {
+        "states": [
+          "QUEUED",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "FAILED"
+        ],
+        "phase": "failed",
+        "message": "HTTP Mock 任务未成功；原作品未更改。",
+        "unchanged": true
+      }
+    },
+    {
+      "id": "H04",
+      "status": "PASS",
+      "description": "HTTP MOCK cancel: real loopback handler with fixture fault, preserve prior work",
+      "evidence": {
+        "states": [
+          "QUEUED",
+          "RUNNING",
+          "RUNNING"
+        ],
+        "phase": "failed",
+        "message": "任务/费用状态未确认；核对前不要重新提交。任务 ID：7d8e5d52-006d-4c73-a94e-2fa1d3dacfe2；请求 ID：587ce4ae-f8f4-47ab-8f71-3005d8ec7282。原作品未更改。",
+        "unchanged": true
+      }
+    },
+    {
+      "id": "H05",
+      "status": "PASS",
+      "description": "HTTP MOCK deadline: real loopback handler with fixture fault, preserve prior work",
+      "evidence": {
+        "states": [
+          "QUEUED",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING"
+        ],
+        "phase": "failed",
+        "message": "任务/费用状态未确认；核对前不要重新提交。任务 ID：ae2101a1-731c-477d-9ded-8c823272fc21；请求 ID：46d3c44b-9ebc-4949-8992-4f3b4993148f。原作品未更改。",
+        "unchanged": true
+      }
+    },
+    {
+      "id": "H06",
+      "status": "PASS",
+      "description": "HTTP MOCK request-timeout: real loopback handler with fixture fault, preserve prior work",
+      "evidence": {
+        "states": [
+          "QUEUED"
+        ],
+        "phase": "failed",
+        "message": "任务/费用状态未确认；核对前不要重新提交。任务 ID：7d6d8cdb-dfe8-4a08-af40-c42fab1888ac；请求 ID：cb02da61-8995-4b18-8d3d-c888eaf13223。原作品未更改。",
+        "unchanged": true
+      }
+    },
+    {
+      "id": "H07",
+      "status": "PASS",
+      "description": "HTTP MOCK dispose: real loopback handler with fixture fault, preserve prior work",
+      "evidence": {
+        "states": [
+          "QUEUED",
+          "RUNNING",
+          "RUNNING"
+        ],
+        "phase": "generating",
+        "message": "HTTP MOCK：正在提交并查询测试任务；不调用 AI 模型…",
+        "unchanged": true
+      }
+    },
+    {
+      "id": "H08",
+      "status": "PASS",
+      "description": "HTTP MOCK storage: real loopback handler with fixture fault, preserve prior work",
+      "evidence": {
+        "states": [
+          "QUEUED",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "SUCCEEDED"
+        ],
+        "phase": "failed",
+        "message": "fixture",
+        "unchanged": true
+      }
+    },
+    {
+      "id": "H09",
+      "status": "PASS",
+      "description": "HTTP MOCK adopt: real loopback handler with fixture fault, preserve prior work",
+      "evidence": {
+        "states": [
+          "QUEUED",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "RUNNING",
+          "SUCCEEDED"
+        ],
+        "oneAsset": true,
+        "oneReceipt": true
+      }
+    },
+    {
+      "id": "H10",
+      "status": "PASS",
+      "description": "HTTP MOCK network: real loopback handler with fixture fault, preserve prior work",
+      "evidence": {
+        "states": [
+          "QUEUED"
+        ],
+        "phase": "failed",
+        "message": "任务/费用状态未确认；核对前不要重新提交。任务 ID：7b046085-5582-483b-ad3e-d1428398e720；请求 ID：95c7b33d-0e3f-4c4e-8045-a591a4303852。原作品未更改。",
+        "unchanged": true
+      }
+    },
+    {
+      "id": "H11",
+      "status": "PASS",
+      "description": "HTTP MOCK asset JSON export imports into an empty context and restores after save/reload",
+      "evidence": {
+        "emptyContext": true,
+        "fullProjectEqual": true,
+        "jsonImportSaveReload": true
+      }
+    }
+  ],
+  "notRun": [
+    "M06 live-provider billing independence",
+    "M10 live-provider reservations, uncertain charges and credential rotation",
+    "real image-model quality/cost"
+  ],
+  "externalRequests": [],
+  "aiRequests": [],
+  "pageErrors": [],
+  "environment": {
+    "platform": "darwin",
+    "node": "v24.22.0",
+    "browser": "151.0.7922.34",
+    "origin": "http://127.0.0.1:61155",
+    "head": "26a97e3eac2ff5f816621c2265b29e4ae4a0a804",
+    "branch": "feat/image-phase2-preparation-20261029",
+    "status": "?? .github/workflows/image-preflight.yml\n?? docs/acceptance/image-phase2-preparation/"
+  },
+  "httpRequests": [
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/345fba20-ab69-4807-9b79-06d7c546a33b"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/72d038b2-d434-46f6-b806-6439aa78f69d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8aad57a8-ffc8-4832-a963-0f9fffc4850b"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/9a440439-4134-4c2f-a87b-5a9c0d046db8"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/7d8e5d52-006d-4c73-a94e-2fa1d3dacfe2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/7d8e5d52-006d-4c73-a94e-2fa1d3dacfe2"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations/7d8e5d52-006d-4c73-a94e-2fa1d3dacfe2/cancel"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ae2101a1-731c-477d-9ded-8c823272fc21"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ae2101a1-731c-477d-9ded-8c823272fc21"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ae2101a1-731c-477d-9ded-8c823272fc21"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ae2101a1-731c-477d-9ded-8c823272fc21"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations/ae2101a1-731c-477d-9ded-8c823272fc21/cancel"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/7d6d8cdb-dfe8-4a08-af40-c42fab1888ac"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations/7d6d8cdb-dfe8-4a08-af40-c42fab1888ac/cancel"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8df98aa4-d14d-44b6-a3bb-87f6cc5e43cc"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/8df98aa4-d14d-44b6-a3bb-87f6cc5e43cc"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations/8df98aa4-d14d-44b6-a3bb-87f6cc5e43cc/cancel"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/ffb71c45-b1ba-4cf2-8060-9655dd10eae0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/2c6e9c61-cb6d-44f7-9dda-b609a8a92691"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations/7b046085-5582-483b-ad3e-d1428398e720/cancel"
+    }
+  ],
+  "httpAudit": [
+    {
+      "id": "345fba20-ab69-4807-9b79-06d7c546a33b",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277794945
+    },
+    {
+      "id": "345fba20-ab69-4807-9b79-06d7c546a33b",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277794945
+    },
+    {
+      "id": "345fba20-ab69-4807-9b79-06d7c546a33b",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "SUCCEEDED",
+      "at": 1793277795122
+    },
+    {
+      "id": "72d038b2-d434-46f6-b806-6439aa78f69d",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277795353
+    },
+    {
+      "id": "72d038b2-d434-46f6-b806-6439aa78f69d",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277795353
+    },
+    {
+      "id": "72d038b2-d434-46f6-b806-6439aa78f69d",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "SUCCEEDED",
+      "at": 1793277795530
+    },
+    {
+      "id": "8aad57a8-ffc8-4832-a963-0f9fffc4850b",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277807296
+    },
+    {
+      "id": "8aad57a8-ffc8-4832-a963-0f9fffc4850b",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277807296
+    },
+    {
+      "id": "8aad57a8-ffc8-4832-a963-0f9fffc4850b",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "FAILED",
+      "at": 1793277807469
+    },
+    {
+      "id": "9a440439-4134-4c2f-a87b-5a9c0d046db8",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277807688
+    },
+    {
+      "id": "9a440439-4134-4c2f-a87b-5a9c0d046db8",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277807688
+    },
+    {
+      "id": "9a440439-4134-4c2f-a87b-5a9c0d046db8",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "FAILED",
+      "at": 1793277807861
+    },
+    {
+      "id": "7d8e5d52-006d-4c73-a94e-2fa1d3dacfe2",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277808058
+    },
+    {
+      "id": "7d8e5d52-006d-4c73-a94e-2fa1d3dacfe2",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277808058
+    },
+    {
+      "id": "7d8e5d52-006d-4c73-a94e-2fa1d3dacfe2",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "CANCELLED",
+      "at": 1793277808090
+    },
+    {
+      "id": "ae2101a1-731c-477d-9ded-8c823272fc21",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277808287
+    },
+    {
+      "id": "ae2101a1-731c-477d-9ded-8c823272fc21",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277808287
+    },
+    {
+      "id": "ae2101a1-731c-477d-9ded-8c823272fc21",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "CANCELLED",
+      "at": 1793277808339
+    },
+    {
+      "id": "7d6d8cdb-dfe8-4a08-af40-c42fab1888ac",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277808516
+    },
+    {
+      "id": "7d6d8cdb-dfe8-4a08-af40-c42fab1888ac",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277808516
+    },
+    {
+      "id": "7d6d8cdb-dfe8-4a08-af40-c42fab1888ac",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "CANCELLED",
+      "at": 1793277808559
+    },
+    {
+      "id": "8df98aa4-d14d-44b6-a3bb-87f6cc5e43cc",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277808733
+    },
+    {
+      "id": "8df98aa4-d14d-44b6-a3bb-87f6cc5e43cc",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277808733
+    },
+    {
+      "id": "8df98aa4-d14d-44b6-a3bb-87f6cc5e43cc",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "CANCELLED",
+      "at": 1793277808765
+    },
+    {
+      "id": "ffb71c45-b1ba-4cf2-8060-9655dd10eae0",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277808964
+    },
+    {
+      "id": "ffb71c45-b1ba-4cf2-8060-9655dd10eae0",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277808964
+    },
+    {
+      "id": "ffb71c45-b1ba-4cf2-8060-9655dd10eae0",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "SUCCEEDED",
+      "at": 1793277809137
+    },
+    {
+      "id": "2c6e9c61-cb6d-44f7-9dda-b609a8a92691",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277809341
+    },
+    {
+      "id": "2c6e9c61-cb6d-44f7-9dda-b609a8a92691",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277809341
+    },
+    {
+      "id": "2c6e9c61-cb6d-44f7-9dda-b609a8a92691",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "SUCCEEDED",
+      "at": 1793277809516
+    },
+    {
+      "id": "7b046085-5582-483b-ad3e-d1428398e720",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793277809722
+    },
+    {
+      "id": "7b046085-5582-483b-ad3e-d1428398e720",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793277809722
+    },
+    {
+      "id": "7b046085-5582-483b-ad3e-d1428398e720",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "CANCELLED",
+      "at": 1793277809735
+    }
+  ],
+  "finishedAt": "2026-10-29T12:43:30.220Z"
+}

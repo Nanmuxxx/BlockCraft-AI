@@ -1,0 +1,420 @@
+{
+  "mode": "MOCK_FIXED_BROWSER_SOURCE",
+  "passed": true,
+  "cases": [
+    {
+      "id": "M00",
+      "status": "PASS",
+      "description": "local worktree identity and served source",
+      "evidence": {
+        "platform": "darwin",
+        "node": "v24.22.0",
+        "browser": "151.0.7922.34",
+        "origin": "http://127.0.0.1:61334",
+        "head": "26a97e3eac2ff5f816621c2265b29e4ae4a0a804",
+        "branch": "feat/image-phase2-preparation-20261029",
+        "status": "?? .github/workflows/image-preflight.yml\n?? docs/acceptance/image-phase2-preparation/"
+      }
+    },
+    {
+      "id": "M01",
+      "status": "PASS",
+      "description": "one candidate, no project change before confirmation; discard preserves original",
+      "evidence": {
+        "revision": 0,
+        "assets": 0,
+        "candidatesPerOperation": 1,
+        "discardedUnchanged": true
+      }
+    },
+    {
+      "id": "M02",
+      "status": "PASS",
+      "description": "preview decodes and identifies actual PNG bytes, size and destination",
+      "evidence": {
+        "width": 320,
+        "height": 240,
+        "mime": "image/png",
+        "bytes": 1092,
+        "sha256": "d97255cfebaf41fd5ec143363390290451925cb3ce4efcd3491e1d6ab01d6501",
+        "target": "practice-gallery"
+      }
+    },
+    {
+      "id": "M03",
+      "status": "PASS",
+      "description": "confirm saves one asset and reference atomically; B and C expose identical bytes",
+      "evidence": {
+        "revision": 1,
+        "assetId": "image-fe6dd575-ab18-4466-a86a-96ab8333ba75",
+        "receipt": {
+          "confirmationId": "confirm-82b3298e-99c0-44fd-ab72-025460a4af90",
+          "digest": "492c3d56bc9009b8a6fd2d09830b25f6ebb94c706559d6ce73c6e94cd6d4ac9a",
+          "assetId": "image-fe6dd575-ab18-4466-a86a-96ab8333ba75",
+          "revision": 1
+        },
+        "storageSequence": 1
+      }
+    },
+    {
+      "id": "M04",
+      "status": "PASS",
+      "description": "page reload restores the latest saved project, references and image bytes",
+      "evidence": {
+        "fullProjectEqual": true,
+        "savedRecordEqual": true
+      }
+    },
+    {
+      "id": "M05",
+      "status": "PASS",
+      "description": "ZIP crosses an empty browser context; imported JSON/ZIP and decoded PNG match",
+      "evidence": {
+        "zipSha256": "7a7edd8b922c115713f9ac90d598a665e40d40fa9b071137754765988209107b",
+        "members": [
+          {
+            "path": "manifest.json",
+            "bytes": 553,
+            "sha256": "d5defeb579ef1be20dd431a87cffc90c7338931259894cb7f2d0c960923e2bf1"
+          },
+          {
+            "path": "project.json",
+            "bytes": 856,
+            "sha256": "f8217ca7f8602eaa4c9415cbfa8ba34cfe804836692737ceebea1e1bec2fda6b"
+          },
+          {
+            "path": "assets/image-fe6dd575-ab18-4466-a86a-96ab8333ba75.png",
+            "bytes": 1092,
+            "sha256": "d97255cfebaf41fd5ec143363390290451925cb3ce4efcd3491e1d6ab01d6501"
+          }
+        ],
+        "isolatedContext": true,
+        "reexportByteIdentical": true,
+        "importSaveReload": true
+      }
+    },
+    {
+      "id": "M06",
+      "status": "PASS",
+      "description": "provider, retrieval, decode, format and capacity failures preserve old project",
+      "evidence": {
+        "results": [
+          {
+            "stage": "provider",
+            "calls": 1,
+            "message": "offline provider failure",
+            "oldHeadPreserved": true
+          },
+          {
+            "stage": "retrieval",
+            "calls": 1,
+            "message": "offline bytes unavailable",
+            "oldHeadPreserved": true
+          },
+          {
+            "stage": "format",
+            "calls": 1,
+            "message": "候选必须是限额内的静态 PNG。",
+            "oldHeadPreserved": true
+          },
+          {
+            "stage": "signature",
+            "calls": 1,
+            "message": "候选未通过项目容量或引用校验：PNG signature mismatch",
+            "oldHeadPreserved": true
+          },
+          {
+            "stage": "native decode",
+            "calls": 1,
+            "message": "候选 PNG 校验失败。",
+            "oldHeadPreserved": true
+          },
+          {
+            "stage": "byte capacity",
+            "calls": 1,
+            "message": "候选必须是限额内的静态 PNG。",
+            "oldHeadPreserved": true
+          }
+        ],
+        "providerBilling": "NOT RUN: offline canvas, no reservation or live provider"
+      }
+    },
+    {
+      "id": "M07",
+      "status": "PASS",
+      "description": "quota/transaction abort preserve old head; activation failure recovers committed head",
+      "evidence": [
+        {
+          "mode": "quota",
+          "oldRuntimePreserved": true,
+          "savedHead": 1,
+          "recovery": false
+        },
+        {
+          "mode": "abort",
+          "oldRuntimePreserved": true,
+          "savedHead": 3,
+          "recovery": false
+        },
+        {
+          "mode": "activation",
+          "oldRuntimePreserved": true,
+          "savedHead": 6,
+          "recovery": true
+        }
+      ]
+    },
+    {
+      "id": "M08",
+      "status": "PASS",
+      "description": "duplicate confirmation, lost response and restored receipt never append twice",
+      "evidence": {
+        "concurrentConfirmations": 3,
+        "imageProviderCalls": 1,
+        "adoptionReceipts": 1,
+        "refreshedRetryDuplicate": true,
+        "lostResponseRecovered": true,
+        "unknownOutcomeBlocksRetry": true
+      }
+    },
+    {
+      "id": "M09",
+      "status": "PASS",
+      "description": "edit, removed target, changed workspace and revoked permission reject stale candidates",
+      "evidence": {
+        "cases": [
+          {
+            "mode": "edit",
+            "preserved": true,
+            "message": "作品、图库或权限已变化，请重新生成预览。"
+          },
+          {
+            "mode": "delete gallery",
+            "preserved": true,
+            "message": "作品、图库或权限已变化，请重新生成预览。"
+          },
+          {
+            "mode": "replace workspace",
+            "preserved": true,
+            "message": "该项目已关闭。"
+          },
+          {
+            "mode": "revoke and regrant",
+            "preserved": true,
+            "message": "作品、图库或权限已变化，请重新生成预览。"
+          }
+        ],
+        "revocationWhileGenerating": true
+      }
+    },
+    {
+      "id": "M10",
+      "status": "PASS",
+      "description": "cancellation and timeout never adopt, retry or invoke a live provider",
+      "evidence": {
+        "cases": [
+          {
+            "mode": "cancel",
+            "calls": 1,
+            "state": "idle",
+            "lateResponseIgnored": true
+          },
+          {
+            "mode": "timeout",
+            "calls": 1,
+            "state": "failed",
+            "lateResponseIgnored": true
+          }
+        ],
+        "costs": "OFFLINE_ZERO; live-provider uncertain billing and key rotation NOT RUN"
+      }
+    },
+    {
+      "id": "M11",
+      "status": "PASS",
+      "description": "old IndexedDB backups and absent/empty/existing assets retain compatibility",
+      "evidence": {
+        "results": [
+          {
+            "assets": "absent",
+            "saveJsonZipRestore": true,
+            "danglingReferenceRejected": true
+          },
+          {
+            "assets": "empty",
+            "saveJsonZipRestore": true,
+            "danglingReferenceRejected": true
+          },
+          {
+            "assets": "existing",
+            "saveJsonZipRestore": true,
+            "danglingReferenceRejected": true
+          }
+        ],
+        "indexedDbV1ToV2BackupsPreserved": true
+      }
+    },
+    {
+      "id": "M12",
+      "status": "PASS",
+      "description": "exact and exceeded image, total, count, JSON and ZIP boundaries",
+      "evidence": {
+        "checks": [
+          "512 KiB valid decodable PNG: PASS",
+          "512 KiB + 1: rejected",
+          "1 MiB aggregate (unreferenced included): PASS",
+          "1 MiB + 1 aggregate byte: rejected",
+          "32 unreferenced PNGs: PASS",
+          "33rd image: rejected",
+          "JSON exact 4,000,000 bytes accepted; +1 rejected",
+          "large valid business text plus candidate exceeds serialized JSON budget: rejected before save",
+          "ZIP per-file 4,000,000 and total 5,100,000 accepted; +1 and archive cap +1 rejected"
+        ],
+        "scope": "Real PNG resource limits; JSON serializer/container byte limits also tested independently of domain admission"
+      }
+    },
+    {
+      "id": "M13",
+      "status": "PASS",
+      "description": "two tabs conflict instead of overwriting the newer saved head",
+      "evidence": {
+        "results": [
+          {
+            "ok": false,
+            "code": "STORAGE_CONFLICT"
+          },
+          {
+            "ok": true,
+            "workspaceId": "workspace-aa8f2291-e82d-442c-83e9-a5bfac94ef5c"
+          }
+        ],
+        "sequence": 1
+      }
+    },
+    {
+      "id": "W01",
+      "status": "PASS",
+      "description": "Mock envelope bounds, metadata and native image validation preserve project/storage",
+      "evidence": {
+        "results": [
+          {
+            "name": "wrong provenance",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "wrong MIME",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "missing envelope",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "not bytes",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "metadata width mismatch",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "nonfinite dimension",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "pixel limit",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "oversize",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "short signature",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "extra field",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "bad CRC",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "missing IEND",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "animated PNG",
+            "calls": 1,
+            "originalPreserved": true
+          },
+          {
+            "name": "native raster decode",
+            "calls": 1,
+            "originalPreserved": true
+          }
+        ],
+        "exact512KiBAccepted": true,
+        "noNetworkTransport": true
+      }
+    },
+    {
+      "id": "W02",
+      "status": "PASS",
+      "description": "Mock input/duplicate generation/cancel/late response isolation and duplicate adoption",
+      "evidence": {
+        "invalidInputClearsStaleCandidate": true,
+        "duplicateAdoptionReceipts": 1,
+        "races": [
+          {
+            "mode": "cancel",
+            "calls": 2,
+            "lateResultIgnored": true
+          },
+          {
+            "mode": "timeout",
+            "calls": 1,
+            "lateResultIgnored": true
+          },
+          {
+            "mode": "dispose",
+            "calls": 1,
+            "lateResultIgnored": true
+          }
+        ]
+      }
+    }
+  ],
+  "notRun": [
+    "M06 live-provider billing independence",
+    "M10 live-provider reservations, uncertain charges and credential rotation",
+    "real image-model quality/cost"
+  ],
+  "externalRequests": [],
+  "aiRequests": [],
+  "pageErrors": [],
+  "environment": {
+    "platform": "darwin",
+    "node": "v24.22.0",
+    "browser": "151.0.7922.34",
+    "origin": "http://127.0.0.1:61334",
+    "head": "26a97e3eac2ff5f816621c2265b29e4ae4a0a804",
+    "branch": "feat/image-phase2-preparation-20261029",
+    "status": "?? .github/workflows/image-preflight.yml\n?? docs/acceptance/image-phase2-preparation/"
+  },
+  "finishedAt": "2026-10-29T12:43:42.830Z"
+}
