@@ -1,0 +1,53 @@
+{
+  "format": "blockcraft-project",
+  "formatVersion": 1,
+  "project": {
+    "formatVersion": 2,
+    "revision": 1,
+    "base": {
+      "spec": {
+        "version": 1,
+        "id": "gallery-practice",
+        "name": "我的图库练习",
+        "entities": [],
+        "relations": [],
+        "blocks": [
+          {
+            "id": "practice-gallery",
+            "type": "gallery",
+            "name": "我的图片",
+            "protocolVersion": 1,
+            "imageIds": [
+              "image-c0a313c8-2fef-423f-a6cf-30ab663faaf2"
+            ],
+            "layout": "grid",
+            "interaction": "preview"
+          }
+        ]
+      },
+      "records": {},
+      "blockPositions": {},
+      "assets": {
+        "image-c0a313c8-2fef-423f-a6cf-30ab663faaf2": {
+          "id": "image-c0a313c8-2fef-423f-a6cf-30ab663faaf2",
+          "name": "Mock测试图片.png",
+          "altText": "固定 Mock 测试风景图，与描述无关",
+          "mimeType": "image/png",
+          "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAADwCAIAAAD+Tyo8AAAEC0lEQVR42u3dwUlDQRSF4RRmLdYguEkPFpGiLMCt2IQKgSAuJCbz5s2594O/gXfmfsuQw+v7h6TQDiaQAJYEsCSAJYAlASwJYEkASwBLAlgSwBLAkgCWBLAkgCWAJQEsCWBJAEsASwJYEsASwJIAlgSwJIAlgCUBLAlgSQBLAEsCWLq3z7fjNQEs5bktKRlgdaRbhjHA6ku3AGOARW+wYYBFb7BhgEVvsGGARW+wYYBFb7BhgEVvsGGARW+wYYAFMMBSOb0RhgEWwABLFfWubxhgAQywBDDA0mp6FzcMsAAGWAIYYAlggAUwwBLAAEsAAyyAAQZYAAMsAQywBDDAAhhgCWCAJb9GAlgCGGABDLDU2vDi+wAsgAGWKhpefxyABTDAUjnDEcsALIb9O6FUyHDQJgCL4VS9AIvhYL0Ai+FgvQCL4WC9AAvjY/QCAKsv4wLfDrDaSa70yQBLAEsCWBLAEsCSAJYEsCSAJYAlASwJYAlgSQBLAlgSwBLAkgCWBLAkgCWAJQEsCWAJYEkASwJYEsASwJIAlgSwJIAlgCUBLAlgCWBJAEsCWBLAEsC1ejq9nHMHAjiS7s9cgwCOpIuxAI6ni7EAjqeLsQCOp4uxAI6ni7FWB/zw/PgduhgrGPAldDFWMOBQydPoYqwMwCmMd6GLsTIAryx5d7oYa8fOMK8FvBTjpehirF3o3gJ4d8nL0sVYM93eC3i+5Ai6GGuO22GAJzCOo4uxJtAdCXgjydF0MdZ2brcCPEpyGboYawu3mwO+mXFJuhhrON0ZgP8luTxdjDXK7WzAf0tuRRdjbgc2G/Avxm3pYoxuMOBL9GLMbTBgjDFGNx4wyRhzWwEwyRhzWwEwxhijGw+YZIy5rQCYZIy5rQAYY4zRjQdMMsbN3RYBjDFdbenWAUwyad3c1gTcXDJ4fdwWB4yxytOtD7izZCZru+0FuK1kRKu6bQoYY3SL1RFwT8nclqw14IaSuQUYY4zRBZhkjLkFGGOMe9IFmOR4xo4TYJLzGDtFgDGOZOz8ACY5j7FjA5jkPMZOC2CMIxk7J4BJzmPseADGOJKxgwGY5DzGzgNgkvMYOwaAMY5k7AAAJjmPsecGmOQ8xh4XYIwjGXtQgEnOy/MBrDzJHgtgRTL2QAArT7LnAFiRjD0BwMqTbHCAlSfZvAArkrFJAVaeZAMCrDzJ5gJYkYxNBLDyJBsEYEUyNgLAkgCWBLAEsCSAJQEsCWAJYEkASwJYEsASwJIAlgSwBLAkgCUBLAlgCWBJAEsCWBLAEsCSAJYEsASwJIAlASwJYAlgSQBLAlgCWBLAkgCWBLAEsCSAJQEsCWAJYEkASwJYAlgSwJIAlgSwBLAkgCUBLAlgCWBJAEsCWOrWF8TiQWX1Bi1jAAAAAElFTkSuQmCC"
+        }
+      }
+    },
+    "custom": {
+      "instances": [],
+      "positions": {},
+      "states": {}
+    },
+    "renderOrder": [
+      {
+        "kind": "builtin",
+        "id": "practice-gallery"
+      }
+    ]
+  },
+  "artifacts": []
+}

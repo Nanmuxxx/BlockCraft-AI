@@ -1,0 +1,272 @@
+[
+  {
+    "number": 93,
+    "title": "[Draft] Supervisor: restore learning-edition multi-agent coordination",
+    "draft": true,
+    "head_sha": "285e061a7820f2b2022bd31d4c1040aa4e1be32d",
+    "base_tip_sha": "bcb6c1a7402ad4b4514feb4865c38d769d7244d1",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/93"
+  },
+  {
+    "number": 77,
+    "title": "[Draft] Add synthetic budget continuity acceptance package",
+    "draft": true,
+    "head_sha": "2e2e0c65a2f0e75e993d14a45a28bd3a5e97a69f",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/77"
+  },
+  {
+    "number": 76,
+    "title": "feat(core): durable one-time Studio session issuer (Mock only)",
+    "draft": true,
+    "head_sha": "3abd5bd7610b693bf7f5b8c08682b9b944e33a15",
+    "base_tip_sha": "7fd6a6836aee5795ee5448264d0e74fcec880ddd",
+    "base_ref": "supervisor/real-pomodoro-candidate-20261020",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/76"
+  },
+  {
+    "number": 75,
+    "title": "P0: real DeepSeek Pomodoro MVP with reviewed Studio issuer candidate",
+    "draft": true,
+    "head_sha": "7a2adbbfaa1d8bfd3c8853a4d204d1d6532bbe8a",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/75"
+  },
+  {
+    "number": 74,
+    "title": "docs(bp): reconcile Windows-designated 15-page BP candidate",
+    "draft": true,
+    "head_sha": "4b3c40c4af2d9a0f8996b3ebdb8c3cbed8ca908b",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/74"
+  },
+  {
+    "number": 73,
+    "title": "test(demo): browser demo QA harness + deliverables + evidence (15/15 PASS on 4a95cae)",
+    "draft": false,
+    "head_sha": "6bf29ca22329296c239d412e83fa0f6ac54ec89a",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/73"
+  },
+  {
+    "number": 72,
+    "title": "[交付备份] 断电恢复：独立交付核验、Windows BP 原件及 105 秒离线保底片",
+    "draft": true,
+    "head_sha": "1af68f9ee09bf76e9edaba325b3a1da989150283",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/72"
+  },
+  {
+    "number": 71,
+    "title": "test(gateway): preserve sidecar failure semantics evidence",
+    "draft": true,
+    "head_sha": "0abfe8454d4679ac323cd73754a52dcb82460541",
+    "base_tip_sha": "1c0bd2672a53756ac9a0e8f537cf3320b6c2e01f",
+    "base_ref": "gateway/idempotency-sidecar-d3",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/71"
+  },
+  {
+    "number": 70,
+    "title": "docs: BP originals cross-device handoff (do not merge)",
+    "draft": true,
+    "head_sha": "d192d9fa3dfab27dadef5271af86b8dc4bed0ff0",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/70"
+  },
+  {
+    "number": 69,
+    "title": "[DRAFT][QA] PR68 isolated Mock and browser evidence handoff",
+    "draft": true,
+    "head_sha": "5fe8351e318944f56d5981682122e679afbec0b5",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/69"
+  },
+  {
+    "number": 68,
+    "title": "[Draft] Compose principal gateway with AI generation flow",
+    "draft": true,
+    "head_sha": "d6f2cb4f110d22f665690e3af1d818249cc03b99",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/68"
+  },
+  {
+    "number": 67,
+    "title": "test: Demo Gallery stability and recovery evidence (58 cases)",
+    "draft": true,
+    "head_sha": "374c7e443ae9012655bee8ae95cc3cff4a344f11",
+    "base_tip_sha": "a5392394b44c1d5702888af6f80e25195a3cc137",
+    "base_ref": "feature/demo-gallery",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/67"
+  },
+  {
+    "number": 66,
+    "title": "fix(supervisor): track pending review requests and explicit ACK evidence",
+    "draft": true,
+    "head_sha": "525af90bc61421884238cac9a7e02cba49f7fbb7",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/66"
+  },
+  {
+    "number": 65,
+    "title": "docs: Docker deployment handoff and Studio secret boundaries",
+    "draft": true,
+    "head_sha": "79824ff3342a0a8b58f5234d4adf5291cce4af14",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/65"
+  },
+  {
+    "number": 64,
+    "title": "docs(security): DeepSeek secret injection checklist and blocked readiness audit",
+    "draft": true,
+    "head_sha": "f4934c38c926a5937cc11cea559e8666e3f9f4a3",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/64"
+  },
+  {
+    "number": 63,
+    "title": "[Draft] Prototype durable generation idempotency sidecar",
+    "draft": true,
+    "head_sha": "1c0bd2672a53756ac9a0e8f537cf3320b6c2e01f",
+    "base_tip_sha": "63a4ab2b65b9ffba72875a383a4ad82f472725fe",
+    "base_ref": "p0/real-ai-generation-20261019",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/63"
+  },
+  {
+    "number": 62,
+    "title": "test(qa): 冻结魔塔候选独立部署验收与可复现证据",
+    "draft": true,
+    "head_sha": "a087a161eee1e12f03b6084f6ed799711751466e",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/62"
+  },
+  {
+    "number": 61,
+    "title": "[Draft] P0 real AI generation B/C lifecycle",
+    "draft": true,
+    "head_sha": "84e61496868b6dea161782c8c3b821df3a0d039f",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/61"
+  },
+  {
+    "number": 60,
+    "title": "test: independent Gallery B/C browser evidence for #55",
+    "draft": true,
+    "head_sha": "dc064a929cc7946749b29d625a73b3e213c257ca",
+    "base_tip_sha": "a5392394b44c1d5702888af6f80e25195a3cc137",
+    "base_ref": "feature/demo-gallery",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/60"
+  },
+  {
+    "number": 59,
+    "title": "test(qa): preserve offline AI loop E2E evidence for five scenarios",
+    "draft": true,
+    "head_sha": "31ef69bfbacaa02385a23736fd2735212a947c85",
+    "base_tip_sha": "4a95cae50f772cd242d932cdbd93366381d1df74",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/59"
+  },
+  {
+    "number": 56,
+    "title": "feat(gateway): add explicit paid generation composition",
+    "draft": true,
+    "head_sha": "7d00712a2e11494eac9cd2e5bf83fb147d553d56",
+    "base_tip_sha": "8cfa37f5112adaab1e0adbb4cb4086240111d436",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/56"
+  },
+  {
+    "number": 55,
+    "title": "feat: add offline multi-scenario Demo Gallery",
+    "draft": true,
+    "head_sha": "a5392394b44c1d5702888af6f80e25195a3cc137",
+    "base_tip_sha": "8cfa37f5112adaab1e0adbb4cb4086240111d436",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/55"
+  },
+  {
+    "number": 54,
+    "title": "feat(mochi): default-off plan provider with live authorization admission",
+    "draft": true,
+    "head_sha": "fe7f1ec1a92ec7770490756d63468e8dcb651822",
+    "base_tip_sha": "8cfa37f5112adaab1e0adbb4cb4086240111d436",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/54"
+  },
+  {
+    "number": 53,
+    "title": "fix(security): recheck paid admission before reservation and egress",
+    "draft": true,
+    "head_sha": "b9adc757870a7e994dc511b8431be2986bd204dc",
+    "base_tip_sha": "8cfa37f5112adaab1e0adbb4cb4086240111d436",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/53"
+  },
+  {
+    "number": 50,
+    "title": "[Draft] Harden Safe Viewer process lifecycle on current main",
+    "draft": true,
+    "head_sha": "580032b05ef2114c7dc45b2ff7e4f53853185d32",
+    "base_tip_sha": "d644835bc915528fddc873e2687c84471f22ec52",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/50"
+  },
+  {
+    "number": 48,
+    "title": "[Draft] Terminate Safe Viewer compiler process trees",
+    "draft": true,
+    "head_sha": "a8c74edf2ee773e2828c1781c261ebe4368903f9",
+    "base_tip_sha": "2a7688480d1859c87762b46224b6ec81fe28d370",
+    "base_ref": "phase2/safe-tsx-viewer",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/48"
+  },
+  {
+    "number": 47,
+    "title": "[Draft] Fix PR40 Windows blockers and preserve main server behavior",
+    "draft": true,
+    "head_sha": "d4705388e4daf4a2686b316aac21b0084b9385a9",
+    "base_tip_sha": "692b7f56e1df094f4db95e35cc3be1fc72cc3dfc",
+    "base_ref": "agent-a/ai-core-night-20261019",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/47"
+  },
+  {
+    "number": 44,
+    "title": "feat(deepseek): authenticated budget gateway and two real B/C application evaluations",
+    "draft": true,
+    "head_sha": "aa7766615e0b6bddfe9c72a6f1709a302d3629ca",
+    "base_tip_sha": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/44"
+  },
+  {
+    "number": 43,
+    "title": "feat:isolated-safe-tsx-viewer",
+    "draft": true,
+    "head_sha": "2a7688480d1859c87762b46224b6ec81fe28d370",
+    "base_tip_sha": "b56a26a9803718d806bac3ddbd7fbe19e0c495c6",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/43"
+  },
+  {
+    "number": 40,
+    "title": "[Draft] AI core: bounded generation, artifact lifecycle and Mochi ownership",
+    "draft": true,
+    "head_sha": "692b7f56e1df094f4db95e35cc3be1fc72cc3dfc",
+    "base_tip_sha": "4044fb185a2720eead0dc6710b0d38a215439b98",
+    "base_ref": "main",
+    "url": "https://github.com/Nanmuxxx/BlockCraft-AI/pull/40"
+  }
+]

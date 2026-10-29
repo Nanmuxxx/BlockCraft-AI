@@ -9,6 +9,8 @@
 !public/
 !public/**
 !server/
+!server/image-generation/
+!server/image-generation/contract.ts
 !server/package.json
 !server/tsconfig.json
 !server/index.mjs

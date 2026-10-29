@@ -1,0 +1,63 @@
+[
+  {
+    "name": "typecheck",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-b"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  },
+  {
+    "name": "build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  },
+  {
+    "name": "default",
+    "command": [
+      "npm",
+      "test"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  },
+  {
+    "name": "prepare-export",
+    "command": [
+      "node",
+      "tools/project-zip-export/prepare.mjs"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  },
+  {
+    "name": "regressions",
+    "command": [
+      "node",
+      "--test",
+      "tests/project-json/format.test.cjs",
+      "tests/project-package/acceptance.test.cjs",
+      "tests/project-package/file.test.cjs",
+      "tests/project-package/format.test.cjs",
+      "tests/project-package/image.test.cjs",
+      "tests/project-package/zip.test.cjs",
+      "tests/custom-block-bc/adapter.test.cjs",
+      "tests/custom-block-bc/authorization.test.cjs",
+      "tests/custom-block-bc/layout-order.test.cjs",
+      "tests/custom-block-bc/owner.test.cjs",
+      "tests/custom-block-bc/viewer.test.cjs",
+      "tests/workshop-export/boundary.test.mjs",
+      "tests/workshop-export/capture.test.cjs",
+      "tests/workshop-export/http.test.mjs"
+    ],
+    "exit_code": 0,
+    "classification": "OFFLINE"
+  }
+]

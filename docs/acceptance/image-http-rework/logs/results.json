@@ -1,0 +1,135 @@
+{
+  "head_sha": "d4fec9ff07d239dc66de0b51ff8d8d6680706aa2",
+  "end_sha": "d4fec9ff07d239dc66de0b51ff8d8d6680706aa2",
+  "environment": "macOS-26.6-arm64-arm-64bit-Mach-O",
+  "node": "v24.22.0",
+  "npm": "11.19.1",
+  "records": [
+    {
+      "classification": "OFFLINE",
+      "command": "node node_modules/typescript/bin/tsc -b",
+      "exit_code": 0,
+      "seconds": 1.21,
+      "log": "types.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "node node_modules/typescript/bin/tsc -p server/tsconfig.json",
+      "exit_code": 0,
+      "seconds": 0.2,
+      "log": "server-types.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "node node_modules/typescript/bin/tsc -p server/image-generation/tsconfig.json",
+      "exit_code": 0,
+      "seconds": 0.28,
+      "log": "provider-types.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "VITE_IMAGE_HTTP_FIXTURE=1 npm run build",
+      "exit_code": 0,
+      "seconds": 1.55,
+      "log": "build.log"
+    },
+    {
+      "classification": "MOCK",
+      "command": "npm --prefix server test",
+      "exit_code": 0,
+      "seconds": 0.58,
+      "log": "server.log"
+    },
+    {
+      "classification": "OFFLINE/MOCK/HTTP MOCK",
+      "command": "node --test --test-timeout=10000 tests/image-backend/provider.test.mjs tests/image-http-contract/*.test.mjs",
+      "exit_code": 0,
+      "seconds": 2.3,
+      "log": "contracts.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "npm test",
+      "exit_code": 0,
+      "seconds": 1.03,
+      "log": "default.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "node tools/project-zip-export/prepare.mjs",
+      "exit_code": 0,
+      "seconds": 0.27,
+      "log": "prepare.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "node --test tests/project-json/*.test.cjs tests/project-package/*.test.cjs tests/custom-block-bc/*.test.cjs tests/workshop-export/*.test.*",
+      "exit_code": 0,
+      "seconds": 1.0,
+      "log": "resource.log"
+    },
+    {
+      "classification": "MOCK",
+      "command": "npm run test:generation",
+      "exit_code": 0,
+      "seconds": 29.78,
+      "log": "generation.log"
+    },
+    {
+      "classification": "HTTP MOCK",
+      "command": "GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_EVIDENCE_DIR=.cache/image-rework/http-desktop node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 16.68,
+      "log": "http-desktop.log"
+    },
+    {
+      "classification": "HTTP MOCK",
+      "command": "GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_VIEWPORT_WIDTH=390 GALLERY_EVIDENCE_DIR=.cache/image-rework/http-mobile node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 16.53,
+      "log": "http-mobile.log"
+    },
+    {
+      "classification": "HTTP MOCK",
+      "command": "GALLERY_EVIDENCE_DIR=.cache/image-rework/rework-desktop node tests/image-http-integration/rework.browser.cjs",
+      "exit_code": 0,
+      "seconds": 5.09,
+      "log": "rework-desktop.log"
+    },
+    {
+      "classification": "HTTP MOCK",
+      "command": "GALLERY_VIEWPORT_WIDTH=390 GALLERY_EVIDENCE_DIR=.cache/image-rework/rework-mobile node tests/image-http-integration/rework.browser.cjs",
+      "exit_code": 0,
+      "seconds": 4.9,
+      "log": "rework-mobile.log"
+    },
+    {
+      "classification": "MOCK",
+      "command": "GALLERY_TEST_PROVIDER=MOCK GALLERY_EVIDENCE_DIR=.cache/image-rework/fixed node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 12.78,
+      "log": "fixed.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "GALLERY_EVIDENCE_DIR=.cache/image-rework/canvas node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 12.53,
+      "log": "canvas.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "node tests/project-package/browser.cjs",
+      "exit_code": 0,
+      "seconds": 2.06,
+      "log": "zip.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "node tests/image-http-integration/production.cjs",
+      "exit_code": 0,
+      "seconds": 0.35,
+      "log": "production.log"
+    }
+  ]
+}

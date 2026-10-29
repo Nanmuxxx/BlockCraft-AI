@@ -1,0 +1,219 @@
+{
+  "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+  "environment": {
+    "platform": "macOS-26.6-arm64-arm-64bit-Mach-O",
+    "node": "v24.22.0",
+    "npm": "11.19.1",
+    "playwright": "Version 1.62.1"
+  },
+  "common_env": {
+    "NODE_PATH": "/tmp/blockcraft-workshop-browser-tools/node_modules",
+    "GALLERY_EXPECTED_SHA": "d66338b6599e6b7972df78e0d5683a3a150c1eff"
+  },
+  "commands": [
+    {
+      "name": "types",
+      "command": "node node_modules/typescript/bin/tsc -b",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/types"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 1.16
+    },
+    {
+      "name": "server-types",
+      "command": "node node_modules/typescript/bin/tsc -p server/tsconfig.json",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/server-types"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 0.24
+    },
+    {
+      "name": "provider-types",
+      "command": "node node_modules/typescript/bin/tsc -p server/image-generation/tsconfig.json",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/provider-types"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 0.29
+    },
+    {
+      "name": "contracts",
+      "command": "node --test --test-timeout=10000 tests/image-backend/provider.test.mjs tests/image-http-contract/*.test.mjs",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/contracts"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 2.29
+    },
+    {
+      "name": "server",
+      "command": "npm --prefix server test",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/server"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 0.61
+    },
+    {
+      "name": "default",
+      "command": "npm test",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/default"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 1.11
+    },
+    {
+      "name": "prepare",
+      "command": "node tools/project-zip-export/prepare.mjs",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/prepare"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 0.29
+    },
+    {
+      "name": "resources",
+      "command": "node --test tests/project-json/*.test.cjs tests/project-package/*.test.cjs tests/custom-block-bc/*.test.cjs tests/workshop-export/*.test.*",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/resources"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 0.98
+    },
+    {
+      "name": "generation",
+      "command": "npm run test:generation",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/generation"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 29.67
+    },
+    {
+      "name": "http-1440",
+      "command": "node tests/gallery-generation/browser.cjs",
+      "env": {
+        "GALLERY_TEST_PROVIDER": "HTTP_MOCK",
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/http-1440"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 17.1
+    },
+    {
+      "name": "http-390",
+      "command": "node tests/gallery-generation/browser.cjs",
+      "env": {
+        "GALLERY_TEST_PROVIDER": "HTTP_MOCK",
+        "GALLERY_VIEWPORT_WIDTH": "390",
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/http-390"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 16.62
+    },
+    {
+      "name": "rework-1440",
+      "command": "node tests/image-http-integration/rework.browser.cjs",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/rework-1440"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 34.52
+    },
+    {
+      "name": "rework-390",
+      "command": "node tests/image-http-integration/rework.browser.cjs",
+      "env": {
+        "GALLERY_VIEWPORT_WIDTH": "390",
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/rework-390"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 34.92
+    },
+    {
+      "name": "fixed-mock",
+      "command": "node tests/gallery-generation/browser.cjs",
+      "env": {
+        "GALLERY_TEST_PROVIDER": "MOCK",
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/fixed-mock"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 13.1
+    },
+    {
+      "name": "canvas",
+      "command": "node tests/gallery-generation/browser.cjs",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/canvas"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 12.75
+    },
+    {
+      "name": "zip-browser",
+      "command": "node tests/project-package/browser.cjs",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/zip-browser"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 2.19
+    },
+    {
+      "name": "build",
+      "command": "npm run build",
+      "env": {
+        "VITE_IMAGE_HTTP_FIXTURE": "1",
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/build"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 1.7
+    },
+    {
+      "name": "production",
+      "command": "node tests/image-http-integration/production.cjs",
+      "env": {
+        "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/docs/acceptance/image-http-rework/stale-async/production"
+      },
+      "mode": "MOCK/OFFLINE; REAL_PROVIDER=NOT_RUN",
+      "head_sha": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+      "exit_code": 0,
+      "seconds": 0.4
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "format": "blockcraft-project",
+  "formatVersion": 1,
+  "project": {
+    "formatVersion": 2,
+    "revision": 1,
+    "base": {
+      "spec": {
+        "version": 1,
+        "id": "gallery-practice",
+        "name": "我的图库练习",
+        "entities": [],
+        "relations": [],
+        "blocks": [
+          {
+            "id": "practice-gallery",
+            "type": "gallery",
+            "name": "我的图片",
+            "protocolVersion": 1,
+            "imageIds": [
+              "image-fc053874-3292-4f80-bd84-c682b73011cd"
+            ],
+            "layout": "grid",
+            "interaction": "preview"
+          }
+        ]
+      },
+      "records": {},
+      "blockPositions": {},
+      "assets": {
+        "image-fc053874-3292-4f80-bd84-c682b73011cd": {
+          "id": "image-fc053874-3292-4f80-bd84-c682b73011cd",
+          "name": "Mock测试图片.png",
+          "altText": "固定 Mock 测试风景图，与描述无关",
+          "mimeType": "image/png",
+          "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII="
+        }
+      }
+    },
+    "custom": {
+      "instances": [],
+      "positions": {},
+      "states": {}
+    },
+    "renderOrder": [
+      {
+        "kind": "builtin",
+        "id": "practice-gallery"
+      }
+    ]
+  },
+  "artifacts": []
+}

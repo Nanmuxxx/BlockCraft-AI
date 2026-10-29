@@ -1,0 +1,20 @@
+✔ OFFLINE: strict versioned input and key; JSON round trip (0.6425ms)
+✔ OFFLINE: terminal wire state cannot expose image before success or uncertain spend (0.172375ms)
+✔ HTTP MOCK: create/poll/replay is serializable, bounded, exactly one dispatch (19.409292ms)
+✔ HTTP MOCK: anonymous, forged identity/project, other owner and revoked cached results denied (8.818ms)
+✔ HTTP MOCK: strict JSON, version, input bounds, duplicate key and cross-origin rejected (5.968ms)
+✔ HTTP MOCK: cancel twice fences late provider success; new key is explicit new task (27.801292ms)
+✔ HTTP MOCK: timeout fences late success and provider errors are safe (28.096083ms)
+✔ HTTP MOCK: budget denial and ledger outage prevent dispatch; uncertain settlement withholds image (3.579916ms)
+✔ HTTP MOCK: bounded concurrency, immutable tombstones and expiry never redispatch (9.781167ms)
+✔ HTTP MOCK: missing authority defaults closed; live provider construction rejected (1.290625ms)
+✔ MOCK: byte-level PNG checks reject MIME, corruption, dimensions, oversize, raster and animation (1.047ms)
+✔ HTTP MOCK: invalid provider bytes fail safely through HTTP (1.414583ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 176.201292

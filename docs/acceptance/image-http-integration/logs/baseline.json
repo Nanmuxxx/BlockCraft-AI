@@ -1,0 +1,43 @@
+{
+  "sha": "00a2653be1cabe480c5d6b2f5599112eb313497d",
+  "environment": "macOS-26.6-arm64-arm-64bit-Mach-O",
+  "node": "v24.22.0",
+  "records": [
+    {
+      "command": "node node_modules/typescript/bin/tsc -b",
+      "exit_code": 0,
+      "seconds": 1.59,
+      "log": "baseline-0.log"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "seconds": 5.6,
+      "log": "baseline-1.log"
+    },
+    {
+      "command": "npm --prefix server test",
+      "exit_code": 0,
+      "seconds": 0.66,
+      "log": "baseline-2.log"
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc -p server/image-generation/tsconfig.json",
+      "exit_code": 0,
+      "seconds": 0.32,
+      "log": "baseline-3.log"
+    },
+    {
+      "command": "node --test tests/image-backend/provider.test.mjs",
+      "exit_code": 0,
+      "seconds": 0.14,
+      "log": "baseline-4.log"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "seconds": 1.33,
+      "log": "baseline-5.log"
+    }
+  ]
+}

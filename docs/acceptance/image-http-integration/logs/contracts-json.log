@@ -1,0 +1,29 @@
+✔ disabled by default; unrecognized/extra provider options never select live transport (0.762084ms)
+✔ explicit fixture is MOCK, bounded PNG with independent bytes on each call (0.869458ms)
+✔ prompt validation rejects override fields, invalid shape, controls and excessive input (0.2785ms)
+✔ cancellation before and during pending fixture delivery returns stable safe error (0.111875ms)
+✔ server guard refuses browser-like construction and subsequent use (0.35375ms)
+✔ current HTTP server has no image route and cannot route image payload to text provider (19.185375ms)
+✔ OFFLINE: strict versioned input and key; JSON round trip (0.67725ms)
+✔ OFFLINE: terminal wire state cannot expose image before success or uncertain spend (0.193583ms)
+✔ HTTP MOCK: create/poll/replay is serializable, bounded, exactly one dispatch (25.4975ms)
+✔ HTTP MOCK: anonymous, forged identity/project, other owner and revoked cached results denied (8.107375ms)
+✔ HTTP MOCK: strict JSON, version, input bounds, duplicate key and cross-origin rejected (8.729792ms)
+✔ HTTP MOCK: cancel twice fences late provider success (25.397875ms)
+✔ HTTP MOCK: timeout fences late success and provider errors are safe (27.060375ms)
+✔ HTTP MOCK: budget denial and ledger outage prevent dispatch; uncertain settlement withholds image (3.239792ms)
+✔ HTTP MOCK: bounded concurrency, immutable tombstones and expiry never redispatch (9.985625ms)
+✔ HTTP MOCK: missing authority defaults closed; live provider construction rejected (2.002958ms)
+✔ MOCK: byte-level PNG checks reject MIME, corruption, dimensions, oversize, raster and animation (0.688833ms)
+✔ HTTP MOCK: invalid provider bytes fail safely through HTTP (1.637583ms)
+✔ HTTP MOCK: same key scoped across owners/projects; distinct keys execute concurrently (2.387958ms)
+✔ MOCK TRANSPORT ONLY: pinned Qwen request, fixed safe parameters and serializable schema (0.791958ms)
+✔ MOCK TRANSPORT ONLY: supplier reference requires explicit host policy and remains unverified (0.574625ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 198.783375

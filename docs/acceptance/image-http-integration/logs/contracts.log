@@ -1,0 +1,28 @@
+✔ disabled by default; unrecognized/extra provider options never select live transport (0.515041ms)
+✔ explicit fixture is MOCK, bounded PNG with independent bytes on each call (0.605875ms)
+✔ prompt validation rejects override fields, invalid shape, controls and excessive input (0.228083ms)
+✔ cancellation before and during pending fixture delivery returns stable safe error (0.099792ms)
+✔ server guard refuses browser-like construction and subsequent use (0.249041ms)
+✔ current HTTP server has no image route and cannot route image payload to text provider (17.747666ms)
+✔ OFFLINE: strict versioned input and key; JSON round trip (0.792916ms)
+✔ OFFLINE: terminal wire state cannot expose image before success or uncertain spend (0.217209ms)
+✔ HTTP MOCK: create/poll/replay is serializable, bounded, exactly one dispatch (21.054209ms)
+✔ HTTP MOCK: anonymous, forged identity/project, other owner and revoked cached results denied (9.485125ms)
+✔ HTTP MOCK: strict JSON, version, input bounds, duplicate key and cross-origin rejected (6.912458ms)
+✔ HTTP MOCK: cancel twice fences late provider success; new key is explicit new task (28.151334ms)
+✔ HTTP MOCK: timeout fences late success and provider errors are safe (30.122084ms)
+✔ HTTP MOCK: budget denial and ledger outage prevent dispatch; uncertain settlement withholds image (2.929541ms)
+✔ HTTP MOCK: bounded concurrency, immutable tombstones and expiry never redispatch (11.066583ms)
+✔ HTTP MOCK: missing authority defaults closed; live provider construction rejected (1.493542ms)
+✔ MOCK: byte-level PNG checks reject MIME, corruption, dimensions, oversize, raster and animation (0.63575ms)
+✔ HTTP MOCK: invalid provider bytes fail safely through HTTP (1.270959ms)
+✔ MOCK TRANSPORT ONLY: pinned Qwen request, fixed safe parameters and serializable schema (1.485792ms)
+✔ MOCK TRANSPORT ONLY: supplier reference requires explicit host policy and remains unverified (0.384833ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 187.43625

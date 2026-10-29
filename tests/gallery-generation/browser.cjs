@@ -12,14 +12,25 @@ const report = { mode: 'OFFLINE_CANVAS', passed: false, cases: Array.from({ leng
   notRun: ['M06 live-provider billing independence', 'M10 live-provider reservations, uncertain charges and credential rotation', 'real image-model quality/cost'],
   externalRequests: [], aiRequests: [], pageErrors: [] }
 const sha = bytes => createHash('sha256').update(bytes).digest('hex')
+const httpMode = process.env.GALLERY_TEST_PROVIDER === 'HTTP_MOCK'
+const mockMode = httpMode || process.env.GALLERY_TEST_PROVIDER === 'MOCK'
+const imageWidth = httpMode ? 1 : 320, imageHeight = httpMode ? 1 : 240
+if (mockMode) {
+  report.mode = httpMode ? 'HTTP_MOCK_LOOPBACK_SERVER' : 'MOCK_FIXED_BROWSER_SOURCE'
+  report.cases.push({ id: 'W01', status: 'NOT RUN' }, { id: 'W02', status: 'NOT RUN' })
+}
+const generateButton = httpMode ? '生成一张 HTTP Mock 测试图片' : mockMode ? '生成一张 Mock 测试图片' : '生成一张离线示例'
+const previewName = httpMode ? '待采用的 HTTP Mock 图片预览' : mockMode ? '待采用的 Mock 图片预览' : '待采用的离线图片预览'
 async function main() {
   await fs.mkdir(output, { recursive: true })
   const { createServer } = await import('vite')
   const fontRoot = path.dirname(require.resolve('@fontsource/pixelify-sans/package.json'))
-  const server = await createServer({ root, server: { host: '127.0.0.1', port: 0, fs: { allow: [root, fontRoot] } },
-    plugins: [{ name: 'offline-acceptance-api-denial', configureServer(s) {
+  const fixture = httpMode ? (await import('../image-http-integration/fixture.mjs')).createHttpMockFixture() : null
+  const server = await createServer({ root,
+    define: { 'import.meta.env.VITE_IMAGE_HTTP_FIXTURE': JSON.stringify(httpMode ? '1' : '0') }, server: { host: '127.0.0.1', port: 0, fs: { allow: [root, fontRoot] } },
+    plugins: [...(fixture ? [fixture.plugin] : []), { name: 'offline-acceptance-api-denial', configureServer(s) {
       s.middlewares.use((req, res, next) => {
-        if (!req.url.startsWith('/api/')) return next()
+        if (!req.url.startsWith('/api/') || (httpMode && req.url.startsWith('/api/image-generations'))) return next()
         res.statusCode = 503; res.setHeader('Content-Type', 'application/json')
         res.end(JSON.stringify({ enabled: false, error: { code: 'OFFLINE_ACCEPTANCE' } }))
       })
@@ -45,7 +56,7 @@ async function main() {
     assert.match(report.environment.head, /^[a-f0-9]{40}$/)
     // GitHub checks out PR commits detached; verify the tested commit, not a local branch name.
     if (process.env.GALLERY_EXPECTED_SHA) assert.equal(report.environment.head, process.env.GALLERY_EXPECTED_SHA)
-    async function fresh({ trace = false, width = 1440 } = {}) {
+    async function fresh({ trace = false, width = Number(process.env.GALLERY_VIEWPORT_WIDTH || 1440) } = {}) {
       const context = await browser.newContext({ viewport: { width, height: 1100 }, acceptDownloads: true, serviceWorkers: 'block' })
       contexts.push(context)
       if (trace) {
@@ -55,6 +66,7 @@ async function main() {
       await context.route('**/*', route => {
         const url = new URL(route.request().url())
         if (url.origin !== origin) { report.externalRequests.push(url.origin + url.pathname); return route.abort() }
+        if (httpMode && url.pathname.startsWith('/api/image-generations')) return route.continue()
         if (url.pathname.startsWith('/api/')) {
           if (!['/api/studio/status', '/api/mochi-plan/status'].includes(url.pathname) && route.request().method() !== 'GET') report.aiRequests.push(url.pathname)
           return route.fulfill({ status: 503, json: { enabled: false, error: { code: 'OFFLINE_ACCEPTANCE' } } })
@@ -93,26 +105,44 @@ async function main() {
     await page.locator('#generation-mode').selectOption('gallery-fixture')
     await page.getByRole('button', { name: '打开离线图库', exact: true }).click()
     await expect(page.getByRole('heading', { name: '我的图库练习', exact: true })).toBeVisible()
+    if (mockMode) {
+      await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption(httpMode ? 'HTTP_MOCK' : 'MOCK')
+      await expect(page.locator('.gallery-generation')).toContainText(httpMode ? 'HTTP MOCK 隔离测试' : '每次返回同一张固定图片，与描述无关')
+      await page.getByRole('textbox', { name: '图片描述', exact: true }).fill('Mock 验收：一只小猫')
+    }
     const before = await project(page, '01-before.json')
     let candidate, adopted, stored, zip
     await run('M01', 'one candidate, no project change before confirmation; discard preserves original', async () => {
-      await page.getByRole('button', { name: '生成一张离线示例', exact: true }).click()
-      const preview = page.getByRole('img', { name: '待采用的离线图片预览', exact: true })
+      await page.getByRole('button', { name: generateButton, exact: true }).click()
+      const preview = page.getByRole('img', { name: previewName, exact: true })
       await expect(preview).toBeVisible(); assert.equal(await preview.count(), 1)
+      const originalSrc = await preview.getAttribute('src')
       assert.deepEqual(await project(page, '02-preview-only.json'), before)
       assert.equal(await saved(page), null)
       await page.getByRole('button', { name: '放弃预览', exact: true }).click()
       await expect(preview).toHaveCount(0)
       assert.deepEqual(await project(page, '03-cancelled.json'), before)
-      await page.getByRole('button', { name: '生成一张离线示例', exact: true }).click()
+      if (mockMode) {
+        await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption('OFFLINE_CANVAS')
+        await page.getByRole('combobox', { name: '图片生成方式', exact: true }).selectOption(httpMode ? 'HTTP_MOCK' : 'MOCK')
+        await expect(page.getByRole('textbox', { name: '图片描述', exact: true })).toHaveValue('Mock 验收：一只小猫')
+        await page.getByRole('textbox', { name: '图片描述', exact: true }).fill('Mock 验收：另一段描述')
+      }
+      await page.getByRole('button', { name: generateButton, exact: true }).click()
       await expect(preview).toBeVisible()
+      if (mockMode) await expect(preview).toHaveAttribute('src', originalSrc)
       return { revision: before.revision, assets: Object.keys(before.base.assets || {}).length, candidatesPerOperation: 1, discardedUnchanged: true }
     })
     await run('M02', 'preview decodes and identifies actual PNG bytes, size and destination', async () => {
-      candidate = await page.getByRole('img', { name: '待采用的离线图片预览', exact: true }).evaluate(async img => {
+      candidate = await page.getByRole('img', { name: previewName, exact: true }).evaluate(async img => {
         await img.decode(); return { src: img.src, width: img.naturalWidth, height: img.naturalHeight }
       })
-      assert.equal(candidate.width, 320); assert.equal(candidate.height, 240)
+      assert.equal(candidate.width, imageWidth); assert.equal(candidate.height, imageHeight)
+      const layout = await page.locator('.gallery-generation').evaluate(panel => {
+        const rect = panel.getBoundingClientRect()
+        return { left: rect.left, right: rect.right, viewport: window.innerWidth }
+      })
+      assert.ok(layout.left >= 0 && layout.right <= layout.viewport + 1, `Gallery controls overflow viewport: ${JSON.stringify(layout)}`)
       assert.equal(await page.getByRole('combobox', { name: '图片目标图库' }).inputValue(), 'practice-gallery')
       await screenshot(page, '02-candidate.png')
       return { width: candidate.width, height: candidate.height, mime: 'image/png', bytes: Buffer.from(candidate.src.split(',')[1], 'base64').length,
@@ -133,7 +163,7 @@ async function main() {
       await page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
       const image = page.locator('#generated-preview img').filter({ visible: true })
       await expect(image).toHaveCount(1); await expect(image).toHaveAttribute('src', candidate.src)
-      await expect(image).toHaveJSProperty('naturalWidth', 320)
+      await expect(image).toHaveJSProperty('naturalWidth', imageWidth)
       assert.deepEqual(await project(page, '05-c-mode.json'), adopted)
       await screenshot(page, '03-adopted-c-mode.png')
       return { revision: adopted.revision, assetId: ids[0], receipt: stored.receipts[0], storageSequence: stored.sequence }
@@ -172,7 +202,7 @@ async function main() {
       await expect(clean.page.getByRole('heading', { name: '我的图库练习', exact: true })).toBeVisible()
       await clean.page.getByRole('button', { name: 'C 模式 · 运行应用', exact: true }).click()
       await expect(clean.page.locator('#generated-preview img')).toHaveAttribute('src', candidate.src)
-      await expect(clean.page.locator('#generated-preview img')).toHaveJSProperty('naturalWidth', 320)
+      await expect(clean.page.locator('#generated-preview img')).toHaveJSProperty('naturalWidth', imageWidth)
       await screenshot(clean.page, '06-isolated-import-restored.png')
       await closeContext(clean.context)
       return { zipSha256: sha(zip.bytes), members: contents.map(f => ({ path: f.path, bytes: f.bytes.length, sha256: sha(Buffer.from(f.bytes)) })),
@@ -202,6 +232,50 @@ async function main() {
       } else evidence = await item.page.evaluate(async method => (await import('/tests/gallery-generation/browser-cases.js'))[method](), method)
       await closeContext(item.context); return evidence
     })
+    if (mockMode) for (const [id, method, description] of [
+      ['W01', 'mockAdapterFailures', 'Mock envelope bounds, metadata and native image validation preserve project/storage'],
+      ['W02', 'mockRaces', 'Mock input/duplicate generation/cancel/late response isolation and duplicate adoption'],
+    ]) await run(id, description, async () => {
+      const item = await fresh()
+      const evidence = await item.page.evaluate(async method => (await import('/tests/gallery-generation/browser-cases.js'))[method](), method)
+      await closeContext(item.context); return evidence
+    })
+    if (fixture) {
+      for (const [id, mode, serverMode] of [
+        ['H01','forbidden','normal'], ['H02','provider-failure','fail'], ['H03','bad-image','bad-image'],
+        ['H04','cancel','late'], ['H05','deadline','late'], ['H06','request-timeout','slow-response'],
+        ['H07','dispose','late'], ['H08','storage','normal'], ['H09','adopt','normal'], ['H10','network','normal'],
+      ]) {
+        report.cases.push({id,status:'NOT RUN'})
+        await run(id, `HTTP MOCK ${mode}: real loopback handler with fixture fault, preserve prior work`, async () => {
+          fixture.controls.mode=serverMode; fixture.controls.delayMs=150
+          const item=await fresh()
+          if(mode==='network') await item.page.route('**/api/image-generations/*',route => route.abort('connectionreset'))
+          const evidence=await item.page.evaluate(async mode => (await import('/tests/image-http-integration/browser-cases.js')).httpCase(mode),mode)
+          await closeContext(item.context)
+          return evidence
+        })
+      }
+      fixture.controls.mode='normal'
+      report.cases.push({id:'H11',status:'NOT RUN'})
+      await run('H11','HTTP MOCK asset JSON export imports into an empty context and restores after save/reload',async()=>{
+        const item=await fresh()
+        await item.page.locator('.project-json-landing-import input[type=file]').setInputFiles(path.join(output,'04-adopted.json'))
+        await expect(item.page.getByRole('heading',{name:'我的图库练习',exact:true})).toBeVisible()
+        assert.deepEqual(await project(item.page,'08-json-imported.json'),adopted)
+        await item.page.getByRole('button',{name:'保存到本机',exact:true}).click()
+        await expect(item.page.locator('.workspace-save')).toContainText('已保存到本机')
+        await item.page.reload()
+        await expect(item.page.getByRole('heading',{name:'我的图库练习',exact:true})).toBeVisible()
+        assert.deepEqual(await project(item.page,'09-json-reloaded.json'),adopted)
+        await closeContext(item.context)
+        return {emptyContext:true,fullProjectEqual:true,jsonImportSaveReload:true}
+      })
+      report.httpRequests = fixture.requests; report.httpAudit = fixture.handler.audit()
+      assert.ok(report.httpRequests.some(x => x.method === 'POST' && x.path === '/api/image-generations'))
+      assert.ok(report.httpRequests.some(x => x.method === 'GET' && x.path.startsWith('/api/image-generations/')))
+      assert.ok(report.httpAudit.some(x => x.event === 'SUCCEEDED'))
+    }
     assert.deepEqual(report.externalRequests, []); assert.deepEqual(report.aiRequests, []); assert.deepEqual(report.pageErrors, [])
     report.passed = true
   } catch (error) {

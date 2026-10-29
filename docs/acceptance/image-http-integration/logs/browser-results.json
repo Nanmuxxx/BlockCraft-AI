@@ -1,0 +1,34 @@
+{
+  "sha": "5909ea572a6868244619b599e4fc5da93f83374a",
+  "environment": "macOS-26.6-arm64-arm-64bit-Mach-O",
+  "records": [
+    {
+      "classification": "HTTP MOCK",
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_EVIDENCE_DIR=.cache/http-mock/desktop node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 17.35,
+      "log": "http-desktop.log"
+    },
+    {
+      "classification": "HTTP MOCK",
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_VIEWPORT_WIDTH=390 GALLERY_EVIDENCE_DIR=.cache/http-mock/mobile node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 16.8,
+      "log": "http-mobile.log"
+    },
+    {
+      "classification": "MOCK",
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules GALLERY_TEST_PROVIDER=MOCK GALLERY_EVIDENCE_DIR=.cache/http-mock/fixed node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 13.51,
+      "log": "fixed-mock.log"
+    },
+    {
+      "classification": "OFFLINE",
+      "command": "NODE_PATH=/tmp/blockcraft-workshop-browser-tools/node_modules GALLERY_EVIDENCE_DIR=.cache/http-mock/canvas node tests/gallery-generation/browser.cjs",
+      "exit_code": 0,
+      "seconds": 13.07,
+      "log": "canvas.log"
+    }
+  ]
+}

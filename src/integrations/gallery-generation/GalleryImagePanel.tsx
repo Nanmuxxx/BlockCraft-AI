@@ -1,20 +1,37 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import type { WorkspaceSession } from '../project-workspace/session'
 import { createGalleryImageController } from './controller'
+import { offlineImageProvider } from './offline'
+import { createHttpMockImageProvider } from './http'
+import { mockImageProvider } from './mock'
 import './gallery-generation.css'
 
+type Source = 'OFFLINE_CANVAS' | 'MOCK' | 'HTTP_MOCK'
+// DEV-only fixture flag: production builds cannot expose the HTTP selector.
+const httpFixture = import.meta.env.DEV && import.meta.env.VITE_IMAGE_HTTP_FIXTURE === '1'
+
 export function GalleryImagePanel({ workspace }: { workspace: WorkspaceSession }) {
-  const [binding, setBinding] = useState<{ workspace: WorkspaceSession; controller: ReturnType<typeof createGalleryImageController> } | null>(null)
+  const [source, setSource] = useState<Source>(() => httpFixture && createHttpMockImageProvider('fixture-project').getReview() ? 'HTTP_MOCK' : 'OFFLINE_CANVAS')
   useEffect(() => {
-    const controller = createGalleryImageController(workspace)
-    setBinding({ workspace, controller })
-    return () => controller.dispose()
-  }, [workspace])
-  return binding?.workspace === workspace ? <ImagePanel workspace={workspace} controller={binding.controller} /> : null
-}
-function ImagePanel({ workspace, controller }: { workspace: WorkspaceSession; controller: ReturnType<typeof createGalleryImageController> }) {
+    if (!httpFixture) return
+    const guard = createHttpMockImageProvider('fixture-project')
+    const changed = () => { if (guard.getReview()) setSource('HTTP_MOCK') }
+    changed(); return guard.subscribeReview(changed)
+  }, [])
   const [prompt, setPrompt] = useState('清晨的山与太阳')
   const [target, setTarget] = useState('')
+  const [binding, setBinding] = useState<{ workspace: WorkspaceSession; source: typeof source; controller: ReturnType<typeof createGalleryImageController> } | null>(null)
+  useEffect(() => {
+    const provider = source === 'HTTP_MOCK' && httpFixture
+      ? createHttpMockImageProvider('fixture-project', status => controller.reportHttpStatus(status))
+      : source === 'MOCK' ? mockImageProvider : offlineImageProvider
+    const controller = createGalleryImageController(workspace, provider, 10_000, source)
+    setBinding({ workspace, source, controller })
+    return () => controller.dispose()
+  }, [workspace, source])
+  return binding?.workspace === workspace && binding.source === source ? <ImagePanel workspace={workspace} controller={binding.controller} source={source} setSource={setSource} prompt={prompt} setPrompt={setPrompt} target={target} setTarget={setTarget} /> : null
+}
+function ImagePanel({ workspace, controller, source, setSource, prompt, setPrompt, target, setTarget }: { workspace: WorkspaceSession; controller: ReturnType<typeof createGalleryImageController>; source: Source; setSource: (source: Source) => void; prompt: string; setPrompt: (prompt: string) => void; target: string; setTarget: (target: string) => void }) {
   const state = useSyncExternalStore(controller.subscribe, controller.getSnapshot)
   const saved = useSyncExternalStore(workspace.subscribe, workspace.getSnapshot)
   const snapshot = useSyncExternalStore(workspace.runtime.subscribe, workspace.runtime.getSnapshot)
@@ -29,18 +46,22 @@ function ImagePanel({ workspace, controller }: { workspace: WorkspaceSession; co
     setError(result.ok ? '' : result.error.message)
   }
   return <section className="gallery-generation" aria-label="图库单张生成">
-    <div><h3>为图库创作一张图片</h3><p>离线练习：按描述生成配色风景示例，不调用 AI 模型，不产生费用。</p></div>
+    <div><h3>为图库创作一张图片</h3><p>{source === 'HTTP_MOCK' ? 'HTTP MOCK 隔离测试：通过本机服务器返回固定图片；非 AI，不产生模型费用。' : source === 'MOCK' ? 'MOCK 测试：每次返回同一张固定图片，与描述无关；不调用模型、不产生费用。' : '离线练习：按描述生成配色风景示例，不调用 AI 模型，不产生费用。'}</p></div>
+    <label>图片生成方式<select aria-label="图片生成方式" value={source} disabled={busy || unavailable || !!state.review} onChange={event => { controller.cancel(); setSource(event.target.value as typeof source) }}>
+      <option value="OFFLINE_CANVAS">离线配色风景示例</option><option value="MOCK">固定 Mock 图片（非 AI）</option>
+    {httpFixture && <option value="HTTP_MOCK">HTTP Mock 隔离测试（非 AI）</option>}
+    </select></label>
     {!galleries.length ? <button type="button" onClick={addGallery} disabled={unavailable}>添加图库</button> : <>
       <label>目标图库<select aria-label="图片目标图库" value={selected} disabled={busy || unavailable} onChange={event => { controller.cancel(); setTarget(event.target.value) }}>
         {galleries.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
       </select></label>
       <label>图片描述<textarea aria-label="图片描述" maxLength={500} value={prompt} disabled={busy || unavailable} onChange={event => setPrompt(event.target.value)} /></label>
       <div className="gallery-generation__actions">
-        <button type="button" disabled={busy || unavailable || !prompt.trim()} onClick={() => void controller.generate(prompt, selected)}>生成一张离线示例</button>
+        <button type="button" disabled={busy || unavailable || !!state.review || !prompt.trim()} onClick={() => void controller.generate(prompt, selected)}>{source === 'HTTP_MOCK' ? '生成一张 HTTP Mock 测试图片' : source === 'MOCK' ? '生成一张 Mock 测试图片' : '生成一张离线示例'}</button>
         {state.phase === 'generating' && <button type="button" onClick={controller.cancel}>取消生成图片</button>}
       </div>
       {state.candidate && <figure>
-        <img src={state.candidate.asset.dataUrl} alt="待采用的离线图片预览" width={state.candidate.width} height={state.candidate.height} />
+        <img src={state.candidate.asset.dataUrl} alt={source === 'HTTP_MOCK' ? '待采用的 HTTP Mock 图片预览' : source === 'MOCK' ? '待采用的 Mock 图片预览' : '待采用的离线图片预览'} width={state.candidate.width} height={state.candidate.height} />
         <figcaption>{state.candidate.width} × {state.candidate.height} · {(state.candidate.bytes / 1024).toFixed(1)} KiB · {state.phase === 'adopted' ? '已采用' : '预览尚未加入作品'}</figcaption>
         {state.phase !== 'adopted' && <div className="gallery-generation__actions">
           <button type="button" disabled={unavailable || busy} onClick={() => void controller.confirm()}>确认采用并保存</button>
@@ -48,6 +69,7 @@ function ImagePanel({ workspace, controller }: { workspace: WorkspaceSession; co
         </div>}
       </figure>}
     </>}
+    {state.review && <button type="button" disabled={busy || unavailable || !state.review.jobId} onClick={() => void controller.reconcile()}>核对原任务状态（不重试）</button>}
     <p role={state.phase === 'failed' || error ? 'alert' : 'status'} aria-live="polite">{error || state.message}</p>
   </section>
 }

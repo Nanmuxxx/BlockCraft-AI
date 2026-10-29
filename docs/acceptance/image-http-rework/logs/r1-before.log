@@ -1,0 +1,24 @@
+4:19:36 PM [vite] (client) Re-optimizing dependencies because vite config has changed
+{
+  "mode": "HTTP MOCK REWORK",
+  "before": true,
+  "width": 1440,
+  "cases": [
+    {
+      "scenario": "uncertain",
+      "reproduced": true,
+      "finalAlert": "HTTP Mock 未完成；原作品未更改。取消或提交结果可能尚未确认，请先核对任务，勿自动重试。",
+      "creates": 2,
+      "noCandidate": true
+    }
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "environment": {
+    "node": "v24.22.0",
+    "platform": "darwin",
+    "browser": "151.0.7922.34",
+    "head": "f325e2fc9f9574fdead27ed7265e851a93cbd849"
+  },
+  "passed": true
+}

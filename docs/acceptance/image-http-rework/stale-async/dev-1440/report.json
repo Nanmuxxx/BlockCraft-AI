@@ -1,0 +1,71 @@
+{
+  "mode": "HTTP MOCK REWORK",
+  "before": false,
+  "width": 1440,
+  "cases": [
+    {
+      "scenario": "uncertain",
+      "passed": true,
+      "review": {
+        "requestId": "13f955eb-222e-4c59-b393-b996ccf3390c",
+        "jobId": "cc7b6685-c4e2-48bd-ba9a-7b21befb4bc1",
+        "state": "UNCERTAIN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "lost-create",
+      "passed": true,
+      "review": {
+        "requestId": "130880be-6649-4bd9-997d-6e7262c7f223",
+        "jobId": null,
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "lost-cancel",
+      "passed": true,
+      "review": {
+        "requestId": "91b85cd8-427f-4735-b496-5bd3b8c462b0",
+        "jobId": "537a2cb6-6f83-4ccf-b08c-77ef1d7a8077",
+        "state": "PENDING"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "unknown-job",
+      "passed": true,
+      "review": {
+        "requestId": "e98e6d8d-928d-4805-adfc-45000040c794",
+        "jobId": "e5c2d03c-738a-4ec9-8dce-8955f94e27d5",
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "poll-network",
+      "passed": true,
+      "review": {
+        "requestId": "90767839-7b01-48b2-9292-1e4cedad21cd",
+        "jobId": "bbad2c3a-e311-4c66-a389-d1ac0711b21d",
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    }
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "environment": {
+    "node": "v24.22.0",
+    "platform": "darwin",
+    "browser": "151.0.7922.34",
+    "head": "c55280a9c8b068d3cf5377e6c8e8c5806d5b379d"
+  },
+  "error": "page.evaluate: TypeError: Cannot read properties of undefined (reading 'repository')\n    at createWorkspaceSession (http://127.0.0.1:54827/src/integrations/project-workspace/session.ts:11:29)\n    at eval (eval at evaluate (:311:30), <anonymous>:7:26)\n    at async <anonymous>:337:30\n    at ownership (/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/tests/image-http-integration/ownership.browser.cjs:57:13)\n    at async main (/Users/nanmuxun/BlockAI/BlockCraft-AI-image-http-phase2/tests/image-http-integration/rework.browser.cjs:115:14)"
+}

@@ -1,0 +1,36 @@
+✔ disabled by default; unrecognized/extra provider options never select live transport (0.554583ms)
+✔ explicit fixture is MOCK, bounded PNG with independent bytes on each call (0.56ms)
+✔ prompt validation rejects override fields, invalid shape, controls and excessive input (0.221333ms)
+✔ cancellation before and during pending fixture delivery returns stable safe error (0.114084ms)
+✔ server guard refuses browser-like construction and subsequent use (0.2735ms)
+✔ current HTTP server has no image route and cannot route image payload to text provider (18.690208ms)
+✔ OFFLINE: strict versioned input and key; JSON round trip (0.506083ms)
+✔ OFFLINE: terminal wire state cannot expose image before success or uncertain spend (0.126375ms)
+✔ HTTP MOCK: create/poll/replay is serializable, bounded, exactly one dispatch (49.123708ms)
+✔ HTTP MOCK: anonymous, forged identity/project, other owner and revoked cached results denied (29.579333ms)
+✔ HTTP MOCK: strict JSON, version, input bounds, duplicate key and cross-origin rejected (5.716334ms)
+✔ HTTP MOCK: cancel twice fences late provider success (267.254833ms)
+✔ HTTP MOCK: timeout fences late success and provider errors are safe (148.186959ms)
+✔ HTTP MOCK: budget denial and ledger outage prevent dispatch; uncertain settlement withholds image (29.888375ms)
+✔ HTTP MOCK: bounded concurrency, immutable tombstones and expiry never redispatch (53.149625ms)
+✔ HTTP MOCK: missing authority defaults closed; live provider construction rejected (2.145708ms)
+✔ MOCK: byte-level PNG checks reject MIME, corruption, dimensions, oversize, raster and animation (0.87025ms)
+✔ HTTP MOCK: invalid provider bytes fail safely through HTTP (29.481ms)
+✔ HTTP MOCK: same key scoped across owners/projects; distinct keys execute concurrently (38.61175ms)
+✔ HTTP MOCK: terminal polling times out with owner/job/last-state diagnostics and bounded cleanup (87.712292ms)
+{"outcome":"cancel","before":{"permanentPending":4},"after":{"running":0,"active":0,"spawned":4,"entered":4,"exited":4,"highWater":4,"blocked":false},"fifth":"SUCCEEDED","final":{"running":0,"active":0,"spawned":5,"entered":5,"exited":5,"highWater":4,"blocked":false},"settlements":1}
+✔ HTTP MOCK R2: four permanent abort-ignoring workers cancel; confirmed exit, tombstones, fifth admission (97.28275ms)
+{"outcome":"timeout","before":{"permanentPending":4},"after":{"running":0,"active":0,"spawned":4,"entered":4,"exited":4,"highWater":4,"blocked":false},"fifth":"SUCCEEDED","final":{"running":0,"active":0,"spawned":5,"entered":5,"exited":5,"highWater":4,"blocked":false},"settlements":1}
+✔ HTTP MOCK R2: four permanent abort-ignoring workers timeout; confirmed exit, tombstones, fifth admission (2064.389458ms)
+✔ MOCK R2: arbitrary in-process provider rejected rather than pretending cancellation terminates it (0.405291ms)
+✔ MOCK R2: terminate also stops a CPU loop, with bounded cleanup (33.461792ms)
+✔ MOCK TRANSPORT ONLY: pinned Qwen request, fixed safe parameters and serializable schema (0.689875ms)
+✔ MOCK TRANSPORT ONLY: supplier reference requires explicit host policy and remains unverified (0.317041ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2262.909084

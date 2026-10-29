@@ -5,6 +5,7 @@ import { projectBuiltinChange } from '../../model/appProjectCommands'
 import type { WriteAuthorization } from '../custom-block-bc/owner'
 import type { WorkspaceSession } from '../project-workspace/session'
 import { WorkspaceError } from '../project-workspace/repository'
+import {httpReviewMessage,type HttpMockProvider,type HttpReview} from './http'
 import { offlineImageProvider, type ImageProvider } from './offline'
 
 export interface ImageCandidate {
@@ -14,7 +15,7 @@ export interface ImageCandidate {
 }
 export interface GalleryGenerationView {
   phase: 'idle' | 'generating' | 'ready' | 'saving' | 'adopted' | 'failed'
-  candidate: Readonly<ImageCandidate> | null; message: string
+  candidate: Readonly<ImageCandidate> | null; message: string; review?: HttpReview | null
 }
 function freeze<T>(value: T): T {
   if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value) }
@@ -35,13 +36,28 @@ async function decodePng(dataUrl: string, signal: AbortSignal) {
   const width = view.getUint32(16), height = view.getUint32(20)
   if (!width || !height || width * height > 16_777_216) throw new Error('候选图片的像素尺寸超过限制。')
   // Reject animated PNG before decoding; do not rely on a provider's dimensions.
-  for (let p = 8; p + 12 <= bytes.length;) {
+  let ended = false, hasData = false
+  for (let p = 8; p < bytes.length;) {
+    if (p + 12 > bytes.length) throw new Error('候选图片结构损坏。')
     const size = view.getUint32(p)
     if (size > bytes.length - p - 12) throw new Error('候选图片结构损坏。')
     const type = String.fromCharCode(...bytes.slice(p + 4, p + 8))
-    if (type === 'acTL') throw new Error('离线图库仅接收静态 PNG。')
+    if (['acTL', 'fcTL', 'fdAT'].includes(type)) throw new Error('图库仅接收静态 PNG。')
+    if (p === 8 ? type !== 'IHDR' || size !== 13 : type === 'IHDR') throw new Error('候选图片头部无效。')
+    let crc = 0xffffffff
+    for (let i = p + 4; i < p + 8 + size; i++) {
+      crc ^= bytes[i]
+      for (let bit = 0; bit < 8; bit++) crc = crc >>> 1 ^ (crc & 1 ? 0xedb88320 : 0)
+    }
+    if (((crc ^ 0xffffffff) >>> 0) !== view.getUint32(p + 8 + size)) throw new Error('候选 PNG 校验失败。')
+    if (type === 'IDAT') hasData = true
+    if (type === 'IEND') {
+      if (size !== 0 || p + 12 !== bytes.length) throw new Error('候选图片结尾无效。')
+      ended = true
+    }
     p += size + 12
   }
+  if (!ended || !hasData) throw new Error('候选图片不完整。')
   if (typeof createImageBitmap === 'function') {
     await bounded(createImageBitmap(new Blob([bytes], { type: 'image/png' })).then(bitmap => {
       try { if (bitmap.width !== width || bitmap.height !== height) throw new Error('图片尺寸与解码结果不一致。') }
@@ -63,32 +79,47 @@ async function decodePng(dataUrl: string, signal: AbortSignal) {
 
 /** One candidate and one confirmation per controller; the project remains untouched
  * until the workspace transaction commits. The provider never owns project state. */
-export function createGalleryImageController(workspace: WorkspaceSession, provider: ImageProvider = offlineImageProvider, timeoutMs = 10_000) {
+export function createGalleryImageController(workspace: WorkspaceSession, provider: ImageProvider = offlineImageProvider, timeoutMs = 10_000, source: 'OFFLINE_CANVAS' | 'MOCK' | 'HTTP_MOCK' = 'OFFLINE_CANVAS') {
   const runtime = workspace.runtime, owner = runtime.customProject
   let state: GalleryGenerationView = Object.freeze({ phase: 'idle', candidate: null, message: '' })
   let active: AbortController | null = null, disposed = false, confirming: Promise<void> | null = null
+  const http = 'getReview' in provider ? provider as Partial<HttpMockProvider> : null
   const listeners = new Set<() => void>()
   const update = (changes: Partial<GalleryGenerationView>) => {
     if (disposed) return
     state = Object.freeze({ ...state, ...changes }); listeners.forEach(listener => listener())
   }
+  const reviewChanged = () => {
+    const review = http?.getReview?.() ?? null
+    if (review && (!active || review.state !== 'PENDING')) update({ phase: 'failed', candidate: null, review, message: httpReviewMessage(review) })
+    else update({ review })
+  }
+  const unsubscribeReview = http?.subscribeReview?.(reviewChanged)
+  reviewChanged()
   return {
     getSnapshot: () => state,
+    async reconcile() {
+      if (active || confirming || disposed || !http?.reconcile || owner.getAuthorization().readOnly) return
+      await http.reconcile(); reviewChanged()
+      if (!http.getReview?.()) update({ phase: 'idle', candidate: null, review: null, message: '已通过服务端权限检查核对原任务终态；未采用或重试。可明确发起新的测试任务。' })
+    },
+    reportHttpStatus(status: string) { if (active) update({ message: `HTTP MOCK：${status}；测试图片尚未加入作品。` }) },
     subscribe(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener) } },
     async generate(prompt: string, targetId: string) {
       if (disposed || active || confirming) return
-      if (!prompt.trim() || prompt.length > 500) { update({ phase: 'failed', message: '请输入 1–500 字的图片描述。' }); return }
+      if (http?.getReview?.()) { reviewChanged(); return }
+      if (!prompt.trim() || prompt.length > 500) { update({ phase: 'failed', candidate: null, message: '请输入 1–500 字的图片描述。' }); return }
       const expected = owner.getSnapshot(), authorization = owner.getAuthorization()
       const gallery = expected.base.spec.blocks.find(b => b.id === targetId && b.type === 'gallery')
       if (!gallery || !workspace.isCurrent(expected, authorization)) { update({ phase: 'failed', message: '请先选择可编辑图库。' }); return }
       const controller = new AbortController(); active = controller
-      const timer = setTimeout(() => controller.abort(), timeoutMs)
-      update({ phase: 'generating', candidate: null, message: '正在生成离线示例，不调用 AI 模型…' })
+      const timer = source === 'HTTP_MOCK' ? undefined : setTimeout(() => controller.abort(), timeoutMs)
+      update({ phase: 'generating', candidate: null, message: source === 'HTTP_MOCK' ? 'HTTP MOCK：正在提交并查询测试任务；不调用 AI 模型…' : source === 'MOCK' ? '正在加载固定 Mock 测试图片，不调用 AI 模型…' : '正在生成离线示例，不调用 AI 模型…' })
       try {
         const dataUrl = await bounded(provider.generate(prompt.trim(), controller.signal), controller.signal)
         controller.signal.throwIfAborted()
         if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/png;base64,') || dataUrl.length > 699100) throw new Error('候选必须是限额内的静态 PNG。')
-        const asset: ProjectAsset = { id: `image-${crypto.randomUUID()}`, name: '离线插图.png', altText: '离线练习风景图', mimeType: 'image/png', dataUrl }
+        const asset: ProjectAsset = { id: `image-${crypto.randomUUID()}`, name: source !== 'OFFLINE_CANVAS' ? 'Mock测试图片.png' : '离线插图.png', altText: source !== 'OFFLINE_CANVAS' ? '固定 Mock 测试风景图，与描述无关' : '离线练习风景图', mimeType: 'image/png', dataUrl }
         const commands = [{ type: 'addProjectAsset' as const, asset }, { type: 'configureGallery' as const, blockId: targetId,
           imageIds: [...(gallery as Extract<typeof gallery, { type: 'gallery' }>).imageIds, asset.id] }]
         const requestId = `confirm-${crypto.randomUUID()}`
@@ -100,15 +131,20 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
         const digest = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input)))].map(x => x.toString(16).padStart(2, '0')).join('')
         controller.signal.throwIfAborted()
         if (!workspace.isCurrent(expected, authorization)) throw new Error('生成期间作品或权限已变化，请重新预览。')
+        if (http?.getReview?.()) { reviewChanged(); return }
         const candidate = freeze({ confirmationId: requestId, digest, asset, targetId, expected, authorization, prepared, ...dimensions })
         update({ phase: 'ready', candidate, message: '预览尚未加入作品。确认后采用这一张图片并保存到本机。' })
       } catch (error) {
-        if (active === controller) update({ phase: 'failed', candidate: null, message: error instanceof Error ? error.message : '离线生成失败，原作品未更改。' })
+        if (active === controller) {
+          const review = http?.getReview?.()
+          update({ phase: 'failed', candidate: null, review, message: review ? httpReviewMessage(review) : error instanceof Error ? error.message : '离线生成失败，原作品未更改。' })
+        }
       } finally { clearTimeout(timer); if (active === controller) active = null }
     },
     confirm(): Promise<void> {
       if (confirming) return confirming
       const candidate = state.candidate
+      if (http?.getReview?.()) { reviewChanged(); return Promise.resolve() }
       if (disposed || !candidate) return Promise.resolve()
       if (workspace.getSnapshot().recovery) {
         update({ phase: 'failed', message: workspace.getSnapshot().error })
@@ -133,8 +169,9 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
     cancel() {
       if (confirming) return
       active?.abort(); active = null
-      update({ phase: 'idle', candidate: null, message: '已取消；原作品未更改，没有模型调用或费用。' })
+      if (http?.getReview?.()) { reviewChanged(); return }
+      update({ phase: 'idle', candidate: null, message: source === 'HTTP_MOCK' ? '已停止等待 HTTP MOCK；已请求取消，结果可能尚未确认，原作品未更改。' : '已取消；原作品未更改，没有模型调用或费用。' })
     },
-    dispose() { disposed = true; active?.abort(); active = null; listeners.clear() },
+    dispose() { disposed = true; unsubscribeReview?.(); active?.abort(); active = null; listeners.clear() },
   }
 }

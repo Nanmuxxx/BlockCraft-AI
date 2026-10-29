@@ -1,0 +1,63 @@
+name: Image HTTP Mock acceptance
+on:
+  pull_request:
+    paths:
+      - .github/workflows/image-http-mock.yml
+      - .dockerignore
+      - package*.json
+      - server/image-generation/**
+      - src/integrations/gallery-generation/**
+      - tests/image-backend/**
+      - tests/image-http-contract/**
+      - tests/image-http-integration/**
+      - tests/gallery-generation/**
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  http-mock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install dependencies and isolated browser
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm install --prefix "$RUNNER_TEMP/image-browser" --no-package-lock --ignore-scripts playwright@1.62.1
+          echo "NODE_PATH=$RUNNER_TEMP/image-browser/node_modules" >> "$GITHUB_ENV"
+          node "$RUNNER_TEMP/image-browser/node_modules/playwright/cli.js" install --with-deps chromium
+      - name: Exact HEAD OFFLINE, MOCK and actual loopback HTTP MOCK
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/image-http
+          git rev-parse HEAD | tee artifacts/image-http/tested-sha.txt
+          export GALLERY_EXPECTED_SHA="$(git rev-parse HEAD)"
+          node node_modules/typescript/bin/tsc -b
+          node node_modules/typescript/bin/tsc -p server/image-generation/tsconfig.json
+          npm --prefix server test
+          node --test --test-timeout=10000 tests/image-backend/provider.test.mjs tests/image-http-contract/*.test.mjs | tee artifacts/image-http/contracts.log
+          npm test
+          node tools/project-zip-export/prepare.mjs
+          node --test tests/project-json/*.test.cjs tests/project-package/*.test.cjs tests/custom-block-bc/*.test.cjs tests/workshop-export/*.test.*
+          GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_EVIDENCE_DIR=artifacts/image-http/desktop node tests/gallery-generation/browser.cjs
+          GALLERY_TEST_PROVIDER=HTTP_MOCK GALLERY_VIEWPORT_WIDTH=390 GALLERY_EVIDENCE_DIR=artifacts/image-http/mobile node tests/gallery-generation/browser.cjs
+          GALLERY_EVIDENCE_DIR=artifacts/image-http/rework-desktop node tests/image-http-integration/rework.browser.cjs
+          GALLERY_VIEWPORT_WIDTH=390 GALLERY_EVIDENCE_DIR=artifacts/image-http/rework-mobile node tests/image-http-integration/rework.browser.cjs
+          GALLERY_TEST_PROVIDER=MOCK GALLERY_EVIDENCE_DIR=artifacts/image-http/fixed node tests/gallery-generation/browser.cjs
+          GALLERY_EVIDENCE_DIR=artifacts/image-http/canvas node tests/gallery-generation/browser.cjs
+          node tests/project-package/browser.cjs
+          VITE_IMAGE_HTTP_FIXTURE=1 npm run build
+          node tests/image-http-integration/production.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: image-http-mock-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/image-http
