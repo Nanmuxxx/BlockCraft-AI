@@ -14,7 +14,7 @@ Mode: **OFFLINE documentation audit**. `REAL_PROVIDER=NOT_RUN`. No provider tran
 
 Branch: `rfc/image-real-contract-20261029`. New isolated worktree; PR targets #99's `feat/image-phase2-preparation-20261029`, so its own delta is documentation only. All writes are inside `docs/acceptance/image-real-contract-rfc/**`. #98/#99/main histories remain unchanged. Rebase or dependency movement requires a new audit and renewed review; a green inherited CI run does not validate this RFC or REAL.
 
-Related: [#91](https://github.com/Nanmuxxx/BlockCraft-AI/issues/91), [coordination #92](https://github.com/Nanmuxxx/BlockCraft-AI/issues/92), [#98](https://github.com/Nanmuxxx/BlockCraft-AI/pull/98), [#99](https://github.com/Nanmuxxx/BlockCraft-AI/pull/99).
+Draft RFC PR: [#100](https://github.com/Nanmuxxx/BlockCraft-AI/pull/100). Related: [#91](https://github.com/Nanmuxxx/BlockCraft-AI/issues/91), [coordination #92](https://github.com/Nanmuxxx/BlockCraft-AI/issues/92), [#98](https://github.com/Nanmuxxx/BlockCraft-AI/pull/98), [#99](https://github.com/Nanmuxxx/BlockCraft-AI/pull/99).
 
 ## Read in order
 

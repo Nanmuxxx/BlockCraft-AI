@@ -70,11 +70,11 @@ A full success response is the create envelope with higher revision, `status=SUC
 | QUEUED | Atomic admission committed; -> RUNNING, CANCELLED (before dispatch), FAILED (known local failure), UNCERTAIN (recovery cannot prove dispatch) |
 | RUNNING | Durable fenced dispatch intent exists; -> SUCCEEDED, FAILED, CANCELLED or UNCERTAIN |
 | UNCERTAIN | Outcome cannot be established; no autonomous retry; -> SUCCEEDED/FAILED/CANCELLED only with authoritative recovered evidence |
-| SUCCEEDED | Validated content/proof persisted; terminal task result |
+| SUCCEEDED | Validated content persisted; proof is nullable pending reconciled eligibility as specified above; terminal task result |
 | FAILED | Known generation/download/validation/policy failure; terminal task result; charge can still be UNKNOWN or SETTLED |
 | CANCELLED | Local execution stopped or predispatch cancellation committed; terminal local task result; **not** a provider no-charge assertion |
 
-Terminal task callbacks cannot overwrite the result; late supplier billing evidence may update billing only, with audited revision. A user timeout/disconnect does not itself create FAILED; the server execution deadline enters UNCERTAIN if outcome is unknown. Late recovered image after CANCELLED cannot automatically adopt or change it to SUCCEEDED.
+Terminal task callbacks cannot overwrite the result; late supplier billing evidence may update billing and attach the reconciled-eligibility proof only, with audited revision; it cannot replace image bytes or task outcome. A user timeout/disconnect does not itself create FAILED; the server execution deadline enters UNCERTAIN if outcome is unknown. Late recovered image after CANCELLED cannot automatically adopt or change it to SUCCEEDED.
 
 | Charge state | Entry and only legal automatic transitions |
 |---|---|
