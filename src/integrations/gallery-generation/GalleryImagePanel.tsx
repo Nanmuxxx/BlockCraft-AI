@@ -12,6 +12,12 @@ const httpFixture = import.meta.env.DEV && import.meta.env.VITE_IMAGE_HTTP_FIXTU
 
 export function GalleryImagePanel({ workspace }: { workspace: WorkspaceSession }) {
   const [source, setSource] = useState<Source>(() => httpFixture && createHttpMockImageProvider('fixture-project').getReview() ? 'HTTP_MOCK' : 'OFFLINE_CANVAS')
+  useEffect(() => {
+    if (!httpFixture) return
+    const guard = createHttpMockImageProvider('fixture-project')
+    const changed = () => { if (guard.getReview()) setSource('HTTP_MOCK') }
+    changed(); return guard.subscribeReview(changed)
+  }, [])
   const [prompt, setPrompt] = useState('清晨的山与太阳')
   const [target, setTarget] = useState('')
   const [binding, setBinding] = useState<{ workspace: WorkspaceSession; source: typeof source; controller: ReturnType<typeof createGalleryImageController> } | null>(null)

@@ -6,7 +6,15 @@ import { setTimeout as delay } from 'node:timers/promises'
  * Identity/membership are isolated fixtures, NOT production authentication.
  */
 export function createHttpMockFixture() {
-  const requests=[], controls={mode:'normal',delayMs:150,revoked:false}
+  const requests=[], held=[], controls={mode:'normal',delayMs:150,revoked:false,holdTab:null}
+  const releaseHeld = (outcome='normal') => {
+    controls.holdTab=null
+    for(const {req,res} of held.splice(0)){
+      if(outcome==='network'){res.destroy();continue}
+      if(outcome==='unknown')req.url='/api/image-generations/11111111-1111-4111-8111-111111111111'
+      void handler(req,res)
+    }
+  }
 
   const handler=createMockImageHandler({fixture:true,
     resolveIdentity:req=>['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.remoteAddress)?'fixture-owner':null,
@@ -15,10 +23,11 @@ export function createHttpMockFixture() {
     provider:createIsolatedMockProvider({moduleUrl:new URL('../image-http-contract/worker-fixture.mjs',import.meta.url),
       dataForRequest:()=>({mode:controls.mode,delayMs:controls.delayMs})}),
   })
-  return {handler,requests,controls,plugin:{name:'isolated-http-mock-fixture',configureServer(server){
+  return {handler,requests,controls,held,releaseHeld,plugin:{name:'isolated-http-mock-fixture',configureServer(server){
     server.middlewares.use((req,res,next)=>{
       if(!req.url?.startsWith('/api/image-generations'))return next()
-      requests.push({method:req.method,path:req.url})
+      requests.push({method:req.method,path:req.url,tab:req.headers['x-rework-tab']})
+      if(controls.holdTab&&req.headers['x-rework-tab']===controls.holdTab&&req.method==='GET'){held.push({req,res});return}
       if(controls.mode==='slow-response'&&req.method==='GET')void delay(100).then(()=>handler(req,res))
       else void handler(req,res)
     })

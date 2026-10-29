@@ -20,12 +20,27 @@ async function harness(t,options={}) {
  server.listen(0,'127.0.0.1');await once(server,'listening')
  t.after(async()=>{await handler.close?.();server.closeAllConnections();await new Promise(resolve=>server.close(resolve))})
  const base=`http://127.0.0.1:${server.address().port}`
- const send=async(path='',{user='alice',method=path?'GET':'POST',body=path?undefined:input,key='request-1234567890',headers={}}={})=>{
- const response=await fetch(base+'/api/image-generations'+path,{method,headers:{...(user?{'x-fixture-user':user}:{}),'Content-Type':'application/json','Idempotency-Key':key,...headers},...(body===undefined?{}:{body:typeof body==='string'?body:JSON.stringify(body)})})
+ const send=async(path='',{user='alice',method=path?'GET':'POST',body=path?undefined:input,key='request-1234567890',headers={},signal=AbortSignal.timeout(2000)}={})=>{
+ const response=await fetch(base+'/api/image-generations'+path,{method,signal,headers:{...(user?{'x-fixture-user':user}:{}),'Content-Type':'application/json','Idempotency-Key':key,...headers},...(body===undefined?{}:{body:typeof body==='string'?body:JSON.stringify(body)})})
  assert.equal(response.headers.get('cache-control'),'no-store')
  return {status:response.status,body:await response.json()}
  }
- const settled=async id=>{for(let i=0;i<100;i++){const x=await send('/'+id);if(!['QUEUED','RUNNING'].includes(x.body.status))return x;await delay(5)}throw Error('fixture did not settle')}
+ const settled=async(id,{user='alice',timeoutMs=2000}={})=>{
+  const start=performance.now(),signal=AbortSignal.timeout(timeoutMs);let last='NOT_QUERIED',polls=0
+  try {
+   while(!signal.aborted){
+    const x=await send('/'+id,{user,signal});polls++
+    assert.equal(x.status,200);assert.ok(validJob(x.body));assert.equal(x.body.id,id)
+    last=x.body.status
+    if(!['QUEUED','RUNNING'].includes(last))return x
+    await delay(5,undefined,{signal})
+   }
+  }catch(error){
+   if(!signal.aborted)throw error
+  }
+  throw Error(`TERMINAL_TIMEOUT id=${id} user=${user} last=${last} polls=${polls} elapsedMs=${Math.round(performance.now()-start)} limitMs=${timeoutMs}`)
+ }
+
  return {send,settled,base,members,handler,get calls(){return provider.resources().spawned}}
 }
 test('HTTP MOCK: create/poll/replay is serializable, bounded, exactly one dispatch',async t=>{
@@ -109,13 +124,30 @@ test('HTTP MOCK: invalid provider bytes fail safely through HTTP',async t=>{
 })
 
 test('HTTP MOCK: same key scoped across owners/projects; distinct keys execute concurrently',async t=>{
- const h=await harness(t)
- const results=await Promise.all([h.send(),h.send('',{key:'different-1234567890'}),h.send('',{user:'bob',body:{...input,projectId:'project-b'}})])
+ const gate=new SharedArrayBuffer(8)
+ const provider=createIsolatedMockProvider({moduleUrl:new URL('../image-http-integration/controlled-worker.mjs',import.meta.url),dataForRequest:()=>({gate})})
+ const h=await harness(t,{provider})
+ const results=await Promise.all([h.send(),h.send('',{key:'different-1234567890'}),h.send('',{user:'bob',body:{...input,projectId:'project-b',prompt:'controlled bob'}})])
  assert.equal(new Set(results.map(x=>x.body.id)).size,3)
  for(const [i,x]of results.entries()){
-  const end= i===2 ? await h.send('/'+x.body.id,{user:'bob'}) : await h.settled(x.body.id)
+  if(i===2) {
+   assert.equal((await h.send('/'+x.body.id,{user:'bob'})).body.status,'RUNNING')
+   Atomics.store(new Int32Array(gate),0,1);Atomics.notify(new Int32Array(gate),0)
+  }
+  const end=await h.settled(x.body.id,{user:i===2?'bob':'alice'})
   assert.equal(end.body.status,'SUCCEEDED')
  }
  assert.equal(h.calls,3)
  const replay=await h.send('',{body:{...input,prompt:'  '+input.prompt+'  '}});assert.equal(replay.body.id,results[0].body.id)
+})
+
+test('HTTP MOCK: terminal polling times out with owner/job/last-state diagnostics and bounded cleanup',async t=>{
+ const h=await harness(t,{mode:'hang'})
+ const job=await h.send(),start=performance.now()
+ await assert.rejects(h.settled(job.body.id,{timeoutMs:80}),error=>{
+  assert.match(error.message,/TERMINAL_TIMEOUT/);assert.ok(error.message.includes(job.body.id))
+  assert.match(error.message,/user=alice last=RUNNING polls=\d+/);return true
+ })
+ assert.ok(performance.now()-start<1000,'polling exceeded its bound')
+ assert.equal(h.calls,1)
 })

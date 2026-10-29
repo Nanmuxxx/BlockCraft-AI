@@ -112,6 +112,7 @@ async function main(){
    }
    await context.close()
   }
+  if(!before)await require('./ownership.browser.cjs')({browser,origin,fixture,width,output,report,openGallery,project})
   assert.deepEqual(report.externalRequests,[]);assert.deepEqual(report.pageErrors,[]);report.passed=true
  }catch(error){report.error=error.stack;throw error}
  finally{for(const context of contexts)await context.close().catch(()=>{});await browser?.close();await fixture.handler.close();await server.close();await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2))}

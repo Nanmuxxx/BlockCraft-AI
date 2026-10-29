@@ -83,7 +83,7 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
   const runtime = workspace.runtime, owner = runtime.customProject
   let state: GalleryGenerationView = Object.freeze({ phase: 'idle', candidate: null, message: '' })
   let active: AbortController | null = null, disposed = false, confirming: Promise<void> | null = null
-  const http = source === 'HTTP_MOCK' ? provider as Partial<HttpMockProvider> : null
+  const http = 'getReview' in provider ? provider as Partial<HttpMockProvider> : null
   const listeners = new Set<() => void>()
   const update = (changes: Partial<GalleryGenerationView>) => {
     if (disposed) return
@@ -131,6 +131,7 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
         const digest = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input)))].map(x => x.toString(16).padStart(2, '0')).join('')
         controller.signal.throwIfAborted()
         if (!workspace.isCurrent(expected, authorization)) throw new Error('生成期间作品或权限已变化，请重新预览。')
+        if (http?.getReview?.()) { reviewChanged(); return }
         const candidate = freeze({ confirmationId: requestId, digest, asset, targetId, expected, authorization, prepared, ...dimensions })
         update({ phase: 'ready', candidate, message: '预览尚未加入作品。确认后采用这一张图片并保存到本机。' })
       } catch (error) {
@@ -143,6 +144,7 @@ export function createGalleryImageController(workspace: WorkspaceSession, provid
     confirm(): Promise<void> {
       if (confirming) return confirming
       const candidate = state.candidate
+      if (http?.getReview?.()) { reviewChanged(); return Promise.resolve() }
       if (disposed || !candidate) return Promise.resolve()
       if (workspace.getSnapshot().recovery) {
         update({ phase: 'failed', message: workspace.getSnapshot().error })
