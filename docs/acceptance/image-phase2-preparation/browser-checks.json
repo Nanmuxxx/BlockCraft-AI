@@ -1,0 +1,81 @@
+[
+  {
+    "name": "http-desktop",
+    "argv": [
+      "node",
+      "tests/gallery-generation/browser.cjs"
+    ],
+    "environment": {
+      "NODE_PATH": "/tmp/blockcraft-workshop-browser-tools/node_modules",
+      "GALLERY_EXPECTED_SHA": "26a97e3eac2ff5f816621c2265b29e4ae4a0a804",
+      "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-phase2-preparation-20261029/.cache/phase2-preparation/http-desktop",
+      "GALLERY_TEST_PROVIDER": "HTTP_MOCK"
+    },
+    "exit": 0,
+    "seconds": 16.69,
+    "log": "docs/acceptance/image-phase2-preparation/http-desktop.log"
+  },
+  {
+    "name": "http-mobile",
+    "argv": [
+      "node",
+      "tests/gallery-generation/browser.cjs"
+    ],
+    "environment": {
+      "NODE_PATH": "/tmp/blockcraft-workshop-browser-tools/node_modules",
+      "GALLERY_EXPECTED_SHA": "26a97e3eac2ff5f816621c2265b29e4ae4a0a804",
+      "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-phase2-preparation-20261029/.cache/phase2-preparation/http-mobile",
+      "GALLERY_TEST_PROVIDER": "HTTP_MOCK",
+      "GALLERY_VIEWPORT_WIDTH": "390"
+    },
+    "exit": 0,
+    "seconds": 16.51,
+    "log": "docs/acceptance/image-phase2-preparation/http-mobile.log"
+  },
+  {
+    "name": "mock",
+    "argv": [
+      "node",
+      "tests/gallery-generation/browser.cjs"
+    ],
+    "environment": {
+      "NODE_PATH": "/tmp/blockcraft-workshop-browser-tools/node_modules",
+      "GALLERY_EXPECTED_SHA": "26a97e3eac2ff5f816621c2265b29e4ae4a0a804",
+      "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-phase2-preparation-20261029/.cache/phase2-preparation/mock",
+      "GALLERY_TEST_PROVIDER": "MOCK"
+    },
+    "exit": 0,
+    "seconds": 12.61,
+    "log": "docs/acceptance/image-phase2-preparation/mock.log"
+  },
+  {
+    "name": "canvas",
+    "argv": [
+      "node",
+      "tests/gallery-generation/browser.cjs"
+    ],
+    "environment": {
+      "NODE_PATH": "/tmp/blockcraft-workshop-browser-tools/node_modules",
+      "GALLERY_EXPECTED_SHA": "26a97e3eac2ff5f816621c2265b29e4ae4a0a804",
+      "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-phase2-preparation-20261029/.cache/phase2-preparation/canvas"
+    },
+    "exit": 0,
+    "seconds": 12.4,
+    "log": "docs/acceptance/image-phase2-preparation/canvas.log"
+  },
+  {
+    "name": "production",
+    "argv": [
+      "node",
+      "tests/image-http-integration/production.cjs"
+    ],
+    "environment": {
+      "NODE_PATH": "/tmp/blockcraft-workshop-browser-tools/node_modules",
+      "GALLERY_EXPECTED_SHA": "26a97e3eac2ff5f816621c2265b29e4ae4a0a804",
+      "GALLERY_EVIDENCE_DIR": "/Users/nanmuxun/BlockAI/BlockCraft-AI-image-phase2-preparation-20261029/.cache/phase2-preparation/production"
+    },
+    "exit": 0,
+    "seconds": 0.35,
+    "log": "docs/acceptance/image-phase2-preparation/production.log"
+  }
+]

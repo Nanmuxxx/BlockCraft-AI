@@ -1,0 +1,24 @@
+name: Image candidate preflight (OFFLINE)
+on:
+  pull_request:
+    paths:
+      - .github/workflows/image-preflight.yml
+      - server/image-generation/preflight/**
+      - tests/image-preflight/**
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-security:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Injected transport only, no provider credentials or model requests
+        run: node --test --test-timeout=5000 tests/image-preflight/*.test.mjs

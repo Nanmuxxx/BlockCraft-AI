@@ -1,0 +1,19 @@
+[
+  {
+    "name": "build-fixture-flag",
+    "argv": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "production-flag",
+    "argv": [
+      "node",
+      "tests/image-http-integration/production.cjs"
+    ],
+    "exit": 0
+  }
+]
