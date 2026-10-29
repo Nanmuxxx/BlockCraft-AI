@@ -35,7 +35,7 @@ These are normative design choices **pending the reviews below**, not claims abo
 - D3: resource schema 2 carried by CustomProject format 3, project JSON/package envelope 2 and IDB database 3. AppSpec remains version 1/2 because block semantics are unchanged. A new ProjectState validator and project-format capability gate are required; no compatibility claim for current readers.
 - D4: retain current image and file budgets; reject oversized outputs without a paid retry. Initial REAL supports the strict bounded PNG subset only, no automatic transcoder. Normalization is a separately reviewed later policy.
 - D5: proposed durable relational transaction backend (PostgreSQL) with fenced dispatch; deployment and storage operations are not authorized by this RFC. No in-memory fallback.
-- D6: portable server attestation using a versioned Ed25519 public verification profile. Signing infrastructure/trust distribution are prerequisites, not available capabilities. Untrusted imported source claims never grant a verified REAL badge.
+- D6: portable server attestation using a versioned Ed25519 public verification profile with signed RECONCILED adoption eligibility; UNKNOWN candidates receive no portable proof. Signing infrastructure/trust distribution are prerequisites, not available capabilities. Untrusted imported source claims never grant a verified REAL badge.
 - D7: monetary accounting uses exact integer **nano currency units** (`10^-9` CNY or USD), decimal strings on wire, currency-separated buckets, no FX. This preserves precision naming of the existing text ledger without reusing its policies or funds.
 
 ## Blockers and accountable decisions

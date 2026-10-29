@@ -30,6 +30,8 @@ No gate is satisfied merely because its predecessor passed. This docs task grant
 | W7 | Queued cancellation vs dispatch CAS, repeat cancel, terminal callback | Exactly no-send+RELEASED or possible-send+UNKNOWN/SETTLED; terminal task not overwritten | Backend / QA |
 | W8 | Timeout/disconnect after upstream send; generated image download/PNG failure; discard | Independent task/fee states, no automatic paid retry/refund; hold max and freeze approval | Backend / QA |
 | W9 | SUCCEEDED+UNKNOWN, FAILED+SETTLED, CANCELLED+UNKNOWN | UI labels faithfully, no adopt for unknown; no boolean success/no-charge collapse | Workshop / QA |
+| W11 | Adoption permission/receipt response lost, replay conflict, 30s expiry, known revocation, server success+local IDB abort/unknown | Exact authorization boundary, no claim of atomic remote ACL+IDB; recover local receipt before new confirmation; no regeneration | Backend+Workshop / QA |
+| W12 | Expired UNKNOWN job status/recover/cancel | Closed 410 summary preserves charge/freeze/tombstone and cancellation intent; no key substitution | Backend / QA |
 | W10 | 4096/+1 request, 710000/+1 response incl proof, prompt units/UTF8/control, proof cap, deadline/poll exhaustion | Reject/bound exactly, unresolved review retained, no truncation | Resource-Contract+Backend / QA |
 | A1 | Forged localStorage user/project/budget, arbitrary project ID/imported ID | Server requires registered ACL and approval; upstream zero | Backend / QA |
 | A2 | Session expiry, revoked membership, project transfer before dispatch/publish/read/cancel | Reauth denies, old-owner byte/history access zero, captured charge owner retained | Backend / QA |
@@ -37,12 +39,14 @@ No gate is satisfied merely because its predecessor passed. This docs task grant
 | L1 | Global/user/project/approval budget boundaries exact/+1, n/model/region tamper | All bucket reservations atomic; no implicit provider choice or cap expansion | Backend+Cost-Security / QA |
 | L2 | CNY/USD, fractional calculation rounding, huge decimal string, missing currency | Exact nano arithmetic, round upper bound up; no FX/mixed currency/float | Cost-Security / QA |
 | L3 | Crash at every T1/T2/T3 step, acknowledgement loss, disk full/serialization conflict | Durable unique claim/evidence, intent never resent, UNKNOWN freezes same approval | Backend / QA |
+| A4 | Session/grant expired/revoked/unavailable after queued admission or restart | Durable opaque reference rechecked before dispatch; no raw cookie persistence or automatic grant refresh | Backend / QA |
 | L4 | Lease expiry, stale dispatcher callback, no actual resource exit, process sleep | Fence rejects stale updates/egress; execution capacity retained, no fake running/released state | Backend / QA |
 | L5 | Missing/inconsistent/excess usage, wrong invoice currency/model, duplicate evidence | No false settlement; overrun discrepancy recorded, approval frozen, no clipping/reuse | Cost-Security+Backend / QA |
 | L6 | Restore old backup, split-brain/multi-instance concurrent reserve | Egress fenced/quiesced, unknown frozen, no restored free budget or key reuse | Backend / QA |
 | L7 | Retention expiry/project deletion/storage full | Prompt/image purge separately, summary/tombstone/unknown holds preserved; new admission denies if full | Backend / QA |
 | P1 | 524288/+1 PNG, 1024/+1 side, inflate bomb/CRC/trailing data/metadata/APNG, SSRF/redirection/DNS mix | Reuse reviewed bounds; reject incompatible output; never paid regeneration | Backend / QA |
 | P2 | Tampered bytes/hash/model/region/signature, test key in prod, unknown/revoked key, remote key URL | No verified REAL badge/adoption; no untrusted key fetch | Resource-Contract+Cost-Security / QA |
+| P5 | SUCCEEDED+UNKNOWN candidate wrapped in JSON2/ZIP2; lifecycle review forged | Missing signed RECONCILED eligibility -> inspection/reject, no adoption, no new call; proof issued only after reconciliation | Resource-Contract+Workshop+Cost-Security / QA |
 | P3 | Legacy Mock-looking filename, absent provenance, user-upload explicit | LEGACY_UNKNOWN vs known FIXED_MOCK vs actual upload kept distinct | Resource-Contract / QA |
 | P4 | Prompt OMITTED/default, explicit include/export exclusion, sensitive input | No prompt/digest in public proof/log by default; source retained and live project unchanged | Resource-Contract+Workshop / QA |
 | M1 | Legacy JSON1/CustomProject2, standalone v1/v2, no assets, timer/custom components | Read old first; migration copy validates all references, no fabricated source/time | Resource-Contract / QA |
