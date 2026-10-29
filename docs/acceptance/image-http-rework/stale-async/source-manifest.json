@@ -1,0 +1,13 @@
+{
+  "functional_head": "d66338b6599e6b7972df78e0d5683a3a150c1eff",
+  "files": {
+    "src/integrations/gallery-generation/GalleryImagePanel.tsx": "39eae1fd98299dc9f535c16722603b9e2cf59d656d7efd421b11057e59d0f544",
+    "src/integrations/gallery-generation/controller.ts": "3a2f059b42fcc9890a86291cfab24a46019d5c6afc669d225af61cb4555e3a5f",
+    "src/integrations/gallery-generation/http.ts": "87f1c1ce3881718e22e7cfc7d2b9a9886d0c28c7882e70677372f764350781d7",
+    "tests/image-http-contract/http.test.mjs": "30272c2c1418d6a8a2ce0393e186601d652b5d67570d48a8ba898c21552131da",
+    "tests/image-http-integration/controlled-worker.mjs": "94350877388d834a2c3a12dd5f0685ede33ad3ea52024cb4de078d65c618101d",
+    "tests/image-http-integration/fixture.mjs": "da829f69a11d33afc19ab02fe2ec93c0a7f8b293f7b60db5bf0b3203bf9412c2",
+    "tests/image-http-integration/ownership.browser.cjs": "fe15c61c1d106d296004fcb739ef0494ee1a8682464872c8505cbf165b8eb874",
+    "tests/image-http-integration/rework.browser.cjs": "596f0d2776ba84c8ec450a5c9d29f9d6ff7aab5f4d6f50743ba172eee27e0c45"
+  }
+}

@@ -1,0 +1,283 @@
+{
+  "mode": "HTTP MOCK REWORK",
+  "before": false,
+  "width": 390,
+  "cases": [
+    {
+      "scenario": "uncertain",
+      "passed": true,
+      "review": {
+        "requestId": "faac23a5-65e5-414c-be45-c6e4796d8a83",
+        "jobId": "7e5cb101-0373-4512-8731-483f34b8fee6",
+        "state": "UNCERTAIN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "lost-create",
+      "passed": true,
+      "review": {
+        "requestId": "e173f77e-8505-40bb-a43f-5b9fe1b64d04",
+        "jobId": null,
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "lost-cancel",
+      "passed": true,
+      "review": {
+        "requestId": "fde9c355-6c4e-4c9a-8f67-6434280827fd",
+        "jobId": "b8dacec5-9704-40d8-a5bf-d652321d3dad",
+        "state": "PENDING"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "unknown-job",
+      "passed": true,
+      "review": {
+        "requestId": "d324e930-d8af-4d8f-b09e-789fef9a5bdc",
+        "jobId": "031c0c92-ec13-4a0c-8c0b-07f18341ab23",
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "poll-network",
+      "passed": true,
+      "review": {
+        "requestId": "cbfa3930-d194-4693-8cdb-63b16875bda2",
+        "jobId": "9608a07a-0e27-487f-8db0-ed311d5e08c6",
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-success",
+      "passed": true,
+      "first": {
+        "requestId": "37dadfde-ed0d-442f-b9cf-a056da47f851",
+        "jobId": "4d183703-c053-417a-b1c2-61923e09e689",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "55d59f4b-411f-4a53-b166-22e98fdd6550",
+        "jobId": "08734a59-a860-4066-9d9b-8899b4a0edca",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-failure",
+      "passed": true,
+      "first": {
+        "requestId": "3dd00619-5c7e-48be-bb33-791caac2e6e3",
+        "jobId": "3d7b5042-c035-4bf7-8339-9fb7b26aafb1",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "ef8ccb95-23d4-4e99-96f4-652f21f2eb01",
+        "jobId": "43397d2c-c462-4a98-bf2f-9aada4c055e0",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-cancelled",
+      "passed": true,
+      "first": {
+        "requestId": "aacdf066-d8e0-4f33-8230-5fbc5fcc94e2",
+        "jobId": "d19e4d6f-bc3d-40a7-9e0b-06f8ce31eb2b",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "79381f1c-165c-4cd9-8d3d-6cbb9884ed1f",
+        "jobId": "daaeeec2-a5d7-4445-8e8f-0b6d1ec6a1ed",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-network",
+      "passed": true,
+      "first": {
+        "requestId": "3db6035f-d6a1-49dc-84f2-d21568272605",
+        "jobId": "91fb8fca-e4d2-467a-904f-2a2b64e2b392",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "cb4d08bf-d353-4e78-9ab6-44ae80338e6f",
+        "jobId": "9968ea7a-79cd-4354-8f84-0f62e9e564c2",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-unknown",
+      "passed": true,
+      "first": {
+        "requestId": "3e5012d3-43e9-42c8-b5be-6fc7d30995d4",
+        "jobId": "d5a77192-1047-40f1-9120-c29917529e80",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "c3a9fa12-14ea-4916-bce8-d8b7cd6934a9",
+        "jobId": "6900b43a-715b-435c-98b8-5b10eb1121db",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-abort",
+      "passed": true,
+      "first": {
+        "requestId": "50136038-02a6-4684-92c8-450a4de90fd1",
+        "jobId": "693e5183-1174-493f-a101-890f657bd688",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "a562a202-9ebe-4104-85bb-5106b2454fce",
+        "jobId": "ec0c183a-5690-49fe-9aed-01e79e0facf2",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-dispose",
+      "passed": true,
+      "first": {
+        "requestId": "141d8132-7683-4ac9-a6f0-a9248c7539d8",
+        "jobId": "abef7fd7-699e-402c-9a63-265562f36006",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "0113295d-2d3f-4bb3-b4e7-b3193aed212e",
+        "jobId": "c5867e7d-7cf1-4d13-9974-f1b604af5140",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-late-reconcile",
+      "passed": true,
+      "first": {
+        "requestId": "65990f11-5639-4ece-ba25-573a7796a75e",
+        "jobId": "4cbaedcf-501d-4243-afdd-6485410ae688",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "97d27780-3497-4f91-91fd-384bfdd324fd",
+        "jobId": "e20a14d1-34c5-4869-b697-259da9e4992f",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-j2-authorized",
+      "passed": true,
+      "first": {
+        "requestId": "30c3bca2-756f-4320-9c62-9a6a443089d9",
+        "jobId": "ba15c87c-8306-4805-8b19-86809628b784",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "f52e1d46-dee4-4d0b-b023-9cd3a4ee1360",
+        "jobId": "709aab22-19a9-4aeb-a6d1-cef717d13f66",
+        "state": "UNKNOWN"
+      },
+      "creates": 2,
+      "serverStatus": "CANCELLED",
+      "serverCharge": "NONE",
+      "unchanged": true
+    },
+    {
+      "scenario": "atomic-two-tab-admission",
+      "passed": true,
+      "creates": 1
+    },
+    {
+      "scenario": "fail-closed-bad-json",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-null-json",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-invalid-schema",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-read",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-write",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-remove",
+      "passed": true,
+      "creates": 1
+    },
+    {
+      "scenario": "fail-closed-coordination-missing",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-coordination-reject",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-coordination-timeout",
+      "passed": true,
+      "creates": 0
+    }
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "environment": {
+    "node": "v24.22.0",
+    "platform": "darwin",
+    "browser": "151.0.7922.34",
+    "head": "d66338b6599e6b7972df78e0d5683a3a150c1eff"
+  },
+  "passed": true
+}

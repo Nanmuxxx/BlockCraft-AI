@@ -1,0 +1,284 @@
+7:52:00 PM [vite] (client) Re-optimizing dependencies because vite config has changed
+{
+  "mode": "HTTP MOCK REWORK",
+  "before": false,
+  "width": 1440,
+  "cases": [
+    {
+      "scenario": "uncertain",
+      "passed": true,
+      "review": {
+        "requestId": "e1f38fd9-3a9b-49c8-bd20-2ec71f08731c",
+        "jobId": "cb952509-9ac8-4bb4-b98e-4886d5d4e770",
+        "state": "UNCERTAIN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "lost-create",
+      "passed": true,
+      "review": {
+        "requestId": "733429f2-4f15-4b78-971f-01f662bca929",
+        "jobId": null,
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "lost-cancel",
+      "passed": true,
+      "review": {
+        "requestId": "74680e87-59a8-4a85-bce7-8f3c45a85adf",
+        "jobId": "240b653a-b5b0-41e1-88ee-254617ee303d",
+        "state": "PENDING"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "unknown-job",
+      "passed": true,
+      "review": {
+        "requestId": "9c6a69af-d36e-4938-8bca-bd9e6e908104",
+        "jobId": "d19142e3-c74a-4973-b581-06966c089f82",
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "poll-network",
+      "passed": true,
+      "review": {
+        "requestId": "45b5ba71-7b1e-401c-98f3-59d2c2dcfd49",
+        "jobId": "ae9f55da-8bfb-49b3-aa2f-339b7e191932",
+        "state": "UNKNOWN"
+      },
+      "creates": 1,
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-success",
+      "passed": true,
+      "first": {
+        "requestId": "3b831511-c037-403d-be43-fd9633889786",
+        "jobId": "9a1a423a-8d86-4499-b213-8123fb243db4",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "48d498cf-bf32-4366-bb44-ace55599f870",
+        "jobId": "2d000f4d-46d5-40ed-b5c1-d9595bb4edb9",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-failure",
+      "passed": true,
+      "first": {
+        "requestId": "0b6a32f2-a512-4935-8e9e-134959cc4b33",
+        "jobId": "8992e8c4-b638-4d6c-9d3c-b0d591d35d34",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "b586497f-401c-4522-a15d-a09d89ba1100",
+        "jobId": "546c9134-9489-416f-a5ae-5ce1b8c26249",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-cancelled",
+      "passed": true,
+      "first": {
+        "requestId": "dc94b557-ec8e-4682-bbca-d8bb199f28fb",
+        "jobId": "de665f98-09a8-4f79-a904-0d3b1bfdc149",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "6a21989c-c339-4752-82b1-7ff757e15831",
+        "jobId": "71e59e63-da9a-4bf6-936c-46947e503419",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-network",
+      "passed": true,
+      "first": {
+        "requestId": "49683405-54cf-4ddb-a131-c2dd2879eb73",
+        "jobId": "d80680cb-852a-4898-936d-4f5fb521db6f",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "9f771b9f-ed48-4d64-837a-df8a2a7bec86",
+        "jobId": "45b230c7-7977-4f84-8c2c-751ac07666fa",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-unknown",
+      "passed": true,
+      "first": {
+        "requestId": "05f48180-70cb-4665-be2d-8ecff60b97d2",
+        "jobId": "a67a873d-781a-437d-b6e5-3605127b0187",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "9b44e3dd-f593-4a93-ac02-2e902e6c6b6a",
+        "jobId": "05b7ce72-a150-46c7-b8bf-3cf43981dc43",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-abort",
+      "passed": true,
+      "first": {
+        "requestId": "6d4bb2e8-b54d-4816-91c6-f9f2eca46303",
+        "jobId": "62503e7b-30ad-433c-b0cc-f7491e2d03ea",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "07e2b027-45a0-4bcc-9953-015dea46fc60",
+        "jobId": "df6fac86-7732-4dd7-a783-50d05a177b12",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-dispose",
+      "passed": true,
+      "first": {
+        "requestId": "38f140df-5c0c-4a11-8843-62fb378ef37a",
+        "jobId": "a3b4e8d2-9472-4bad-a084-f49f830b4a69",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "31f9a30a-0d5e-4153-abce-7adbfcfc63ca",
+        "jobId": "e6a03270-e950-42bb-9ccc-610b7812f5e1",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-late-reconcile",
+      "passed": true,
+      "first": {
+        "requestId": "8bcbfef1-2a4f-4305-9d0a-59e751574c0f",
+        "jobId": "52d1b169-4bf1-4e8a-b8c7-b7ab664d9fb1",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "90dc5023-43fa-44eb-9fb8-080d92c4f4fc",
+        "jobId": "fc2e87d2-6c89-4be6-91fb-82e83b5aae86",
+        "state": "UNCERTAIN"
+      },
+      "creates": 2,
+      "serverStatus": "UNCERTAIN",
+      "serverCharge": "UNCERTAIN",
+      "unchanged": true
+    },
+    {
+      "scenario": "stale-j2-authorized",
+      "passed": true,
+      "first": {
+        "requestId": "18dc2da5-2633-4b11-a1b4-d52258c26cd4",
+        "jobId": "cc2fbce7-2326-4e3a-89bf-5330d8067c19",
+        "state": "PENDING"
+      },
+      "second": {
+        "requestId": "4d34ecb2-a8d6-4ec0-b155-28efaaf0cada",
+        "jobId": "b34a1a1f-5fab-403e-86b5-3bbe23b3529c",
+        "state": "UNKNOWN"
+      },
+      "creates": 2,
+      "serverStatus": "CANCELLED",
+      "serverCharge": "NONE",
+      "unchanged": true
+    },
+    {
+      "scenario": "atomic-two-tab-admission",
+      "passed": true,
+      "creates": 1
+    },
+    {
+      "scenario": "fail-closed-bad-json",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-null-json",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-invalid-schema",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-read",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-write",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-remove",
+      "passed": true,
+      "creates": 1
+    },
+    {
+      "scenario": "fail-closed-coordination-missing",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-coordination-reject",
+      "passed": true,
+      "creates": 0
+    },
+    {
+      "scenario": "fail-closed-coordination-timeout",
+      "passed": true,
+      "creates": 0
+    }
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "environment": {
+    "node": "v24.22.0",
+    "platform": "darwin",
+    "browser": "151.0.7922.34",
+    "head": "d66338b6599e6b7972df78e0d5683a3a150c1eff"
+  },
+  "passed": true
+}

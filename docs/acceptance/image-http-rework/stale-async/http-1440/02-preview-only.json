@@ -1,0 +1,42 @@
+{
+  "format": "blockcraft-project",
+  "formatVersion": 1,
+  "project": {
+    "formatVersion": 2,
+    "revision": 0,
+    "base": {
+      "spec": {
+        "version": 1,
+        "id": "gallery-practice",
+        "name": "我的图库练习",
+        "entities": [],
+        "relations": [],
+        "blocks": [
+          {
+            "id": "practice-gallery",
+            "type": "gallery",
+            "name": "我的图片",
+            "protocolVersion": 1,
+            "imageIds": [],
+            "layout": "grid",
+            "interaction": "preview"
+          }
+        ]
+      },
+      "records": {},
+      "blockPositions": {}
+    },
+    "custom": {
+      "instances": [],
+      "positions": {},
+      "states": {}
+    },
+    "renderOrder": [
+      {
+        "kind": "builtin",
+        "id": "practice-gallery"
+      }
+    ]
+  },
+  "artifacts": []
+}

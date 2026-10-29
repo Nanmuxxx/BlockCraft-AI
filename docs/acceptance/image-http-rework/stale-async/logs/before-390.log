@@ -1,0 +1,141 @@
+{
+  "sha": "c55280a9c8b068d3cf5377e6c8e8c5806d5b379d",
+  "external": [],
+  "pageErrors": [],
+  "firstJob": {
+    "requestId": "1459dc87-9861-457e-b55e-65d2ffd77cfe",
+    "jobId": "585c7454-06ac-4b6f-8116-417d7a698c8b",
+    "state": "PENDING"
+  },
+  "authorizedFirstReconciliation": {
+    "cleared": true,
+    "creates": 1
+  },
+  "secondBeforeOldResponse": {
+    "review": {
+      "requestId": "5ed2312c-3a9d-4b19-9872-fefd1b7f4196",
+      "jobId": "d279117a-f4da-4d63-adf9-5c7adf595a2a",
+      "state": "UNCERTAIN"
+    },
+    "alert": "任务/费用状态未确认（UNCERTAIN）；核对前不要重新提交。任务 ID：d279117a-f4da-4d63-adf9-5c7adf595a2a；请求 ID：5ed2312c-3a9d-4b19-9872-fefd1b7f4196。原作品未更改。",
+    "buttonDisabled": true,
+    "creates": 2
+  },
+  "sharedLatchAfterOldSuccess": null,
+  "secondServerAfterOldSuccess": {
+    "version": "image-generation/1",
+    "kind": "HTTP_MOCK",
+    "id": "d279117a-f4da-4d63-adf9-5c7adf595a2a",
+    "status": "UNCERTAIN",
+    "charge": "UNCERTAIN",
+    "expiresAt": 1793275131620,
+    "error": {
+      "code": "BILLING_UNCERTAIN"
+    }
+  },
+  "afterReload": {
+    "review": null,
+    "buttonEnabled": true,
+    "panel": "为图库创作一张图片\n\nHTTP MOCK 隔离测试：通过本机服务器返回固定图片；非 AI，不产生模型费用。\n\n图片生成方式\n离线配色风景示例\n固定 Mock 图片（非 AI）\nHTTP Mock 隔离测试（非 AI）\n目标图库\n我的图片\n图片描述\n生成一张 HTTP Mock 测试图片"
+  },
+  "createsAfterOrdinaryClick": 3,
+  "audit": [
+    {
+      "id": "585c7454-06ac-4b6f-8116-417d7a698c8b",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793274231286
+    },
+    {
+      "id": "585c7454-06ac-4b6f-8116-417d7a698c8b",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793274231286
+    },
+    {
+      "id": "585c7454-06ac-4b6f-8116-417d7a698c8b",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "SUCCEEDED",
+      "at": 1793274231311
+    },
+    {
+      "id": "d279117a-f4da-4d63-adf9-5c7adf595a2a",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793274231620
+    },
+    {
+      "id": "d279117a-f4da-4d63-adf9-5c7adf595a2a",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793274231621
+    },
+    {
+      "id": "d279117a-f4da-4d63-adf9-5c7adf595a2a",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "UNCERTAIN",
+      "at": 1793274231650
+    },
+    {
+      "id": "641bd0d4-3838-48a6-9247-c6ac64515597",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "QUEUED",
+      "at": 1793274232225
+    },
+    {
+      "id": "641bd0d4-3838-48a6-9247-c6ac64515597",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "RUNNING",
+      "at": 1793274232226
+    },
+    {
+      "id": "641bd0d4-3838-48a6-9247-c6ac64515597",
+      "projectTag": "9ccc8bf50bc687b4d30f557f1ee40ab5c5b9d4a3112725e686e54abe58555035",
+      "event": "UNCERTAIN",
+      "at": 1793274232249
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/image-generations",
+      "tab": "A"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/585c7454-06ac-4b6f-8116-417d7a698c8b",
+      "tab": "A"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/585c7454-06ac-4b6f-8116-417d7a698c8b",
+      "tab": "B"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations",
+      "tab": "B"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/d279117a-f4da-4d63-adf9-5c7adf595a2a",
+      "tab": "B"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/d279117a-f4da-4d63-adf9-5c7adf595a2a",
+      "tab": "B"
+    },
+    {
+      "method": "POST",
+      "path": "/api/image-generations",
+      "tab": "B"
+    },
+    {
+      "method": "GET",
+      "path": "/api/image-generations/641bd0d4-3838-48a6-9247-c6ac64515597",
+      "tab": "B"
+    }
+  ],
+  "reproduced": true
+}
